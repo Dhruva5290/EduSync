@@ -1,0 +1,6 @@
+{
+  "name": "EduSync",
+  "description": "Role-based AI-powered EdTech academic OS featuring Student, Faculty, and Registrar/Admin dashboards, identity provisioning, student directory class allocator, syllabus management, assignment hub, AI diagnostics, and smart study assistant.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
