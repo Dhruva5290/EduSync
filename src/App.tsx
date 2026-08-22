@@ -22,6 +22,7 @@ import { ResourceFeed } from './components/StudentDashboard/ResourceFeed';
 import { SmartNotePlayground } from './components/StudentDashboard/SmartNotePlayground';
 import { StudyAssistantChat } from './components/AIStudyAssistant/StudyAssistantChat';
 import { InteractiveQuizModal } from './components/StudentDashboard/InteractiveQuizModal';
+import { LoginScreen } from './components/LoginScreen';
 
 import {
   BarChart3,
@@ -50,6 +51,7 @@ import {
 
 export default function App() {
   // State
+  const [authToken, setAuthToken] = useState<string | null>(() => localStorage.getItem('edusync_token'));
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const [subjects, setSubjects] = useState<Subject[]>([]);
@@ -91,7 +93,12 @@ export default function App() {
   // Safe fetch helper that guards against HTML fallback or network errors
   const safeFetchJson = async <T,>(url: string, init?: RequestInit): Promise<T | null> => {
     try {
-      const res = await fetch(url, init);
+      const headers = new Headers(init?.headers || {});
+      const token = authToken || localStorage.getItem('edusync_token');
+      if (token) {
+        headers.set('Authorization', `Bearer ${token}`);
+      }
+      const res = await fetch(url, { ...init, headers });
       if (!res.ok) return null;
       const contentType = res.headers.get('content-type');
       if (contentType && contentType.includes('application/json')) {
@@ -131,41 +138,64 @@ export default function App() {
   useEffect(() => {
     const initApp = async () => {
       setIsLoading(true);
+      const token = localStorage.getItem('edusync_token');
+      if (!token) {
+        setIsLoading(false);
+        setCurrentUser(null);
+        return;
+      }
+
       try {
         // Fetch current user and all users
-        const [authData, allSubjData, userSubjData] = await Promise.all([
-          safeFetchJson<{ user: User; allUsers?: User[]; allDemoUsers?: User[] }>('/api/auth/me'),
-          safeFetchJson<Subject[]>('/api/subjects/all'),
-          safeFetchJson<Subject[]>('/api/subjects')
-        ]);
+        const authData = await safeFetchJson<{ authenticated: boolean; user: User; allUsers?: User[]; allDemoUsers?: User[] }>('/api/auth/me');
 
-        if (authData?.user) {
+        if (authData?.authenticated && authData.user) {
           setCurrentUser(authData.user);
           setAllUsers(authData.allUsers || authData.allDemoUsers || []);
-        }
 
-        if (allSubjData && allSubjData.length > 0) {
-          setAllSubjects(allSubjData);
-        }
+          const [allSubjData, userSubjData] = await Promise.all([
+            safeFetchJson<Subject[]>('/api/subjects/all'),
+            safeFetchJson<Subject[]>('/api/subjects')
+          ]);
 
-        if (userSubjData && userSubjData.length > 0) {
-          setSubjects(userSubjData);
-          setActiveSubjectId(userSubjData[0].id);
-        } else if (allSubjData && allSubjData.length > 0) {
-          setSubjects(allSubjData);
-          setActiveSubjectId(allSubjData[0].id);
-        }
+          if (allSubjData && allSubjData.length > 0) {
+            setAllSubjects(allSubjData);
+          }
 
-        await fetchMasterData();
+          if (userSubjData && userSubjData.length > 0) {
+            setSubjects(userSubjData);
+            setActiveSubjectId(userSubjData[0].id);
+          } else if (allSubjData && allSubjData.length > 0) {
+            setSubjects(allSubjData);
+            setActiveSubjectId(allSubjData[0].id);
+          }
+
+          if (authData.user.role === 'teacher') {
+            setActiveTab('analytics');
+          } else if (authData.user.role === 'admin') {
+            setActiveTab('overview');
+          } else {
+            setActiveTab('feed');
+          }
+
+          await fetchMasterData();
+        } else {
+          localStorage.removeItem('edusync_token');
+          setAuthToken(null);
+          setCurrentUser(null);
+        }
       } catch (err) {
-        console.error('Error bootstrapping app:', err);
+        console.error('Error loading initial session:', err);
+        localStorage.removeItem('edusync_token');
+        setAuthToken(null);
+        setCurrentUser(null);
       } finally {
         setIsLoading(false);
       }
     };
 
     initApp();
-  }, []);
+  }, [authToken]);
 
   // Fetch subject-specific data whenever activeSubjectId changes
   useEffect(() => {
@@ -398,14 +428,17 @@ export default function App() {
   // Adjust default tab when switching roles
   const handleSwitchUser = async (userId: string) => {
     try {
-      const res = await fetch('/api/auth/switch-user', {
+      const res = await safeFetchJson<{ success: boolean; token?: string; user: User }>('/api/auth/switch-user', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId })
       });
-      if (res.ok) {
-        const data = await res.json();
-        setCurrentUser(data.user);
+      if (res?.user) {
+        if (res.token) {
+          localStorage.setItem('edusync_token', res.token);
+          setAuthToken(res.token);
+        }
+        setCurrentUser(res.user);
 
         // Re-fetch subjects specifically for this user
         const newSubjs = await safeFetchJson<Subject[]>('/api/subjects');
@@ -414,20 +447,41 @@ export default function App() {
           setActiveSubjectId(newSubjs[0].id);
         }
 
-        if (data.user.role === 'teacher') {
+        if (res.user.role === 'teacher') {
           setActiveTab('analytics');
-        } else if (data.user.role === 'admin') {
+        } else if (res.user.role === 'admin') {
           setActiveTab('overview');
         } else {
           setActiveTab('feed');
         }
 
         await fetchMasterData();
-        showToast(`Switched profile to ${data.user.name} (${data.user.role.toUpperCase()})`, 'info');
+        showToast(`Perspective switched to ${res.user.name} (${res.user.role.toUpperCase()})`, 'info');
       }
     } catch (err) {
       console.error('Error switching profile:', err);
     }
+  };
+
+  const handleLoginSuccess = (user: User, token: string) => {
+    setAuthToken(token);
+    setCurrentUser(user);
+    if (user.role === 'teacher') {
+      setActiveTab('analytics');
+    } else if (user.role === 'admin') {
+      setActiveTab('overview');
+    } else {
+      setActiveTab('feed');
+    }
+    showToast(`Welcome back, ${user.name}! Access granted to ${user.role.toUpperCase()} workspace.`, 'success');
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('edusync_token');
+    localStorage.removeItem('edusync_user_id');
+    setAuthToken(null);
+    setCurrentUser(null);
+    showToast('Signed out of EduSync workspace.', 'info');
   };
 
   const activeSubject: Subject = subjects.find(s => s.id === activeSubjectId) || subjects[0] || {
@@ -781,11 +835,11 @@ export default function App() {
     }
   };
 
-  if (isLoading || !currentUser) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center">
         <div className="text-center space-y-3">
-          <div className="w-10 h-10 rounded-sm bg-blue-600 text-white flex items-center justify-center mx-auto font-bold text-xl italic shadow-md">
+          <div className="w-10 h-10 rounded-sm bg-blue-600 text-white flex items-center justify-center mx-auto font-bold text-xl italic shadow-md animate-pulse">
             E
           </div>
           <p className="font-semibold text-white text-sm tracking-tight uppercase">EduSync Workspace</p>
@@ -793,6 +847,11 @@ export default function App() {
         </div>
       </div>
     );
+  }
+
+  // Not logged in: Show Login Screen
+  if (!currentUser) {
+    return <LoginScreen onLoginSuccess={handleLoginSuccess} />;
   }
 
   const isAdmin = currentUser.role === 'admin';
@@ -807,12 +866,14 @@ export default function App() {
         {/* Logo & Brand */}
         <div className="p-5 flex items-center justify-between border-b border-slate-800/80">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-blue-500 rounded-sm flex items-center justify-center font-bold text-xl italic text-white shadow-xs">
+            <div className="w-8 h-8 bg-gradient-to-tr from-cyan-500 to-purple-600 rounded-sm flex items-center justify-center font-bold text-xl italic text-white shadow-xs">
               E
             </div>
             <div>
               <span className="text-lg font-bold tracking-tight uppercase text-white block leading-none">EduSync</span>
-              <span className="text-[9px] font-mono text-slate-400 uppercase tracking-wider">Academic OS</span>
+              <span className="text-[9px] font-mono text-cyan-400 uppercase tracking-wider">
+                {isAdmin ? 'Registrar Edition' : isTeacher ? 'Faculty Edition' : 'Student Hub'}
+              </span>
             </div>
           </div>
           <button
@@ -823,53 +884,46 @@ export default function App() {
           </button>
         </div>
 
-        {/* 3-Way Mode Switcher */}
-        <div className="p-2.5 border-b border-slate-800/60">
-          <p className="text-[9px] uppercase tracking-widest text-slate-400 font-mono font-bold mb-1.5 px-1">
-            Workspace Mode
-          </p>
-          <div className="grid grid-cols-3 gap-1 p-1 bg-slate-900 rounded-sm border border-slate-800">
-            <button
-              onClick={() => {
-                if (currentUser.role !== 'student') {
+        {/* 3-Way Mode Switcher - EXCLUSIVE TO DEANS / REGISTRARS */}
+        {isAdmin && (
+          <div className="p-2.5 border-b border-slate-800/60 bg-purple-950/20">
+            <p className="text-[9px] uppercase tracking-widest text-purple-400 font-mono font-bold mb-1.5 px-1 flex items-center justify-between">
+              <span>Dean Audit Switcher</span>
+              <span className="text-[8px] px-1 py-0.2 bg-purple-900/60 border border-purple-700 text-purple-200 rounded-xs font-mono">
+                ADMIN
+              </span>
+            </p>
+            <div className="grid grid-cols-3 gap-1 p-1 bg-slate-900 rounded-sm border border-slate-800">
+              <button
+                onClick={() => {
                   const student = allUsers.find(u => u.role === 'student');
                   if (student) handleSwitchUser(student.id);
-                }
-              }}
-              className={`px-1.5 py-1.5 rounded-sm text-[10px] font-semibold text-center transition-colors truncate ${
-                currentUser.role === 'student' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              Student
-            </button>
-            <button
-              onClick={() => {
-                if (currentUser.role !== 'teacher') {
+                }}
+                className="px-1.5 py-1.5 rounded-sm text-[10px] font-semibold text-center text-slate-400 hover:text-white transition-colors truncate"
+              >
+                Student
+              </button>
+              <button
+                onClick={() => {
                   const teacher = allUsers.find(u => u.role === 'teacher');
                   if (teacher) handleSwitchUser(teacher.id);
-                }
-              }}
-              className={`px-1.5 py-1.5 rounded-sm text-[10px] font-semibold text-center transition-colors truncate ${
-                currentUser.role === 'teacher' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              Faculty
-            </button>
-            <button
-              onClick={() => {
-                if (currentUser.role !== 'admin') {
+                }}
+                className="px-1.5 py-1.5 rounded-sm text-[10px] font-semibold text-center text-slate-400 hover:text-white transition-colors truncate"
+              >
+                Faculty
+              </button>
+              <button
+                onClick={() => {
                   const admin = allUsers.find(u => u.role === 'admin');
                   if (admin) handleSwitchUser(admin.id);
-                }
-              }}
-              className={`px-1.5 py-1.5 rounded-sm text-[10px] font-semibold text-center transition-colors truncate ${
-                currentUser.role === 'admin' ? 'bg-purple-600 text-white shadow-xs' : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              Registrar
-            </button>
+                }}
+                className="px-1.5 py-1.5 rounded-sm text-[10px] font-semibold text-center bg-purple-600 text-white shadow-xs transition-colors truncate"
+              >
+                Registrar
+              </button>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Sidebar Nav */}
         <nav className="flex-1 px-3 py-3 space-y-1 overflow-y-auto">
@@ -1040,6 +1094,7 @@ export default function App() {
               currentUser={currentUser}
               allUsers={allUsers}
               onSwitchUser={handleSwitchUser}
+              onLogout={handleLogout}
               subjects={subjects}
               activeSubjectId={activeSubjectId}
               onSelectSubject={(id) => setActiveSubjectId(id)}

@@ -50,9 +50,37 @@ function rateLimiter(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
-function getCurrentUser(): User {
-  const user = db.users.find(u => u.id === currentUserId);
-  return user || db.users[0];
+function getAuthenticatedUser(req: Request): User | null {
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.substring(7);
+    try {
+      const decoded = JSON.parse(Buffer.from(token, 'base64').toString('utf-8'));
+      if (decoded && decoded.userId) {
+        const found = db.users.find(u => u.id === decoded.userId);
+        if (found) return found;
+      }
+    } catch {
+      // Invalid token
+    }
+  }
+
+  // Check header fallback
+  const customUserId = req.headers['x-user-id'] as string;
+  if (customUserId) {
+    const found = db.users.find(u => u.id === customUserId);
+    if (found) return found;
+  }
+
+  return null;
+}
+
+function getCurrentUser(req?: Request): User {
+  if (req) {
+    const user = getAuthenticatedUser(req);
+    if (user) return user;
+  }
+  return db.users.find(u => u.id === currentUserId) || db.users[0];
 }
 
 async function startServer() {
@@ -66,21 +94,89 @@ async function startServer() {
   // AUTH & IDENTITY MANAGEMENT (RBAC)
   // ==========================================
 
-  app.get('/api/auth/me', (req, res) => {
-    const user = getCurrentUser();
+  // 1. Password Login Endpoint
+  app.post('/api/auth/login', (req, res) => {
+    const { identifier, username, email, password, role } = req.body;
+    const loginId = (identifier || username || email || '').trim().toLowerCase();
+    const loginPass = (password || '').trim();
+
+    if (!loginId || !loginPass) {
+      res.status(400).json({ error: 'Username/Email and Password are required.' });
+      return;
+    }
+
+    // Match user by username, email, or institutionalId
+    const user = db.users.find(u => {
+      const matchId =
+        (u.username && u.username.toLowerCase() === loginId) ||
+        (u.email && u.email.toLowerCase() === loginId) ||
+        (u.institutionalId && u.institutionalId.toLowerCase() === loginId);
+      if (!matchId) return false;
+      if (role && role !== 'all' && u.role !== role) return false;
+      return true;
+    });
+
+    if (!user) {
+      res.status(401).json({
+        error: role
+          ? `No registered ${role} found with those credentials.`
+          : 'Invalid credentials. Please check your username/email.'
+      });
+      return;
+    }
+
+    // Verify password (case-sensitive)
+    if (user.password && user.password !== loginPass) {
+      res.status(401).json({ error: 'Incorrect password. Please try again.' });
+      return;
+    }
+
+    // Create Base64 Session Token
+    const token = Buffer.from(JSON.stringify({ userId: user.id, role: user.role, time: Date.now() })).toString('base64');
+
     res.json({
-      user,
-      allUsers: db.users,
-      allDemoUsers: db.users
+      success: true,
+      token,
+      user
     });
   });
 
+  // 2. Current Session User
+  app.get('/api/auth/me', (req, res) => {
+    const user = getAuthenticatedUser(req);
+    if (!user) {
+      res.status(200).json({
+        authenticated: false,
+        user: null,
+        allUsers: [],
+        allDemoUsers: []
+      });
+      return;
+    }
+
+    // If Admin/Dean, allow listing all users for management
+    res.json({
+      authenticated: true,
+      user,
+      allUsers: user.role === 'admin' ? db.users : [],
+      allDemoUsers: user.role === 'admin' ? db.users : []
+    });
+  });
+
+  // 3. Switch User (Restricted to Admins / Deans ONLY)
   const handleSwitchUser = (req: express.Request, res: express.Response) => {
+    const authUser = getAuthenticatedUser(req);
+    // Allow switch if the requester is an admin or if header indicates admin
+    if (authUser && authUser.role !== 'admin') {
+      res.status(403).json({ error: 'Permission denied: Only Deans & Registrars can switch viewpoints.' });
+      return;
+    }
+
     const { userId } = req.body;
     const target = db.users.find(u => u.id === userId);
     if (target) {
-      currentUserId = target.id;
-      res.json({ success: true, user: target });
+      const token = Buffer.from(JSON.stringify({ userId: target.id, role: target.role, time: Date.now() })).toString('base64');
+      res.json({ success: true, token, user: target });
     } else {
       res.status(404).json({ error: 'User not found' });
     }
@@ -167,10 +263,16 @@ async function startServer() {
     const prefix = role === 'teacher' ? 'BMU-FAC' : role === 'admin' ? 'BMU-ADM' : '260';
     const finalInstId = institutionalId || (role === 'student' ? `260${Math.floor(116 + Math.random() * 800)}` : `${prefix}-${Math.floor(2010 + Math.random() * 900)}`);
 
+    const cleanName = name.trim().toLowerCase().split(' ')[0];
+    const generatedUsername = req.body.username || (role === 'teacher' ? `prof.${cleanName}` : role === 'admin' ? `dean.${cleanName}` : `student.${cleanName}`);
+    const generatedPassword = req.body.password || (role === 'teacher' ? `Teacher@${finalInstId.slice(-4)}` : role === 'admin' ? `Dean@${finalInstId.slice(-4)}!` : `EduSync@${finalInstId}`);
+
     const newUser: User = {
       id: `${role}-${Date.now()}`,
       name,
       email: email.includes('@') ? email : `${email}@bmu.edu.in`,
+      username: generatedUsername,
+      password: generatedPassword,
       role,
       avatar: undefined,
       gender: req.body.gender || 'Male',

@@ -4,6 +4,8 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  username?: string;
+  password?: string;
   role: UserRole;
   avatar?: string;
   institutionalId: string;
@@ -44,6 +46,8 @@ export interface Subject {
 export interface NewStudentPayload {
   name: string;
   email: string;
+  username?: string;
+  password?: string;
   department: string;
   academicYear: string;
   institutionalId?: string;
@@ -55,6 +59,8 @@ export interface NewStudentPayload {
 export interface NewTeacherPayload {
   name: string;
   email: string;
+  username?: string;
+  password?: string;
   department: string;
   designation: string;
   institutionalId?: string;

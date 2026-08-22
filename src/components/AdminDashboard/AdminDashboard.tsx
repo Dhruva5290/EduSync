@@ -25,7 +25,13 @@ import {
   MapPin,
   ExternalLink,
   Award,
-  Building2
+  Building2,
+  KeyRound,
+  Eye,
+  EyeOff,
+  Copy,
+  Lock,
+  User as UserIcon
 } from 'lucide-react';
 
 interface AdminDashboardProps {
@@ -56,6 +62,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   // Registration Form State
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [revealedPasswordUserIds, setRevealedPasswordUserIds] = useState<Record<string, boolean>>({});
   const [department, setDepartment] = useState('Department of Computer Science & Engineering');
   const [program, setProgram] = useState('B.Tech Computer Science and Engineering');
   const [gender, setGender] = useState('Male');
@@ -99,6 +107,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         u.name.toLowerCase().includes(q) ||
         u.email.toLowerCase().includes(q) ||
         u.institutionalId.toLowerCase().includes(q) ||
+        (u.username && u.username.toLowerCase().includes(q)) ||
         u.department.toLowerCase().includes(q)
       );
     }
@@ -118,6 +127,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       const payload = {
         name: name.trim(),
         email: email.trim(),
+        password: password.trim() || undefined,
         role: registerRole,
         department,
         program: registerRole === 'student' ? program : undefined,
@@ -140,10 +150,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
       if (res.ok) {
         const data = await res.json();
-        onShowToast(`Successfully registered ${data.user.name} (${data.user.institutionalId}) at BML Munjal University!`, 'success');
+        onShowToast(`Successfully registered ${data.user.name} (${data.user.institutionalId}) at BML Munjal University! Assigned Password: ${data.user.password}`, 'success');
         // Reset form
         setName('');
         setEmail('');
+        setPassword('');
         setSelectedSubjectIds([]);
         onRefreshUsers();
         onRefreshSubjects();
@@ -430,7 +441,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             </div>
 
             <form onSubmit={handleRegisterSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-300 mb-1">
                     Full Legal Name <span className="text-rose-400">*</span>
@@ -456,6 +467,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-sm text-xs text-slate-200 focus:outline-none focus:border-purple-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1 flex items-center justify-between">
+                    <span>Initial Password</span>
+                    <span className="text-[10px] text-purple-400 font-mono">Optional</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Auto-generated if left blank"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-sm text-xs text-slate-200 focus:outline-none focus:border-purple-500 font-mono"
                   />
                 </div>
               </div>
@@ -712,6 +737,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <tr className="bg-slate-950 text-slate-400 border-b border-slate-800 font-semibold uppercase tracking-wider text-[10px]">
                   <th className="py-2.5 px-3">Identity & Account</th>
                   <th className="py-2.5 px-3">Role & Roll / ID</th>
+                  <th className="py-2.5 px-3">Credentials & Security</th>
                   <th className="py-2.5 px-3">Department & Academic Program</th>
                   <th className="py-2.5 px-3">Contact & Phone</th>
                   <th className="py-2.5 px-3">Subject Enrollments</th>
@@ -771,6 +797,40 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                             {user.role}
                           </span>
                           <p className="text-[10px] font-mono text-slate-400">{user.institutionalId}</p>
+                        </div>
+                      </td>
+
+                      <td className="py-3 px-3">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-1 font-mono text-[11px] text-purple-300">
+                            <UserIcon className="w-3 h-3 text-purple-400 shrink-0" />
+                            <span className="truncate max-w-[120px]">{user.username || user.email.split('@')[0]}</span>
+                          </div>
+                          <div className="flex items-center gap-1 font-mono text-[10px] text-slate-300">
+                            <KeyRound className="w-3 h-3 text-slate-500 shrink-0" />
+                            <span className="font-semibold text-slate-200">
+                              {revealedPasswordUserIds[user.id] ? (user.password || 'EduSync@2026') : '••••••••'}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => setRevealedPasswordUserIds(prev => ({ ...prev, [user.id]: !prev[user.id] }))}
+                              className="text-slate-400 hover:text-white p-0.5"
+                              title={revealedPasswordUserIds[user.id] ? 'Hide password' : 'Show password'}
+                            >
+                              {revealedPasswordUserIds[user.id] ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                navigator.clipboard.writeText(`User: ${user.username || user.email}\nPass: ${user.password || 'EduSync@2026'}`);
+                                onShowToast(`Copied credentials for ${user.name}`);
+                              }}
+                              className="text-slate-400 hover:text-purple-300 p-0.5"
+                              title="Copy credentials"
+                            >
+                              <Copy className="w-3 h-3" />
+                            </button>
+                          </div>
                         </div>
                       </td>
 

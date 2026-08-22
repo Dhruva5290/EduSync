@@ -17,6 +17,7 @@ interface HeaderProps {
   currentUser: User;
   allUsers: User[];
   onSwitchUser: (userId: string) => void;
+  onLogout?: () => void;
   subjects: Subject[];
   activeSubjectId: string;
   onSelectSubject: (subjectId: string) => void;
@@ -27,6 +28,7 @@ export const Header: React.FC<HeaderProps> = ({
   currentUser,
   allUsers,
   onSwitchUser,
+  onLogout,
   subjects,
   activeSubjectId,
   onSelectSubject,
@@ -36,21 +38,12 @@ export const Header: React.FC<HeaderProps> = ({
   const activeSubject = subjects.find(s => s.id === activeSubjectId) || subjects[0];
 
   const toggleRole = () => {
-    // 3-way toggle between student, teacher, and admin
-    if (currentUser.role === 'student') {
-      const teacher = allUsers.find(u => u.role === 'teacher');
-      if (teacher) onSwitchUser(teacher.id);
-    } else if (currentUser.role === 'teacher') {
-      const admin = allUsers.find(u => u.role === 'admin');
-      if (admin) onSwitchUser(admin.id);
-      else {
-        const student = allUsers.find(u => u.role === 'student');
-        if (student) onSwitchUser(student.id);
-      }
-    } else {
-      const student = allUsers.find(u => u.role === 'student');
-      if (student) onSwitchUser(student.id);
-    }
+    // Only admins have the authority to cycle between perspectives
+    if (currentUser.role !== 'admin') return;
+    
+    // Cycle between admin, teacher, and student
+    const student = allUsers.find(u => u.role === 'student');
+    if (student) onSwitchUser(student.id);
   };
 
   return (
@@ -91,34 +84,36 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Right Controls: Role Indicator, AI Quota, User Profile */}
           <div className="flex items-center gap-3">
-            {/* Quick Role Switcher Button */}
-            <button
-              id="header-quick-role-toggle-btn"
-              onClick={toggleRole}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-sm text-xs font-semibold border transition-all shadow-xs ${
-                currentUser.role === 'admin'
-                  ? 'bg-purple-950/60 text-purple-300 border-purple-800 hover:bg-purple-900/80'
-                  : currentUser.role === 'teacher'
-                  ? 'bg-blue-950/60 text-blue-300 border-blue-800 hover:bg-blue-900/80'
-                  : 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700'
-              }`}
-              title="Click to cycle between Student, Faculty, and Registrar viewpoints"
-            >
-              <RefreshCw className="w-3.5 h-3.5 text-blue-400" />
-              <span className="hidden sm:inline">
-                {currentUser.role === 'student'
-                  ? 'Switch to Faculty View'
-                  : currentUser.role === 'teacher'
-                  ? 'Switch to Admin View'
-                  : 'Switch to Student View'}
-              </span>
-            </button>
+            {/* Quick Role Switcher Button - Strictly for Deans/Registrars */}
+            {currentUser.role === 'admin' && (
+              <button
+                id="header-quick-role-toggle-btn"
+                onClick={toggleRole}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-sm text-xs font-semibold border transition-all shadow-xs bg-purple-950/60 text-purple-300 border-purple-800 hover:bg-purple-900/80"
+                title="Dean Privilege: Click to inspect Student viewpoint"
+              >
+                <RefreshCw className="w-3.5 h-3.5 text-purple-400" />
+                <span className="hidden sm:inline">Audit Student View</span>
+              </button>
+            )}
 
             {/* Rate limit & security meter */}
             <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-slate-950 text-slate-300 text-xs font-medium border border-slate-800">
               <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />
               <span className="text-[11px] font-mono text-slate-400">{rateLimitRemaining}/60 RPM</span>
             </div>
+
+            {/* Log Out Button */}
+            {onLogout && (
+              <button
+                onClick={onLogout}
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-sm bg-slate-950 hover:bg-rose-950/60 text-slate-400 hover:text-rose-300 border border-slate-800 hover:border-rose-800 text-xs font-semibold transition-colors"
+                title="Sign out of current account"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span className="hidden md:inline">Sign Out</span>
+              </button>
+            )}
 
             {/* User Dropdown */}
             <div className="relative">
@@ -127,7 +122,13 @@ export const Header: React.FC<HeaderProps> = ({
                 onClick={() => setShowUserMenu(!showUserMenu)}
                 className="flex items-center gap-2.5 p-1.5 rounded-md hover:bg-slate-800 border border-transparent hover:border-slate-700 transition-colors text-left"
               >
-                <div className="w-8 h-8 rounded-full bg-blue-600/30 text-blue-300 border border-blue-500/40 flex items-center justify-center text-xs font-bold ring-1 ring-slate-800">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border ${
+                  currentUser.role === 'admin'
+                    ? 'bg-purple-900/40 text-purple-300 border-purple-500/50'
+                    : currentUser.role === 'teacher'
+                    ? 'bg-emerald-900/40 text-emerald-300 border-emerald-500/50'
+                    : 'bg-blue-900/40 text-blue-300 border-blue-500/50'
+                }`}>
                   {currentUser.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
                 </div>
                 <div className="hidden sm:block text-left">
@@ -138,11 +139,11 @@ export const Header: React.FC<HeaderProps> = ({
                         currentUser.role === 'admin'
                           ? 'bg-purple-900/60 text-purple-300 border border-purple-700/50'
                           : currentUser.role === 'teacher'
-                          ? 'bg-blue-900/60 text-blue-300 border border-blue-700/50'
-                          : 'bg-slate-800 text-slate-300 border border-slate-700'
+                          ? 'bg-emerald-900/60 text-emerald-300 border border-emerald-700/50'
+                          : 'bg-blue-900/60 text-blue-300 border border-blue-700/50'
                       }`}
                     >
-                      {currentUser.role === 'admin' ? 'Dean/Admin' : currentUser.role === 'teacher' ? 'Faculty' : 'Student'}
+                      {currentUser.role === 'admin' ? 'Dean/Registrar' : currentUser.role === 'teacher' ? 'Faculty' : 'Student'}
                     </span>
                   </div>
                   <div className="text-[10px] text-slate-400 font-mono">
@@ -152,7 +153,7 @@ export const Header: React.FC<HeaderProps> = ({
                 <ChevronDown className="w-4 h-4 text-slate-400" />
               </button>
 
-              {/* User Switcher Dropdown Modal */}
+              {/* User Dropdown Modal */}
               {showUserMenu && (
                 <div className="absolute right-0 mt-2 w-80 bg-slate-900 rounded-md shadow-2xl border border-slate-800 py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                   <div className="px-3 py-2.5 border-b border-slate-800 bg-slate-950/50">
@@ -167,55 +168,21 @@ export const Header: React.FC<HeaderProps> = ({
                     <p className="text-xs font-bold text-white truncate">{currentUser.name}</p>
                     <p className="text-[11px] text-slate-400 font-mono truncate">{currentUser.email}</p>
                     <p className="text-[10px] text-blue-400 font-medium mt-0.5 truncate">{currentUser.department}</p>
+                    {currentUser.username && (
+                      <p className="text-[10px] text-purple-400 font-mono mt-0.5 truncate">Username: @{currentUser.username}</p>
+                    )}
                   </div>
 
-                  <div className="p-2 max-h-80 overflow-y-auto space-y-3">
-                    {/* 1. Faculty Section */}
-                    <div>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-blue-400 px-2 py-1 flex items-center justify-between">
-                        <span>Faculty Instructors ({allUsers.filter(u => u.role === 'teacher').length})</span>
-                        <span className="font-mono text-[9px] text-slate-400">5 Departments</span>
-                      </p>
-                      <div className="space-y-1">
-                        {allUsers.filter(u => u.role === 'teacher').map((user) => (
-                          <button
-                            key={user.id}
-                            onClick={() => {
-                              onSwitchUser(user.id);
-                              setShowUserMenu(false);
-                            }}
-                            className={`w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-sm text-left text-xs transition-colors ${
-                              user.id === currentUser.id
-                                ? 'bg-blue-950/90 text-blue-200 border border-blue-700 font-semibold'
-                                : 'hover:bg-slate-800 text-slate-300'
-                            }`}
-                          >
-                            <div className="w-6 h-6 rounded-full bg-blue-900/60 text-blue-300 border border-blue-700 flex items-center justify-center text-[10px] font-bold shrink-0">
-                              {user.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                            </div>
-                            <div className="flex-1 truncate">
-                              <div className="flex items-center justify-between">
-                                <span className="truncate text-white font-medium">{user.name}</span>
-                                <span className="text-[9px] px-1 rounded-xs bg-blue-950 text-blue-300 border border-blue-800 font-mono">
-                                  {user.designation || 'Faculty'}
-                                </span>
-                              </div>
-                              <span className="text-[10px] text-slate-400 font-mono block truncate">{user.department}</span>
-                            </div>
-                            {user.id === currentUser.id && <UserCheck className="w-4 h-4 text-blue-400 shrink-0" />}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* 2. Admin Section */}
-                    {allUsers.some(u => u.role === 'admin') && (
+                  {/* If Admin/Dean, allow inspecting perspectives */}
+                  {currentUser.role === 'admin' && allUsers.length > 0 ? (
+                    <div className="p-2 max-h-80 overflow-y-auto space-y-3">
                       <div>
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-purple-400 px-2 py-1">
-                          Registrar & Administration
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-purple-400 px-2 py-1 flex items-center justify-between">
+                          <span>Dean Audit Switcher</span>
+                          <span className="font-mono text-[9px] text-slate-400">Authorized</span>
                         </p>
                         <div className="space-y-1">
-                          {allUsers.filter(u => u.role === 'admin').map((user) => (
+                          {allUsers.map((user) => (
                             <button
                               key={user.id}
                               onClick={() => {
@@ -228,14 +195,14 @@ export const Header: React.FC<HeaderProps> = ({
                                   : 'hover:bg-slate-800 text-slate-300'
                               }`}
                             >
-                              <div className="w-6 h-6 rounded-full bg-purple-900/60 text-purple-300 border border-purple-700 flex items-center justify-center text-[10px] font-bold shrink-0">
+                              <div className="w-6 h-6 rounded-full bg-slate-800 text-slate-200 border border-slate-700 flex items-center justify-center text-[10px] font-bold shrink-0">
                                 {user.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
                               </div>
                               <div className="flex-1 truncate">
                                 <div className="flex items-center justify-between">
                                   <span className="truncate text-white font-medium">{user.name}</span>
-                                  <span className="text-[9px] px-1 rounded-xs bg-purple-950 text-purple-300 border border-purple-800 font-mono">
-                                    Registrar
+                                  <span className="text-[9px] px-1 rounded-xs bg-slate-800 text-slate-300 font-mono">
+                                    {user.role}
                                   </span>
                                 </div>
                                 <span className="text-[10px] text-slate-400 font-mono block truncate">{user.department}</span>
@@ -245,46 +212,30 @@ export const Header: React.FC<HeaderProps> = ({
                           ))}
                         </div>
                       </div>
-                    )}
-
-                    {/* 3. Students Section */}
-                    <div>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-400 px-2 py-1 flex items-center justify-between">
-                        <span>B.Tech Students ({allUsers.filter(u => u.role === 'student').length})</span>
-                        <span className="font-mono text-[9px] text-slate-400">1st Year Cohort</span>
-                      </p>
-                      <div className="space-y-1">
-                        {allUsers.filter(u => u.role === 'student').map((user) => (
-                          <button
-                            key={user.id}
-                            onClick={() => {
-                              onSwitchUser(user.id);
-                              setShowUserMenu(false);
-                            }}
-                            className={`w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-sm text-left text-xs transition-colors ${
-                              user.id === currentUser.id
-                                ? 'bg-emerald-950/90 text-emerald-200 border border-emerald-700 font-semibold'
-                                : 'hover:bg-slate-800 text-slate-300'
-                            }`}
-                          >
-                            <div className="w-6 h-6 rounded-full bg-slate-800 text-slate-200 border border-slate-700 flex items-center justify-center text-[10px] font-bold shrink-0">
-                              {user.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                            </div>
-                            <div className="flex-1 truncate">
-                              <div className="flex items-center justify-between">
-                                <span className="truncate text-white font-medium">{user.name}</span>
-                                <span className="text-[9px] px-1 rounded-xs bg-slate-800 text-slate-300 font-mono">
-                                  {user.institutionalId}
-                                </span>
-                              </div>
-                              <span className="text-[10px] text-slate-400 font-mono block truncate">{user.department}</span>
-                            </div>
-                            {user.id === currentUser.id && <UserCheck className="w-4 h-4 text-emerald-400 shrink-0" />}
-                          </button>
-                        ))}
-                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="p-3 text-xs text-slate-400 space-y-2">
+                      <p className="leading-relaxed text-[11px]">
+                        🔒 <strong>Role Isolation:</strong> Your account is restricted to your authorized {currentUser.role} dashboard workspace.
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Bottom Logout in Dropdown */}
+                  {onLogout && (
+                    <div className="px-2 pt-2 border-t border-slate-800">
+                      <button
+                        onClick={() => {
+                          setShowUserMenu(false);
+                          onLogout();
+                        }}
+                        className="w-full flex items-center justify-center gap-2 py-2 px-3 bg-rose-950/40 hover:bg-rose-950 text-rose-300 border border-rose-800/60 rounded-sm text-xs font-bold transition-colors"
+                      >
+                        <LogOut className="w-3.5 h-3.5" />
+                        <span>Sign Out of EduSync</span>
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
