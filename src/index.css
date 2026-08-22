@@ -5,6 +5,7 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     background-color: #090d16;
     color: #f1f5f9;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
   
   h1, h2, h3, h4, h5, h6, .font-display {
@@ -13,18 +14,173 @@
   }
 }
 
-/* Custom scrollbars with geometric slate styling */
+/* Custom scrollbars */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
   background: rgba(100, 116, 139, 0.4);
-  border-radius: 2px;
+  border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(148, 163, 184, 0.7);
+}
+
+/* ==========================================================================
+   LIGHT THEME OVERRIDES (Clean, Modern, Slate & White Minimalist Aesthetics)
+   ========================================================================== */
+html.light-theme,
+html.light-theme body,
+.light-theme {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+/* Light Theme Scrollbars */
+html.light-theme ::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.5);
+}
+html.light-theme ::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.7);
+}
+
+/* Background Layouts */
+html.light-theme .bg-\[\#090d16\],
+html.light-theme main.bg-\[\#090d16\],
+html.light-theme section.bg-\[\#090d16\] {
+  background-color: #f1f5f9 !important;
+}
+
+/* Card & Surface Overrides */
+html.light-theme .bg-slate-950,
+html.light-theme .bg-slate-900,
+html.light-theme .bg-slate-900\/90,
+html.light-theme .bg-slate-900\/80,
+html.light-theme .bg-slate-900\/70,
+html.light-theme .bg-slate-900\/60,
+html.light-theme .bg-slate-900\/50 {
+  background-color: #ffffff !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+}
+
+html.light-theme .bg-slate-800,
+html.light-theme .bg-slate-800\/50,
+html.light-theme .bg-slate-850 {
+  background-color: #f8fafc !important;
+}
+
+html.light-theme .hover\:bg-slate-800:hover,
+html.light-theme .hover\:bg-slate-800\/50:hover,
+html.light-theme .hover\:bg-slate-700:hover {
+  background-color: #f1f5f9 !important;
+}
+
+/* Sidebar & Header Navigation in Light Mode */
+html.light-theme aside {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 1px 0 3px 0 rgba(0, 0, 0, 0.03);
+}
+
+html.light-theme header {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.03);
+}
+
+/* Border Overrides */
+html.light-theme .border-slate-800,
+html.light-theme .border-slate-800\/80,
+html.light-theme .border-slate-800\/60,
+html.light-theme .border-slate-700,
+html.light-theme .border-slate-700\/50,
+html.light-theme .divide-slate-800 > * + * {
+  border-color: #e2e8f0 !important;
+}
+
+/* Typography & Contrast in Light Mode */
+html.light-theme .text-white,
+html.light-theme .text-slate-100 {
+  color: #0f172a !important;
+}
+
+html.light-theme .text-slate-200 {
+  color: #1e293b !important;
+}
+
+html.light-theme .text-slate-300 {
+  color: #334155 !important;
+}
+
+html.light-theme .text-slate-400 {
+  color: #64748b !important;
+}
+
+html.light-theme .text-slate-500 {
+  color: #64748b !important;
+}
+
+/* Form Controls & Inputs in Light Mode */
+html.light-theme input,
+html.light-theme select,
+html.light-theme textarea {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+html.light-theme input:focus,
+html.light-theme select:focus,
+html.light-theme textarea:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 1px #3b82f6 !important;
+}
+
+html.light-theme input::placeholder,
+html.light-theme textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Table Header and Rows */
+html.light-theme thead tr,
+html.light-theme tr.bg-slate-950 {
+  background-color: #f8fafc !important;
+  color: #475569 !important;
+}
+
+html.light-theme tbody tr:hover {
+  background-color: #f8fafc !important;
+}
+
+/* Specific component tweaks in light mode */
+html.light-theme .bg-purple-950,
+html.light-theme .bg-purple-950\/60,
+html.light-theme .bg-purple-950\/40,
+html.light-theme .bg-purple-950\/20 {
+  background-color: #f5f3ff !important;
+}
+
+html.light-theme .bg-blue-950,
+html.light-theme .bg-blue-950\/60,
+html.light-theme .bg-blue-950\/40 {
+  background-color: #eff6ff !important;
+}
+
+html.light-theme .bg-emerald-950,
+html.light-theme .bg-emerald-950\/60 {
+  background-color: #ecfdf5 !important;
+}
+
+html.light-theme .bg-amber-950,
+html.light-theme .bg-amber-950\/60 {
+  background-color: #fffbeb !important;
+}
+
+html.light-theme .bg-rose-950,
+html.light-theme .bg-rose-950\/60 {
+  background-color: #fff1f2 !important;
 }

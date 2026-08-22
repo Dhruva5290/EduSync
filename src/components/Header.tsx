@@ -10,7 +10,11 @@ import {
   Zap,
   RefreshCw,
   LogOut,
-  Building2
+  Building2,
+  Sun,
+  Moon,
+  Shield,
+  Eye
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -22,6 +26,10 @@ interface HeaderProps {
   activeSubjectId: string;
   onSelectSubject: (subjectId: string) => void;
   rateLimitRemaining?: number;
+  theme?: 'dark' | 'light';
+  onToggleTheme?: () => void;
+  isAuditing?: boolean;
+  onExitAudit?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -32,14 +40,18 @@ export const Header: React.FC<HeaderProps> = ({
   subjects,
   activeSubjectId,
   onSelectSubject,
-  rateLimitRemaining = 58
+  rateLimitRemaining = 58,
+  theme = 'dark',
+  onToggleTheme,
+  isAuditing = false,
+  onExitAudit
 }) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const activeSubject = subjects.find(s => s.id === activeSubjectId) || subjects[0];
 
   const toggleRole = () => {
     // Only admins have the authority to cycle between perspectives
-    if (currentUser.role !== 'admin') return;
+    if (currentUser.role !== 'admin' && !isAuditing) return;
     
     // Cycle between admin, teacher, and student
     const student = allUsers.find(u => u.role === 'student');
@@ -47,7 +59,7 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-slate-900 border-b border-slate-800 shadow-sm">
+    <header className="sticky top-0 z-40 bg-slate-900 border-b border-slate-800 shadow-sm transition-colors">
       <div className="w-full px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 gap-4">
           {/* Active Course & ID info */}
@@ -82,8 +94,21 @@ export const Header: React.FC<HeaderProps> = ({
             )}
           </div>
 
-          {/* Right Controls: Role Indicator, AI Quota, User Profile */}
-          <div className="flex items-center gap-3">
+          {/* Right Controls: Audit Return, Theme Toggle, AI Quota, User Profile */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* If Registrar is in Audit Mode, show Return Button */}
+            {isAuditing && onExitAudit && (
+              <button
+                id="header-exit-audit-btn"
+                onClick={onExitAudit}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-bold bg-purple-600 hover:bg-purple-500 text-white shadow-md transition-all animate-pulse"
+                title="Dean Privilege: Return to Registrar Dashboard"
+              >
+                <Shield className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Return to Registrar</span>
+              </button>
+            )}
+
             {/* Quick Role Switcher Button - Strictly for Deans/Registrars */}
             {currentUser.role === 'admin' && (
               <button
@@ -94,6 +119,23 @@ export const Header: React.FC<HeaderProps> = ({
               >
                 <RefreshCw className="w-3.5 h-3.5 text-purple-400" />
                 <span className="hidden sm:inline">Audit Student View</span>
+              </button>
+            )}
+
+            {/* Minimalistic Theme Toggle (Light / Dark) */}
+            {onToggleTheme && (
+              <button
+                id="header-theme-toggle-btn"
+                onClick={onToggleTheme}
+                className="p-2 rounded-sm bg-slate-950/80 hover:bg-slate-800 text-slate-300 hover:text-amber-300 border border-slate-800 hover:border-slate-700 transition-all cursor-pointer"
+                title={theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
+                aria-label="Toggle Theme"
+              >
+                {theme === 'dark' ? (
+                  <Sun className="w-4 h-4 text-amber-400" />
+                ) : (
+                  <Moon className="w-4 h-4 text-indigo-400" />
+                )}
               </button>
             )}
 
