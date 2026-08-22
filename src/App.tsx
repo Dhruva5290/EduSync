@@ -275,20 +275,20 @@ export default function App() {
         if (subjCode === 'ESS') {
           initialVideos = [
             {
-              title: 'Environmental Impact Assessment (EIA) Process & Methodology',
-              url: 'https://www.youtube.com/watch?v=F3G8K1JgR5c',
-              searchQuery: 'Environmental Impact Assessment EIA process steps NPTEL',
-              channelOrTopic: 'NPTEL IIT Roorkee',
-              duration: '28:40',
-              description: 'Step-by-step EIA screening, scoping, impact baseline quantification, and public hearing protocols.'
+              title: 'Renewable Energy 101 & Solar PV Cell Efficiency',
+              url: 'https://www.youtube.com/watch?v=1kUE0BZtTRc',
+              searchQuery: 'Renewable Energy 101 National Geographic solar wind',
+              channelOrTopic: 'National Geographic',
+              duration: '03:17',
+              description: 'Overview of clean energy sources, solar photovoltaic conversion, and wind power generation systems.'
             },
             {
-              title: 'Renewable Energy Systems & Solar Photovoltaic Cell Efficiency',
-              url: 'https://www.youtube.com/watch?v=1gtaT_rA6jM',
-              searchQuery: 'Solar PV cells working principle renewable energy engineering',
-              channelOrTopic: 'MIT OpenCourseWare',
-              duration: '42:15',
-              description: 'Semiconductor bandgaps, I-V characteristics, Shockley-Queisser limit, and wind turbine Betz law derivations.'
+              title: 'Ecosystem Ecology: Energy Flow & Carbon Cycles',
+              url: 'https://www.youtube.com/watch?v=7G3eIYSfg5o',
+              searchQuery: 'Ecosystem Ecology Links in the Chain Crash Course Ecology',
+              channelOrTopic: 'CrashCourse',
+              duration: '10:09',
+              description: 'Trophic energy pyramids, biogeochemical cycles, and ecosystem stability principles.'
             }
           ];
           initialQuestions = [
@@ -302,20 +302,20 @@ export default function App() {
         } else if (subjCode === 'CALC') {
           initialVideos = [
             {
-              title: 'Lagrange Multipliers with Constrained Optimization Visualized',
-              url: 'https://www.youtube.com/watch?v=5A38rDhB2cw',
-              searchQuery: 'Lagrange Multipliers multivariable calculus visual intuition 3Blue1Brown',
-              channelOrTopic: '3Blue1Brown / Khan Academy',
-              duration: '18:32',
-              description: 'Geometric proof showing why contour tangent gradients align in constrained optimization.'
+              title: 'The Essence of Calculus, Chapter 1: Visual Foundations',
+              url: 'https://www.youtube.com/watch?v=WUvTyaaNkzM',
+              searchQuery: 'Essence of calculus chapter 1 3Blue1Brown',
+              channelOrTopic: '3Blue1Brown',
+              duration: '17:04',
+              description: 'Visual geometric proof connecting area under curves, tangents, and fundamental theorem of calculus.'
             },
             {
-              title: 'Double and Triple Integrals in Cylindrical Coordinates',
-              url: 'https://www.youtube.com/watch?v=KbmW8mFh7qU',
-              searchQuery: 'Double integrals multivariable calculus MIT 18.02',
-              channelOrTopic: 'MIT OpenCourseWare',
-              duration: '48:10',
-              description: 'Jacobian determinant transformations and flux volume integration across 3D surfaces.'
+              title: 'Lagrange Multipliers with Constrained Optimization Visualized',
+              url: 'https://www.youtube.com/watch?v=9vKqVkMQHKk',
+              searchQuery: 'Lagrange multipliers multivariable calculus Khan Academy 3Blue1Brown',
+              channelOrTopic: 'Khan Academy / 3Blue1Brown',
+              duration: '08:42',
+              description: 'Geometric explanation of why contour gradients align (grad f = lambda grad g) at constrained extrema.'
             }
           ];
           initialQuestions = [
@@ -329,20 +329,20 @@ export default function App() {
         } else if (subjCode === 'EME') {
           initialVideos = [
             {
-              title: 'Thermodynamic Cycles: Otto, Diesel & Dual Combustion Analysis',
-              url: 'https://www.youtube.com/watch?v=0tOQ_d_cI64',
-              searchQuery: 'Otto cycle PV and TS diagram thermal efficiency derivation',
-              channelOrTopic: 'Learn Engineering (Lesics)',
-              duration: '14:25',
-              description: 'Detailed P-v and T-s cycle plots, compression ratio equations, and mean effective pressure (MEP).'
+              title: 'Understanding Stress and Strain: Engineering Mechanics',
+              url: 'https://www.youtube.com/watch?v=aQf6Q8t1FQE',
+              searchQuery: 'Understanding Stress and Strain The Efficient Engineer',
+              channelOrTopic: 'The Efficient Engineer',
+              duration: '11:42',
+              description: 'Fundamental explanation of normal stress, shear stress, Hooke’s law, and tensile stress-strain curves.'
             },
             {
-              title: 'Stress-Strain Behavior & Mohr’s Circle Transformation',
-              url: 'https://www.youtube.com/watch?v=gT8B2_Jg_7M',
-              searchQuery: 'Mohrs Circle 2D stress transformation mechanics of materials',
-              channelOrTopic: 'The Efficient Engineer',
-              duration: '19:40',
-              description: 'Plane stress transformations, center and radius derivation of Mohr’s circle, and maximum shear stress.'
+              title: 'How Thermodynamic Engine Cycles Work (Otto & Diesel Cycles)',
+              url: 'https://www.youtube.com/watch?v=DZt5xU44IfQ',
+              searchQuery: 'How Diesel Engines Work Lesics Learn Engineering',
+              channelOrTopic: 'Lesics (Learn Engineering)',
+              duration: '08:12',
+              description: 'Detailed animation of four-stroke cycle, P-v and T-s thermodynamic diagrams, and fuel injection physics.'
             }
           ];
           initialQuestions = [
@@ -356,20 +356,20 @@ export default function App() {
         } else if (subjCode === 'ENG-ETH') {
           initialVideos = [
             {
-              title: 'Engineering Ethics: Challenger Disaster & Therac-25 Case Studies',
-              url: 'https://www.youtube.com/watch?v=2dxvP_KzVqI',
-              searchQuery: 'Engineering ethics Therac 25 Space Shuttle Challenger case study',
-              channelOrTopic: 'IEEE / Stanford Ethics in Tech',
-              duration: '22:15',
-              description: 'Root cause analysis of management pressure vs software race condition hazards in medical linacs.'
+              title: 'Justice: What’s The Right Thing To Do? (Utilitarianism & Morality)',
+              url: 'https://www.youtube.com/watch?v=kBdfcR-8hEY',
+              searchQuery: 'Justice Episode 01 The Moral Side of Murder Harvard Sandel',
+              channelOrTopic: 'Harvard University',
+              duration: '54:56',
+              description: 'Seminal Harvard course lecture on moral reasoning, utilitarian trade-offs, and categorical ethical duties.'
             },
             {
-              title: 'Ethical Frameworks: Utilitarianism vs Deontology in Engineering',
-              url: 'https://www.youtube.com/watch?v=-a739VjqdSI',
-              searchQuery: 'Utilitarianism vs Kantian deontology applied engineering ethics',
-              channelOrTopic: 'Harvard Justice',
-              duration: '31:40',
-              description: 'Comparative breakdown of Kantian categorical imperatives vs consequentialist utility trade-offs.'
+              title: 'Engineering Ethics: The Space Shuttle Challenger Disaster',
+              url: 'https://www.youtube.com/watch?v=0wI_y1t8Jps',
+              searchQuery: 'Engineering Ethics Space Shuttle Challenger Crash Course Engineering',
+              channelOrTopic: 'CrashCourse Engineering',
+              duration: '09:44',
+              description: 'Investigation into O-ring blow-by engineering warnings, managerial pressure, and ethical whistleblowing.'
             }
           ];
           initialQuestions = [
@@ -384,20 +384,20 @@ export default function App() {
           // CPC
           initialVideos = [
             {
-              title: 'Pointers, Memory Layout & Dynamic Memory Allocation in C',
-              url: 'https://www.youtube.com/watch?v=zuegQmMdy8M',
-              searchQuery: 'Pointers in C programming full tutorial freeCodeCamp',
-              channelOrTopic: 'freeCodeCamp',
-              duration: '45:30',
-              description: 'Pointer arithmetic, stack vs heap allocation, pointer-to-pointer dereferencing, and memory leak prevention.'
+              title: 'C Programming Tutorial for Beginners: Full Course',
+              url: 'https://www.youtube.com/watch?v=KJgsSFOSQv0',
+              searchQuery: 'C Programming Tutorial for Beginners freeCodeCamp',
+              channelOrTopic: 'freeCodeCamp.org',
+              duration: '3:46:15',
+              description: 'Comprehensive beginner-to-advanced curriculum covering variables, pointers, arrays, structs, and memory.'
             },
             {
-              title: 'Structures, Unions & Linked Lists Implementation in C',
-              url: 'https://www.youtube.com/watch?v=VOpjAHCuz7I',
-              searchQuery: 'Linked lists in C singly doubly linked list tutorial',
-              channelOrTopic: 'Gate Smashers',
-              duration: '26:18',
-              description: 'Self-referential structures, pointer manipulation for node insertion, deletion, and reversal.'
+              title: 'Introduction to Linked Lists & Dynamic Data Structures in C',
+              url: 'https://www.youtube.com/watch?v=2ybLDQagr84',
+              searchQuery: 'Introduction to Linked List in C Neso Academy',
+              channelOrTopic: 'Neso Academy',
+              duration: '14:28',
+              description: 'Node struct declarations, self-referential structures, pointer manipulation, and dynamic list traversal.'
             }
           ];
           initialQuestions = [
@@ -898,9 +898,11 @@ export default function App() {
     return (
       <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center">
         <div className="text-center space-y-3">
-          <div className="w-10 h-10 rounded-sm bg-blue-600 text-white flex items-center justify-center mx-auto font-bold text-xl italic shadow-md animate-pulse">
-            E
-          </div>
+          <img
+            src="/logo.png"
+            alt="EduSync Logo"
+            className="w-14 h-14 object-contain mx-auto rounded-xl shadow-xl shadow-cyan-500/20 animate-pulse"
+          />
           <p className="font-semibold text-white text-sm tracking-tight uppercase">EduSync Workspace</p>
           <p className="text-xs text-slate-400">Verifying Institutional Access & AI Engine...</p>
         </div>
@@ -926,9 +928,11 @@ export default function App() {
         {/* Logo & Brand */}
         <div className="p-5 flex items-center justify-between border-b border-slate-800/80">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-gradient-to-tr from-cyan-500 to-purple-600 rounded-sm flex items-center justify-center font-bold text-xl italic text-white shadow-xs">
-              E
-            </div>
+            <img
+              src="/logo.png"
+              alt="EduSync"
+              className="w-9 h-9 object-contain rounded-lg shadow-sm shrink-0"
+            />
             <div>
               <span className="text-lg font-bold tracking-tight uppercase text-white block leading-none">EduSync</span>
               <span className="text-[9px] font-mono text-cyan-400 uppercase tracking-wider">

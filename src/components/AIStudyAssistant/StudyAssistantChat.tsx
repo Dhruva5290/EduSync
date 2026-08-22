@@ -312,49 +312,90 @@ export const StudyAssistantChat: React.FC<StudyAssistantChatProps> = ({
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {msg.recommendedVideos.map((vid, idx) => {
                       const videoUrl = vid.url || `https://www.youtube.com/results?search_query=${encodeURIComponent(vid.searchQuery || vid.title)}`;
+                      const videoIdMatch = vid.url?.match(/(?:v=|\/embed\/|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+                      const videoId = videoIdMatch ? videoIdMatch[1] : null;
+                      const thumbUrl = videoId ? `https://img.youtube.com/vi/${videoId}/mqdefault.jpg` : null;
+
                       return (
                         <div
                           key={idx}
-                          className="p-3 rounded-md bg-slate-950 border border-slate-800 hover:border-red-600/70 transition-all flex flex-col justify-between space-y-2 group"
+                          className="p-3 rounded-md bg-slate-950 border border-slate-800 hover:border-red-500/70 transition-all flex flex-col justify-between space-y-3 group shadow-xs hover:shadow-red-950/20"
                         >
-                          <div className="space-y-1">
-                            <div className="flex items-start justify-between gap-2">
-                              <span className="text-[10px] font-mono font-bold text-red-400 bg-red-950/70 px-1.5 py-0.5 rounded-sm border border-red-900/50 flex items-center gap-1 shrink-0">
-                                <PlayCircle className="w-3 h-3" />
-                                {vid.channelOrTopic}
-                              </span>
-                              {vid.duration && (
-                                <span className="text-[10px] font-mono text-slate-400 flex items-center gap-1 shrink-0">
-                                  <Clock className="w-2.5 h-2.5" />
-                                  {vid.duration}
+                          <div className="space-y-2.5">
+                            {/* Video Thumbnail or Header Banner */}
+                            {thumbUrl ? (
+                              <a
+                                href={videoUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="relative block w-full aspect-video rounded-sm overflow-hidden bg-slate-900 border border-slate-800 group/thumb"
+                              >
+                                <img
+                                  src={thumbUrl}
+                                  alt={vid.title}
+                                  className="w-full h-full object-cover group-hover/thumb:scale-105 transition-transform duration-300"
+                                  onError={(e) => {
+                                    (e.target as HTMLElement).style.display = 'none';
+                                  }}
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 flex items-center justify-center opacity-90 group-hover/thumb:opacity-100 transition-opacity">
+                                  <div className="w-10 h-10 rounded-full bg-red-600/90 text-white flex items-center justify-center shadow-lg group-hover/thumb:scale-110 group-hover/thumb:bg-red-600 transition-all">
+                                    <PlayCircle className="w-6 h-6 fill-white text-red-600" />
+                                  </div>
+                                </div>
+                                {vid.duration && (
+                                  <span className="absolute bottom-2 right-2 bg-black/80 text-white text-[10px] font-mono px-1.5 py-0.5 rounded-xs">
+                                    {vid.duration}
+                                  </span>
+                                )}
+                              </a>
+                            ) : (
+                              <div className="flex items-start justify-between gap-2">
+                                <span className="text-[10px] font-mono font-bold text-red-400 bg-red-950/70 px-1.5 py-0.5 rounded-sm border border-red-900/50 flex items-center gap-1 shrink-0">
+                                  <PlayCircle className="w-3 h-3" />
+                                  {vid.channelOrTopic}
                                 </span>
+                                {vid.duration && (
+                                  <span className="text-[10px] font-mono text-slate-400 flex items-center gap-1 shrink-0">
+                                    <Clock className="w-2.5 h-2.5" />
+                                    {vid.duration}
+                                  </span>
+                                )}
+                              </div>
+                            )}
+
+                            <div>
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="text-[10px] font-mono font-bold text-red-400 bg-red-950/50 px-1.5 py-0.2 rounded-xs border border-red-900/40">
+                                  {vid.channelOrTopic}
+                                </span>
+                              </div>
+                              <h4 className="font-semibold text-xs text-slate-100 group-hover:text-red-300 transition-colors line-clamp-2">
+                                {vid.title}
+                              </h4>
+                              {vid.description && (
+                                <p className="text-[11px] text-slate-400 line-clamp-2 leading-relaxed mt-1">
+                                  {vid.description}
+                                </p>
                               )}
                             </div>
-                            <h4 className="font-semibold text-xs text-slate-100 group-hover:text-red-300 transition-colors line-clamp-2">
-                              {vid.title}
-                            </h4>
-                            {vid.description && (
-                              <p className="text-[11px] text-slate-400 line-clamp-2 leading-relaxed">
-                                {vid.description}
-                              </p>
-                            )}
                           </div>
 
                           <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between">
-                            <span className="text-[10px] font-mono text-slate-500">
-                              Query: {vid.searchQuery.slice(0, 24)}...
+                            <span className="text-[10px] font-mono text-slate-500 truncate max-w-[120px]">
+                              {vid.searchQuery ? `Q: ${vid.searchQuery}` : 'Curated Tutorial'}
                             </span>
                             <a
                               href={videoUrl}
                               target="_blank"
-                              rel="noreferrer"
-                              className="inline-flex items-center gap-1.5 text-xs font-semibold text-red-400 hover:text-red-300 bg-red-950/50 hover:bg-red-900/50 border border-red-800 px-2.5 py-1 rounded-sm transition-all shadow-xs"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1.5 text-xs font-bold text-red-400 hover:text-white bg-red-950/60 hover:bg-red-600 border border-red-800 hover:border-red-600 px-3 py-1.5 rounded-sm transition-all shadow-xs"
                             >
-                              <span>Watch on YouTube</span>
-                              <ExternalLink className="w-3 h-3 shrink-0" />
+                              <PlayCircle className="w-3.5 h-3.5 shrink-0" />
+                              <span>Watch on YouTube ➔</span>
                             </a>
                           </div>
                         </div>

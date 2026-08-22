@@ -59,132 +59,132 @@ export interface StudyAssistantResult {
 const SUBJECT_CURATED_VIDEOS: Record<string, YouTubeVideoRecommendation[]> = {
   ESS: [
     {
+      title: 'Renewable Energy 101 & Solar PV Cell Efficiency',
+      url: 'https://www.youtube.com/watch?v=1kUE0BZtTRc',
+      searchQuery: 'Renewable Energy 101 National Geographic solar wind',
+      channelOrTopic: 'National Geographic',
+      duration: '03:17',
+      description: 'Overview of clean energy sources, solar photovoltaic conversion, and wind power generation systems.'
+    },
+    {
+      title: 'Ecosystem Ecology: Energy Flow & Carbon Cycles',
+      url: 'https://www.youtube.com/watch?v=7G3eIYSfg5o',
+      searchQuery: 'Ecosystem Ecology Links in the Chain Crash Course Ecology',
+      channelOrTopic: 'CrashCourse',
+      duration: '10:09',
+      description: 'Trophic energy pyramids, biogeochemical cycles, and ecosystem stability principles.'
+    },
+    {
       title: 'Environmental Impact Assessment (EIA) Process & Methodology',
-      url: 'https://www.youtube.com/watch?v=F3G8K1JgR5c',
-      searchQuery: 'Environmental Impact Assessment EIA process steps NPTEL',
-      channelOrTopic: 'NPTEL IIT Roorkee',
+      url: 'https://www.youtube.com/watch?v=O1EZXw4Xb_c',
+      searchQuery: 'Environmental Impact Assessment EIA methodology NPTEL',
+      channelOrTopic: 'NPTEL Engineering',
       duration: '28:40',
-      description: 'Step-by-step EIA screening, scoping, impact baseline quantification, mitigation matrix, and public hearing protocols.'
-    },
-    {
-      title: 'Renewable Energy Systems & Solar Photovoltaic Cell Efficiency',
-      url: 'https://www.youtube.com/watch?v=1gtaT_rA6jM',
-      searchQuery: 'Solar PV cells working principle renewable energy engineering',
-      channelOrTopic: 'MIT OpenCourseWare',
-      duration: '42:15',
-      description: 'Semiconductor bandgaps, I-V characteristics, Shockley-Queisser limit, and wind turbine Betz law derivations.'
-    },
-    {
-      title: 'Ecosystem Dynamics, Carbon Cycles & Biodiversity Indices',
-      url: 'https://www.youtube.com/watch?v=kYidkaV_xG4',
-      searchQuery: 'Biodiversity indices Shannon Wiener Simpson index calculation',
-      channelOrTopic: 'Khan Academy Science',
-      duration: '16:50',
-      description: 'Trophic energy pyramids, bioaccumulation vs biomagnification, and Shannon-Wiener index calculation with practice problems.'
+      description: 'Step-by-step EIA screening, scoping, impact baseline quantification, and public consultation protocols.'
     }
   ],
   CALC: [
     {
+      title: 'The Essence of Calculus, Chapter 1: Visual Foundations',
+      url: 'https://www.youtube.com/watch?v=WUvTyaaNkzM',
+      searchQuery: 'Essence of calculus chapter 1 3Blue1Brown',
+      channelOrTopic: '3Blue1Brown',
+      duration: '17:04',
+      description: 'Visual geometric proof connecting area under curves, tangents, and fundamental theorem of calculus.'
+    },
+    {
       title: 'Lagrange Multipliers with Constrained Optimization Visualized',
-      url: 'https://www.youtube.com/watch?v=5A38rDhB2cw',
-      searchQuery: 'Lagrange Multipliers multivariable calculus visual intuition 3Blue1Brown',
-      channelOrTopic: '3Blue1Brown / Khan Academy',
-      duration: '18:32',
-      description: 'Geometric proof showing why contour tangent gradients align (grad f = lambda grad g) in constrained optimization.'
+      url: 'https://www.youtube.com/watch?v=9vKqVkMQHKk',
+      searchQuery: 'Lagrange multipliers multivariable calculus Khan Academy 3Blue1Brown',
+      channelOrTopic: 'Khan Academy / 3Blue1Brown',
+      duration: '08:42',
+      description: 'Geometric explanation of why contour gradients align (grad f = lambda grad g) at constrained extrema.'
     },
     {
-      title: 'Double and Triple Integrals in Cylindrical & Spherical Coordinates',
-      url: 'https://www.youtube.com/watch?v=KbmW8mFh7qU',
-      searchQuery: 'Double integrals multivariable calculus MIT 18.02',
-      channelOrTopic: 'MIT OpenCourseWare (18.02)',
-      duration: '48:10',
-      description: 'Jacobian determinant transformations, bounding limits of integration, and flux volume integration across 3D surfaces.'
-    },
-    {
-      title: 'Gradient Vectors, Directional Derivatives & Hessian Matrices',
-      url: 'https://www.youtube.com/watch?v=GkB4vW16Q80',
-      searchQuery: 'Directional derivatives gradient vector tangent plane Calculus 3',
-      channelOrTopic: "Professor Leonard (Calculus 3)",
-      duration: '52:20',
-      description: 'Full derivation of unit vector directional derivatives and second-derivative test using Hessian determinants.'
+      title: 'Calculus 3: Double and Triple Integrals in Polar & Cylindrical Coordinates',
+      url: 'https://www.youtube.com/watch?v=tBVnfxSgmrc',
+      searchQuery: 'Calculus 3 Double Integrals Professor Leonard',
+      channelOrTopic: 'Professor Leonard (Calculus 3)',
+      duration: '1:48:10',
+      description: 'Complete walkthrough of 3D integration bounds, Jacobian coordinate transformations, and volume calculations.'
     }
   ],
   EME: [
     {
-      title: 'Thermodynamic Cycles: Otto, Diesel & Dual Combustion Analysis',
-      url: 'https://www.youtube.com/watch?v=0tOQ_d_cI64',
-      searchQuery: 'Otto cycle PV and TS diagram thermal efficiency derivation',
-      channelOrTopic: 'Learn Engineering (Lesics)',
-      duration: '14:25',
-      description: 'Detailed P-v and T-s cycle plots, compression ratio equations, and mean effective pressure (MEP) derivations.'
-    },
-    {
-      title: 'Stress-Strain Behavior, Mohr’s Circle & Principal Stresses',
-      url: 'https://www.youtube.com/watch?v=gT8B2_Jg_7M',
-      searchQuery: 'Mohrs Circle 2D stress transformation mechanics of materials',
+      title: 'Understanding Stress and Strain: Engineering Mechanics',
+      url: 'https://www.youtube.com/watch?v=aQf6Q8t1FQE',
+      searchQuery: 'Understanding Stress and Strain The Efficient Engineer',
       channelOrTopic: 'The Efficient Engineer',
-      duration: '19:40',
-      description: 'Transformation equations for plane stress, center and radius derivation of Mohr’s circle, and maximum shear stress.'
+      duration: '11:42',
+      description: 'Fundamental explanation of normal stress, shear stress, Hooke’s law, and tensile stress-strain curves.'
     },
     {
-      title: 'Four-Bar Linkage Kinematics & Grashof’s Criterion',
-      url: 'https://www.youtube.com/watch?v=2Tz8wKq7jLw',
-      searchQuery: 'Grashofs law four bar mechanism kinematics of machines',
-      channelOrTopic: 'NPTEL IIT Kharagpur',
-      duration: '35:10',
-      description: 'Kinematic inversions, crank-rocker vs double-crank conditions, and instantaneous velocity center analysis.'
+      title: 'How Thermodynamic Engine Cycles Work (Otto & Diesel Cycles)',
+      url: 'https://www.youtube.com/watch?v=DZt5xU44IfQ',
+      searchQuery: 'How Diesel Engines Work Lesics Learn Engineering',
+      channelOrTopic: 'Lesics (Learn Engineering)',
+      duration: '08:12',
+      description: 'Detailed animation of four-stroke cycle, P-v and T-s thermodynamic diagrams, and fuel injection physics.'
+    },
+    {
+      title: 'Understanding Mohr’s Circle & Principal Stresses',
+      url: 'https://www.youtube.com/watch?v=1OxTsdEUg-k',
+      searchQuery: 'Understanding Mohrs Circle 2D Stress Transformation The Efficient Engineer',
+      channelOrTopic: 'The Efficient Engineer',
+      duration: '12:28',
+      description: 'Stress transformation equations, drawing Mohr’s circle, and finding maximum in-plane shear stress.'
     }
   ],
   'ENG-ETH': [
     {
-      title: 'Engineering Ethics: Challenger Disaster & Therac-25 Case Studies',
-      url: 'https://www.youtube.com/watch?v=2dxvP_KzVqI',
-      searchQuery: 'Engineering ethics Therac 25 Space Shuttle Challenger case study',
-      channelOrTopic: 'IEEE / Stanford Ethics in Tech',
-      duration: '22:15',
-      description: 'Root cause analysis of O-ring blow-by management pressure vs software race condition dosage hazards in Therac-25.'
+      title: 'Justice: What’s The Right Thing To Do? (Utilitarianism & Morality)',
+      url: 'https://www.youtube.com/watch?v=kBdfcR-8hEY',
+      searchQuery: 'Justice Episode 01 The Moral Side of Murder Harvard Sandel',
+      channelOrTopic: 'Harvard University (Michael Sandel)',
+      duration: '54:56',
+      description: 'Seminal Harvard course lecture on moral reasoning, utilitarian trade-offs, and categorical ethical duties.'
     },
     {
-      title: 'Ethical Frameworks: Utilitarianism, Deontology & Whistleblowing',
-      url: 'https://www.youtube.com/watch?v=-a739VjqdSI',
-      searchQuery: 'Utilitarianism vs Kantian deontology applied engineering ethics',
-      channelOrTopic: 'Harvard Justice (Michael Sandel)',
-      duration: '31:40',
-      description: 'Comparative breakdown of Kantian categorical imperatives, consequentialist utility trade-offs, and NSPE professional codes.'
+      title: 'Engineering Ethics: The Space Shuttle Challenger Disaster',
+      url: 'https://www.youtube.com/watch?v=0wI_y1t8Jps',
+      searchQuery: 'Engineering Ethics Space Shuttle Challenger Crash Course Engineering',
+      channelOrTopic: 'CrashCourse Engineering',
+      duration: '09:44',
+      description: 'Investigation into O-ring blow-by engineering warnings, managerial pressure, and ethical whistleblowing.'
     },
     {
-      title: 'AI Ethics, Algorithmic Bias & Autonomous Vehicle Moral Dilemmas',
-      url: 'https://www.youtube.com/watch?v=ixIoDYVfKA0',
-      searchQuery: 'AI ethics algorithmic fairness autonomous systems liability',
-      channelOrTopic: 'MIT CSAIL Tech Review',
-      duration: '24:50',
-      description: 'Trolley problem variations in autonomous driving, training data fairness audits, and engineer moral liability.'
+      title: 'Artificial Intelligence, Algorithmic Bias & Engineering Governance',
+      url: 'https://www.youtube.com/watch?v=40riCgmUXMs',
+      searchQuery: 'Ethics Governance and Policy in AI MIT OpenCourseWare',
+      channelOrTopic: 'MIT OpenCourseWare',
+      duration: '48:30',
+      description: 'Moral liability in autonomous machines, data ethics, and professional engineering accountability.'
     }
   ],
   CPC: [
     {
-      title: 'Pointers, Memory Layout & Dynamic Memory Allocation in C (malloc/free)',
-      url: 'https://www.youtube.com/watch?v=zuegQmMdy8M',
-      searchQuery: 'Pointers in C programming full tutorial mycodeschool freeCodeCamp',
-      channelOrTopic: 'freeCodeCamp / mycodeschool',
-      duration: '45:30',
-      description: 'Pointer arithmetic, stack vs heap allocation, pointer-to-pointer dereferencing, and memory leak debugging with Valgrind.'
+      title: 'C Programming Tutorial for Beginners: Full Course',
+      url: 'https://www.youtube.com/watch?v=KJgsSFOSQv0',
+      searchQuery: 'C Programming Tutorial for Beginners freeCodeCamp',
+      channelOrTopic: 'freeCodeCamp.org',
+      duration: '3:46:15',
+      description: 'Comprehensive beginner-to-advanced curriculum covering variables, pointers, arrays, structs, and memory.'
     },
     {
-      title: 'Structures, Unions, Bitfields & Linked Lists Implementation in C',
-      url: 'https://www.youtube.com/watch?v=VOpjAHCuz7I',
-      searchQuery: 'Linked lists in C singly doubly linked list tutorial',
-      channelOrTopic: 'Gate Smashers (Varun Singla)',
-      duration: '26:18',
-      description: 'Struct padding, self-referential structures, pointer manipulation for node insertion, deletion, and reversal.'
+      title: 'CS50 Lecture 4: Memory, Pointers, Heap Allocation & Malloc',
+      url: 'https://www.youtube.com/watch?v=zYIER3UahhU',
+      searchQuery: 'CS50 2023 Lecture 4 Memory Pointers David J Malan',
+      channelOrTopic: 'Harvard CS50 (David J. Malan)',
+      duration: '2:15:30',
+      description: 'World-renowned lecture explaining hexadecimal memory addresses, pointer dereferencing, malloc, and free.'
     },
     {
-      title: 'File Handling, String Manipulation & Command Line Arguments (argc/argv)',
-      url: 'https://www.youtube.com/watch?v=F_fP4e02Uv8',
-      searchQuery: 'File handling in C fopen fread fwrite fprintf argc argv',
+      title: 'Introduction to Linked Lists & Dynamic Data Structures in C',
+      url: 'https://www.youtube.com/watch?v=2ybLDQagr84',
+      searchQuery: 'Introduction to Linked List in C Neso Academy',
       channelOrTopic: 'Neso Academy',
-      duration: '32:45',
-      description: 'Binary vs text modes, buffer flushing, file pointers (FILE*), error handling with errno, and command-line parsing.'
+      duration: '14:28',
+      description: 'Node struct declarations, self-referential structures, pointer manipulation, and dynamic list traversal.'
     }
   ]
 };

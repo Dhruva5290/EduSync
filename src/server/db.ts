@@ -685,23 +685,23 @@ export const db: InMemoryDatabase = {
     {
       id: 'res-ess-1',
       subjectId: 'subj-ess',
-      title: 'Environmental Studies: From Crisis to Cure (3rd Ed)',
+      title: 'Environmental Studies: Sustainable Energy & Ecology',
       category: 'Textbook',
-      url: 'https://www.oup.com/environmental-studies-rajamannar',
-      author: 'Dr. R. Rajagopalan (Oxford University Press)',
-      description: 'Core reference text for ecosystem energy flows, environmental legislation, and sustainability case studies in India.',
-      keyTopics: ['Ecosystems', 'Pollution Control', 'Environmental Law'],
+      url: 'https://openstax.org/details/books/environmental-science',
+      author: 'OpenStax & Academic Editorial Board',
+      description: 'Comprehensive open-access reference text covering renewable solar transitions, carbon audits, and biodiversity conservation.',
+      keyTopics: ['Ecosystems', 'Solar PV Energy', 'Carbon Footprint'],
       dateAdded: '2026-08-05'
     },
     {
       id: 'res-ess-2',
       subjectId: 'subj-ess',
-      title: 'Lecture Slides: Climate Change & Carbon Footprint Calculation',
+      title: 'Coursepack: Environmental Impact Assessment (EIA) Guidelines',
       category: 'Lecture Notes',
-      url: 'https://bmu.edu.in/academics/ess/unit-3-climate.pdf',
-      author: 'Dr. Sanmitra Burman',
-      description: 'Detailed formulations for GHG emissions estimation and renewable solar integration.',
-      keyTopics: ['GHG Inventory', 'Solar Energy', 'Carbon Neutrality'],
+      url: 'https://nptel.ac.in/courses/120108004',
+      author: 'Dr. Sanmitra Burman (IIT/NPTEL Series)',
+      description: 'Step-by-step screening, baseline scoping, impact prediction matrices, and public hearing protocols.',
+      keyTopics: ['EIA Matrix', 'Environmental Audits', 'Mitigation Plan'],
       dateAdded: '2026-08-10'
     },
 
@@ -709,12 +709,12 @@ export const db: InMemoryDatabase = {
     {
       id: 'res-calc-1',
       subjectId: 'subj-calc',
-      title: 'Thomas’ Calculus (Early Transcendentals, 14th Edition)',
+      title: 'MIT 18.02 Multivariable Calculus Coursepack & Lecture Series',
       category: 'Textbook',
-      url: 'https://www.pearson.com/en-us/subject-catalog/p/thomas-calculus-early-transcendentals/P200000003444',
-      author: 'George B. Thomas, Maurice D. Weir, Joel Hass',
-      description: 'Comprehensive textbook for multivariable calculus, partial derivatives, and Stokes/Green theorem problems.',
-      keyTopics: ['Partial Derivatives', 'Multiple Integrals', 'Vector Calculus'],
+      url: 'https://ocw.mit.edu/courses/18-02sc-multivariable-calculus-fall-2010/',
+      author: 'MIT OpenCourseWare (Prof. Denis Auroux)',
+      description: 'Comprehensive curriculum for partial derivatives, Lagrange multipliers, double integrals, and Stokes/Green theorems.',
+      keyTopics: ['Lagrange Multipliers', 'Multiple Integrals', 'Vector Fields'],
       dateAdded: '2026-08-04'
     },
     {
@@ -722,9 +722,9 @@ export const db: InMemoryDatabase = {
       subjectId: 'subj-calc',
       title: 'Practice Problem Set: Lagrange Multipliers & Maxima-Minima',
       category: 'Lab Manual',
-      url: 'https://bmu.edu.in/academics/calc/lagrange-handout.pdf',
-      author: 'Dr. Raghav Singhal',
-      description: 'Step-by-step solved engineering optimization problems with constraint equations.',
+      url: 'https://tutorial.math.lamar.edu/Classes/CalcIII/LagrangeMultipliers.aspx',
+      author: 'Paul Dawkins (Paul\'s Online Math Notes)',
+      description: 'Step-by-step solved engineering optimization problems with constraint equations and Hessian classification.',
       keyTopics: ['Lagrange Multipliers', 'Critical Points', 'Hessian Matrix'],
       dateAdded: '2026-08-12'
     },
@@ -733,12 +733,12 @@ export const db: InMemoryDatabase = {
     {
       id: 'res-eme-1',
       subjectId: 'subj-eme',
-      title: 'Basic Mechanical Engineering (5th Edition)',
+      title: 'MIT 2.001 Mechanics of Materials & Thermodynamic Cycles',
       category: 'Textbook',
-      url: 'https://www.mheducation.co.in/basic-mechanical-engineering-p-k-nag',
-      author: 'P.K. Nag (McGraw Hill India)',
-      description: 'Standard textbook for thermodynamic cycles, IC engines, refrigeration, and gear power transmission.',
-      keyTopics: ['Thermodynamics', 'Otto Cycle', 'Gear Trains'],
+      url: 'https://ocw.mit.edu/courses/2-001-mechanics-materials-i-fall-2006/',
+      author: 'MIT OpenCourseWare (Dept. of Mechanical Engineering)',
+      description: 'Core course notes for stress-strain tensors, Mohr’s circle transformations, and Otto/Diesel thermodynamic efficiency.',
+      keyTopics: ['Thermodynamics', 'Stress-Strain', 'Mohr\'s Circle'],
       dateAdded: '2026-08-06'
     },
 
@@ -746,12 +746,12 @@ export const db: InMemoryDatabase = {
     {
       id: 'res-engeth-1',
       subjectId: 'subj-engeth',
-      title: 'Engineering Ethics: Concepts & Cases (6th Edition)',
+      title: 'National Academy of Engineering: Space Shuttle Challenger Case Study',
       category: 'Textbook',
-      url: 'https://www.cengage.com/c/engineering-ethics-concepts-and-cases-6e-harris',
-      author: 'Charles E. Harris, Michael S. Pritchard, Michael J. Rabins',
-      description: 'Seminal work exploring moral choices in engineering practice and disaster case studies.',
-      keyTopics: ['Codes of Conduct', 'Challenger Disaster', 'AI Governance'],
+      url: 'https://onlineethics.org/cases/space-shuttle-challenger-case',
+      author: 'Online Ethics Center for Engineering & Science (NAE)',
+      description: 'In-depth case study analyzing the O-ring decision, whistleblowing dilemmas, and NSPE engineering responsibility.',
+      keyTopics: ['Whistleblowing', 'Challenger Disaster', 'NSPE Canon'],
       dateAdded: '2026-08-08'
     },
 
@@ -759,13 +759,24 @@ export const db: InMemoryDatabase = {
     {
       id: 'res-cpc-1',
       subjectId: 'subj-cpc',
-      title: 'The C Programming Language (ANSI C, 2nd Edition)',
+      title: 'C Reference & Standard Library Pointer Specification',
       category: 'Textbook',
-      url: 'https://www.pearson.com/en-us/subject-catalog/p/c-programming-language/P200000003450',
-      author: 'Brian W. Kernighan & Dennis M. Ritchie',
-      description: 'The definitive classic on C syntax, pointers, memory allocation, and standard library I/O.',
-      keyTopics: ['Pointers', 'Structs', 'Memory Allocation'],
+      url: 'https://en.cppreference.com/w/c/language/pointer',
+      author: 'CppReference / ANSI C Standard Committee',
+      description: 'Authoritative documentation on pointer arithmetic, dynamic memory allocation (malloc/free), structs, and memory models.',
+      keyTopics: ['Pointers', 'Dynamic Memory', 'Structs'],
       dateAdded: '2026-08-02'
+    },
+    {
+      id: 'res-cpc-2',
+      subjectId: 'subj-cpc',
+      title: 'Harvard CS50: Memory, Pointers, and Data Structures Guide',
+      category: 'Lecture Notes',
+      url: 'https://cs50.harvard.edu/x/2024/weeks/4/',
+      author: 'Prof. David J. Malan (Harvard University)',
+      description: 'Comprehensive guide to stack vs heap memory layout, pointer dereferencing, Valgrind leak checking, and linked lists.',
+      keyTopics: ['Memory Layout', 'Heap Allocation', 'Linked Lists'],
+      dateAdded: '2026-08-14'
     }
   ],
 

@@ -97,11 +97,11 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
       {/* Top Banner */}
       <header className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 via-purple-600 to-pink-500 p-0.5 shadow-lg shadow-purple-500/20">
-            <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-              <GraduationCap className="w-5 h-5 text-cyan-400" />
-            </div>
-          </div>
+          <img
+            src="/logo.png"
+            alt="EduSync Logo"
+            className="w-10 h-10 object-contain rounded-xl shadow-lg shadow-cyan-500/20 border border-slate-700/60"
+          />
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-lg font-bold text-white tracking-tight">
@@ -128,6 +128,11 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
           <div className="bg-slate-900/80 backdrop-blur-xl border border-slate-800/80 rounded-2xl p-6 sm:p-8 shadow-2xl shadow-purple-950/20">
             {/* Header in Card */}
             <div className="text-center mb-6">
+              <img
+                src="/logo.png"
+                alt="EduSync"
+                className="w-16 h-16 object-contain mx-auto mb-3 rounded-2xl shadow-xl shadow-cyan-500/20 border border-slate-700/60"
+              />
               <h2 className="text-2xl font-extrabold text-white tracking-tight">
                 Sign in to your Portal
               </h2>
