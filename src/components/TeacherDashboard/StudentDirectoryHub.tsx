@@ -65,19 +65,26 @@ export const StudentDirectoryHub: React.FC<StudentDirectoryHubProps> = ({
   const [isCreatingClass, setIsCreatingClass] = useState(false);
 
   // All student users
-  const allStudents = allUsers.filter(u => u.role === 'student');
+  const allStudents = (allUsers || []).filter(u => u.role === 'student');
 
   // Teacher's owned subjects
   const mySubjects = subjects.filter(s =>
-    s.teacherId === currentUser.id || currentUser.teachingSubjectIds?.includes(s.id)
+    s.teacherId === currentUser.id ||
+    currentUser.teachingSubjectIds?.includes(s.id) ||
+    (s.teacherName && currentUser.name && s.teacherName.toLowerCase().includes(currentUser.name.toLowerCase().split(' ').pop() || ''))
   );
+  const effectiveSubjects = mySubjects.length > 0 ? mySubjects : subjects;
 
   // Filter students based on scope, search, and subject filter
   const filteredStudents = allStudents.filter(student => {
-    // Scope filter
-    if (scopeFilter === 'my-classes') {
-      const isEnrolledInMyClasses = mySubjects.some(s => student.enrolledSubjectIds?.includes(s.id));
-      if (!isEnrolledInMyClasses) return false;
+    // Scope filter: In My Classes
+    if (scopeFilter === 'my-classes' && effectiveSubjects.length > 0) {
+      const mySubjIds = effectiveSubjects.map(s => s.id);
+      const isEnrolledInMyClasses = mySubjIds.some(sId => student.enrolledSubjectIds?.includes(sId));
+      // If student has explicit enrollment list and not in my class, filter out
+      if (!isEnrolledInMyClasses && student.enrolledSubjectIds && student.enrolledSubjectIds.length > 0) {
+        return false;
+      }
     }
 
     // Specific subject filter
@@ -91,8 +98,8 @@ export const StudentDirectoryHub: React.FC<StudentDirectoryHubProps> = ({
       return (
         student.name.toLowerCase().includes(q) ||
         student.email.toLowerCase().includes(q) ||
-        student.institutionalId.toLowerCase().includes(q) ||
-        student.department.toLowerCase().includes(q)
+        (student.institutionalId && student.institutionalId.toLowerCase().includes(q)) ||
+        (student.department && student.department.toLowerCase().includes(q))
       );
     }
     return true;

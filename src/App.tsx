@@ -511,12 +511,15 @@ export default function App() {
     }
   };
 
-  const handleReturnToAdmin = () => {
-    if (auditAdmin) {
-      handleSwitchUser(auditAdmin.id);
-    } else {
-      const admin = allUsers.find(u => u.role === 'admin');
-      if (admin) handleSwitchUser(admin.id);
+  const handleReturnToAdmin = async () => {
+    const adminId = auditAdmin?.id || allUsers.find(u => u.role === 'admin')?.id || 'admin-1';
+    try {
+      await handleSwitchUser(adminId);
+      setAuditAdmin(null);
+      localStorage.removeItem('edusync_audit_admin');
+      setActiveTab('overview');
+    } catch (err) {
+      console.error('Error returning to registrar portal:', err);
     }
   };
 
