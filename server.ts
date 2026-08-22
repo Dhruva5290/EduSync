@@ -584,7 +584,7 @@ async function startServer() {
   });
 
   app.get('/api/subjects', (req, res) => {
-    const user = getCurrentUser();
+    const user = getCurrentUser(req);
     if (user.role === 'teacher') {
       // Return strictly subjects taught by this teacher
       const teacherSubjects = db.subjects.filter(
@@ -631,7 +631,7 @@ async function startServer() {
   });
 
   const handlePostTimeline = (req: express.Request, res: express.Response) => {
-    const user = getCurrentUser();
+    const user = getCurrentUser(req);
     if (user.role !== 'teacher') {
       res.status(403).json({ error: 'Unauthorized: Only teachers can manage course timeline' });
       return;
@@ -661,7 +661,7 @@ async function startServer() {
   app.post('/api/subjects/:id/timeline', handlePostTimeline);
 
   const handleDeleteTimeline = (req: express.Request, res: express.Response) => {
-    const user = getCurrentUser();
+    const user = getCurrentUser(req);
     if (user.role !== 'teacher') {
       res.status(403).json({ error: 'Unauthorized' });
       return;
@@ -691,7 +691,7 @@ async function startServer() {
   app.get('/api/subjects/:id/resources', handleGetResources);
 
   const handlePostResource = (req: express.Request, res: express.Response) => {
-    const user = getCurrentUser();
+    const user = getCurrentUser(req);
     if (user.role !== 'teacher') {
       res.status(403).json({ error: 'Unauthorized' });
       return;
@@ -717,7 +717,7 @@ async function startServer() {
   app.post('/api/subjects/:id/resources', handlePostResource);
 
   const handleDeleteResource = (req: express.Request, res: express.Response) => {
-    const user = getCurrentUser();
+    const user = getCurrentUser(req);
     if (user.role !== 'teacher') {
       res.status(403).json({ error: 'Unauthorized' });
       return;
@@ -752,7 +752,7 @@ async function startServer() {
   app.get('/api/assignments', handleGetAssignments);
 
   app.post('/api/assignments', (req, res) => {
-    const user = getCurrentUser();
+    const user = getCurrentUser(req);
     if (user.role !== 'teacher') {
       res.status(403).json({ error: 'Unauthorized: Only faculty can publish assignments' });
       return;
@@ -782,7 +782,7 @@ async function startServer() {
   });
 
   app.get('/api/assignments/:id/submissions', (req, res) => {
-    const user = getCurrentUser();
+    const user = getCurrentUser(req);
     const assignmentSubmissions = db.submissions.filter(s => s.assignmentId === req.params.id);
 
     if (user.role === 'teacher') {
@@ -795,7 +795,7 @@ async function startServer() {
   });
 
   const handleGetSubmissions = (req: express.Request, res: express.Response) => {
-    const user = getCurrentUser();
+    const user = getCurrentUser(req);
     const subjectId = req.params.subjectId || (req.query.subjectId as string);
 
     let relevantAssignments = db.assignments;
@@ -814,7 +814,7 @@ async function startServer() {
   app.get('/api/submissions', handleGetSubmissions);
 
   const handleSubmitAssignment = (req: express.Request, res: express.Response) => {
-    const user = getCurrentUser();
+    const user = getCurrentUser(req);
     const assignmentId = req.body.assignmentId || req.params.id;
     const { submissionText, fileAttachment } = req.body;
 
@@ -852,7 +852,7 @@ async function startServer() {
   app.post('/api/assignments/:id/submit', handleSubmitAssignment);
 
   app.post('/api/submissions/:id/grade', (req, res) => {
-    const user = getCurrentUser();
+    const user = getCurrentUser(req);
     if (user.role !== 'teacher') {
       res.status(403).json({ error: 'Unauthorized: Faculty access required' });
       return;
@@ -876,7 +876,7 @@ async function startServer() {
   // ==========================================
 
   const handleGetNotes = (req: express.Request, res: express.Response) => {
-    const user = getCurrentUser();
+    const user = getCurrentUser(req);
     const subjectId = req.params.subjectId || (req.query.subjectId as string);
     let userNotes = db.notes.filter(n => n.studentId === user.id);
     if (subjectId) {
@@ -889,7 +889,7 @@ async function startServer() {
   app.get('/api/notes', handleGetNotes);
 
   app.post('/api/notes', (req, res) => {
-    const user = getCurrentUser();
+    const user = getCurrentUser(req);
     const { id, subjectId, title, content, tags, isPinned, summary, keyTakeaways, flashcards, quiz } = req.body;
 
     if (id) {
@@ -933,7 +933,7 @@ async function startServer() {
   });
 
   app.delete('/api/notes/:id', (req, res) => {
-    const user = getCurrentUser();
+    const user = getCurrentUser(req);
     const idx = db.notes.findIndex(n => n.id === req.params.id && n.studentId === user.id);
     if (idx !== -1) {
       db.notes.splice(idx, 1);
