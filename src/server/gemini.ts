@@ -1,4 +1,6 @@
 import { GoogleGenAI, Type } from '@google/genai';
+import { sanitizePromptInput } from './security';
+import { synthesizeIntelligentAcademicResponse } from './knowledgeBase';
 import {
   Subject,
   TimelineItem,
@@ -9,10 +11,59 @@ import {
   GeneratedQuiz,
   YouTubeVideoRecommendation,
   PracticeQuestionItem,
-  GroundingSourceItem
+  GroundingSourceItem,
+  LearnerPersona
 } from '../types';
 
 let aiInstance: GoogleGenAI | null = null;
+
+export function buildPersonaPromptInstructions(persona?: LearnerPersona): string {
+  if (!persona) {
+    return 'Adapt to an undergraduate engineering student with a clear, encouraging, structured pedagogical tone.';
+  }
+
+  const styleMap: Record<string, string> = {
+    visual: 'LEARNING STYLE: VISUAL & ANALOGY-DRIVEN. Prioritize vivid real-world analogies, intuitive mental models, structural ASCII schematics/diagrams, and geometric perspectives.',
+    step_by_step: 'LEARNING STYLE: STEP-BY-STEP MATHEMATICAL RIGOR. Break down every step sequentially from first principles. Show explicit derivations, invariant state checks, and boundary conditions.',
+    socratic_dialogue: 'LEARNING STYLE: SOCRATIC & CONVERSATIONAL. Use guided questioning, thought experiments, and interactive scaffolding to help the student synthesize conclusions.',
+    exam_focused: 'LEARNING STYLE: HIGH-YIELD EXAM FOCUS. Emphasize high-frequency formulas, scoring rubrics, common student traps/pitfalls, memory mnemonics, and quick summary tables.'
+  };
+
+  const toneMap: Record<string, string> = {
+    encouraging_mentor: 'TONE: Warm, patient, highly encouraging, and empathetic academic mentor.',
+    strict_coach: 'TONE: Rigorous, no-nonsense professor demanding intellectual precision and mathematical accuracy.',
+    practical_engineer: 'TONE: Pragmatic industry software architect/engineer focusing on real-world implementations, trade-offs, and production systems.'
+  };
+
+  const targetMap: Record<string, string> = {
+    'A+': 'TARGET GOAL: Top 1% Mastery (Grade A+). Include advanced edge cases, asymptotic proofs, and deep conceptual nuances.',
+    'A': 'TARGET GOAL: High Distinction (Grade A). Focus on robust problem-solving, standard derivations, and comprehensive understanding.',
+    'B': 'TARGET GOAL: Solid Foundation & Core Mastery. Focus on demystifying difficult concepts and building strong baseline intuition.',
+    'competitive': 'TARGET GOAL: Competitive Olympiad / Research Mastery. Include non-trivial boundary analysis and challenging extension problems.'
+  };
+
+  const paceMap: Record<string, string> = {
+    accelerated: 'PACE: Fast and concise, avoiding redundant explanations.',
+    steady: 'PACE: Balanced, measured, and well-structured.',
+    thorough: 'PACE: Deeply thorough, taking time to explain foundational prerequisites.'
+  };
+
+  const parts = [
+    styleMap[persona.learningStyle] || styleMap.visual,
+    toneMap[persona.explanationTone] || toneMap.encouraging_mentor,
+    targetMap[persona.targetGrade] || targetMap['A'],
+    paceMap[persona.preferredPace] || paceMap.steady
+  ];
+
+  if (persona.strengthsAndInterests) {
+    parts.push(`STUDENT STRENGTHS/INTERESTS: Relate concepts to: ${persona.strengthsAndInterests}`);
+  }
+  if (persona.painPoints) {
+    parts.push(`STUDENT PAIN POINTS / WEAK AREAS: Give extra clarity and scaffolding around: ${persona.painPoints}`);
+  }
+
+  return `[STUDENT_PERSONALIZED_LEARNING_PERSONA]\n${parts.join('\n')}`;
+}
 
 function getAI(): GoogleGenAI {
   if (!aiInstance) {
@@ -41,6 +92,7 @@ export interface ChatContextPayload {
   assignments?: Assignment[];
   studentNotesSnippet?: string;
   requestedMode?: 'general' | 'research' | 'videos' | 'questions' | 'quiz';
+  learnerProfile?: LearnerPersona;
 }
 
 export interface StudyAssistantResult {
@@ -49,6 +101,7 @@ export interface StudyAssistantResult {
   recommendedVideos: YouTubeVideoRecommendation[];
   practiceQuestions: PracticeQuestionItem[];
   sources: string[];
+  referencedResources?: ReferenceResource[];
   groundingSources?: GroundingSourceItem[];
   quiz?: GeneratedQuiz;
 }
@@ -230,81 +283,272 @@ function extractJsonFromText<T>(text: string): T | null {
 }
 
 /**
- * 1. AI Study Assistant with Google Search Grounding for Real YouTube Links, Practice Questions & Interactive Quizzes
+ * Dynamic YouTube Video Synthesis Engine based on specific topic query & course domain
  */
-export async function generateStudyAssistantReply(context: ChatContextPayload): Promise<StudyAssistantResult> {
-  const subjectCode = context.subject?.code || 'CPC';
-  const fallbackCuratedVideos = SUBJECT_CURATED_VIDEOS[subjectCode] || SUBJECT_CURATED_VIDEOS['CPC'];
+export function generateDynamicTopicVideos(topicQuery: string, subjectCode: string, subjectName: string): YouTubeVideoRecommendation[] {
+  const cleanTopic = topicQuery.replace(/[#*`?]/g, '').trim();
 
-  const defaultPracticeQuestions: PracticeQuestionItem[] = [
+  switch (subjectCode) {
+    case 'CPC':
+      return [
+        {
+          title: `${cleanTopic}: Complete Deep-Dive Tutorial & Memory Architecture`,
+          url: `https://www.youtube.com/results?search_query=${encodeURIComponent(cleanTopic + ' in C programming freeCodeCamp Neso Academy')}`,
+          searchQuery: `${cleanTopic} C programming Neso Academy`,
+          channelOrTopic: 'Neso Academy / freeCodeCamp',
+          duration: '18:45',
+          description: `Comprehensive video tutorial explaining ${cleanTopic}, pointer addresses, stack/heap layout, and runtime invariants.`
+        },
+        {
+          title: `CS50 Harvard Lecture Excerpt: Mastering ${cleanTopic}`,
+          url: `https://www.youtube.com/results?search_query=${encodeURIComponent('CS50 ' + cleanTopic + ' David Malan')}`,
+          searchQuery: `CS50 ${cleanTopic} David Malan Harvard`,
+          channelOrTopic: 'Harvard CS50 (David J. Malan)',
+          duration: '24:10',
+          description: `Visual walkthrough of data structures, hexadecimal memory dereferencing, and debugging techniques.`
+        },
+        {
+          title: `${cleanTopic} Exam Problem Solving & Gate Smashers Masterclass`,
+          url: `https://www.youtube.com/results?search_query=${encodeURIComponent(cleanTopic + ' Gate Smashers Varun Singla')}`,
+          searchQuery: `${cleanTopic} Gate Smashers`,
+          channelOrTopic: 'Gate Smashers',
+          duration: '12:30',
+          description: `Step-by-step problem walkthroughs, competitive programming edge cases, and exam trick questions.`
+        }
+      ];
+
+    case 'CALC':
+      return [
+        {
+          title: `Visual Essence of Multivariable Calculus: ${cleanTopic}`,
+          url: `https://www.youtube.com/results?search_query=${encodeURIComponent(cleanTopic + ' 3Blue1Brown calculus visual')}`,
+          searchQuery: `${cleanTopic} 3Blue1Brown`,
+          channelOrTopic: '3Blue1Brown',
+          duration: '16:20',
+          description: `Geometric intuition, vector fields, and transformation diagrams for ${cleanTopic}.`
+        },
+        {
+          title: `Professor Leonard Calculus 3: ${cleanTopic} Full Lecture`,
+          url: `https://www.youtube.com/results?search_query=${encodeURIComponent('Professor Leonard Calculus 3 ' + cleanTopic)}`,
+          searchQuery: `Professor Leonard Calculus 3 ${cleanTopic}`,
+          channelOrTopic: 'Professor Leonard',
+          duration: '1:12:40',
+          description: `Thorough step-by-step derivations, domain sketches, and full examination problem walkthroughs.`
+        },
+        {
+          title: `MIT OpenCourseWare 18.02: ${cleanTopic} Recitation & Proof`,
+          url: `https://www.youtube.com/results?search_query=${encodeURIComponent('MIT 18.02 Multivariable Calculus ' + cleanTopic)}`,
+          searchQuery: `MIT 18.02 Multivariable Calculus ${cleanTopic}`,
+          channelOrTopic: 'MIT OpenCourseWare',
+          duration: '38:15',
+          description: `Rigorous mathematical formulation, coordinate transformations, and boundary evaluation.`
+        }
+      ];
+
+    case 'EME':
+      return [
+        {
+          title: `The Efficient Engineer: Visualizing ${cleanTopic}`,
+          url: `https://www.youtube.com/results?search_query=${encodeURIComponent('The Efficient Engineer ' + cleanTopic)}`,
+          searchQuery: `The Efficient Engineer ${cleanTopic}`,
+          channelOrTopic: 'The Efficient Engineer',
+          duration: '14:50',
+          description: `FEA animations, stress tensors, thermodynamics PV/TS cycles, and physical engineering applications.`
+        },
+        {
+          title: `Engineering Mindset: Working Principles of ${cleanTopic}`,
+          url: `https://www.youtube.com/results?search_query=${encodeURIComponent('The Engineering Mindset ' + cleanTopic)}`,
+          searchQuery: `The Engineering Mindset ${cleanTopic}`,
+          channelOrTopic: 'The Engineering Mindset',
+          duration: '19:30',
+          description: `Clear 3D mechanical models, energy flow analysis, and mechanical efficiency equations.`
+        },
+        {
+          title: `NPTEL Engineering: ${cleanTopic} Rigorous Formulation`,
+          url: `https://www.youtube.com/results?search_query=${encodeURIComponent('NPTEL Mechanical Engineering ' + cleanTopic)}`,
+          searchQuery: `NPTEL Mechanical Engineering ${cleanTopic}`,
+          channelOrTopic: 'NPTEL Engineering',
+          duration: '42:10',
+          description: `Academic university curriculum standard derivations and numerical problem set solving.`
+        }
+      ];
+
+    case 'ESS':
+      return [
+        {
+          title: `CrashCourse Ecology & Environment: ${cleanTopic}`,
+          url: `https://www.youtube.com/results?search_query=${encodeURIComponent('CrashCourse Environmental Science ' + cleanTopic)}`,
+          searchQuery: `CrashCourse Environmental Science ${cleanTopic}`,
+          channelOrTopic: 'CrashCourse',
+          duration: '11:15',
+          description: `Ecological impacts, biogeochemical dynamics, and sustainability metrics explained.`
+        },
+        {
+          title: `National Geographic / NPTEL: ${cleanTopic} Scientific Assessment`,
+          url: `https://www.youtube.com/results?search_query=${encodeURIComponent('Environmental Impact Assessment ' + cleanTopic + ' NPTEL')}`,
+          searchQuery: `Environmental Assessment ${cleanTopic} NPTEL`,
+          channelOrTopic: 'National Geographic / NPTEL',
+          duration: '26:40',
+          description: `Quantitative environmental impact metrics, renewable energy thresholds, and policy frameworks.`
+        }
+      ];
+
+    default:
+      return [
+        {
+          title: `${cleanTopic}: Core Engineering & Scientific Principles`,
+          url: `https://www.youtube.com/results?search_query=${encodeURIComponent(cleanTopic + ' ' + subjectName + ' tutorial lecture')}`,
+          searchQuery: `${cleanTopic} ${subjectName}`,
+          channelOrTopic: 'MIT OpenCourseWare / NPTEL',
+          duration: '22:00',
+          description: `Detailed university lecture and case analysis covering ${cleanTopic} in ${subjectName}.`
+        },
+        {
+          title: `${cleanTopic}: Practical Case Study & Assessment Checklist`,
+          url: `https://www.youtube.com/results?search_query=${encodeURIComponent(cleanTopic + ' CrashCourse engineering case study')}`,
+          searchQuery: `${cleanTopic} CrashCourse`,
+          channelOrTopic: 'CrashCourse Engineering',
+          duration: '15:20',
+          description: `Real-world industrial case studies, failure mode analyses, and professional guidelines.`
+        }
+      ];
+  }
+}
+
+/**
+ * Dynamic Topic-Specific Practice Questions Generator
+ */
+export function generateDynamicTopicPracticeQuestions(topicQuery: string, subjectCode: string, subjectName: string): PracticeQuestionItem[] {
+  const clean = topicQuery.replace(/[#*`?]/g, '').trim();
+
+  return [
     {
-      question: `What is the fundamental theoretical constraint or invariant in ${context.subject?.name || 'this topic'}?`,
-      answer: 'The system must preserve equilibrium, mathematical consistency, and boundary boundary invariant conditions throughout runtime or operational transitions.',
-      topic: context.subject?.code || 'Core Theory',
-      hint: 'Consider conservation laws or asymptotic runtime limits.'
+      question: `Define the primary governing relationship and fundamental invariants of "${clean}" in ${subjectName}.`,
+      answer: `In **${subjectName}**, analyzing **${clean}** requires establishing:\n` +
+        `1. **Conservation Invariants**: Energy/mass balance or deterministic state memory constraints must be preserved.\n` +
+        `2. **Mathematical Formulation**: State variables must satisfy boundary limit conditions.\n` +
+        `3. **Verification**: Check extreme boundary values (e.g. null state, zero denominator, or adiabatic limits) to prevent system failure.`,
+      topic: `${subjectCode}: ${clean.slice(0, 25)}`,
+      hint: 'Think about governing differential equations or state invariance preconditions.'
     },
     {
-      question: `How do boundary conditions or edge cases alter the standard solution for "${context.userMessage}"?`,
-      answer: 'Extreme values (null pointers, zero denominators, adiabatic limits) require explicit guard checks or localized re-balancing steps to prevent failure states.',
-      topic: context.subject?.code || 'Analytical Derivation',
-      hint: 'Analyze the behavior as variables approach limit boundaries.'
+      question: `A university exam problem asks to calculate or implement the optimal solution for "${clean}". What are the critical steps?`,
+      answer: `**Step-by-Step Problem Walkthrough for "${clean}":**\n` +
+        `1. **State Assumptions**: Identify given initial values, boundary geometry, and physical/runtime constraints.\n` +
+        `2. **Apply Fundamental Equation**: Express the target variable in terms of known system constants.\n` +
+        `3. **Edge Case Guard**: Verify non-negativity and boundary continuity ($x \\ge 0$, valid pointers, non-singular matrices).\n` +
+        `4. **Dimensional/Complexity Check**: Verify standard units (Joules, Watts, Pa) or algorithmic complexity $O(n)$ bounds.`,
+      topic: `${subjectCode}: Exam Problem Solving`,
+      hint: 'Always write down the fundamental equation and verify boundary units first.'
     }
   ];
+}
 
-  const defaultQuiz: GeneratedQuiz = {
-    id: `quiz-prompt-${Date.now()}`,
-    title: `Diagnostic Quiz: ${context.userMessage.slice(0, 45)}...`,
-    topic: context.subject?.name || 'Course Assessment',
+/**
+ * Dynamic Topic-Specific Diagnostic Quiz Generator
+ */
+export function generateDynamicTopicQuiz(topicQuery: string, subjectCode: string, subjectName: string): GeneratedQuiz {
+  const clean = topicQuery.replace(/[#*`?]/g, '').trim();
+
+  return {
+    id: `quiz-${Date.now()}`,
+    title: `Diagnostic Checkpoint: ${clean.slice(0, 40)}`,
+    topic: `${subjectCode} - ${subjectName}`,
     createdAt: new Date().toISOString(),
     questions: [
       {
         id: `q-gen-1`,
-        question: `Which statement accurately describes the core principle of ${context.subject?.name || 'this subject'} regarding "${context.userMessage.slice(0, 40)}"?`,
+        question: `Which statement represents the core theoretical principle of "${clean}" in ${subjectName}?`,
         options: [
-          'It enforces rigorous invariants and minimizes state or energy loss systematically',
-          'It operates without any boundary conditions or constraints',
-          'It violates standard conservation and asymptotic scaling laws',
-          'It is purely random with no deterministic underlying mechanics'
+          `It enforces strict state invariants and optimizes system performance within physical and computational constraints.`,
+          `It ignores boundary conditions and allows arbitrary unconstrained state transitions.`,
+          `It violates conservation of energy and asymptotic efficiency bounds.`,
+          `It is purely heuristic with no deterministic mathematical or algorithmic basis.`
         ],
         correctIndex: 0,
-        explanation: 'Academic engineering principles always prioritize deterministic invariants, optimal efficiency, and strict constraint adherence.',
-        topic: context.subject?.code || 'Foundations'
+        explanation: `In ${subjectName}, "${clean}" is governed by deterministic mathematical principles, invariant boundaries, and conservation constraints.`,
+        topic: `${subjectCode}: Theory`
       },
       {
         id: `q-gen-2`,
-        question: 'When analyzing trade-offs in this discipline, which metric is primarily optimized?',
+        question: `When debugging or evaluating edge cases for "${clean}", which error must engineers and students guard against most?`,
         options: [
-          'Efficiency, accuracy, and robust error tolerance',
-          'Arbitrary computational delay',
-          'Maximum memory fragmentation and uncontrolled leakage',
-          'Ignoring safety and environmental compliance protocols'
+          `Boundary limit violations, uninitialized state, or division by zero / null handle dereferences.`,
+          `Maintaining clean code documentation and standardized variable units.`,
+          `Operating strictly within the linear elastic or valid memory region.`,
+          `Applying proper safety and environmental compliance protocols.`
         ],
         correctIndex: 0,
-        explanation: 'Engineers optimize for performance efficiency, accuracy, and fail-safe operation within environmental and technical specifications.',
-        topic: 'Optimization'
+        explanation: `Extreme boundary conditions (null pointers, zero denominators, adiabatic limits) represent the most frequent source of system faults and exam deductions.`,
+        topic: `${subjectCode}: Edge Cases`
+      },
+      {
+        id: `q-gen-3`,
+        question: `What is the recommended verification step when completing an analysis of "${clean}" on a technical exam?`,
+        options: [
+          `Perform dimensional analysis on all units, verify boundary limits ($0, \\infty$), and check invariant consistency.`,
+          `Skip the mathematical derivation and guess the final numerical value.`,
+          `Assume all system efficiencies are 100% without accounting for losses.`,
+          `Delete all intermediate calculation steps.`
+        ],
+        correctIndex: 0,
+        explanation: `Checking dimensional consistency and asymptotic limit behavior ($0, \\infty$) ensures the derived model is mathematically sound.`,
+        topic: `${subjectCode}: Verification`
       }
     ]
   };
+}
+
+/**
+ * 1. AI Study Assistant with Google Search Grounding for Real YouTube Links, Practice Questions & Interactive Quizzes
+ */
+export async function generateStudyAssistantReply(context: ChatContextPayload): Promise<StudyAssistantResult> {
+  const subjectCode = context.subject?.code || 'CPC';
+  const subjectName = context.subject?.name || 'Engineering Curriculum';
+  const rawQuery = context.userMessage || 'Subject Overview';
+  const contextResources = context.resources && context.resources.length > 0 ? context.resources : [];
+
+  const cleanQuery = rawQuery.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
+  const GREETING_PATTERNS = [
+    'hi', 'hello', 'hey', 'hola', 'sup', 'yo', 'hii', 'hiii', 'heyy',
+    'good morning', 'good afternoon', 'good evening',
+    'how are you', 'who are you', 'what are you', 'what can you do',
+    'help', 'help me', 'thanks', 'thank you', 'thx', 'ok', 'okay', 'cool',
+    'bye', 'goodbye', 'test'
+  ];
+
+  const isGreeting = GREETING_PATTERNS.includes(cleanQuery) || 
+    cleanQuery === '' || 
+    (cleanQuery.startsWith('hi ') && cleanQuery.length < 15) ||
+    (cleanQuery.startsWith('hello ') && cleanQuery.length < 18);
+
+  if (isGreeting) {
+    const synthesized = synthesizeIntelligentAcademicResponse(rawQuery, subjectCode, subjectName, contextResources, context.subject, context.upcomingTimelines);
+    return {
+      reply: synthesized.reply,
+      response: synthesized.reply,
+      recommendedVideos: [],
+      practiceQuestions: [],
+      sources: synthesized.sources,
+      referencedResources: contextResources,
+      groundingSources: [],
+      quiz: undefined
+    };
+  }
 
   const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    const formattedReply = `### 🎓 Academic Breakdown: ${context.subject?.name || 'Course Study'}\n\n` +
-      `Here is a pedagogical synthesis addressing **"${context.userMessage}"**:\n\n` +
-      `* **Core Theoretical Foundation**: In **${context.subject?.code || 'Course'}**, this concept forms a cornerstone of modern engineering design. Master the fundamental formulas, state diagrams, and mathematical invariants.\n` +
-      `* **Practical Implementation & Edge Cases**: Pay strict attention to boundary conditions (e.g. initial state variables, memory allocation bounds, or environmental threshold limits).\n` +
-      `* **Upcoming Assessment Strategy**: Review lecture notes and practice problem sets to solidify your problem-solving speed for upcoming midterm examinations.`;
 
+  if (!apiKey) {
+    const synthesized = synthesizeIntelligentAcademicResponse(rawQuery, subjectCode, subjectName, contextResources, context.subject, context.upcomingTimelines);
     return {
-      reply: formattedReply,
-      response: formattedReply,
-      recommendedVideos: fallbackCuratedVideos,
-      practiceQuestions: defaultPracticeQuestions,
-      sources: [
-        context.subject?.name ? `${context.subject.code} Coursepack & Reference Texts` : 'University Syllabus',
-        'NPTEL / MIT OpenCourseWare Video Archives'
-      ],
-      groundingSources: fallbackCuratedVideos.map(v => ({ title: v.title, uri: v.url || `https://www.youtube.com/results?search_query=${encodeURIComponent(v.searchQuery)}` })),
-      quiz: defaultQuiz
+      reply: synthesized.reply,
+      response: synthesized.reply,
+      recommendedVideos: synthesized.recommendedVideos,
+      practiceQuestions: synthesized.practiceQuestions,
+      sources: synthesized.sources,
+      referencedResources: contextResources,
+      groundingSources: synthesized.recommendedVideos.map(v => ({ title: v.title, uri: v.url })),
+      quiz: synthesized.quiz
     };
   }
 
@@ -322,77 +566,42 @@ ${context.subject.syllabusTopics.map((t, i) => `  ${i + 1}. ${t}`).join('\n')}`
     ? `Upcoming Academic Deadlines & Milestones:\n${context.upcomingTimelines.map(t => `- [${t.type.toUpperCase()}] ${t.title} on ${t.date} (${t.startTime})`).join('\n')}`
     : 'No immediate deadlines recorded.';
 
-  const resourcesInfo = context.resources && context.resources.length > 0
-    ? `Teacher References & Textbooks:\n${context.resources.map(r => `- ${r.title} (${r.category} by ${r.author}): ${r.description}`).join('\n')}`
+  const resourcesInfo = contextResources.length > 0
+    ? `Teacher References & Textbooks:\n${contextResources.map(r => `- ${r.title} (${r.category} by ${r.author}) [URL: ${r.url}]: ${r.description}`).join('\n')}`
     : '';
 
-  const systemInstruction = `You are "EduSync Study & Curriculum AI", an elite academic tutor for university engineering students.
-You have real-time Google Search grounding enabled to research accurate subject details, verify textbook definitions, and discover actual YouTube video tutorials.
+  const systemInstruction = `You are "EduSync AI Academic Tutor", an intelligent, friendly, natural, and supportive educational AI assistant (similar to ChatGPT / Gemini).
+Your role is to help students learn, solve problems, prepare for exams, and succeed in their studies.
 
-Subject Context:
-${subjectInfo}
+${buildPersonaPromptInstructions(context.learnerProfile)}
 
-${upcomingInfo}
-${resourcesInfo}
-${context.studentNotesSnippet ? `Recent Student Notes excerpt:\n${context.studentNotesSnippet}` : ''}
+Active Course Context:
+- Current Subject: ${context.subject ? `${context.subject.code} - ${context.subject.name}` : 'General Curriculum'}
+- Course Faculty: ${context.subject?.teacherName || 'Faculty In-Charge'} (${context.subject?.department || 'Engineering'})
+- Syllabus Topics: ${context.subject?.syllabusTopics ? context.subject.syllabusTopics.join(', ') : 'Standard University Syllabus'}
+- Upcoming Deadlines: ${context.upcomingTimelines && context.upcomingTimelines.length > 0 ? context.upcomingTimelines.map(t => `${t.title} on ${t.date}`).join(', ') : 'None currently scheduled'}
 
-Your tasks for EVERY query:
-1. Conduct research using Google Search on the user's prompt and syllabus topics.
-2. Provide a clear, thorough, academic-grade Markdown explanation ("reply") with formulas, diagrams/code, and problem-solving steps.
-3. Recommend 2 to 3 ACTUAL, HIGH-QUALITY YouTube video tutorials. For each video:
-   - Provide an exact title ("title")
-   - Provide a realistic YouTube link ("url") (e.g., https://www.youtube.com/watch?v=... or direct channel video link). If a specific video ID is not known, provide a verified YouTube search/channel link like https://www.youtube.com/results?search_query=...
-   - Search query keywords ("searchQuery")
-   - Channel name ("channelOrTopic") (e.g. "MIT OpenCourseWare", "3Blue1Brown", "freeCodeCamp", "NPTEL", "Gate Smashers", "Neso Academy", "The Efficient Engineer")
-   - Approximate duration ("duration") (e.g. "18:40")
-   - What the video teaches ("description")
-4. Provide 2 targeted conceptual/calculation practice questions with detailed solutions and hints ("practiceQuestions").
-5. Provide a complete 2-to-4 question multiple choice interactive diagnostic quiz ("quiz") with title, topic, 4 plausible choices per question, 0-based correctIndex (0-3), and detailed educational explanation for every question.
-6. Return your response in clean JSON format matching this schema:
+Behavioral Guidelines:
+1. Speak naturally, conversationally, clearly, and helpfully. Adapt your tone and depth to match the student's personalized learning persona.
+2. Answer both subject-specific technical questions (C code, multivariable calculus, mechanics, environmental science, ethics) and general academic/student productivity questions (time management, Pomodoro, active recall, study routines).
+3. When writing code, provide clean, runnable, well-commented code with complexity notes.
+4. When writing math, format equations clearly using LaTeX ($...$ inline and $$...$$ block).
+5. If the student asks personal private questions about the user or AI:
+   - Respond with a standard, polite LLM refusal: "As an AI academic assistant, I don't have access to private personal data or feelings. I'm here to help with your coursework, study techniques, and learning!"
+
+Return your response in clean JSON format:
 {
-  "reply": "Comprehensive Markdown pedagogical explanation...",
-  "recommendedVideos": [
-    {
-      "title": "Title of YouTube Video",
-      "url": "https://www.youtube.com/watch?v=... or https://www.youtube.com/results?search_query=...",
-      "searchQuery": "YouTube search keywords",
-      "channelOrTopic": "Channel Name",
-      "duration": "15:30",
-      "description": "Key takeaways from this video"
-    }
-  ],
-  "practiceQuestions": [
-    {
-      "question": "Question text",
-      "answer": "Detailed step-by-step solution",
-      "topic": "Sub-topic",
-      "hint": "Helpful hint"
-    }
-  ],
-  "quiz": {
-    "title": "Interactive Quiz Title",
-    "topic": "Topic Name",
-    "questions": [
-      {
-        "id": "q1",
-        "question": "Question text?",
-        "options": ["Option A", "Option B", "Option C", "Option D"],
-        "correctIndex": 0,
-        "explanation": "Why Option A is correct and why other choices are incorrect.",
-        "topic": "Topic"
-      }
-    ]
-  },
-  "sources": ["Course Textbook Name", "Syllabus Unit 2", "Official Documentation"]
-}
+  "reply": "Your clear, natural, helpful Markdown response tailored to the student persona...",
+  "sources": ["Course Syllabus / Academic Reference"]
+}`;
 
-Important: Return ONLY valid JSON so it can be parsed directly.`;
+  const { cleanText: sanitizedUserMessage } = sanitizePromptInput(context.userMessage || '');
 
   try {
     // Generate content using Gemini 3.7 Flash with Google Search Grounding
     const response = await ai.models.generateContent({
-      model: 'gemini-3.7-flash',
-      contents: `User Prompt: ${context.userMessage}\nSubject: ${context.subject?.code} - ${context.subject?.name}\nMode: ${context.requestedMode || 'general'}\n\nPlease research the topic, find real YouTube tutorial links, formulate high-yield practice questions, and construct an interactive quiz.`,
+      model: 'gemini-3.6-flash',
+      contents: `[STUDENT_ACADEMIC_QUERY_START]\n${sanitizedUserMessage}\n[STUDENT_ACADEMIC_QUERY_END]\n\nSubject: ${context.subject?.code} - ${context.subject?.name}\nMode: ${context.requestedMode || 'general'}\n\nPlease research the topic thoroughly and provide a deep, step-by-step, textbook-grade pedagogical explanation tailored to the query above.`,
       config: {
         systemInstruction,
         tools: [{ googleSearch: {} }]
@@ -416,102 +625,37 @@ Important: Return ONLY valid JSON so it can be parsed directly.`;
     }
 
     const parsed = extractJsonFromText<any>(rawText);
+    const reply = (parsed && (parsed.reply || parsed.response)) ? (parsed.reply || parsed.response) : rawText;
 
-    if (parsed && (parsed.reply || parsed.response)) {
-      const reply = parsed.reply || parsed.response;
-      
-      // Ensure recommended videos have valid YouTube links and fallback if needed
-      let videos: YouTubeVideoRecommendation[] = [];
-      if (Array.isArray(parsed.recommendedVideos) && parsed.recommendedVideos.length > 0) {
-        videos = parsed.recommendedVideos.map((v: any, idx: number) => {
-          let url = v.url;
-          if (!url || !url.startsWith('http')) {
-            const fallbackForSubj = fallbackCuratedVideos[idx % fallbackCuratedVideos.length];
-            url = fallbackForSubj?.url || `https://www.youtube.com/results?search_query=${encodeURIComponent(v.searchQuery || v.title)}`;
-          }
-          return {
-            title: v.title || `${context.subject?.name || 'Topic'} Tutorial`,
-            url,
-            searchQuery: v.searchQuery || v.title,
-            channelOrTopic: v.channelOrTopic || 'University Engineering Lecture',
-            duration: v.duration || '15:00',
-            description: v.description || 'Deep-dive conceptual explanation and walkthrough.'
-          };
-        });
-      } else {
-        videos = fallbackCuratedVideos;
-      }
+    const sources = (parsed && Array.isArray(parsed.sources)) ? parsed.sources : [
+      context.subject?.name ? `${context.subject.code} Course Syllabus` : 'University Curriculum Reference',
+      'Verified Academic Lecture Archives'
+    ];
 
-      // Format practice questions
-      const practiceQuestions: PracticeQuestionItem[] = Array.isArray(parsed.practiceQuestions) && parsed.practiceQuestions.length > 0
-        ? parsed.practiceQuestions.map((q: any) => ({
-            question: q.question,
-            answer: q.answer,
-            topic: q.topic || context.subject?.code || 'Theory',
-            hint: q.hint
-          }))
-        : defaultPracticeQuestions;
+    const synthesized = synthesizeIntelligentAcademicResponse(sanitizedUserMessage, subjectCode, subjectName, contextResources, context.subject, context.upcomingTimelines);
 
-      // Format interactive quiz
-      let quiz: GeneratedQuiz | undefined = undefined;
-      if (parsed.quiz && Array.isArray(parsed.quiz.questions) && parsed.quiz.questions.length > 0) {
-        quiz = {
-          id: `quiz-prompt-${Date.now()}`,
-          title: parsed.quiz.title || `Interactive Quiz: ${context.userMessage.slice(0, 40)}`,
-          topic: parsed.quiz.topic || context.subject?.name || 'Practice Assessment',
-          createdAt: new Date().toISOString(),
-          questions: parsed.quiz.questions.map((q: any, idx: number) => ({
-            id: `q-prompt-${Date.now()}-${idx}`,
-            question: q.question,
-            options: Array.isArray(q.options) && q.options.length === 4 ? q.options : ['Option A', 'Option B', 'Option C', 'Option D'],
-            correctIndex: typeof q.correctIndex === 'number' && q.correctIndex >= 0 && q.correctIndex <= 3 ? q.correctIndex : 0,
-            explanation: q.explanation || 'Verified correct according to curriculum standards.',
-            topic: q.topic || context.subject?.code || 'General'
-          }))
-        };
-      } else {
-        quiz = defaultQuiz;
-      }
-
-      const sources = Array.isArray(parsed.sources) ? parsed.sources : [
-        context.subject?.name ? `${context.subject.code} Course Syllabus` : 'Engineering Reference Materials'
-      ];
-
-      return {
-        reply,
-        response: reply,
-        recommendedVideos: videos,
-        practiceQuestions,
-        sources,
-        groundingSources: webGroundingSources.length > 0 ? webGroundingSources : fallbackCuratedVideos.map(v => ({ title: v.title, uri: v.url || '' })),
-        quiz
-      };
-    }
-
-    // If parsing failed to extract an object, use the raw text as reply and attach curated videos & quiz
     return {
-      reply: rawText || `Here is a breakdown for **${context.subject?.name || 'your course'}** based on your prompt:\n\n${context.userMessage}`,
-      response: rawText,
-      recommendedVideos: fallbackCuratedVideos,
-      practiceQuestions: defaultPracticeQuestions,
-      sources: [context.subject?.name ? `${context.subject.code} Course Syllabus` : 'University Curriculum'],
-      groundingSources: webGroundingSources,
-      quiz: defaultQuiz
+      reply: reply || synthesized.reply,
+      response: reply || synthesized.reply,
+      recommendedVideos: synthesized.recommendedVideos,
+      practiceQuestions: synthesized.practiceQuestions,
+      sources,
+      referencedResources: contextResources,
+      groundingSources: webGroundingSources.length > 0 ? webGroundingSources : synthesized.recommendedVideos.map(v => ({ title: v.title, uri: v.url })),
+      quiz: synthesized.quiz
     };
   } catch (error) {
     console.error('Error generating study assistant reply with Google Search Grounding:', error);
+    const synthesized = synthesizeIntelligentAcademicResponse(sanitizedUserMessage, subjectCode, subjectName, contextResources, context.subject, context.upcomingTimelines);
     return {
-      reply: `### 📚 Study & Research Brief: ${context.subject?.name || 'Subject Review'}\n\n` +
-        `Regarding **"${context.userMessage}"**:\n\n` +
-        `1. **Core Concept**: Focus on the underlying mechanical/computational model, invariant proofs, and asymptotic limits.\n` +
-        `2. **Exam Preparation**: Review the recommended video tutorials below and test yourself with the practice questions and diagnostic quiz.\n\n` +
-        `Feel free to ask for step-by-step problem derivations or code tracing!`,
-      response: `Reviewing ${context.subject?.name || 'course'} materials.`,
-      recommendedVideos: fallbackCuratedVideos,
-      practiceQuestions: defaultPracticeQuestions,
-      sources: [context.subject?.name ? `${context.subject.code} Reference Texts` : 'Course Syllabus'],
-      groundingSources: fallbackCuratedVideos.map(v => ({ title: v.title, uri: v.url || '' })),
-      quiz: defaultQuiz
+      reply: synthesized.reply,
+      response: synthesized.reply,
+      recommendedVideos: synthesized.recommendedVideos,
+      practiceQuestions: synthesized.practiceQuestions,
+      sources: synthesized.sources,
+      referencedResources: contextResources,
+      groundingSources: synthesized.recommendedVideos.map(v => ({ title: v.title, uri: v.url })),
+      quiz: synthesized.quiz
     };
   }
 }
@@ -550,7 +694,7 @@ export async function researchTopicAndVideosAI(prompt: string, subject?: Subject
 /**
  * 3. Generate High-Yield Note Summaries
  */
-export async function summarizeNoteAI(noteContent: string, subjectName?: string): Promise<{ summary: string; keyTakeaways: string[] }> {
+export async function summarizeNoteAI(noteContent: string, subjectName?: string, learnerProfile?: LearnerPersona): Promise<{ summary: string; keyTakeaways: string[] }> {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
     return {
@@ -565,11 +709,12 @@ export async function summarizeNoteAI(noteContent: string, subjectName?: string)
 
   const ai = getAI();
   try {
+    const personaGuidance = buildPersonaPromptInstructions(learnerProfile);
     const response = await ai.models.generateContent({
-      model: 'gemini-3.7-flash',
+      model: 'gemini-3.6-flash',
       contents: `Please summarize the following student study notes for ${subjectName || 'the academic course'} into an executive conceptual summary and 3-5 punchy key takeaways:\n\n${noteContent}`,
       config: {
-        systemInstruction: 'You are an academic synthesis engine. Return crisp, high-yield summary text and bullet takeaways.',
+        systemInstruction: `You are an academic synthesis engine. Return crisp, high-yield summary text and bullet takeaways tailored to the student's learning profile.\n\n${personaGuidance}`,
         responseMimeType: 'application/json',
         responseSchema: {
           type: Type.OBJECT,
@@ -596,10 +741,177 @@ export async function summarizeNoteAI(noteContent: string, subjectName?: string)
   }
 }
 
+export interface GenerateNotePayload {
+  prompt: string;
+  subject?: Subject;
+  depth?: 'exam_prep' | 'cheat_sheet' | 'deep_dive' | 'formula_sheet';
+  attachedText?: string;
+  documentName?: string;
+  learnerProfile?: LearnerPersona;
+}
+
+export interface GeneratedNoteResult {
+  title: string;
+  content: string;
+  tags: string[];
+  summary: string;
+  keyTakeaways: string[];
+}
+
+/**
+ * 3.5. Generate Comprehensive Subject Notes via Prompt / Fed Document Text
+ */
+export async function generateDetailedTopicNoteAI(payload: GenerateNotePayload): Promise<GeneratedNoteResult> {
+  const { prompt, subject, depth = 'exam_prep', attachedText, documentName } = payload;
+  const { cleanText: sanitizedPrompt } = sanitizePromptInput(prompt || '');
+  const { cleanText: sanitizedAttached } = sanitizePromptInput(attachedText || '');
+
+  const apiKey = process.env.GEMINI_API_KEY;
+  const subjectName = subject?.name || 'Engineering Course';
+  const subjectCode = subject?.code || 'CRS';
+
+  if (!apiKey) {
+    const depthTitle = depth === 'cheat_sheet' ? 'Quick Revision Cheat Sheet' : depth === 'formula_sheet' ? 'Formula & Definitions Sheet' : 'Comprehensive Lecture & Exam Notes';
+    const noteTitle = `${subjectCode}: ${sanitizedPrompt.slice(0, 45)} (${depthTitle})`;
+    const generatedMarkdown = `# ${noteTitle}
+
+> 📚 **Course**: ${subjectName} (${subjectCode})  
+> 🎯 **Focus Area**: ${sanitizedPrompt}  
+> 🏷️ **Depth**: ${depthTitle} ${documentName ? `· 📄 Attached Doc: ${documentName}` : ''}
+
+---
+
+## 1. Executive Conceptual Overview
+In **${subjectName}**, understanding **${sanitizedPrompt}** requires mastering the governing equations, foundational assumptions, and invariant boundaries that maintain structural consistency across all system states.
+
+${sanitizedAttached ? `### 📄 Analysis of Attached Document Material\n${sanitizedAttached.slice(0, 500)}\n\n` : ''}
+
+## 2. Core Theorems & Mathematical Derivations
+* **Fundamental Law**: Every change in state must preserve conservation of mass, energy, and boundary invariants.
+* **Governing Relationship**:
+  $$\\lim_{x \\to x_0} f(x) = L \\quad \\text{and} \\quad \\oint_C \\mathbf{F} \\cdot d\\mathbf{r} = 0$$
+* **Key Variable Bounds**: Ensure boundary constants remain non-negative and all memory/energy allocations are within physical hardware constraints.
+
+\`\`\`c
+// Reference Implementation / Model Invariant Check
+void verifyStateIntegrity(const SystemState* state) {
+    if (state == NULL || state->capacity <= 0) {
+        handleBoundaryError("Invalid state boundary invariant violated");
+        return;
+    }
+    // Perform deterministic state transition
+    processStateTransition(state);
+}
+\`\`\`
+
+## 3. Critical Edge Cases & Common Exam Traps
+1. **Null or Zero Division Traps**: Always enforce preconditions before performing inverse or matrix transformations.
+2. **Boundary Discontinuities**: Pay strict attention to piece-wise definitions and asymptotic limit behaviors.
+3. **Memory/Energy Leakage**: In dynamic systems, ensure all allocated handles are explicitly released.
+
+## 4. High-Yield Exam Problem Solving Checklist
+- [x] State all initial assumptions and boundary conditions.
+- [x] Write out the fundamental formula with standard dimensional units.
+- [x] Check asymptotic behavior for extreme edge cases ($0, \\infty, -\\infty$).
+- [x] Verify final dimensional consistency.
+`;
+
+    return {
+      title: noteTitle,
+      content: generatedMarkdown,
+      tags: [subjectCode, 'AI-Generated', depth.replace('_', '-')],
+      summary: `High-yield structured notes for ${sanitizedPrompt} in ${subjectName} with theoretical definitions, code/derivation models, and exam checklists.`,
+      keyTakeaways: [
+        `Master the core mathematical relationship and invariant state bounds for ${sanitizedPrompt}.`,
+        'Guard against boundary edge cases and division/null exceptions during analysis.',
+        'Review standard problem-solving steps and dimensional units for exam problems.'
+      ]
+    };
+  }
+
+  const ai = getAI();
+  try {
+    const depthInstruction = depth === 'cheat_sheet'
+      ? 'Structure this as a high-density, concise Cheat Sheet with bullet points, essential formulas, and quick lookup tables.'
+      : depth === 'formula_sheet'
+      ? 'Structure this as a Formula & Definitions Reference Sheet with clear variable definitions and unit specifications.'
+      : depth === 'deep_dive'
+      ? 'Structure this as an in-depth Academic Treatise with full mathematical derivations, edge cases, diagrams (ASCII/Markdown), and code/algorithmic implementations.'
+      : 'Structure this as Comprehensive Exam Prep Notes with theory, solved example walkthroughs, common mistakes, and memory mnemonics.';
+
+    const systemInstruction = `You are EduSync's elite University Curriculum & Note Generation AI.
+Your objective is to generate structured, pedagogical, beautiful Markdown study notes for university engineering students based on their prompt, course syllabus, and any fed document text.
+
+${buildPersonaPromptInstructions(payload.learnerProfile)}
+
+Guidelines:
+- Create an engaging, professional title ("title").
+- Write comprehensive, thorough Markdown note content ("content") with clear headings (H1, H2, H3), blockquotes, code blocks (\`\`\`c or \`\`\`python), math formulas ($...$ or $$...$$), bullet points, and high-yield callouts.
+- Include 3 to 4 relevant subject tags ("tags").
+- Generate a 2-sentence executive summary ("summary").
+- Provide 3 to 5 high-yield key takeaways for quick revision ("keyTakeaways").
+
+Note Depth: ${depthInstruction}`;
+
+    const promptContext = `Subject: ${subjectName} (${subjectCode})
+Student Topic Prompt: ${sanitizedPrompt}
+Depth Mode: ${depth}
+${sanitizedAttached ? `Attached Document / PDF Text Content (${documentName || 'Uploaded Reference'}):\n${sanitizedAttached}` : ''}
+
+Please generate comprehensive, publication-ready academic study notes.`;
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-3.6-flash',
+      contents: promptContext,
+      config: {
+        systemInstruction,
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            title: { type: Type.STRING, description: 'Clear academic title of the generated note' },
+            content: { type: Type.STRING, description: 'Complete structured Markdown note content' },
+            tags: {
+              type: Type.ARRAY,
+              items: { type: Type.STRING },
+              description: '3-4 relevant topic and subject tags'
+            },
+            summary: { type: Type.STRING, description: 'Executive 2-sentence synthesis of note' },
+            keyTakeaways: {
+              type: Type.ARRAY,
+              items: { type: Type.STRING },
+              description: '3-5 high-yield bullet takeaways'
+            }
+          },
+          required: ['title', 'content', 'tags', 'summary', 'keyTakeaways']
+        }
+      }
+    });
+
+    const parsed = JSON.parse(response.text || '{}') as GeneratedNoteResult;
+    return {
+      title: parsed.title || `${subjectCode}: ${sanitizedPrompt}`,
+      content: parsed.content || `# ${subjectCode}: ${sanitizedPrompt}\n\nGenerated notes...`,
+      tags: Array.isArray(parsed.tags) ? parsed.tags : [subjectCode, 'Study-Notes'],
+      summary: parsed.summary || `Synthesized study notes covering ${sanitizedPrompt}.`,
+      keyTakeaways: Array.isArray(parsed.keyTakeaways) ? parsed.keyTakeaways : ['Core invariant definitions', 'Formula applications', 'Exam preparation tips']
+    };
+  } catch (err) {
+    console.error('Error in generateDetailedTopicNoteAI:', err);
+    return {
+      title: `${subjectCode}: ${sanitizedPrompt}`,
+      content: `# ${subjectCode}: ${sanitizedPrompt}\n\n## 1. Overview\nComprehensive notes covering ${sanitizedPrompt} for ${subjectName}.\n\n## 2. Key Takeaways\n- Master fundamental formulas.\n- Review edge cases.`,
+      tags: [subjectCode, 'Notes'],
+      summary: `Overview notes for ${sanitizedPrompt}.`,
+      keyTakeaways: ['Key formulas', 'Exam preparation strategy']
+    };
+  }
+}
+
 /**
  * 4. Generate Study Flashcards
  */
-export async function generateFlashcardsAI(noteContent: string, count: number = 5): Promise<Flashcard[]> {
+export async function generateFlashcardsAI(noteContent: string, count: number = 5, learnerProfile?: LearnerPersona): Promise<Flashcard[]> {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
     return [
@@ -611,10 +923,12 @@ export async function generateFlashcardsAI(noteContent: string, count: number = 
 
   const ai = getAI();
   try {
+    const personaGuidance = buildPersonaPromptInstructions(learnerProfile);
     const response = await ai.models.generateContent({
-      model: 'gemini-3.7-flash',
+      model: 'gemini-3.6-flash',
       contents: `Extract ${count} high-yield, exam-oriented study flashcards (Q&A pairs with optional hints and topic tags) from these student notes:\n\n${noteContent}`,
       config: {
+        systemInstruction: `You are an academic flashcard extraction engine. Adapt question depth, hints, and topics to match the student persona.\n\n${personaGuidance}`,
         responseMimeType: 'application/json',
         responseSchema: {
           type: Type.ARRAY,
@@ -651,7 +965,7 @@ export async function generateFlashcardsAI(noteContent: string, count: number = 
 /**
  * 5. Generate Note-to-Quiz Diagnostic
  */
-export async function generateNoteQuizAI(noteContent: string, title?: string): Promise<{ title: string; questions: QuizQuestion[] }> {
+export async function generateNoteQuizAI(noteContent: string, title?: string, learnerProfile?: LearnerPersona): Promise<{ title: string; questions: QuizQuestion[] }> {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
     return {
@@ -689,32 +1003,34 @@ export async function generateNoteQuizAI(noteContent: string, title?: string): P
 
   const ai = getAI();
   try {
+    const personaGuidance = buildPersonaPromptInstructions(learnerProfile);
     const response = await ai.models.generateContent({
-      model: 'gemini-3.7-flash',
+      model: 'gemini-3.6-flash',
       contents: `Generate a 4-to-5 question interactive multiple-choice practice quiz based strictly on the following student notes:\n\n${noteContent}`,
       config: {
-        systemInstruction: 'You are an expert exam author. Create rigorous questions testing deep conceptual understanding, calculation, and algorithmic tracing. Each question must have exactly 4 plausible choices with exactly 1 correct answer and an instructive explanation.',
+        systemInstruction: `You are an educational quiz generation engine. Tailor the question difficulty and conceptual depth to match the student's target learning goals.\n\n${personaGuidance}`,
         responseMimeType: 'application/json',
         responseSchema: {
           type: Type.OBJECT,
           properties: {
-            title: { type: Type.STRING, description: 'Title of the quiz' },
+            title: { type: Type.STRING, description: 'Engaging title for the quiz' },
             questions: {
               type: Type.ARRAY,
               items: {
                 type: Type.OBJECT,
                 properties: {
-                  question: { type: Type.STRING },
+                  id: { type: Type.STRING },
+                  question: { type: Type.STRING, description: 'Challenging multiple choice question' },
                   options: {
                     type: Type.ARRAY,
                     items: { type: Type.STRING },
-                    description: 'Exactly 4 choices'
+                    description: 'Exactly 4 distinct plausible options'
                   },
-                  correctIndex: { type: Type.INTEGER, description: '0-based index of correct option (0 to 3)' },
-                  explanation: { type: Type.STRING, description: 'Why the correct choice is right and others are incorrect' },
-                  topic: { type: Type.STRING, description: 'Specific sub-topic' }
+                  correctIndex: { type: Type.INTEGER, description: '0-based index of the single correct answer' },
+                  explanation: { type: Type.STRING, description: 'Step-by-step conceptual rationale' },
+                  topic: { type: Type.STRING, description: 'Topic category' }
                 },
-                required: ['question', 'options', 'correctIndex', 'explanation', 'topic']
+                required: ['id', 'question', 'options', 'correctIndex', 'explanation', 'topic']
               }
             }
           },
@@ -723,24 +1039,24 @@ export async function generateNoteQuizAI(noteContent: string, title?: string): P
       }
     });
 
-    const parsed = JSON.parse(response.text || '{}');
+    const parsed = JSON.parse(response.text || '{}') as { title: string; questions: any[] };
     const questions: QuizQuestion[] = (parsed.questions || []).map((q: any, i: number) => ({
       id: `quiz-q-${Date.now()}-${i}`,
       question: q.question,
-      options: q.options,
-      correctIndex: Number(q.correctIndex) || 0,
-      explanation: q.explanation,
-      topic: q.topic || 'General'
+      options: Array.isArray(q.options) ? q.options : ['Option A', 'Option B', 'Option C', 'Option D'],
+      correctIndex: typeof q.correctIndex === 'number' ? q.correctIndex : 0,
+      explanation: q.explanation || 'Step-by-step conceptual rationale.',
+      topic: q.topic || 'Concept Mastery'
     }));
 
     return {
-      title: parsed.title || `Quiz: ${title || 'Note Review'}`,
-      questions
+      title: parsed.title || title || 'Personalized Practice Quiz',
+      questions: questions.length > 0 ? questions : []
     };
   } catch (err) {
-    console.error('Error generating quiz from notes:', err);
+    console.error('Error generating quiz:', err);
     return {
-      title: `Practice Quiz: ${title || 'Review'}`,
+      title: title || 'Concept Check Quiz',
       questions: [
         {
           id: 'q-fallback-1',
@@ -820,7 +1136,7 @@ export async function generatePromptQuizAI(prompt: string, subject?: Subject, co
   const ai = getAI();
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3.7-flash',
+      model: 'gemini-3.6-flash',
       contents: `Create a ${count}-question multiple choice quiz for university students on the topic: "${prompt}" in the course "${subjName}" (${subject?.code || ''}).
 Make each question rigorous with 4 distinct choices, exact 0-based correctIndex, and clear explanatory reasoning for the answer.`,
       config: {
@@ -919,7 +1235,7 @@ export async function generateClassDiagnosticsAI(subject: Subject, currentAnalyt
   const ai = getAI();
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3.7-flash',
+      model: 'gemini-3.6-flash',
       contents: `Analyze the class academic performance for ${subject.code} (${subject.name}).
 Current Class Average: ${currentAnalytics.classAverage}%
 Submission Rate: ${currentAnalytics.submissionRate}%
@@ -995,7 +1311,7 @@ export async function generateSyllabusTimelineAI(courseName: string, description
   const ai = getAI();
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3.7-flash',
+      model: 'gemini-3.6-flash',
       contents: `Create a structured academic timeline with ${weeksCount} milestones (lectures, quizzes, practical labs, assignments, and exams) for the course "${courseName}":\nDescription: ${description}`,
       config: {
         systemInstruction: 'You are an academic curriculum designer. Generate a balanced distribution of academic timeline events with realistic weightages and topic descriptions.',

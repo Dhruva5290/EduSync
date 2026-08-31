@@ -30,8 +30,13 @@ import {
   Eye,
   EyeOff,
   Copy,
-  Lock,
-  User as UserIcon
+  User as UserIcon,
+  UploadCloud,
+  FileSpreadsheet,
+  Download,
+  FileText,
+  ArrowRight,
+  Table
 } from 'lucide-react';
 
 interface AdminDashboardProps {
@@ -51,13 +56,32 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   onRefreshSubjects,
   onShowToast
 }) => {
-  const [activeTab, setActiveTab] = useState<'register' | 'directory' | 'courses'>('register');
+  const [activeTab, setActiveTab] = useState<'register' | 'directory' | 'courses' | 'importer'>('register');
   const [registerRole, setRegisterRole] = useState<'student' | 'teacher' | 'admin'>('student');
 
   // Search & Filters for directory
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState<'all' | 'student' | 'teacher' | 'admin'>('all');
   const [deptFilter, setDeptFilter] = useState<string>('all');
+
+  // Bulk Roster Importer State
+  const [importInputMode, setImportInputMode] = useState<'file' | 'paste'>('file');
+  const [rawCsvText, setRawCsvText] = useState('');
+  const [csvFileName, setCsvFileName] = useState('');
+  const [parsedImportUsers, setParsedImportUsers] = useState<any[]>([]);
+  const [importTargetSubjectIds, setImportTargetSubjectIds] = useState<string[]>(subjects.map(s => s.id));
+  const [importDept, setImportDept] = useState('Department of Computer Science & Engineering');
+  const [importProgram, setImportProgram] = useState('B.Tech Computer Science and Engineering');
+  const [importRole, setImportRole] = useState<'student' | 'teacher'>('student');
+  const [isImporting, setIsImporting] = useState(false);
+  const [importResults, setImportResults] = useState<{
+    success: boolean;
+    importedCount: number;
+    updatedCount: number;
+    skippedCount: number;
+    errors: string[];
+    message: string;
+  } | null>(null);
 
   // Registration Form State
   const [name, setName] = useState('');
@@ -274,6 +298,191 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     }
   };
 
+  // CSV Helper: Robust line tokenizer respecting quotes
+  const tokenizeCSVLine = (line: string, delimiter: string): string[] => {
+    const values: string[] = [];
+    let current = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
+      if (char === '"') {
+        inQuotes = !inQuotes;
+      } else if (char === delimiter && !inQuotes) {
+        values.push(current.trim().replace(/^"|"$/g, ''));
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+    values.push(current.trim().replace(/^"|"$/g, ''));
+    return values;
+  };
+
+  // CSV Parser
+  const parseCSV = (text: string) => {
+    if (!text.trim()) {
+      setParsedImportUsers([]);
+      return;
+    }
+
+    const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+    if (lines.length === 0) {
+      setParsedImportUsers([]);
+      return;
+    }
+
+    // Auto-detect delimiter
+    const firstLine = lines[0];
+    let delimiter = ',';
+    if (firstLine.includes('\t')) delimiter = '\t';
+    else if (firstLine.includes(';') && !firstLine.includes(',')) delimiter = ';';
+
+    const rawHeaders = tokenizeCSVLine(firstLine, delimiter).map(h => h.trim());
+    const hasHeaderRow = rawHeaders.some(h =>
+      /name|email|student|roll|id|first|last/i.test(h)
+    );
+
+    const startIndex = hasHeaderRow ? 1 : 0;
+    const headers = hasHeaderRow ? rawHeaders : ['Name', 'Email Address', 'Student ID', 'Department', 'Program'];
+
+    const parsed: any[] = [];
+    for (let i = startIndex; i < lines.length; i++) {
+      const rowVals = tokenizeCSVLine(lines[i], delimiter);
+      if (rowVals.every(v => !v)) continue;
+
+      const record: Record<string, string> = {};
+      headers.forEach((h, colIdx) => {
+        record[h] = rowVals[colIdx] || '';
+      });
+
+      // Extract unified fields
+      const firstName = record['First Name'] || record['firstName'] || record['first_name'] || '';
+      const lastName = record['Last Name'] || record['lastName'] || record['last_name'] || '';
+      const nameVal = record['Name'] || record['Full Name'] || record['Student Name'] || (firstName || lastName ? `${firstName} ${lastName}`.trim() : '');
+      const emailVal = record['Email Address'] || record['Email'] || record['email'] || record['Student Email'] || '';
+      const idVal = record['Student ID'] || record['User ID'] || record['Roll No'] || record['Roll Number'] || record['Institutional ID'] || record['ID'] || '';
+      const deptVal = record['Department'] || record['dept'] || importDept;
+      const progVal = record['Program'] || record['prog'] || importProgram;
+      const gpaVal = record['GPA'] || record['gpa'] || '8.25';
+      const genderVal = record['Gender'] || record['gender'] || 'Not Specified';
+
+      if (nameVal || emailVal) {
+        parsed.push({
+          name: nameVal,
+          firstName,
+          lastName,
+          email: emailVal,
+          institutionalId: idVal,
+          department: deptVal,
+          program: progVal,
+          gpa: gpaVal,
+          gender: genderVal,
+          isValid: Boolean(emailVal || nameVal)
+        });
+      }
+    }
+
+    setParsedImportUsers(parsed);
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setCsvFileName(file.name);
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const text = event.target?.result as string;
+      setRawCsvText(text);
+      parseCSV(text);
+      onShowToast(`Parsed ${file.name} successfully`, 'success');
+    };
+    reader.onerror = () => {
+      onShowToast('Failed to read CSV file', 'error');
+    };
+    reader.readAsText(file);
+  };
+
+  const handleDownloadTemplate = () => {
+    const csvContent = [
+      'First Name,Last Name,Email Address,Student ID,Department,Program,Gender,GPA',
+      'Aarav,Sharma,aarav.sharma@bmu.edu.in,260101,Department of Computer Science & Engineering,B.Tech Computer Science and Engineering,Male,8.5',
+      'Diya,Patel,diya.patel@bmu.edu.in,260102,Department of Computer Science & Engineering,B.Tech Computer Science and Engineering,Female,9.1',
+      'Rohan,Verma,rohan.verma@bmu.edu.in,260103,Department of Computer Science & Engineering,B.Tech Computer Science and Engineering,Male,7.8',
+      'Ananya,Iyer,ananya.iyer@bmu.edu.in,260104,Department of Computer Science & Engineering,B.Tech Computer Science and Engineering,Female,8.9',
+      'Vikram,Singh,vikram.singh@bmu.edu.in,260105,Department of Computer Science & Engineering,B.Tech Computer Science and Engineering,Male,8.2'
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'edusync_google_classroom_roster_template.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    onShowToast('Downloaded Google Classroom CSV template', 'success');
+  };
+
+  const handleExecuteBulkImport = async () => {
+    if (parsedImportUsers.length === 0) {
+      onShowToast('No parsed students to import. Please upload or paste a roster.', 'error');
+      return;
+    }
+
+    setIsImporting(true);
+    setImportResults(null);
+
+    try {
+      const payload = {
+        users: parsedImportUsers,
+        targetSubjectIds: importTargetSubjectIds,
+        defaultRole: importRole,
+        defaultDepartment: importDept,
+        defaultProgram: importProgram,
+        defaultAcademicYear: '1st Year (Semester 1)'
+      };
+
+      const res = await fetch('/api/users/bulk-import', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        setImportResults({
+          success: true,
+          importedCount: data.importedCount,
+          updatedCount: data.updatedCount,
+          skippedCount: data.skippedCount,
+          errors: data.errors || [],
+          message: data.message
+        });
+
+        onShowToast(`Successfully imported ${data.importedCount} students!`, 'success');
+        onRefreshUsers();
+        onRefreshSubjects();
+      } else {
+        onShowToast(data.error || 'Failed to import roster', 'error');
+        setImportResults({
+          success: false,
+          importedCount: 0,
+          updatedCount: 0,
+          skippedCount: parsedImportUsers.length,
+          errors: [data.error || 'Unknown error occurred'],
+          message: 'Import failed'
+        });
+      }
+    } catch (err: any) {
+      console.error(err);
+      onShowToast('Error connecting to import service', 'error');
+    } finally {
+      setIsImporting(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Top Banner & Institutional Metrics */}
@@ -390,6 +599,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         >
           <BookOpen className="w-3.5 h-3.5" />
           <span>Curriculum Offerings & Rosters ({subjects.length})</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('importer')}
+          className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-sm transition-all ${
+            activeTab === 'importer'
+              ? 'bg-emerald-600 text-white shadow-xs'
+              : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+          }`}
+        >
+          <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-300" />
+          <span>Google Classroom & CSV Importer</span>
         </button>
       </div>
 
@@ -822,11 +1043,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                             <button
                               type="button"
                               onClick={() => {
-                                navigator.clipboard.writeText(`User: ${user.username || user.email}\nPass: ${user.password || 'EduSync@2026'}`);
-                                onShowToast(`Copied credentials for ${user.name}`);
+                                const passToCopy = user.password || 'EduSync@260101';
+                                navigator.clipboard.writeText(passToCopy);
+                                onShowToast(`Copied password for ${user.name}`);
                               }}
                               className="text-slate-400 hover:text-purple-300 p-0.5"
-                              title="Copy credentials"
+                              title="Copy password"
                             >
                               <Copy className="w-3 h-3" />
                             </button>
@@ -1000,6 +1222,400 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </div>
               );
             })}
+          </div>
+        </div>
+      )}
+
+      {/* TAB 4: GOOGLE CLASSROOM & BULK CSV ROSTER IMPORTER */}
+      {activeTab === 'importer' && (
+        <div className="space-y-6">
+          {/* Header Banner */}
+          <div className="bg-slate-900 rounded-md border border-slate-800 p-5 shadow-sm">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="flex items-start gap-3">
+                <div className="p-2.5 bg-emerald-950/70 border border-emerald-800/80 rounded-sm text-emerald-400 mt-0.5">
+                  <FileSpreadsheet className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="px-2 py-0.5 bg-emerald-950 text-emerald-300 border border-emerald-800 text-[10px] font-mono font-bold rounded-sm uppercase tracking-wide">
+                      Bulk Roster Provisioning Engine
+                    </span>
+                    <span className="text-xs text-slate-400 font-mono">Google Classroom & SIS Compatible</span>
+                  </div>
+                  <h2 className="text-lg font-bold text-white tracking-tight mt-1">
+                    Google Classroom & CSV Student Roster Importer
+                  </h2>
+                  <p className="text-xs text-slate-400 mt-0.5 max-w-2xl">
+                    Export your student roster from Google Classroom (<span className="text-slate-300 font-mono">People → Export Roster</span>) or your University SIS, then drop the CSV here. EduSync will parse all accounts, assign institutional roll numbers, issue default passwords, and enroll students into their courses in one click.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={handleDownloadTemplate}
+                  className="flex items-center gap-1.5 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-sm text-xs font-semibold border border-slate-700 transition-colors shadow-xs"
+                >
+                  <Download className="w-3.5 h-3.5 text-emerald-400" />
+                  Download Sample CSV
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Import Results Banner (if active) */}
+          {importResults && (
+            <div className={`p-4 rounded-md border text-xs ${
+              importResults.success
+                ? 'bg-emerald-950/50 border-emerald-800 text-emerald-200'
+                : 'bg-rose-950/50 border-rose-800 text-rose-200'
+            }`}>
+              <div className="flex items-center gap-2 font-bold text-sm mb-1">
+                {importResults.success ? (
+                  <>
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    <span>Roster Import Completed Successfully</span>
+                  </>
+                ) : (
+                  <>
+                    <AlertCircle className="w-4 h-4 text-rose-400" />
+                    <span>Roster Import Encountered Issues</span>
+                  </>
+                )}
+              </div>
+              <p className="text-slate-300 mb-2">{importResults.message}</p>
+              <div className="flex items-center gap-4 font-mono text-[11px] pt-2 border-t border-slate-800/80">
+                <span className="text-emerald-300 font-bold">🟢 {importResults.importedCount} New Students Created</span>
+                <span className="text-blue-300 font-bold">🔵 {importResults.updatedCount} Existing Profiles Enrolled</span>
+                {importResults.skippedCount > 0 && (
+                  <span className="text-amber-300 font-bold">🟡 {importResults.skippedCount} Skipped</span>
+                )}
+              </div>
+              {importResults.errors.length > 0 && (
+                <div className="mt-2 text-rose-300 font-mono text-[10px] space-y-0.5">
+                  {importResults.errors.map((err, i) => (
+                    <div key={i}>• {err}</div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* 2-Column Grid: Config & Dropzone */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {/* Left: Settings & Target Allocations */}
+            <div className="lg:col-span-5 space-y-4">
+              <div className="bg-slate-900 rounded-md border border-slate-800 p-4 shadow-sm text-slate-100 space-y-3.5">
+                <div className="flex items-center gap-2 pb-2.5 border-b border-slate-800">
+                  <Users className="w-4 h-4 text-purple-400" />
+                  <h3 className="text-xs font-bold text-white uppercase tracking-wider">
+                    Default Target Configurations
+                  </h3>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2.5">
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-300 mb-1">Target Role</label>
+                    <select
+                      value={importRole}
+                      onChange={(e) => setImportRole(e.target.value as any)}
+                      className="w-full px-2.5 py-1.5 bg-slate-950 border border-slate-700 rounded-sm text-xs text-slate-200 focus:outline-none focus:border-purple-500"
+                    >
+                      <option value="student">Student (Undergraduate)</option>
+                      <option value="teacher">Faculty / Instructor</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-300 mb-1">Academic Term</label>
+                    <input
+                      type="text"
+                      value="1st Year (Semester 1)"
+                      readOnly
+                      className="w-full px-2.5 py-1.5 bg-slate-950/70 border border-slate-800 rounded-sm text-xs text-slate-400 font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-300 mb-1">Department</label>
+                  <input
+                    type="text"
+                    value={importDept}
+                    onChange={(e) => setImportDept(e.target.value)}
+                    className="w-full px-2.5 py-1.5 bg-slate-950 border border-slate-700 rounded-sm text-xs text-slate-200 focus:outline-none focus:border-purple-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-300 mb-1">Degree / Program</label>
+                  <input
+                    type="text"
+                    value={importProgram}
+                    onChange={(e) => setImportProgram(e.target.value)}
+                    className="w-full px-2.5 py-1.5 bg-slate-950 border border-slate-700 rounded-sm text-xs text-slate-200 focus:outline-none focus:border-purple-500"
+                  />
+                </div>
+
+                {/* Subject Auto-Enrollment Checkboxes */}
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="text-[11px] font-bold text-slate-300">
+                      Auto-Enroll in Subjects ({importTargetSubjectIds.length}/{subjects.length})
+                    </label>
+                    <div className="flex items-center gap-2 text-[10px]">
+                      <button
+                        type="button"
+                        onClick={() => setImportTargetSubjectIds(subjects.map(s => s.id))}
+                        className="text-purple-400 hover:text-purple-300 underline"
+                      >
+                        Select All
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setImportTargetSubjectIds([])}
+                        className="text-slate-400 hover:text-slate-300 underline"
+                      >
+                        Clear
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5 max-h-40 overflow-y-auto p-2 bg-slate-950 rounded-sm border border-slate-800">
+                    {subjects.map((subj) => {
+                      const isChecked = importTargetSubjectIds.includes(subj.id);
+                      return (
+                        <label
+                          key={subj.id}
+                          className="flex items-center justify-between p-1.5 rounded-xs hover:bg-slate-900 cursor-pointer text-xs"
+                        >
+                          <div className="flex items-center gap-2 truncate">
+                            <input
+                              type="checkbox"
+                              checked={isChecked}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setImportTargetSubjectIds([...importTargetSubjectIds, subj.id]);
+                                } else {
+                                  setImportTargetSubjectIds(importTargetSubjectIds.filter(id => id !== subj.id));
+                                }
+                              }}
+                              className="rounded-xs text-purple-600 focus:ring-purple-500 bg-slate-900 border-slate-700"
+                            />
+                            <span className="truncate text-slate-300 font-medium">{subj.code} · {subj.name}</span>
+                          </div>
+                          <span className="text-[10px] font-mono text-slate-500">{subj.credits || 4} Cr</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Button */}
+              <div className="bg-slate-900 rounded-md border border-slate-800 p-4 shadow-sm">
+                <div className="flex items-center justify-between mb-3">
+                  <div>
+                    <p className="text-xs font-bold text-white">Ready for Ingestion</p>
+                    <p className="text-[11px] text-slate-400">
+                      {parsedImportUsers.length > 0 ? (
+                        <span className="text-emerald-400 font-bold">{parsedImportUsers.length} student records parsed</span>
+                      ) : (
+                        'No roster data uploaded yet'
+                      )}
+                    </p>
+                  </div>
+                  {parsedImportUsers.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setParsedImportUsers([]);
+                        setRawCsvText('');
+                        setCsvFileName('');
+                      }}
+                      className="text-[11px] text-slate-400 hover:text-rose-400 transition-colors"
+                    >
+                      Clear Data
+                    </button>
+                  )}
+                </div>
+
+                <button
+                  type="button"
+                  disabled={parsedImportUsers.length === 0 || isImporting}
+                  onClick={handleExecuteBulkImport}
+                  className={`w-full py-2.5 px-4 rounded-sm text-xs font-bold flex items-center justify-center gap-2 shadow-xs transition-all ${
+                    parsedImportUsers.length > 0 && !isImporting
+                      ? 'bg-emerald-600 hover:bg-emerald-500 text-white cursor-pointer'
+                      : 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700/50'
+                  }`}
+                >
+                  {isImporting ? (
+                    <>
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      <span>Provisioning Database Records...</span>
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="w-4 h-4" />
+                      <span>Import {parsedImportUsers.length} Students into Database</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Right: File Upload Dropzone / Paste Box */}
+            <div className="lg:col-span-7 space-y-4">
+              <div className="bg-slate-900 rounded-md border border-slate-800 p-4 shadow-sm text-slate-100">
+                {/* Input Mode Selector */}
+                <div className="flex items-center justify-between pb-3 border-b border-slate-800 mb-3">
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setImportInputMode('file')}
+                      className={`px-3 py-1.5 text-xs font-bold rounded-sm transition-colors flex items-center gap-1.5 ${
+                        importInputMode === 'file'
+                          ? 'bg-slate-800 text-white border border-slate-700'
+                          : 'text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      <UploadCloud className="w-3.5 h-3.5 text-blue-400" />
+                      Upload CSV / TSV File
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setImportInputMode('paste')}
+                      className={`px-3 py-1.5 text-xs font-bold rounded-sm transition-colors flex items-center gap-1.5 ${
+                        importInputMode === 'paste'
+                          ? 'bg-slate-800 text-white border border-slate-700'
+                          : 'text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      <FileText className="w-3.5 h-3.5 text-purple-400" />
+                      Direct Paste Text
+                    </button>
+                  </div>
+
+                  {csvFileName && (
+                    <span className="text-[11px] font-mono text-emerald-400 bg-emerald-950/80 px-2 py-0.5 border border-emerald-800 rounded-xs">
+                      {csvFileName}
+                    </span>
+                  )}
+                </div>
+
+                {/* Mode 1: File Dropzone */}
+                {importInputMode === 'file' ? (
+                  <div className="border-2 border-dashed border-slate-700 hover:border-emerald-500/70 rounded-md p-6 text-center bg-slate-950/60 transition-colors">
+                    <input
+                      type="file"
+                      id="roster-file-input"
+                      accept=".csv,.tsv,.txt"
+                      onChange={handleFileUpload}
+                      className="hidden"
+                    />
+                    <label
+                      htmlFor="roster-file-input"
+                      className="cursor-pointer flex flex-col items-center justify-center space-y-2"
+                    >
+                      <div className="p-3 bg-slate-800/80 border border-slate-700 rounded-full text-emerald-400">
+                        <UploadCloud className="w-6 h-6" />
+                      </div>
+                      <p className="text-xs font-bold text-white">
+                        Click to select or drag Google Classroom CSV file here
+                      </p>
+                      <p className="text-[11px] text-slate-400">
+                        Supports <span className="text-slate-300 font-mono">.csv</span>, <span className="text-slate-300 font-mono">.tsv</span>, <span className="text-slate-300 font-mono">.txt</span> formatted exports
+                      </p>
+                    </label>
+                  </div>
+                ) : (
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                      Paste CSV Content (Headers: First Name, Last Name, Email Address, Student ID...)
+                    </label>
+                    <textarea
+                      rows={7}
+                      value={rawCsvText}
+                      onChange={(e) => {
+                        setRawCsvText(e.target.value);
+                        parseCSV(e.target.value);
+                      }}
+                      placeholder={`First Name,Last Name,Email Address,Student ID\nRahul,Gupta,rahul.gupta@bmu.edu.in,260110\nPooja,Nair,pooja.nair@bmu.edu.in,260111`}
+                      className="w-full p-2.5 bg-slate-950 border border-slate-700 rounded-sm font-mono text-xs text-slate-200 focus:outline-none focus:border-purple-500 leading-relaxed"
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Live Preview Table */}
+              <div className="bg-slate-900 rounded-md border border-slate-800 p-4 shadow-sm text-slate-100">
+                <div className="flex items-center justify-between pb-2.5 border-b border-slate-800 mb-3">
+                  <div className="flex items-center gap-2">
+                    <Table className="w-4 h-4 text-emerald-400" />
+                    <h3 className="text-xs font-bold text-white uppercase tracking-wider">
+                      Live Parsed Roster Preview ({parsedImportUsers.length})
+                    </h3>
+                  </div>
+                  <span className="text-[10px] text-slate-400 font-mono">
+                    Auto-generates credentials upon import
+                  </span>
+                </div>
+
+                {parsedImportUsers.length === 0 ? (
+                  <div className="text-center py-8 text-slate-500 text-xs">
+                    <FileSpreadsheet className="w-8 h-8 mx-auto mb-2 opacity-40" />
+                    No parsed student records to display yet. Upload a CSV above or paste text to preview.
+                  </div>
+                ) : (
+                  <div className="max-h-72 overflow-y-auto border border-slate-800 rounded-sm">
+                    <table className="w-full text-left text-xs border-collapse">
+                      <thead className="bg-slate-950 text-slate-400 font-semibold border-b border-slate-800 sticky top-0">
+                        <tr>
+                          <th className="py-2 px-2.5">#</th>
+                          <th className="py-2 px-2.5">Student Name</th>
+                          <th className="py-2 px-2.5">Institutional Email</th>
+                          <th className="py-2 px-2.5">Roll / ID</th>
+                          <th className="py-2 px-2.5">Department</th>
+                          <th className="py-2 px-2.5">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-800 text-slate-200">
+                        {parsedImportUsers.slice(0, 50).map((user, idx) => (
+                          <tr key={idx} className="hover:bg-slate-800/50 transition-colors">
+                            <td className="py-2 px-2.5 font-mono text-slate-500 text-[11px]">{idx + 1}</td>
+                            <td className="py-2 px-2.5 font-semibold text-white truncate max-w-[130px]">
+                              {user.name || `${user.firstName || ''} ${user.lastName || ''}`}
+                            </td>
+                            <td className="py-2 px-2.5 font-mono text-slate-300 text-[11px] truncate max-w-[170px]">
+                              {user.email}
+                            </td>
+                            <td className="py-2 px-2.5 font-mono text-purple-300 text-[11px]">
+                              {user.institutionalId || 'Auto (260XXX)'}
+                            </td>
+                            <td className="py-2 px-2.5 text-slate-400 text-[11px] truncate max-w-[130px]">
+                              {user.department || importDept}
+                            </td>
+                            <td className="py-2 px-2.5">
+                              <span className="px-1.5 py-0.5 bg-emerald-950 text-emerald-300 border border-emerald-800 rounded-xs text-[10px] font-semibold">
+                                Ready
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+                {parsedImportUsers.length > 50 && (
+                  <p className="text-[10px] text-slate-500 font-mono mt-2 text-right">
+                    Showing first 50 of {parsedImportUsers.length} parsed records
+                  </p>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       )}

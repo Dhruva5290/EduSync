@@ -21,27 +21,45 @@ import {
   Play,
   Save,
   Layers,
-  Search
+  Search,
+  Download,
+  Copy,
+  Check,
+  Wand2,
+  FileCode,
+  UploadCloud,
+  X,
+  FileSpreadsheet,
+  Zap,
+  AlignLeft,
+  ChevronRight,
+  BookMarked
 } from 'lucide-react';
 
 interface SmartNotePlaygroundProps {
   activeSubject: Subject;
   notes: StudentNote[];
+  currentUser?: { id: string; name: string; learningProfile?: import('../../types').LearnerPersona };
+  onOpenPersonalization?: () => void;
   onSaveNote: (note: Partial<StudentNote>) => Promise<StudentNote>;
   onDeleteNote: (noteId: string) => Promise<void>;
-  onSummarizeNote: (noteId: string, content: string) => Promise<{ summary: string; keyTakeaways: string[] }>;
-  onGenerateFlashcards: (noteId: string, content: string) => Promise<Flashcard[]>;
-  onGenerateQuizFromNote: (noteId: string, content: string, title: string) => Promise<GeneratedQuiz>;
+  onSummarizeNote: (noteId: string, content: string, learnerProfile?: import('../../types').LearnerPersona) => Promise<{ summary: string; keyTakeaways: string[] }>;
+  onGenerateFlashcards: (noteId: string, content: string, learnerProfile?: import('../../types').LearnerPersona) => Promise<Flashcard[]>;
+  onGenerateQuizFromNote: (noteId: string, content: string, title: string, learnerProfile?: import('../../types').LearnerPersona) => Promise<GeneratedQuiz>;
+  onGenerateNoteFromPrompt?: (payload: { prompt: string; depth: string; attachedText?: string; documentName?: string; learnerProfile?: import('../../types').LearnerPersona }) => Promise<StudentNote>;
 }
 
 export const SmartNotePlayground: React.FC<SmartNotePlaygroundProps> = ({
   activeSubject,
   notes,
+  currentUser,
+  onOpenPersonalization,
   onSaveNote,
   onDeleteNote,
   onSummarizeNote,
   onGenerateFlashcards,
-  onGenerateQuizFromNote
+  onGenerateQuizFromNote,
+  onGenerateNoteFromPrompt
 }) => {
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(notes.length > 0 ? notes[0].id : null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -53,11 +71,21 @@ export const SmartNotePlayground: React.FC<SmartNotePlaygroundProps> = ({
   const [content, setContent] = useState(activeNote?.content || '');
   const [tagsInput, setTagsInput] = useState(activeNote?.tags?.join(', ') || '');
   const [isPinned, setIsPinned] = useState(activeNote?.isPinned || false);
+  const [copiedState, setCopiedState] = useState(false);
+  const [saveIndicator, setSaveIndicator] = useState(false);
 
   // AI loading states
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [isGeneratingCards, setIsGeneratingCards] = useState(false);
   const [isGeneratingQuiz, setIsGeneratingQuiz] = useState(false);
+
+  // AI Note Generator Modal state
+  const [showAiGenModal, setShowAiGenModal] = useState(false);
+  const [aiGenPrompt, setAiGenPrompt] = useState('');
+  const [aiGenDepth, setAiGenDepth] = useState<'exam_prep' | 'cheat_sheet' | 'deep_dive' | 'formula_sheet'>('exam_prep');
+  const [aiGenAttachedText, setAiGenAttachedText] = useState('');
+  const [aiGenDocName, setAiGenDocName] = useState('');
+  const [isAiGenerating, setIsAiGenerating] = useState(false);
 
   // Active Modals
   const [activeQuiz, setActiveQuiz] = useState<GeneratedQuiz | null>(null);
@@ -81,7 +109,7 @@ export const SmartNotePlayground: React.FC<SmartNotePlaygroundProps> = ({
     const created = await onSaveNote({
       subjectId: activeSubject.id,
       title: 'Untitled Lecture Note',
-      content: `# Notes: ${activeSubject.name}\n\n## 1. Core Principles\n- Define concepts...\n\n\`\`\`c\n// Code snippet\n\`\`\`\n`,
+      content: `# Notes: ${activeSubject.name}\n\n## 1. Core Principles\n- Define concepts and theoretical framework...\n\n\`\`\`c\n// Code or formula reference\n\`\`\`\n`,
       tags: ['General', 'Exam Prep'],
       isPinned: false
     });
@@ -90,6 +118,7 @@ export const SmartNotePlayground: React.FC<SmartNotePlaygroundProps> = ({
 
   const handleSaveCurrent = async () => {
     if (!activeNote) return;
+    setSaveIndicator(true);
     await onSaveNote({
       id: activeNote.id,
       subjectId: activeSubject.id,
@@ -98,15 +127,15 @@ export const SmartNotePlayground: React.FC<SmartNotePlaygroundProps> = ({
       tags: tagsInput.split(',').map(t => t.trim()).filter(Boolean),
       isPinned
     });
+    setTimeout(() => setSaveIndicator(false), 2000);
   };
 
-  // AI Summarization Action
+  // AI Summarize Action
   const handleRunSummarize = async () => {
     if (!activeNote) return;
     setIsSummarizing(true);
     try {
-      const res = await onSummarizeNote(activeNote.id, content);
-      // local update
+      const res = await onSummarizeNote(activeNote.id, content, currentUser?.learningProfile);
       activeNote.summary = res.summary;
       activeNote.keyTakeaways = res.keyTakeaways;
     } finally {
@@ -119,7 +148,7 @@ export const SmartNotePlayground: React.FC<SmartNotePlaygroundProps> = ({
     if (!activeNote) return;
     setIsGeneratingCards(true);
     try {
-      const cards = await onGenerateFlashcards(activeNote.id, content);
+      const cards = await onGenerateFlashcards(activeNote.id, content, currentUser?.learningProfile);
       activeNote.flashcards = cards;
       setActiveDeck(cards);
     } finally {
@@ -132,7 +161,7 @@ export const SmartNotePlayground: React.FC<SmartNotePlaygroundProps> = ({
     if (!activeNote) return;
     setIsGeneratingQuiz(true);
     try {
-      const quiz = await onGenerateQuizFromNote(activeNote.id, content, title);
+      const quiz = await onGenerateQuizFromNote(activeNote.id, content, title, currentUser?.learningProfile);
       activeNote.quiz = quiz;
       setActiveQuiz(quiz);
     } finally {
@@ -140,10 +169,93 @@ export const SmartNotePlayground: React.FC<SmartNotePlaygroundProps> = ({
     }
   };
 
+  // Generate Note from Prompt / PDF Text
+  const handleGenerateNoteFromAI = async () => {
+    if (!aiGenPrompt.trim()) return;
+    setIsAiGenerating(true);
+
+    try {
+      if (onGenerateNoteFromPrompt) {
+        const generated = await onGenerateNoteFromPrompt({
+          prompt: aiGenPrompt.trim(),
+          depth: aiGenDepth,
+          attachedText: aiGenAttachedText.trim() || undefined,
+          documentName: aiGenDocName.trim() || undefined,
+          learnerProfile: currentUser?.learningProfile
+        });
+        setSelectedNoteId(generated.id);
+      } else {
+        // Direct API Call fallback
+        const res = await fetch('/api/ai/notes/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            prompt: aiGenPrompt.trim(),
+            subjectId: activeSubject.id,
+            depth: aiGenDepth,
+            attachedText: aiGenAttachedText.trim() || undefined,
+            documentName: aiGenDocName.trim() || undefined,
+            learnerProfile: currentUser?.learningProfile
+          })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          const newNote = await onSaveNote({
+            subjectId: activeSubject.id,
+            title: data.title || `${activeSubject.code}: ${aiGenPrompt}`,
+            content: data.content,
+            tags: data.tags || [activeSubject.code, 'AI-Notes'],
+            summary: data.summary,
+            keyTakeaways: data.keyTakeaways,
+            isPinned: true
+          });
+          setSelectedNoteId(newNote.id);
+        }
+      }
+
+      setShowAiGenModal(false);
+      setAiGenPrompt('');
+      setAiGenAttachedText('');
+      setAiGenDocName('');
+    } catch (err) {
+      console.error('Error generating AI note:', err);
+    } finally {
+      setIsAiGenerating(false);
+    }
+  };
+
+  // Copy Note Action
+  const handleCopyNote = () => {
+    navigator.clipboard.writeText(`${title}\n\n${content}`);
+    setCopiedState(true);
+    setTimeout(() => setCopiedState(false), 2000);
+  };
+
+  // Export Note as .md File
+  const handleExportMarkdown = () => {
+    const blob = new Blob([`# ${title}\n\nSubject: ${activeSubject.name} (${activeSubject.code})\nTags: ${tagsInput}\n\n${content}`], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${title.toLowerCase().replace(/[^a-z0-9]/g, '-')}.md`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  // Preset topic prompt loader for quick demonstration
+  const handleLoadSamplePrompt = (sampleTopic: string, depthType: 'exam_prep' | 'cheat_sheet' | 'deep_dive' | 'formula_sheet') => {
+    setAiGenPrompt(sampleTopic);
+    setAiGenDepth(depthType);
+  };
+
   // Markdown Formatting Helper
   const insertFormatting = (prefix: string, suffix: string = '') => {
     setContent(prev => prev + `\n${prefix} ` + suffix);
   };
+
+  const wordCount = content.trim() ? content.trim().split(/\s+/).length : 0;
+  const charCount = content.length;
 
   const filteredNotes = notes.filter(n =>
     n.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -153,35 +265,69 @@ export const SmartNotePlayground: React.FC<SmartNotePlaygroundProps> = ({
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 p-5 rounded-md border border-slate-800 shadow-sm text-slate-100">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/90 backdrop-blur-md p-5 rounded-md border border-slate-800 shadow-sm text-slate-100">
         <div>
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-sm bg-blue-950 text-blue-300 border border-blue-800">
               {activeSubject.code}
             </span>
-            <h2 className="text-base font-bold uppercase tracking-tight text-white">
-              Smart Note-Making & Synthesis Playground
+            <h2 className="text-base font-bold uppercase tracking-tight text-white flex items-center gap-2">
+              <span>Smart Note-Making & Synthesis Playground</span>
+              <span className="text-[10px] font-normal px-2 py-0.5 bg-indigo-950 text-indigo-300 border border-indigo-800 rounded-full">
+                Gemini AI Engine
+              </span>
             </h2>
           </div>
           <p className="text-xs text-slate-400 mt-0.5">
-            Structured subject notes with one-click AI summarization, flashcards, and Note-to-Quiz testing.
+            Structured subject notes with prompt-based AI note generation, document ingestion, flashcards, and Note-to-Quiz testing.
           </p>
         </div>
 
-        <button
-          id="notes-create-new-btn"
-          onClick={handleCreateNewNote}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm bg-blue-600 text-white text-xs font-semibold hover:bg-blue-500 transition-all shadow-xs shrink-0"
-        >
-          <Plus className="w-4 h-4" />
-          <span>New Study Note</span>
-        </button>
+        <div className="flex items-center gap-2 shrink-0 flex-wrap">
+          {currentUser?.learningProfile?.questionnaireCompleted ? (
+            <button
+              type="button"
+              onClick={onOpenPersonalization}
+              className="inline-flex items-center gap-1 text-[11px] font-bold bg-purple-950/80 text-purple-300 border border-purple-700 hover:border-purple-500 px-2.5 py-1 rounded-sm transition-colors cursor-pointer"
+              title="Click to customize AI note formatting persona"
+            >
+              <span>✨ {currentUser.learningProfile.learningStyle.toUpperCase()} · Target {currentUser.learningProfile.targetGrade}</span>
+              <span className="text-[10px] text-purple-400 underline ml-0.5">Edit</span>
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={onOpenPersonalization}
+              className="inline-flex items-center gap-1 text-[11px] font-bold bg-amber-950/80 text-amber-300 border border-amber-700 hover:border-amber-500 px-2.5 py-1 rounded-sm transition-colors cursor-pointer animate-pulse"
+            >
+              <span>⚡ Personalize AI Notes</span>
+            </button>
+          )}
+
+          <button
+            id="notes-ai-generate-btn"
+            onClick={() => setShowAiGenModal(true)}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-sm bg-purple-600 text-white text-xs font-semibold hover:bg-purple-500 transition-all shadow-xs cursor-pointer"
+          >
+            <Wand2 className="w-3.5 h-3.5" />
+            <span>Generate Notes with AI</span>
+          </button>
+
+          <button
+            id="notes-create-new-btn"
+            onClick={handleCreateNewNote}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-sm bg-blue-600 text-white text-xs font-semibold hover:bg-blue-500 transition-all shadow-xs"
+          >
+            <Plus className="w-4 h-4" />
+            <span>New Study Note</span>
+          </button>
+        </div>
       </div>
 
       {/* Main Split Layout: Left Notes Sidebar, Right Note Editor & AI Panels */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Sidebar: Notes Browser */}
-        <div className="lg:col-span-4 bg-slate-900 p-4 rounded-md border border-slate-800 shadow-sm space-y-4 text-slate-100">
+        <div className="lg:col-span-4 bg-slate-900/90 backdrop-blur-md p-4 rounded-md border border-slate-800 shadow-sm space-y-4 text-slate-100">
           <div className="relative">
             <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
             <input
@@ -196,7 +342,7 @@ export const SmartNotePlayground: React.FC<SmartNotePlaygroundProps> = ({
           <div className="space-y-2 max-h-[600px] overflow-y-auto pr-1">
             {filteredNotes.length === 0 ? (
               <div className="text-center py-10 text-xs text-slate-500">
-                No notes found. Create your first note above!
+                No notes found. Click "Generate Notes with AI" or create your first note!
               </div>
             ) : (
               filteredNotes.map((n) => (
@@ -237,7 +383,7 @@ export const SmartNotePlayground: React.FC<SmartNotePlaygroundProps> = ({
         </div>
 
         {/* Right Pane: Rich Note Editor & AI Action Toolbar */}
-        <div className="lg:col-span-8 bg-slate-900 p-5 rounded-md border border-slate-800 shadow-sm space-y-5 text-slate-100">
+        <div className="lg:col-span-8 bg-slate-900/90 backdrop-blur-md p-5 rounded-md border border-slate-800 shadow-sm space-y-5 text-slate-100">
           {activeNote ? (
             <div className="space-y-4">
               {/* Note Title & Header Actions */}
@@ -251,6 +397,27 @@ export const SmartNotePlayground: React.FC<SmartNotePlaygroundProps> = ({
                 />
 
                 <div className="flex items-center gap-2 shrink-0">
+                  {/* Word count stats */}
+                  <span className="text-[11px] font-mono text-slate-400 hidden sm:inline">
+                    {wordCount} words
+                  </span>
+
+                  <button
+                    onClick={handleCopyNote}
+                    className="p-1.5 rounded-sm border border-slate-800 text-slate-400 hover:bg-slate-800 transition-colors"
+                    title="Copy Note Text"
+                  >
+                    {copiedState ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  </button>
+
+                  <button
+                    onClick={handleExportMarkdown}
+                    className="p-1.5 rounded-sm border border-slate-800 text-slate-400 hover:bg-slate-800 transition-colors"
+                    title="Export Markdown (.md)"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                  </button>
+
                   <button
                     onClick={() => setIsPinned(!isPinned)}
                     className={`p-1.5 rounded-sm border transition-colors ${
@@ -267,8 +434,8 @@ export const SmartNotePlayground: React.FC<SmartNotePlaygroundProps> = ({
                     onClick={handleSaveCurrent}
                     className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-600 text-white rounded-sm text-xs font-semibold hover:bg-blue-500 shadow-xs"
                   >
-                    <Save className="w-3.5 h-3.5" />
-                    <span>Save</span>
+                    {saveIndicator ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-300" /> : <Save className="w-3.5 h-3.5" />}
+                    <span>{saveIndicator ? 'Saved' : 'Save'}</span>
                   </button>
 
                   <button
@@ -385,16 +552,21 @@ export const SmartNotePlayground: React.FC<SmartNotePlaygroundProps> = ({
                 placeholder="Start writing notes with markdown formatting..."
               />
 
-              {/* Tags Editor */}
-              <div className="flex items-center gap-2">
-                <Tag className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                <input
-                  type="text"
-                  value={tagsInput}
-                  onChange={(e) => setTagsInput(e.target.value)}
-                  placeholder="Tags (comma-separated, e.g. Functions, Memory, Arrays)"
-                  className="w-full text-xs font-mono text-slate-300 border-none focus:outline-none bg-transparent"
-                />
+              {/* Tags & Footer Info */}
+              <div className="flex items-center justify-between gap-3 text-slate-400">
+                <div className="flex items-center gap-2 flex-1">
+                  <Tag className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                  <input
+                    type="text"
+                    value={tagsInput}
+                    onChange={(e) => setTagsInput(e.target.value)}
+                    placeholder="Tags (comma-separated, e.g. Functions, Memory, Arrays)"
+                    className="w-full text-xs font-mono text-slate-300 border-none focus:outline-none bg-transparent"
+                  />
+                </div>
+                <div className="text-[10px] font-mono text-slate-500 shrink-0">
+                  {charCount} characters
+                </div>
               </div>
 
               {/* AI Generated Summary & Key Takeaways Drawer */}
@@ -456,6 +628,178 @@ export const SmartNotePlayground: React.FC<SmartNotePlaygroundProps> = ({
           )}
         </div>
       </div>
+
+      {/* AI Note Generator & Document/PDF Feeder Modal */}
+      {showAiGenModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs">
+          <div className="bg-slate-900 border border-slate-800 rounded-lg max-w-2xl w-full p-6 space-y-5 text-slate-100 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center gap-2">
+                <Wand2 className="w-5 h-5 text-purple-400" />
+                <h3 className="font-bold text-base text-white">AI Detailed Note Generator & Document Feeder</h3>
+              </div>
+              <button
+                onClick={() => setShowAiGenModal(false)}
+                className="p-1 rounded-sm text-slate-400 hover:text-white hover:bg-slate-800"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Ask Gemini AI to generate comprehensive, structured academic notes for any topic in <strong>{activeSubject.name}</strong>, or feed document/PDF text to synthesize into structured study materials.
+            </p>
+
+            {/* Quick Topic Presets */}
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-mono text-slate-400 uppercase font-semibold">
+                Syllabus Topic Presets:
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {activeSubject.syllabusTopics.slice(0, 3).map((topic, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => handleLoadSamplePrompt(topic, 'exam_prep')}
+                    className="px-2.5 py-1 text-xs bg-slate-950 border border-slate-800 rounded-sm text-blue-300 hover:bg-slate-800 font-mono text-left truncate max-w-xs"
+                  >
+                    📚 {topic}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Prompt Input */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-300">
+                What topic or concept should the AI create notes for?
+              </label>
+              <input
+                type="text"
+                value={aiGenPrompt}
+                onChange={(e) => setAiGenPrompt(e.target.value)}
+                placeholder="e.g. In-depth derivation of Lagrange Multipliers, Pointer Arithmetic memory layout, or Solar PV Efficiency..."
+                className="w-full px-3 py-2 text-xs bg-slate-950 border border-slate-700 rounded-sm text-slate-200 focus:outline-none focus:border-purple-500 font-sans"
+              />
+            </div>
+
+            {/* Note Depth / Format Style */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-300">
+                Note Format & Depth:
+              </label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setAiGenDepth('exam_prep')}
+                  className={`p-2.5 rounded-sm border text-left space-y-1 transition-all ${
+                    aiGenDepth === 'exam_prep'
+                      ? 'bg-purple-950/80 border-purple-600 text-purple-200'
+                      : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
+                  }`}
+                >
+                  <div className="flex items-center gap-1 font-bold text-xs text-white">
+                    <BookOpen className="w-3.5 h-3.5 text-purple-400" />
+                    <span>Exam Prep</span>
+                  </div>
+                  <p className="text-[10px] leading-tight text-slate-400">Theory, proofs & traps</p>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setAiGenDepth('cheat_sheet')}
+                  className={`p-2.5 rounded-sm border text-left space-y-1 transition-all ${
+                    aiGenDepth === 'cheat_sheet'
+                      ? 'bg-purple-950/80 border-purple-600 text-purple-200'
+                      : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
+                  }`}
+                >
+                  <div className="flex items-center gap-1 font-bold text-xs text-white">
+                    <Zap className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Cheat Sheet</span>
+                  </div>
+                  <p className="text-[10px] leading-tight text-slate-400">High-density bullet points</p>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setAiGenDepth('deep_dive')}
+                  className={`p-2.5 rounded-sm border text-left space-y-1 transition-all ${
+                    aiGenDepth === 'deep_dive'
+                      ? 'bg-purple-950/80 border-purple-600 text-purple-200'
+                      : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
+                  }`}
+                >
+                  <div className="flex items-center gap-1 font-bold text-xs text-white">
+                    <Code className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Deep Dive</span>
+                  </div>
+                  <p className="text-[10px] leading-tight text-slate-400">Mathematical derivations & code</p>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setAiGenDepth('formula_sheet')}
+                  className={`p-2.5 rounded-sm border text-left space-y-1 transition-all ${
+                    aiGenDepth === 'formula_sheet'
+                      ? 'bg-purple-950/80 border-purple-600 text-purple-200'
+                      : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
+                  }`}
+                >
+                  <div className="flex items-center gap-1 font-bold text-xs text-white">
+                    <FileSpreadsheet className="w-3.5 h-3.5 text-blue-400" />
+                    <span>Formulas</span>
+                  </div>
+                  <p className="text-[10px] leading-tight text-slate-400">Definitions & variables</p>
+                </button>
+              </div>
+            </div>
+
+            {/* Optional Document / PDF Text Feeder */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-semibold text-slate-300">Feed Document / PDF Text Content (Optional):</span>
+                <span className="text-[11px] font-mono text-slate-500">Paste excerpts or textbook pages</span>
+              </div>
+
+              <input
+                type="text"
+                value={aiGenDocName}
+                onChange={(e) => setAiGenDocName(e.target.value)}
+                placeholder="Document / PDF Source Name (e.g. Unit 3 Lecture Slide / Beej Guide Chapter 4)..."
+                className="w-full px-3 py-1.5 text-xs bg-slate-950 border border-slate-700 rounded-sm text-slate-200 focus:outline-none focus:border-purple-500 font-mono"
+              />
+
+              <textarea
+                rows={4}
+                value={aiGenAttachedText}
+                onChange={(e) => setAiGenAttachedText(e.target.value)}
+                placeholder="Paste raw PDF text, textbook excerpt, or lecture transcript here..."
+                className="w-full p-2.5 font-mono text-xs text-slate-200 bg-slate-950 border border-slate-700 rounded-sm focus:outline-none focus:border-purple-500 leading-relaxed"
+              />
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2 border-t border-slate-800">
+              <button
+                type="button"
+                onClick={() => setShowAiGenModal(false)}
+                className="px-3 py-1.5 text-xs text-slate-400 hover:text-white"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleGenerateNoteFromAI}
+                disabled={!aiGenPrompt.trim() || isAiGenerating}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-sm bg-purple-600 text-white text-xs font-semibold hover:bg-purple-500 disabled:opacity-50 shadow-md"
+              >
+                <Wand2 className={`w-4 h-4 ${isAiGenerating ? 'animate-spin' : ''}`} />
+                <span>{isAiGenerating ? 'Synthesizing Detailed Note...' : 'Generate & Save Study Note'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Quiz Modal */}
       {activeQuiz && (

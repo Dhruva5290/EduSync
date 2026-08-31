@@ -2,10 +2,11 @@ import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
 import { createServer as createViteServer } from 'vite';
 import dotenv from 'dotenv';
-import { db } from './src/server/db';
+import { db, saveUsersToDisk } from './src/server/db';
 import {
   generateStudyAssistantReply,
   summarizeNoteAI,
+  generateDetailedTopicNoteAI,
   generateFlashcardsAI,
   generateNoteQuizAI,
   generatePromptQuizAI,
@@ -13,89 +14,53 @@ import {
   generateClassDiagnosticsAI,
   generateSyllabusTimelineAI
 } from './src/server/gemini';
+import {
+  securityHeadersMiddleware,
+  inputSanitizerMiddleware,
+  authRateLimiter,
+  aiRateLimiter,
+  generalApiLimiter,
+  getAuthenticatedUser,
+  getCurrentUser,
+  requireAuth,
+  requireRole,
+  runSecuritySelfAudit
+} from './src/server/security';
 import { User, Subject, StudentNote, Assignment, Submission, TimelineItem, ReferenceResource } from './src/types';
 
 dotenv.config();
 
-// Active session state for prototyping (defaults to Teacher for initial inspection, easily switchable)
-let currentUserId = 'teacher-1';
-
-// In-memory rate limiting tracker
-const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
-const RATE_LIMIT_MAX = 60; // 60 requests per minute
-const RATE_LIMIT_WINDOW = 60 * 1000;
-
-function rateLimiter(req: Request, res: Response, next: NextFunction) {
-  const clientIp = req.ip || 'local-client';
-  const now = Date.now();
-  let record = rateLimitMap.get(clientIp);
-
-  if (!record || now > record.resetTime) {
-    record = { count: 1, resetTime: now + RATE_LIMIT_WINDOW };
-    rateLimitMap.set(clientIp, record);
-  } else {
-    record.count++;
-  }
-
-  res.setHeader('X-RateLimit-Limit', RATE_LIMIT_MAX);
-  res.setHeader('X-RateLimit-Remaining', Math.max(0, RATE_LIMIT_MAX - record.count));
-  res.setHeader('X-RateLimit-Reset', Math.ceil(record.resetTime / 1000));
-
-  if (record.count > RATE_LIMIT_MAX) {
-    res.status(429).json({
-      error: 'Rate limit exceeded. Please wait a moment before sending more AI requests.'
-    });
-    return;
-  }
-  next();
-}
-
-function getAuthenticatedUser(req: Request): User | null {
-  const authHeader = req.headers.authorization;
-  if (authHeader && authHeader.startsWith('Bearer ')) {
-    const token = authHeader.substring(7);
-    try {
-      const decoded = JSON.parse(Buffer.from(token, 'base64').toString('utf-8'));
-      if (decoded && decoded.userId) {
-        const found = db.users.find(u => u.id === decoded.userId);
-        if (found) return found;
-      }
-    } catch {
-      // Invalid token
-    }
-  }
-
-  // Check header fallback
-  const customUserId = req.headers['x-user-id'] as string;
-  if (customUserId) {
-    const found = db.users.find(u => u.id === customUserId);
-    if (found) return found;
-  }
-
-  return null;
-}
-
-function getCurrentUser(req?: Request): User {
-  if (req) {
-    const user = getAuthenticatedUser(req);
-    if (user) return user;
-  }
-  return db.users.find(u => u.id === currentUserId) || db.users[0];
-}
-
 async function startServer() {
   const app = express();
-  const PORT = 3000;
+  const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
-  app.use(express.json());
-  app.use(rateLimiter);
+  // 1. Security Headers (OWASP Top 10)
+  app.use(securityHeadersMiddleware);
+
+  // 2. Request Payload Size Caps (Prevent memory-exhaustion DoS)
+  app.use(express.json({ limit: '2mb' }));
+
+  // 3. Recursive Input Sanitizer (XSS & Prototype Pollution Guard)
+  app.use(inputSanitizerMiddleware);
+
+  // 4. General API Rate Limiter
+  app.use(generalApiLimiter.middleware);
+
+  // ==========================================
+  // SECURITY & AUDIT ENDPOINTS
+  // ==========================================
+
+  app.get('/api/security/audit', (_req, res) => {
+    const report = runSecuritySelfAudit();
+    res.json(report);
+  });
 
   // ==========================================
   // AUTH & IDENTITY MANAGEMENT (RBAC)
   // ==========================================
 
   // 1. Password Login Endpoint (Supports preloaded credentials + Straightforward Instant Login for any user ID)
-  app.post('/api/auth/login', (req, res) => {
+  app.post('/api/auth/login', authRateLimiter.middleware, (req, res) => {
     const { identifier, username, email, password, role } = req.body;
     const rawId = (identifier || username || email || '').trim();
     const loginId = rawId.toLowerCase();
@@ -176,6 +141,7 @@ async function startServer() {
 
       // Add to database
       db.users.push(user);
+      saveUsersToDisk(db.users);
     }
 
     // Create Base64 Session Token
@@ -185,6 +151,23 @@ async function startServer() {
       success: true,
       token,
       user
+    });
+  });
+
+  // Public endpoint for LoginScreen to display registered accounts list
+  app.get('/api/auth/public-users', (req, res) => {
+    res.json({
+      users: db.users.map(u => ({
+        id: u.id,
+        name: u.name,
+        username: u.username,
+        email: u.email,
+        role: u.role,
+        institutionalId: u.institutionalId,
+        password: u.password,
+        department: u.department,
+        designation: u.designation
+      }))
     });
   });
 
@@ -237,8 +220,8 @@ async function startServer() {
     res.json({ success: true, token, user: target });
   };
 
-  app.post('/api/auth/switch', handleSwitchUser);
-  app.post('/api/auth/switch-user', handleSwitchUser);
+  app.post('/api/auth/switch', generalApiLimiter.middleware, handleSwitchUser);
+  app.post('/api/auth/switch-user', generalApiLimiter.middleware, handleSwitchUser);
 
   // Get all registered users (Students, Faculty, Admins)
   app.get('/api/users', (req, res) => {
@@ -347,6 +330,7 @@ async function startServer() {
     };
 
     db.users.push(newUser);
+    saveUsersToDisk(db.users);
 
     // Update enrolled counts in subjects if student
     if (role === 'student' && initialSubjectIds.length > 0) {
@@ -400,11 +384,12 @@ async function startServer() {
       user.teachingSubjectIds = teachingSubjectIds;
     }
 
+    saveUsersToDisk(db.users);
     res.json({ success: true, user });
   });
 
-  // Delete user
-  app.delete('/api/users/:id', (req, res) => {
+  // Delete user (Restricted to Administrator)
+  app.delete('/api/users/:id', requireRole(['admin']), (req, res) => {
     const idx = db.users.findIndex(u => u.id === req.params.id);
     if (idx !== -1) {
       const removed = db.users.splice(idx, 1)[0];
@@ -415,6 +400,7 @@ async function startServer() {
           if (s && s.enrolledCount > 0) s.enrolledCount--;
         });
       }
+      saveUsersToDisk(db.users);
       res.json({ success: true, message: 'User successfully unregistered' });
     } else {
       res.status(404).json({ error: 'User not found' });
@@ -446,7 +432,7 @@ async function startServer() {
       }
     });
 
-    student.enrolledSubjectIds.forEach(id => {
+    student.enrolledSubjectIds?.forEach(id => {
       if (!next.has(id)) {
         const s = db.subjects.find(sub => sub.id === id);
         if (s && s.enrolledCount > 0) s.enrolledCount--;
@@ -454,7 +440,161 @@ async function startServer() {
     });
 
     student.enrolledSubjectIds = subjectIds;
+    saveUsersToDisk(db.users);
     res.json({ success: true, user: student });
+  });
+
+  // Save / Update Student Personalized Learning Profile (Questionnaire Results)
+  app.post('/api/students/:id/learning-profile', (req, res) => {
+    try {
+      const student = db.users.find(u => u.id === req.params.id);
+      if (!student) {
+        res.status(404).json({ error: 'Student not found' });
+        return;
+      }
+
+      const { learningProfile } = req.body;
+      if (!learningProfile) {
+        res.status(400).json({ error: 'learningProfile payload is required' });
+        return;
+      }
+
+      student.learningProfile = {
+        learningStyle: learningProfile.learningStyle || 'visual',
+        targetGrade: learningProfile.targetGrade || 'A+',
+        explanationTone: learningProfile.explanationTone || 'encouraging_mentor',
+        preferredPace: learningProfile.preferredPace || 'steady',
+        strengthsAndInterests: learningProfile.strengthsAndInterests || '',
+        painPoints: learningProfile.painPoints || '',
+        questionnaireCompleted: true,
+        completedAt: new Date().toISOString()
+      };
+
+      saveUsersToDisk(db.users);
+      res.json({ success: true, message: 'Learning profile saved successfully', user: student });
+    } catch (err: any) {
+      console.error('Error saving learning profile:', err);
+      res.status(500).json({ error: 'Failed to update learning profile' });
+    }
+  });
+
+  // Bulk Import Users (Google Classroom CSV / Excel Roster Importer)
+  app.post('/api/users/bulk-import', (req, res) => {
+    try {
+      const {
+        users,
+        targetSubjectIds = [],
+        defaultRole = 'student',
+        defaultDepartment = 'Department of Computer Science & Engineering',
+        defaultProgram = 'B.Tech Computer Science and Engineering',
+        defaultAcademicYear = '1st Year (Semester 1)'
+      } = req.body;
+
+      if (!Array.isArray(users) || users.length === 0) {
+        res.status(400).json({ error: 'A non-empty users array is required for bulk import.' });
+        return;
+      }
+
+      let importedCount = 0;
+      let updatedCount = 0;
+      let skippedCount = 0;
+      const errors: string[] = [];
+      const createdUsers: User[] = [];
+
+      users.forEach((rawUser: any, index: number) => {
+        // Support multiple common CSV column headers (Google Classroom, Standard SIS, etc.)
+        const firstName = rawUser['First Name'] || rawUser.firstName || rawUser.first_name || '';
+        const lastName = rawUser['Last Name'] || rawUser.lastName || rawUser.last_name || '';
+        const rawName = rawUser.name || (firstName || lastName ? `${firstName} ${lastName}`.trim() : '');
+        const rawEmail = (rawUser['Email Address'] || rawUser['Email'] || rawUser.email || rawUser.emailAddress || '').trim();
+        const rawRoll = (rawUser['Student ID'] || rawUser['User ID'] || rawUser['Roll No'] || rawUser.institutionalId || rawUser.rollNo || rawUser.id || '').trim();
+
+        if (!rawEmail && !rawName) {
+          errors.push(`Row ${index + 1}: Skipped due to missing name and email.`);
+          skippedCount++;
+          return;
+        }
+
+        const cleanEmail = rawEmail.includes('@')
+          ? rawEmail.toLowerCase()
+          : `${(rawEmail || rawName).toLowerCase().replace(/[^a-z0-9]/g, '.')}@bmu.edu.in`;
+
+        const cleanName = rawName || rawEmail.split('@')[0].replace(/\./g, ' ');
+        const role = (rawUser.role || defaultRole).toLowerCase();
+        const prefix = role === 'teacher' ? 'BMU-FAC' : role === 'admin' ? 'BMU-ADM' : '260';
+        const finalRoll = rawRoll || `${prefix}${Math.floor(100 + Math.random() * 899)}`;
+
+        const userSubjects: string[] = Array.isArray(rawUser.enrolledSubjectIds) && rawUser.enrolledSubjectIds.length > 0
+          ? rawUser.enrolledSubjectIds
+          : (targetSubjectIds.length > 0 ? targetSubjectIds : db.subjects.map(s => s.id));
+
+        // Check if user already exists by email or institutionalId
+        const existingUser = db.users.find(u =>
+          (u.email && u.email.toLowerCase() === cleanEmail.toLowerCase()) ||
+          (u.institutionalId && u.institutionalId.toLowerCase() === finalRoll.toLowerCase())
+        );
+
+        if (existingUser) {
+          // Merge subject enrollments without duplicating
+          const subsSet = new Set(existingUser.enrolledSubjectIds || []);
+          userSubjects.forEach(sId => subsSet.add(sId));
+          existingUser.enrolledSubjectIds = Array.from(subsSet);
+
+          if (rawUser.department) existingUser.department = rawUser.department;
+          if (rawUser.program) existingUser.program = rawUser.program;
+          if (rawName && existingUser.name.length < cleanName.length) existingUser.name = cleanName;
+          updatedCount++;
+        } else {
+          const usernamePrefix = cleanEmail.split('@')[0].toLowerCase().replace(/[^a-z0-9._-]/g, '');
+          const cleanUsername = rawUser.username || (role === 'teacher' ? `prof.${usernamePrefix}` : `student.${usernamePrefix}`);
+          const defaultPassword = rawUser.password || (role === 'teacher' ? `Teacher@${finalRoll.slice(-4)}` : `EduSync@${finalRoll}`);
+
+          const newUser: User = {
+            id: `${role}-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
+            name: cleanName,
+            email: cleanEmail,
+            username: cleanUsername,
+            password: defaultPassword,
+            role: role as 'student' | 'teacher' | 'admin',
+            gender: rawUser['Gender'] || rawUser.gender || 'Not Specified',
+            institutionalId: finalRoll,
+            department: rawUser['Department'] || rawUser.department || defaultDepartment,
+            program: rawUser['Program'] || rawUser.program || defaultProgram,
+            academicYear: rawUser['Academic Year'] || rawUser.academicYear || defaultAcademicYear,
+            status: 'active',
+            joinedDate: new Date().toISOString().split('T')[0],
+            enrolledSubjectIds: role === 'student' ? userSubjects : [],
+            teachingSubjectIds: role === 'teacher' ? userSubjects : [],
+            gpa: rawUser['GPA'] || rawUser.gpa ? Number(rawUser['GPA'] || rawUser.gpa) : (role === 'student' ? 8.25 : undefined)
+          };
+
+          db.users.push(newUser);
+          createdUsers.push(newUser);
+          importedCount++;
+        }
+      });
+
+      // Recalculate subject enrolled counts accurately
+      db.subjects.forEach(subject => {
+        const enrolled = db.users.filter(u => u.role === 'student' && u.enrolledSubjectIds.includes(subject.id));
+        subject.enrolledCount = enrolled.length;
+      });
+
+      saveUsersToDisk(db.users);
+
+      res.status(200).json({
+        success: true,
+        message: `Roster import completed: ${importedCount} created, ${updatedCount} updated, ${skippedCount} skipped.`,
+        importedCount,
+        updatedCount,
+        skippedCount,
+        errors,
+        createdUsersSample: createdUsers.slice(0, 10)
+      });
+    } catch (err: any) {
+      console.error('Error in bulk-import:', err);
+      res.status(500).json({ error: 'Failed to process roster import: ' + err.message });
+    }
   });
 
   // Bulk enroll students into a class
@@ -999,6 +1139,122 @@ async function startServer() {
   });
 
   // ==========================================
+  // EXTERNAL OCR WEBHOOK INGESTION ENDPOINT
+  // ==========================================
+  app.post('/api/webhooks/ocr-ingest', async (req, res) => {
+    try {
+      const ocrSecret = req.headers['x-ocr-api-key'] || req.headers['x-ocr-secret'];
+      const expectedSecret = process.env.OCR_WEBHOOK_SECRET || 'edusync_ocr_secret_2026';
+
+      // 1. Verify Shared Secret Key
+      if (ocrSecret !== expectedSecret) {
+        res.status(401).json({
+          success: false,
+          error: 'Unauthorized: Invalid x-ocr-api-key provided.'
+        });
+        return;
+      }
+
+      const {
+        studentId,
+        studentEmail,
+        subjectId,
+        title,
+        scannedContent,
+        sourceImageUrl,
+        tags = ['OCR', 'Handwritten', 'Auto-Ingested'],
+        autoProcessAI = true
+      } = req.body;
+
+      if (!scannedContent || (!studentId && !studentEmail)) {
+        res.status(400).json({
+          success: false,
+          error: 'Missing required parameters: scannedContent and (studentId or studentEmail) are required.'
+        });
+        return;
+      }
+
+      // Resolve student from ID or email
+      let targetStudent = db.users.find(u =>
+        u.id === studentId ||
+        (u.email && studentEmail && u.email.toLowerCase() === studentEmail.toLowerCase()) ||
+        (u.institutionalId && studentId && u.institutionalId.toLowerCase() === studentId.toLowerCase())
+      );
+
+      // If student doesn't exist, auto-provision student record
+      if (!targetStudent) {
+        const fallbackEmail = studentEmail || `${studentId || 'student'}@bmu.edu.in`;
+        const fallbackName = fallbackEmail.split('@')[0].replace(/\./g, ' ');
+        targetStudent = {
+          id: studentId || `student-${Date.now()}`,
+          name: fallbackName,
+          email: fallbackEmail,
+          username: fallbackEmail.split('@')[0],
+          password: `EduSync@${Date.now().toString().slice(-4)}`,
+          role: 'student',
+          gender: 'Not Specified',
+          institutionalId: studentId || `260${Math.floor(100 + Math.random() * 899)}`,
+          department: 'Department of Computer Science & Engineering',
+          program: 'B.Tech Computer Science and Engineering',
+          status: 'active',
+          enrolledSubjectIds: subjectId ? [subjectId] : db.subjects.map(s => s.id),
+          teachingSubjectIds: [],
+          gpa: 8.0
+        };
+        db.users.push(targetStudent);
+        saveUsersToDisk(db.users);
+      }
+
+      const finalSubjectId = subjectId || (targetStudent.enrolledSubjectIds?.[0]) || db.subjects[0]?.id || 'subj-cs301';
+      const cleanTitle = title || `OCR Scan - ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+
+      // Construct StudentNote
+      const newNote: StudentNote = {
+        id: `note-ocr-${Date.now()}`,
+        studentId: targetStudent.id,
+        subjectId: finalSubjectId,
+        title: cleanTitle,
+        content: scannedContent,
+        tags: Array.isArray(tags) ? tags : ['OCR', 'Handwritten'],
+        lastModified: new Date().toISOString(),
+        isPinned: false
+      };
+
+      // 2. Auto-Enhance note with Gemini AI Cognitive Scaffolding (if enabled)
+      if (autoProcessAI) {
+        try {
+          const summaryRes = await summarizeNoteAI(cleanTitle, scannedContent);
+          newNote.summary = summaryRes.summary;
+          newNote.keyTakeaways = summaryRes.keyTakeaways;
+
+          const flashcardsRes = await generateFlashcardsAI(cleanTitle, scannedContent);
+          if (Array.isArray(flashcardsRes) && flashcardsRes.length > 0) {
+            newNote.flashcards = flashcardsRes;
+          }
+        } catch (aiErr) {
+          console.warn('AI processing skipped or timed out during OCR ingestion:', aiErr);
+        }
+      }
+
+      db.notes.unshift(newNote);
+
+      res.status(201).json({
+        success: true,
+        message: 'OCR note successfully received, ingested, and processed by EduSync.',
+        note: newNote,
+        student: {
+          id: targetStudent.id,
+          name: targetStudent.name,
+          email: targetStudent.email
+        }
+      });
+    } catch (err: any) {
+      console.error('Error in OCR webhook ingestion:', err);
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // ==========================================
   // AI CLASS ANALYTICS (Teacher View)
   // ==========================================
 
@@ -1064,7 +1320,7 @@ async function startServer() {
       const assignments = db.assignments.filter(a => a.subjectId === subject.id);
 
       // Fetch student's recent notes for snippet grounding
-      const user = getCurrentUser();
+      const user = getCurrentUser(req);
       const studentNotes = db.notes.filter(n => n.studentId === user.id && n.subjectId === subject.id);
       const studentNotesSnippet = studentNotes.map(n => `Title: ${n.title}\nContent snippet: ${n.content.slice(0, 300)}`).join('\n---\n');
 
@@ -1076,7 +1332,8 @@ async function startServer() {
         resources,
         assignments,
         studentNotesSnippet,
-        requestedMode: req.body.mode || 'general'
+        requestedMode: req.body.mode || 'general',
+        learnerProfile: req.body.learnerProfile || user.learningProfile
       });
 
       res.json({
@@ -1089,11 +1346,66 @@ async function startServer() {
     }
   };
 
-  app.post('/api/ai/chat', handleAIChat);
-  app.post('/api/ai/study-assistant/chat', handleAIChat);
+  app.post('/api/ai/chat', aiRateLimiter.middleware, handleAIChat);
+  app.post('/api/ai/study-assistant/chat', aiRateLimiter.middleware, handleAIChat);
+
+  // AI Tutor — Pure Gemini LLM Chat
+  app.post('/api/tutor', aiRateLimiter.middleware, async (req, res) => {
+    try {
+      const { message, history = [] } = req.body;
+
+      if (!message || typeof message !== 'string') {
+        return res.status(400).json({ error: 'Message is required.' });
+      }
+
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (!apiKey) {
+        return res.status(400).json({
+          error: 'GEMINI_API_KEY is not configured. Please add your GEMINI_API_KEY in the .env file.'
+        });
+      }
+
+      const { GoogleGenAI } = await import('@google/genai');
+      const ai = new GoogleGenAI({ apiKey });
+
+      // Format chat history for Gemini API
+      const chatHistory = (Array.isArray(history) ? history : [])
+        .filter((h: any) => (h.text || h.content) && (h.sender || h.role))
+        .map((h: any) => ({
+          role: (h.sender === 'user' || h.role === 'user') ? 'user' : 'model',
+          parts: [{ text: h.text || h.content }]
+        }));
+
+      const result = await ai.models.generateContent({
+        model: 'gemini-3.6-flash',
+        contents: [
+          ...chatHistory,
+          { role: 'user', parts: [{ text: message }] }
+        ],
+        config: {
+          systemInstruction: `You are EduSync AI, an intelligent, friendly, and expert academic AI tutor embedded in the university platform.
+You assist across all subjects (Computer Science, Programming, Mathematics, Calculus, Mechanics, Thermodynamics, Environmental Studies, Engineering Ethics, and study techniques).
+Guidelines:
+1. Explain concepts clearly and step-by-step.
+2. Format all mathematical equations, formulas, and units in clean, readable text using standard unicode symbols (for example: x², θ, π, ΔT, O(log n), 1/2, √x, ≤, ≥, ±) rather than raw unrendered LaTeX markup (do NOT write raw LaTeX brackets like ^{} or \\frac{}).
+3. Use clean Markdown with headers, bullet points, and code blocks.`,
+          temperature: 0.7
+        }
+      });
+
+      const reply = result.text || 'No response generated from Gemini.';
+      return res.json({ reply });
+
+    } catch (err: any) {
+      console.error('Error in /api/tutor Gemini call:', err);
+      return res.status(500).json({
+        error: err?.message || 'Failed to generate response from Gemini API.'
+      });
+    }
+  });
 
   // Dedicated Subject Deep Research & YouTube Video Finder
-  app.post('/api/ai/research', async (req, res) => {
+  app.post('/api/ai/research', aiRateLimiter.middleware, async (req, res) => {
     try {
       const { prompt, subjectId } = req.body;
       const subject = db.subjects.find(s => s.id === subjectId) || db.subjects[0];
@@ -1106,7 +1418,7 @@ async function startServer() {
   });
 
   // Dedicated Topic / Prompt Quiz Generator
-  app.post('/api/ai/quiz/generate', async (req, res) => {
+  app.post('/api/ai/quiz/generate', aiRateLimiter.middleware, async (req, res) => {
     try {
       const { prompt, subjectId, count } = req.body;
       const subject = db.subjects.find(s => s.id === subjectId);
@@ -1118,12 +1430,14 @@ async function startServer() {
     }
   });
 
-  // 2. Note Summarization
+  // 2. Note Summarization (with Persona Adaptation)
   const handleSummarizeNote = async (req: express.Request, res: express.Response) => {
     try {
-      const { noteId, content, subjectId } = req.body;
+      const { noteId, content, subjectId, learnerProfile } = req.body;
+      const user = getCurrentUser(req);
       const subject = db.subjects.find(s => s.id === subjectId);
-      const result = await summarizeNoteAI(content, subject?.name);
+      const finalProfile = learnerProfile || user?.learningProfile;
+      const result = await summarizeNoteAI(content, subject?.name, finalProfile);
 
       // If noteId provided, update note in db
       if (noteId) {
@@ -1142,14 +1456,37 @@ async function startServer() {
     }
   };
 
-  app.post('/api/ai/summarize-note', handleSummarizeNote);
-  app.post('/api/ai/notes/summarize', handleSummarizeNote);
+  app.post('/api/ai/summarize-note', aiRateLimiter.middleware, handleSummarizeNote);
+  app.post('/api/ai/notes/summarize', aiRateLimiter.middleware, handleSummarizeNote);
 
-  // 3. Quick Flashcard Generation
+  // 2.5 Prompt-Based & Document-Fed AI Note Generator (with Persona Adaptation)
+  app.post('/api/ai/notes/generate', aiRateLimiter.middleware, async (req, res) => {
+    try {
+      const { prompt, subjectId, depth, attachedText, documentName, learnerProfile } = req.body;
+      const user = getCurrentUser(req);
+      const subject = db.subjects.find(s => s.id === subjectId) || db.subjects[0];
+      const result = await generateDetailedTopicNoteAI({
+        prompt,
+        subject,
+        depth: depth || 'exam_prep',
+        attachedText,
+        documentName,
+        learnerProfile: learnerProfile || user?.learningProfile
+      });
+      res.json(result);
+    } catch (err: any) {
+      console.error('Error in /api/ai/notes/generate:', err);
+      res.status(500).json({ error: 'Failed to generate comprehensive notes' });
+    }
+  });
+
+  // 3. Quick Flashcard Generation (with Persona Adaptation)
   const handleGenerateFlashcards = async (req: express.Request, res: express.Response) => {
     try {
-      const { noteId, content } = req.body;
-      const flashcards = await generateFlashcardsAI(content, 5);
+      const { noteId, content, learnerProfile } = req.body;
+      const user = getCurrentUser(req);
+      const finalProfile = learnerProfile || user?.learningProfile;
+      const flashcards = await generateFlashcardsAI(content, 5, finalProfile);
 
       if (noteId) {
         const note = db.notes.find(n => n.id === noteId);
@@ -1166,14 +1503,16 @@ async function startServer() {
     }
   };
 
-  app.post('/api/ai/generate-flashcards', handleGenerateFlashcards);
-  app.post('/api/ai/notes/flashcards', handleGenerateFlashcards);
+  app.post('/api/ai/generate-flashcards', aiRateLimiter.middleware, handleGenerateFlashcards);
+  app.post('/api/ai/notes/flashcards', aiRateLimiter.middleware, handleGenerateFlashcards);
 
-  // 4. Note-to-Quiz Bridge
+  // 4. Note-to-Quiz Bridge (with Persona Adaptation)
   const handleNoteToQuiz = async (req: express.Request, res: express.Response) => {
     try {
-      const { noteId, content, title } = req.body;
-      const quizData = await generateNoteQuizAI(content, title);
+      const { noteId, content, title, learnerProfile } = req.body;
+      const user = getCurrentUser(req);
+      const finalProfile = learnerProfile || user?.learningProfile;
+      const quizData = await generateNoteQuizAI(content, title, finalProfile);
 
       const generatedQuiz = {
         id: `quiz-${Date.now()}`,
@@ -1198,8 +1537,8 @@ async function startServer() {
     }
   };
 
-  app.post('/api/ai/note-to-quiz', handleNoteToQuiz);
-  app.post('/api/ai/notes/quiz', handleNoteToQuiz);
+  app.post('/api/ai/note-to-quiz', aiRateLimiter.middleware, handleNoteToQuiz);
+  app.post('/api/ai/notes/quiz', aiRateLimiter.middleware, handleNoteToQuiz);
 
   // 5. AI Class Diagnostics (Teacher Analytics)
   const handleClassDiagnostics = async (req: express.Request, res: express.Response) => {
@@ -1251,8 +1590,8 @@ async function startServer() {
     }
   };
 
-  app.post('/api/ai/class-diagnostics', handleClassDiagnostics);
-  app.post('/api/ai/analytics/diagnostics', handleClassDiagnostics);
+  app.post('/api/ai/class-diagnostics', aiRateLimiter.middleware, handleClassDiagnostics);
+  app.post('/api/ai/analytics/diagnostics', aiRateLimiter.middleware, handleClassDiagnostics);
 
   // 6. Teacher AI Syllabus & Timeline Generator
   const handleSyllabusGenerate = async (req: express.Request, res: express.Response) => {
@@ -1292,8 +1631,26 @@ async function startServer() {
     }
   };
 
-  app.post('/api/ai/generate-syllabus', handleSyllabusGenerate);
-  app.post('/api/ai/syllabus/generate', handleSyllabusGenerate);
+  app.post('/api/ai/generate-syllabus', aiRateLimiter.middleware, handleSyllabusGenerate);
+  app.post('/api/ai/syllabus/generate', aiRateLimiter.middleware, handleSyllabusGenerate);
+
+  // Global Safe Error Handling Middleware (Prevents internal stack trace leakage)
+  app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
+    if (err) {
+      if (err.type === 'entity.too.large') {
+        res.status(413).json({ error: 'Payload too large. Maximum allowed size is 2MB.' });
+        return;
+      }
+      if (err instanceof SyntaxError && 'body' in err) {
+        res.status(400).json({ error: 'Malformed JSON payload.' });
+        return;
+      }
+      console.error('Unhandled server error:', err);
+      res.status(500).json({ error: 'Internal server error.' });
+      return;
+    }
+    next();
+  });
 
   // ==========================================
   // VITE MIDDLEWARE SETUP

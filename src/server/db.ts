@@ -9,6 +9,9 @@ import {
   ClassAnalytics
 } from '../types';
 
+import fs from 'fs';
+import path from 'path';
+
 export interface InMemoryDatabase {
   users: User[];
   subjects: Subject[];
@@ -20,8 +23,48 @@ export interface InMemoryDatabase {
   analytics: Record<string, ClassAnalytics>;
 }
 
-export const db: InMemoryDatabase = {
-  users: [
+const USERS_FILE_PATH = path.resolve(process.cwd(), 'data', 'users.json');
+
+export function saveUsersToDisk(users: User[]) {
+  try {
+    const dir = path.dirname(USERS_FILE_PATH);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(USERS_FILE_PATH, JSON.stringify(users, null, 2), 'utf-8');
+  } catch (err) {
+    console.error('Error saving users to disk:', err);
+  }
+}
+
+export function loadUsersFromDisk(seed: User[]): User[] {
+  try {
+    const dir = path.dirname(USERS_FILE_PATH);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    if (fs.existsSync(USERS_FILE_PATH)) {
+      const content = fs.readFileSync(USERS_FILE_PATH, 'utf-8');
+      const parsed = JSON.parse(content);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        // Merge any new seed users if missing by id
+        const existingIds = new Set(parsed.map((u: any) => u.id));
+        const missingSeeds = seed.filter(s => !existingIds.has(s.id));
+        const merged = [...parsed, ...missingSeeds];
+        if (missingSeeds.length > 0) {
+          saveUsersToDisk(merged);
+        }
+        return merged;
+      }
+    }
+  } catch (err) {
+    console.error('Error loading users from disk:', err);
+  }
+  saveUsersToDisk(seed);
+  return seed;
+}
+
+const seedUsers: User[] = [
     // --- LEADERSHIP & REGISTRAR ---
     {
       id: 'admin-1',
@@ -445,8 +488,10 @@ export const db: InMemoryDatabase = {
       joinedDate: '2026-08-01',
       phone: '+91 98219 260115'
     }
-  ],
+  ];
 
+export const db: InMemoryDatabase = {
+  users: loadUsersFromDisk(seedUsers),
   subjects: [
     {
       id: 'subj-ess',
@@ -685,23 +730,23 @@ export const db: InMemoryDatabase = {
     {
       id: 'res-ess-1',
       subjectId: 'subj-ess',
-      title: 'Environmental Studies: Sustainable Energy & Ecology',
+      title: 'OpenStax: Environmental Science (Full Free Online Textbook)',
       category: 'Textbook',
       url: 'https://openstax.org/details/books/environmental-science',
-      author: 'OpenStax & Academic Editorial Board',
-      description: 'Comprehensive open-access reference text covering renewable solar transitions, carbon audits, and biodiversity conservation.',
-      keyTopics: ['Ecosystems', 'Solar PV Energy', 'Carbon Footprint'],
+      author: 'OpenStax & Rice University',
+      description: 'Complete peer-reviewed university textbook — read free online with full chapters on ecosystems, pollution, climate, biodiversity, and sustainability.',
+      keyTopics: ['Ecosystems', 'Climate Change', 'Biodiversity', 'Sustainability'],
       dateAdded: '2026-08-05'
     },
     {
       id: 'res-ess-2',
       subjectId: 'subj-ess',
-      title: 'Coursepack: Environmental Impact Assessment (EIA) Guidelines',
-      category: 'Lecture Notes',
-      url: 'https://nptel.ac.in/courses/120108004',
-      author: 'Dr. Sanmitra Burman (IIT/NPTEL Series)',
-      description: 'Step-by-step screening, baseline scoping, impact prediction matrices, and public hearing protocols.',
-      keyTopics: ['EIA Matrix', 'Environmental Audits', 'Mitigation Plan'],
+      title: 'IPCC AR5 Climate Change Synthesis Report — Summary for Policymakers (PDF, 3.3 MB)',
+      category: 'Research Paper',
+      url: 'https://www.ipcc.ch/site/assets/uploads/2018/02/AR5_SYR_FINAL_SPM.pdf',
+      author: 'Intergovernmental Panel on Climate Change (IPCC)',
+      description: 'Official United Nations climate science report PDF — covers greenhouse gas emissions, global warming projections, and mitigation pathways.',
+      keyTopics: ['Carbon Footprint', 'Global Warming', 'Climate Policy', 'Renewable Energy'],
       dateAdded: '2026-08-10'
     },
 
@@ -709,23 +754,23 @@ export const db: InMemoryDatabase = {
     {
       id: 'res-calc-1',
       subjectId: 'subj-calc',
-      title: 'MIT 18.02 Multivariable Calculus Coursepack & Lecture Series',
+      title: 'MIT OpenCourseWare 18.02SC — Multivariable Calculus (Full Course)',
       category: 'Textbook',
       url: 'https://ocw.mit.edu/courses/18-02sc-multivariable-calculus-fall-2010/',
-      author: 'MIT OpenCourseWare (Prof. Denis Auroux)',
-      description: 'Comprehensive curriculum for partial derivatives, Lagrange multipliers, double integrals, and Stokes/Green theorems.',
-      keyTopics: ['Lagrange Multipliers', 'Multiple Integrals', 'Vector Fields'],
+      author: 'Prof. Denis Auroux (MIT Mathematics)',
+      description: 'Complete MIT course with lecture videos, notes PDFs, problem sets, and exams — covers partial derivatives, multiple integrals, and vector calculus.',
+      keyTopics: ['Lagrange Multipliers', 'Multiple Integrals', 'Vector Fields', 'Stokes Theorem'],
       dateAdded: '2026-08-04'
     },
     {
       id: 'res-calc-2',
       subjectId: 'subj-calc',
-      title: 'Practice Problem Set: Lagrange Multipliers & Maxima-Minima',
-      category: 'Lab Manual',
-      url: 'https://tutorial.math.lamar.edu/Classes/CalcIII/LagrangeMultipliers.aspx',
-      author: 'Paul Dawkins (Paul\'s Online Math Notes)',
-      description: 'Step-by-step solved engineering optimization problems with constraint equations and Hessian classification.',
-      keyTopics: ['Lagrange Multipliers', 'Critical Points', 'Hessian Matrix'],
+      title: 'OpenStax: Calculus Volume 3 — Multivariable (Full Free Online Textbook)',
+      category: 'Lecture Notes',
+      url: 'https://openstax.org/details/books/calculus-volume-3',
+      author: 'Prof. Gilbert Strang & Edwin Herman (OpenStax)',
+      description: 'Complete 700+ page university textbook — read free online with interactive exercises, Lagrange multipliers, surface integrals, and Green/Stokes theorems.',
+      keyTopics: ['Lagrange Multipliers', 'Gradient Vectors', 'Triple Integrals', 'Coordinate Transforms'],
       dateAdded: '2026-08-12'
     },
 
@@ -733,49 +778,71 @@ export const db: InMemoryDatabase = {
     {
       id: 'res-eme-1',
       subjectId: 'subj-eme',
-      title: 'MIT 2.001 Mechanics of Materials & Thermodynamic Cycles',
+      title: 'MIT Unified Engineering — Thermodynamics & Power Cycles (Course Notes PDF, 63 MB)',
       category: 'Textbook',
-      url: 'https://ocw.mit.edu/courses/2-001-mechanics-materials-i-fall-2006/',
-      author: 'MIT OpenCourseWare (Dept. of Mechanical Engineering)',
-      description: 'Core course notes for stress-strain tensors, Mohr’s circle transformations, and Otto/Diesel thermodynamic efficiency.',
-      keyTopics: ['Thermodynamics', 'Stress-Strain', 'Mohr\'s Circle'],
+      url: 'https://web.mit.edu/16.unified/www/FALL/thermodynamics/notes/notes.pdf',
+      author: 'Prof. Z. S. Spakovszky (MIT Aero/Astro)',
+      description: 'Comprehensive 300+ page MIT course notes PDF — covers 1st/2nd laws, Otto/Diesel/Carnot cycles, entropy, P-v and T-s diagrams with derivations.',
+      keyTopics: ['Thermodynamics', 'Otto & Diesel Cycles', 'Entropy', 'Carnot Efficiency'],
       dateAdded: '2026-08-06'
+    },
+    {
+      id: 'res-eme-2',
+      subjectId: 'subj-eme',
+      title: 'Engineering LibreTexts — Mechanics of Materials & Stress Analysis (Full Bookshelf)',
+      category: 'Lecture Notes',
+      url: 'https://eng.libretexts.org/Bookshelves/Mechanical_Engineering',
+      author: 'LibreTexts Engineering Consortium',
+      description: 'Full open-access digital bookshelf — covers stress-strain tensors, Mohr\'s circle, beam bending, material failure criteria, and mechanism kinematics.',
+      keyTopics: ['Stress-Strain', 'Mohr\'s Circle', 'Beam Bending', 'Material Failure'],
+      dateAdded: '2026-08-11'
     },
 
     // --- ENG-ETH Resources ---
     {
       id: 'res-engeth-1',
       subjectId: 'subj-engeth',
-      title: 'National Academy of Engineering: Space Shuttle Challenger Case Study',
+      title: 'NASA Official: Report of the Presidential Commission on the Challenger Accident',
       category: 'Textbook',
-      url: 'https://onlineethics.org/cases/space-shuttle-challenger-case',
-      author: 'Online Ethics Center for Engineering & Science (NAE)',
-      description: 'In-depth case study analyzing the O-ring decision, whistleblowing dilemmas, and NSPE engineering responsibility.',
-      keyTopics: ['Whistleblowing', 'Challenger Disaster', 'NSPE Canon'],
+      url: 'https://history.nasa.gov/rogersrep/v1ch1.htm',
+      author: 'Presidential Rogers Commission / NASA History Office',
+      description: 'Full official NASA-hosted investigation report — covers O-ring failure analysis, Morton Thiokol decision chain, and engineering ethics lessons.',
+      keyTopics: ['Whistleblowing', 'Challenger Disaster', 'O-ring Failure', 'Public Safety'],
       dateAdded: '2026-08-08'
+    },
+    {
+      id: 'res-engeth-2',
+      subjectId: 'subj-engeth',
+      title: 'NSPE Code of Ethics for Engineers — Official Canons & Rules of Practice',
+      category: 'Lecture Notes',
+      url: 'https://www.nspe.org/resources/ethics/code-ethics',
+      author: 'National Society of Professional Engineers (NSPE)',
+      description: 'Official NSPE standards page — Fundamental Canons, Rules of Practice, and Professional Obligations regarding public safety and ethical governance.',
+      keyTopics: ['Public Safety', 'NSPE Canons', 'Conflict of Interest', 'Ethical Governance'],
+      dateAdded: '2026-08-15'
     },
 
     // --- CPC Resources ---
     {
       id: 'res-cpc-1',
       subjectId: 'subj-cpc',
-      title: 'C Reference & Standard Library Pointer Specification',
+      title: 'Beej\'s Guide to C Programming (Complete Textbook PDF, 1.5 MB)',
       category: 'Textbook',
-      url: 'https://en.cppreference.com/w/c/language/pointer',
-      author: 'CppReference / ANSI C Standard Committee',
-      description: 'Authoritative documentation on pointer arithmetic, dynamic memory allocation (malloc/free), structs, and memory models.',
-      keyTopics: ['Pointers', 'Dynamic Memory', 'Structs'],
+      url: 'https://beej.us/guide/bgc/pdf/bgc_usl_c_1.pdf',
+      author: 'Brian "Beej" Hall',
+      description: 'Beloved 300+ page C programming textbook PDF — covers variables, pointers, memory allocation, structs, file I/O, and the standard library with examples.',
+      keyTopics: ['Pointers', 'Dynamic Memory', 'Structs', 'Standard Library'],
       dateAdded: '2026-08-02'
     },
     {
       id: 'res-cpc-2',
       subjectId: 'subj-cpc',
-      title: 'Harvard CS50: Memory, Pointers, and Data Structures Guide',
+      title: 'Bell Labs: The C Reference Manual by Dennis M. Ritchie (Original PDF)',
       category: 'Lecture Notes',
-      url: 'https://cs50.harvard.edu/x/2024/weeks/4/',
-      author: 'Prof. David J. Malan (Harvard University)',
-      description: 'Comprehensive guide to stack vs heap memory layout, pointer dereferencing, Valgrind leak checking, and linked lists.',
-      keyTopics: ['Memory Layout', 'Heap Allocation', 'Linked Lists'],
+      url: 'https://www.bell-labs.com/usr/dmr/www/cman.pdf',
+      author: 'Dennis M. Ritchie (Bell Laboratories)',
+      description: 'The original C language reference manual by its creator — covers syntax, types, declarations, pointer semantics, and expressions.',
+      keyTopics: ['Memory Layout', 'Pointer Arithmetic', 'Type System', 'Language Semantics'],
       dateAdded: '2026-08-14'
     }
   ],

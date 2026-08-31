@@ -1,5 +1,16 @@
 export type UserRole = 'teacher' | 'student' | 'admin';
 
+export interface LearnerPersona {
+  learningStyle: 'visual' | 'step_by_step' | 'socratic_dialogue' | 'exam_focused';
+  targetGrade: 'A+' | 'A' | 'B' | 'competitive';
+  explanationTone: 'encouraging_mentor' | 'strict_coach' | 'practical_engineer';
+  preferredPace: 'accelerated' | 'steady' | 'thorough';
+  strengthsAndInterests?: string;
+  painPoints?: string;
+  questionnaireCompleted: boolean;
+  completedAt?: string;
+}
+
 export interface User {
   id: string;
   name: string;
@@ -10,8 +21,8 @@ export interface User {
   avatar?: string;
   institutionalId: string;
   department: string;
-  gender?: 'Male' | 'Female';
-  program?: 'CSE' | 'ECE' | 'ME';
+  gender?: 'Male' | 'Female' | 'Other' | string;
+  program?: string;
   enrolledSubjectIds: string[];
   teachingSubjectIds: string[];
   gpa?: number;
@@ -22,6 +33,7 @@ export interface User {
   joinedDate?: string;
   phone?: string;
   designation?: string;
+  learningProfile?: LearnerPersona;
 }
 
 export interface Subject {
@@ -106,6 +118,7 @@ export interface ReferenceResource {
   title: string;
   category: 'Textbook' | 'Lecture Notes' | 'Research Paper' | 'Video Guide' | 'Lab Manual';
   url: string;
+  archiveUrl?: string;
   author: string;
   description: string;
   keyTopics: string[];
@@ -258,6 +271,7 @@ export interface StudyChatMessage {
   recommendedVideos?: YouTubeVideoRecommendation[];
   practiceQuestions?: PracticeQuestionItem[];
   referencedMaterials?: string[];
+  referencedResources?: ReferenceResource[];
   groundingSources?: GroundingSourceItem[];
   quiz?: GeneratedQuiz;
   mode?: 'general' | 'research' | 'videos' | 'questions' | 'quiz';
@@ -271,7 +285,9 @@ export interface ChatMessage {
   recommendedVideos?: YouTubeVideoRecommendation[];
   practiceQuestions?: PracticeQuestionItem[];
   sources?: string[];
+  referencedResources?: ReferenceResource[];
   groundingSources?: GroundingSourceItem[];
   quiz?: GeneratedQuiz;
 }
+
 

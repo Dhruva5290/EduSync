@@ -30,6 +30,8 @@ interface HeaderProps {
   onToggleTheme?: () => void;
   isAuditing?: boolean;
   onExitAudit?: () => void;
+  activeTab?: string;
+  onOpenPersonalization?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -44,10 +46,13 @@ export const Header: React.FC<HeaderProps> = ({
   theme = 'dark',
   onToggleTheme,
   isAuditing = false,
-  onExitAudit
+  onExitAudit,
+  activeTab,
+  onOpenPersonalization
 }) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const activeSubject = subjects.find(s => s.id === activeSubjectId) || subjects[0];
+  const isTutorTab = activeTab === 'tutor';
 
   const toggleRole = () => {
     // Only admins have the authority to cycle between perspectives
@@ -66,15 +71,19 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-3">
               <h2 className="text-base sm:text-lg font-semibold text-white tracking-tight truncate max-w-xs sm:max-w-md">
-                {currentUser.role === 'admin' ? 'Academic Administration & Registrar' : (activeSubject?.name || 'Advanced Academic Course')}
+                {currentUser.role === 'admin'
+                  ? 'Academic Administration & Registrar'
+                  : isTutorTab
+                  ? 'AI Tutor'
+                  : (activeSubject?.name || 'Academic Course')}
               </h2>
               <span className="px-2 py-0.5 bg-slate-800 text-blue-400 text-[10px] font-mono rounded-sm border border-slate-700 shrink-0 font-medium">
-                {currentUser.role === 'admin' ? 'REGISTRAR-OPS' : `ID: ${activeSubject?.code || 'CRS-101'}`}
+                {currentUser.role === 'admin' ? 'REGISTRAR-OPS' : isTutorTab ? 'GEMINI-LLM' : `ID: ${activeSubject?.code || 'CRS-101'}`}
               </span>
             </div>
 
-            {/* Course Switcher (only for student or teacher) */}
-            {currentUser.role !== 'admin' && (
+            {/* Course Switcher (hidden on AI Tutor tab and for admin) */}
+            {currentUser.role !== 'admin' && !isTutorTab && (
               <div className="flex items-center gap-1.5 ml-1 sm:ml-2 pl-2 sm:pl-3 border-l border-slate-800">
                 <span className="hidden sm:inline text-[10px] uppercase font-bold tracking-wider text-slate-400">Course:</span>
                 <select
@@ -94,8 +103,29 @@ export const Header: React.FC<HeaderProps> = ({
             )}
           </div>
 
-          {/* Right Controls: Audit Return, Theme Toggle, AI Quota, User Profile */}
+          {/* Right Controls: Audit Return, Personalization Button, Theme Toggle, AI Quota, User Profile */}
           <div className="flex items-center gap-2 sm:gap-3">
+            {/* Highly Prevalent AI Notes & Learning Questionnaire Button */}
+            {currentUser.role === 'student' && onOpenPersonalization && (
+              <button
+                id="header-personalize-ai-btn"
+                onClick={onOpenPersonalization}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-bold transition-all shadow-md cursor-pointer ${
+                  currentUser.learningProfile?.questionnaireCompleted
+                    ? 'bg-purple-950 text-purple-200 border border-purple-700 hover:bg-purple-900 hover:border-purple-500'
+                    : 'bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 text-white hover:from-purple-500 hover:to-indigo-500 ring-2 ring-purple-500/50 animate-pulse'
+                }`}
+                title="Launch the AI Cognitive Tuning Questionnaire to personalize all study notes and AI tutoring"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                <span className="hidden md:inline">
+                  {currentUser.learningProfile?.questionnaireCompleted
+                    ? `✨ AI Persona: ${currentUser.learningProfile.learningStyle.replace('_', ' ').toUpperCase()} (${currentUser.learningProfile.targetGrade})`
+                    : '⚡ Personalize Notes Questionnaire'}
+                </span>
+                <span className="md:hidden">⚡ Notes AI</span>
+              </button>
+            )}
             {/* If Registrar is in Audit Mode, show Return Button */}
             {isAuditing && onExitAudit && (
               <button
@@ -139,10 +169,17 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
             )}
 
-            {/* Rate limit & security meter */}
-            <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-slate-950 text-slate-300 text-xs font-medium border border-slate-800">
-              <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />
-              <span className="text-[11px] font-mono text-slate-400">{rateLimitRemaining}/60 RPM</span>
+            {/* Security & System Meter */}
+            <div className="hidden lg:flex items-center gap-2 px-2.5 py-1 rounded-sm bg-slate-950 text-slate-300 text-xs font-medium border border-slate-800" title="Security Hardened: OWASP Defenses & RBAC Active">
+              <div className="flex items-center gap-1">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="text-[10px] font-mono text-emerald-400 font-bold uppercase tracking-wider">A+ Protected</span>
+              </div>
+              <span className="text-slate-700">|</span>
+              <div className="flex items-center gap-1">
+                <Zap className="w-3 h-3 text-blue-400" />
+                <span className="text-[10px] font-mono text-slate-400">{rateLimitRemaining} RPM</span>
+              </div>
             </div>
 
             {/* Log Out Button */}

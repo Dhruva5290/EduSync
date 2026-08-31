@@ -8,9 +8,9 @@ import {
   StudentNote,
   ReferenceResource,
   ClassAnalytics,
-  StudyChatMessage,
   Flashcard,
-  GeneratedQuiz
+  GeneratedQuiz,
+  LearnerPersona
 } from './types';
 import { Header } from './components/Header';
 import { AIClassAnalytics } from './components/TeacherDashboard/AIClassAnalytics';
@@ -20,8 +20,9 @@ import { StudentDirectoryHub } from './components/TeacherDashboard/StudentDirect
 import { AdminDashboard } from './components/AdminDashboard/AdminDashboard';
 import { ResourceFeed } from './components/StudentDashboard/ResourceFeed';
 import { SmartNotePlayground } from './components/StudentDashboard/SmartNotePlayground';
-import { StudyAssistantChat } from './components/AIStudyAssistant/StudyAssistantChat';
+import { TutorLayout } from './components/SmartAITutor/TutorLayout';
 import { InteractiveQuizModal } from './components/StudentDashboard/InteractiveQuizModal';
+import { LearnerPersonaModal } from './components/Personalization/LearnerPersonaModal';
 import { LoginScreen } from './components/LoginScreen';
 
 import {
@@ -69,6 +70,7 @@ export default function App() {
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [activeSubjectId, setActiveSubjectId] = useState<string>('subj-1');
   const [activeTab, setActiveTab] = useState<string>('overview');
+  const [showPersonaModal, setShowPersonaModal] = useState(false);
 
   // Theme synchronization with HTML root
   useEffect(() => {
@@ -101,9 +103,6 @@ export default function App() {
   const [allAssignments, setAllAssignments] = useState<Assignment[]>([]);
   const [allSubmissions, setAllSubmissions] = useState<Submission[]>([]);
 
-  // Chat Data
-  const [chatMessages, setChatMessages] = useState<StudyChatMessage[]>([]);
-  const [isSendingChat, setIsSendingChat] = useState<boolean>(false);
   const [activeQuizModal, setActiveQuizModal] = useState<GeneratedQuiz | null>(null);
 
   // Loading States
@@ -166,64 +165,26 @@ export default function App() {
   useEffect(() => {
     const initApp = async () => {
       setIsLoading(true);
-      const token = localStorage.getItem('edusync_token');
-      if (!token) {
-        setIsLoading(false);
-        setCurrentUser(null);
-        return;
-      }
+      // Clean start: always begin at the Login Screen on page load/refresh
+      setCurrentUser(null);
+      setAuthToken(null);
+      localStorage.removeItem('edusync_token');
 
       try {
-        // Fetch current user and all users
-        const authData = await safeFetchJson<{ authenticated: boolean; user: User; allUsers?: User[]; allDemoUsers?: User[] }>('/api/auth/me');
-
-        if (authData?.authenticated && authData.user) {
-          setCurrentUser(authData.user);
-          setAllUsers(authData.allUsers || authData.allDemoUsers || []);
-
-          const [allSubjData, userSubjData] = await Promise.all([
-            safeFetchJson<Subject[]>('/api/subjects/all'),
-            safeFetchJson<Subject[]>('/api/subjects')
-          ]);
-
-          if (allSubjData && allSubjData.length > 0) {
-            setAllSubjects(allSubjData);
-          }
-
-          if (userSubjData && userSubjData.length > 0) {
-            setSubjects(userSubjData);
-            setActiveSubjectId(userSubjData[0].id);
-          } else if (allSubjData && allSubjData.length > 0) {
-            setSubjects(allSubjData);
-            setActiveSubjectId(allSubjData[0].id);
-          }
-
-          if (authData.user.role === 'teacher') {
-            setActiveTab('analytics');
-          } else if (authData.user.role === 'admin') {
-            setActiveTab('overview');
-          } else {
-            setActiveTab('feed');
-          }
-
-          await fetchMasterData();
-        } else {
-          localStorage.removeItem('edusync_token');
-          setAuthToken(null);
-          setCurrentUser(null);
+        // Fetch all registered users list so LoginScreen and rosters have up-to-date data
+        const publicData = await safeFetchJson<{ users: User[] }>('/api/auth/public-users');
+        if (publicData?.users && Array.isArray(publicData.users)) {
+          setAllUsers(publicData.users);
         }
       } catch (err) {
-        console.error('Error loading initial session:', err);
-        localStorage.removeItem('edusync_token');
-        setAuthToken(null);
-        setCurrentUser(null);
+        console.error('Error initializing user roster:', err);
       } finally {
         setIsLoading(false);
       }
     };
 
     initApp();
-  }, [authToken]);
+  }, []);
 
   // Fetch subject-specific data whenever activeSubjectId changes
   useEffect(() => {
@@ -263,188 +224,6 @@ export default function App() {
         if (anaData) {
           setAnalytics(anaData);
         }
-
-        // Initialize Chat with Welcome Message for this Subject
-        const activeSubj = subjects.find(s => s.id === activeSubjectId) || allSubjects.find(s => s.id === activeSubjectId);
-        const subjCode = activeSubj?.code || 'CPC';
-        const subjName = activeSubj?.name || 'Curriculum';
-        
-        let initialVideos: any[] = [];
-        let initialQuestions: any[] = [];
-        
-        if (subjCode === 'ESS') {
-          initialVideos = [
-            {
-              title: 'Renewable Energy 101 & Solar PV Cell Efficiency',
-              url: 'https://www.youtube.com/watch?v=1kUE0BZtTRc',
-              searchQuery: 'Renewable Energy 101 National Geographic solar wind',
-              channelOrTopic: 'National Geographic',
-              duration: '03:17',
-              description: 'Overview of clean energy sources, solar photovoltaic conversion, and wind power generation systems.'
-            },
-            {
-              title: 'Ecosystem Ecology: Energy Flow & Carbon Cycles',
-              url: 'https://www.youtube.com/watch?v=7G3eIYSfg5o',
-              searchQuery: 'Ecosystem Ecology Links in the Chain Crash Course Ecology',
-              channelOrTopic: 'CrashCourse',
-              duration: '10:09',
-              description: 'Trophic energy pyramids, biogeochemical cycles, and ecosystem stability principles.'
-            }
-          ];
-          initialQuestions = [
-            {
-              question: 'What is the primary difference between EIA Screening and EIA Scoping?',
-              answer: 'Screening determines WHETHER an EIA is required based on statutory thresholds, whereas Scoping defines WHAT environmental parameters, spatial boundaries, and alternatives must be investigated.',
-              topic: 'EIA Methodology',
-              hint: 'One is a yes/no threshold filter; the other defines the boundary of study.'
-            }
-          ];
-        } else if (subjCode === 'CALC') {
-          initialVideos = [
-            {
-              title: 'The Essence of Calculus, Chapter 1: Visual Foundations',
-              url: 'https://www.youtube.com/watch?v=WUvTyaaNkzM',
-              searchQuery: 'Essence of calculus chapter 1 3Blue1Brown',
-              channelOrTopic: '3Blue1Brown',
-              duration: '17:04',
-              description: 'Visual geometric proof connecting area under curves, tangents, and fundamental theorem of calculus.'
-            },
-            {
-              title: 'Lagrange Multipliers with Constrained Optimization Visualized',
-              url: 'https://www.youtube.com/watch?v=9vKqVkMQHKk',
-              searchQuery: 'Lagrange multipliers multivariable calculus Khan Academy 3Blue1Brown',
-              channelOrTopic: 'Khan Academy / 3Blue1Brown',
-              duration: '08:42',
-              description: 'Geometric explanation of why contour gradients align (grad f = lambda grad g) at constrained extrema.'
-            }
-          ];
-          initialQuestions = [
-            {
-              question: 'Why must grad f = lambda * grad g at the constrained local extremum of f(x, y) subject to g(x, y) = c?',
-              answer: 'Because at the optimal point on the constraint curve, the level curves of f are tangent to g = c. If they crossed, you could increase f by moving along the curve.',
-              topic: 'Constrained Optimization',
-              hint: 'Consider the geometric alignment of gradient normal vectors.'
-            }
-          ];
-        } else if (subjCode === 'EME') {
-          initialVideos = [
-            {
-              title: 'Understanding Stress and Strain: Engineering Mechanics',
-              url: 'https://www.youtube.com/watch?v=aQf6Q8t1FQE',
-              searchQuery: 'Understanding Stress and Strain The Efficient Engineer',
-              channelOrTopic: 'The Efficient Engineer',
-              duration: '11:42',
-              description: 'Fundamental explanation of normal stress, shear stress, Hooke’s law, and tensile stress-strain curves.'
-            },
-            {
-              title: 'How Thermodynamic Engine Cycles Work (Otto & Diesel Cycles)',
-              url: 'https://www.youtube.com/watch?v=DZt5xU44IfQ',
-              searchQuery: 'How Diesel Engines Work Lesics Learn Engineering',
-              channelOrTopic: 'Lesics (Learn Engineering)',
-              duration: '08:12',
-              description: 'Detailed animation of four-stroke cycle, P-v and T-s thermodynamic diagrams, and fuel injection physics.'
-            }
-          ];
-          initialQuestions = [
-            {
-              question: 'For the same compression ratio and heat input, why does an ideal Otto cycle achieve higher thermal efficiency than a Diesel cycle?',
-              answer: 'In the Otto cycle, all heat addition occurs at constant volume (highest peak temperature and pressure), whereas in the Diesel cycle, heat addition occurs at constant pressure during expansion.',
-              topic: 'Thermodynamics',
-              hint: 'Compare heat addition processes: isochoric vs isobaric.'
-            }
-          ];
-        } else if (subjCode === 'ENG-ETH') {
-          initialVideos = [
-            {
-              title: 'Justice: What’s The Right Thing To Do? (Utilitarianism & Morality)',
-              url: 'https://www.youtube.com/watch?v=kBdfcR-8hEY',
-              searchQuery: 'Justice Episode 01 The Moral Side of Murder Harvard Sandel',
-              channelOrTopic: 'Harvard University',
-              duration: '54:56',
-              description: 'Seminal Harvard course lecture on moral reasoning, utilitarian trade-offs, and categorical ethical duties.'
-            },
-            {
-              title: 'Engineering Ethics: The Space Shuttle Challenger Disaster',
-              url: 'https://www.youtube.com/watch?v=0wI_y1t8Jps',
-              searchQuery: 'Engineering Ethics Space Shuttle Challenger Crash Course Engineering',
-              channelOrTopic: 'CrashCourse Engineering',
-              duration: '09:44',
-              description: 'Investigation into O-ring blow-by engineering warnings, managerial pressure, and ethical whistleblowing.'
-            }
-          ];
-          initialQuestions = [
-            {
-              question: 'Under the NSPE Code of Ethics, what is an engineer’s primary obligation when discovering a safety-critical defect?',
-              answer: 'Engineers must hold paramount the safety, health, and welfare of the public. If their judgment is overruled, they must notify their employer and, if unaddressed, appropriate regulatory authorities.',
-              topic: 'NSPE Fundamental Canons',
-              hint: 'Review Fundamental Canon 1.'
-            }
-          ];
-        } else {
-          // CPC
-          initialVideos = [
-            {
-              title: 'C Programming Tutorial for Beginners: Full Course',
-              url: 'https://www.youtube.com/watch?v=KJgsSFOSQv0',
-              searchQuery: 'C Programming Tutorial for Beginners freeCodeCamp',
-              channelOrTopic: 'freeCodeCamp.org',
-              duration: '3:46:15',
-              description: 'Comprehensive beginner-to-advanced curriculum covering variables, pointers, arrays, structs, and memory.'
-            },
-            {
-              title: 'Introduction to Linked Lists & Dynamic Data Structures in C',
-              url: 'https://www.youtube.com/watch?v=2ybLDQagr84',
-              searchQuery: 'Introduction to Linked List in C Neso Academy',
-              channelOrTopic: 'Neso Academy',
-              duration: '14:28',
-              description: 'Node struct declarations, self-referential structures, pointer manipulation, and dynamic list traversal.'
-            }
-          ];
-          initialQuestions = [
-            {
-              question: 'What happens when you dereference a freed pointer (dangling pointer) in C?',
-              answer: 'It results in Undefined Behavior (UB). The memory page may still contain stale data, be reallocated to another process, or trigger a SIGSEGV segmentation fault.',
-              topic: 'Memory Safety',
-              hint: 'Think about heap allocator memory ownership after free().'
-            }
-          ];
-        }
-
-        setChatMessages([
-          {
-            id: 'msg-welcome',
-            role: 'assistant',
-            content: `Hello! I am your **AI Subject Research & Curriculum Tutor** grounded in **${subjCode} (${subjName})**.\n\nI have real-time Google Search grounding enabled to research academic proofs, verify textbook concepts, recommend actual YouTube tutorials, provide practice problem sets, and generate interactive quizzes. What would you like to explore today?`,
-            timestamp: new Date().toISOString(),
-            practiceQuestions: initialQuestions,
-            recommendedVideos: initialVideos,
-            referencedMaterials: [
-              `${subjCode} Approved Coursepack & Syllabus`,
-              'University Academic Guidelines'
-            ],
-            quiz: {
-              id: `quiz-welcome-${Date.now()}`,
-              title: `Introductory Diagnostic: ${subjCode} Fundamentals`,
-              topic: subjName,
-              createdAt: new Date().toISOString(),
-              questions: [
-                {
-                  id: 'q-w-1',
-                  question: `Which fundamental principle is central to ${subjName} (${subjCode})?`,
-                  options: [
-                    'Adherence to mathematical invariants, physical conservation laws, and rigorous design constraints',
-                    'Operating without boundary conditions or safety protocols',
-                    'Arbitrary trial and error without verification',
-                    'Ignoring environmental and computational efficiency'
-                  ],
-                  correctIndex: 0,
-                  explanation: 'All engineering disciplines enforce strict conservation laws, deterministic invariants, and verified safety constraints.',
-                  topic: 'Foundations'
-                }
-              ]
-            }
-          }
-        ]);
       } catch (err) {
         console.error('Error loading subject records:', err);
       }
@@ -523,17 +302,50 @@ export default function App() {
     }
   };
 
-  const handleLoginSuccess = (user: User, token: string) => {
+  const handleLoginSuccess = async (user: User, token: string) => {
+    setIsLoading(true);
     setAuthToken(token);
     setCurrentUser(user);
-    if (user.role === 'teacher') {
-      setActiveTab('analytics');
-    } else if (user.role === 'admin') {
-      setActiveTab('overview');
-    } else {
-      setActiveTab('feed');
+
+    try {
+      // Fetch subjects and data for the logged-in user
+      const [allSubjData, userSubjData, authData] = await Promise.all([
+        safeFetchJson<Subject[]>('/api/subjects/all'),
+        safeFetchJson<Subject[]>('/api/subjects'),
+        safeFetchJson<{ allUsers?: User[]; allDemoUsers?: User[] }>('/api/auth/me')
+      ]);
+
+      if (authData?.allUsers && Array.isArray(authData.allUsers)) {
+        setAllUsers(authData.allUsers);
+      }
+
+      if (allSubjData && allSubjData.length > 0) {
+        setAllSubjects(allSubjData);
+      }
+
+      if (userSubjData && userSubjData.length > 0) {
+        setSubjects(userSubjData);
+        setActiveSubjectId(userSubjData[0].id);
+      } else if (allSubjData && allSubjData.length > 0) {
+        setSubjects(allSubjData);
+        setActiveSubjectId(allSubjData[0].id);
+      }
+
+      if (user.role === 'teacher') {
+        setActiveTab('analytics');
+      } else if (user.role === 'admin') {
+        setActiveTab('overview');
+      } else {
+        setActiveTab('feed');
+      }
+
+      await fetchMasterData();
+      showToast(`Welcome back, ${user.name}! Access granted to ${user.role.toUpperCase()} workspace.`, 'success');
+    } catch (err) {
+      console.error('Error hydrating user workspace after login:', err);
+    } finally {
+      setIsLoading(false);
     }
-    showToast(`Welcome back, ${user.name}! Access granted to ${user.role.toUpperCase()} workspace.`, 'success');
   };
 
   const handleLogout = () => {
@@ -746,11 +558,11 @@ export default function App() {
   };
 
   // 11. AI Summarize Note
-  const handleSummarizeNote = async (noteId: string, content: string) => {
+  const handleSummarizeNote = async (noteId: string, content: string, learnerProfile?: LearnerPersona) => {
     const res = await fetch('/api/ai/notes/summarize', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ noteId, content })
+      body: JSON.stringify({ noteId, content, learnerProfile: learnerProfile || currentUser?.learningProfile })
     });
     if (res.ok) {
       const data = await res.json();
@@ -761,11 +573,11 @@ export default function App() {
   };
 
   // 12. AI Generate Flashcards
-  const handleGenerateFlashcards = async (noteId: string, content: string): Promise<Flashcard[]> => {
+  const handleGenerateFlashcards = async (noteId: string, content: string, learnerProfile?: LearnerPersona): Promise<Flashcard[]> => {
     const res = await fetch('/api/ai/notes/flashcards', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ noteId, content })
+      body: JSON.stringify({ noteId, content, learnerProfile: learnerProfile || currentUser?.learningProfile })
     });
     if (res.ok) {
       const data = await res.json();
@@ -776,11 +588,11 @@ export default function App() {
   };
 
   // 13. AI Note-to-Quiz Bridge
-  const handleGenerateQuizFromNote = async (noteId: string, content: string, title: string): Promise<GeneratedQuiz> => {
+  const handleGenerateQuizFromNote = async (noteId: string, content: string, title: string, learnerProfile?: LearnerPersona): Promise<GeneratedQuiz> => {
     const res = await fetch('/api/ai/notes/quiz', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ noteId, content, title })
+      body: JSON.stringify({ noteId, content, title, learnerProfile: learnerProfile || currentUser?.learningProfile })
     });
     if (res.ok) {
       const data = await res.json();
@@ -790,7 +602,52 @@ export default function App() {
     throw new Error('Failed to generate quiz');
   };
 
-  // 14. Refresh AI Class Diagnostics
+  // 13.5 AI Generate Detailed Note from Topic Prompt / Document
+  const handleGenerateNoteFromPrompt = async (payload: { prompt: string; depth: string; attachedText?: string; documentName?: string; learnerProfile?: LearnerPersona }): Promise<StudentNote> => {
+    const res = await fetch('/api/ai/notes/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...payload,
+        subjectId: activeSubject.id,
+        learnerProfile: payload.learnerProfile || currentUser?.learningProfile
+      })
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      const newNote = await handleSaveNote({
+        subjectId: activeSubject.id,
+        title: data.title || `${activeSubject.code}: ${payload.prompt}`,
+        content: data.content,
+        tags: data.tags || [activeSubject.code, 'AI-Generated'],
+        summary: data.summary,
+        keyTakeaways: data.keyTakeaways,
+        isPinned: true
+      });
+      showToast(`AI note generated for ${payload.prompt}!`);
+      return newNote;
+    }
+    throw new Error('Failed to generate detailed note');
+  };
+
+  // 14. Save Student Personalized Learning Profile
+  const handleSaveLearningProfile = async (profile: LearnerPersona) => {
+    if (!currentUser) return;
+    const res = await fetch(`/api/students/${currentUser.id}/learning-profile`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ learningProfile: profile })
+    });
+    if (res.ok) {
+      setCurrentUser(prev => prev ? { ...prev, learningProfile: profile } : null);
+      setAllUsers(prev => prev.map(u => u.id === currentUser.id ? { ...u, learningProfile: profile } : u));
+    } else {
+      throw new Error('Failed to update learning persona');
+    }
+  };
+
+  // 15. Refresh AI Class Diagnostics
   const handleRefreshDiagnostics = async () => {
     setIsGeneratingDiagnostics(true);
     try {
@@ -809,64 +666,6 @@ export default function App() {
     } finally {
       setIsGeneratingDiagnostics(false);
     }
-  };
-
-  // 15. Send Chat to AI Study Assistant
-  const handleSendMessage = async (text: string, mode?: 'general' | 'research' | 'videos' | 'questions' | 'quiz') => {
-    const userMsg: StudyChatMessage = {
-      id: `msg-${Date.now()}`,
-      role: 'user',
-      content: text,
-      timestamp: new Date().toISOString(),
-      mode: mode || 'general'
-    };
-    setChatMessages(prev => [...prev, userMsg]);
-    setIsSendingChat(true);
-
-    try {
-      const res = await fetch('/api/ai/study-assistant/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          subjectId: activeSubject.id,
-          message: text,
-          mode: mode || 'general',
-          history: chatMessages.slice(-6)
-        })
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        const assistantMsg: StudyChatMessage = {
-          id: `msg-${Date.now() + 1}`,
-          role: 'assistant',
-          content: data.reply || data.response || 'Here is your subject analysis.',
-          timestamp: new Date().toISOString(),
-          recommendedVideos: data.recommendedVideos,
-          practiceQuestions: data.practiceQuestions,
-          referencedMaterials: data.sources || data.referencedMaterials,
-          groundingSources: data.groundingSources,
-          quiz: data.quiz,
-          mode: mode || 'general'
-        };
-        setChatMessages(prev => [...prev, assistantMsg]);
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsSendingChat(false);
-    }
-  };
-
-  const handleClearChat = () => {
-    setChatMessages([
-      {
-        id: `msg-reset-${Date.now()}`,
-        role: 'assistant',
-        content: `Study Assistant session cleared for **${activeSubject.code}**. Ready for your next research inquiry or quiz assessment!`,
-        timestamp: new Date().toISOString()
-      }
-    ]);
   };
 
   // Helper to re-fetch all users and current session
@@ -915,11 +714,12 @@ export default function App() {
 
   // Not logged in: Show Login Screen
   if (!currentUser) {
-    return <LoginScreen onLoginSuccess={handleLoginSuccess} />;
+    return <LoginScreen onLoginSuccess={handleLoginSuccess} allUsers={allUsers} />;
   }
 
   const isAdmin = currentUser.role === 'admin';
   const isTeacher = currentUser.role === 'teacher';
+  const isStudent = currentUser.role === 'student';
   const isAuditing = Boolean(auditAdmin && currentUser && currentUser.role !== 'admin');
 
   return (
@@ -1108,17 +908,44 @@ export default function App() {
               </button>
 
               <button
-                id="sidebar-tab-assistant"
-                onClick={() => { setActiveTab('assistant'); setMobileMenuOpen(false); }}
+                id="sidebar-tab-tutor"
+                onClick={() => { setActiveTab('tutor'); setMobileMenuOpen(false); }}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-sm text-xs font-semibold transition-colors text-left ${
-                  activeTab === 'assistant'
+                  activeTab === 'tutor'
                     ? 'bg-blue-600 text-white shadow-xs'
                     : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                 }`}
               >
-                <Sparkles className="w-4 h-4 shrink-0 text-blue-400" />
-                <span>AI Study Tutor</span>
+                <Sparkles className="w-4 h-4 shrink-0 text-indigo-400" />
+                <span>Smart AI Tutor</span>
               </button>
+
+              {/* Dedicated Questionnaire Sidebar Item */}
+              <div className="pt-2">
+                <button
+                  id="sidebar-persona-questionnaire-btn"
+                  onClick={() => { setShowPersonaModal(true); setMobileMenuOpen(false); }}
+                  className="w-full text-left p-3 rounded-lg bg-gradient-to-br from-indigo-950/90 via-purple-950/80 to-slate-950 border border-indigo-700/60 hover:border-indigo-400 shadow-md transition-all group cursor-pointer"
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[10px] uppercase font-mono font-bold text-indigo-300 flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-amber-300 group-hover:rotate-12 transition-transform" />
+                      AI Notes Tuning
+                    </span>
+                    <span className="text-[9px] px-1.5 py-0.2 rounded bg-indigo-900/90 text-indigo-200 border border-indigo-600 font-mono">
+                      {currentUser.learningProfile?.questionnaireCompleted ? 'Configured' : 'Setup'}
+                    </span>
+                  </div>
+                  <p className="text-xs font-bold text-white group-hover:text-indigo-200 transition-colors">
+                    {currentUser.learningProfile?.questionnaireCompleted
+                      ? `✨ ${currentUser.learningProfile.learningStyle.replace('_', ' ').toUpperCase()} (${currentUser.learningProfile.targetGrade})`
+                      : '⚡ Personalize All Notes'}
+                  </p>
+                  <p className="text-[10px] text-slate-400 mt-1 leading-snug">
+                    Launch 5-step cognitive tuning questionnaire
+                  </p>
+                </button>
+              </div>
             </>
           )}
 
@@ -1205,14 +1032,45 @@ export default function App() {
               onToggleTheme={toggleTheme}
               isAuditing={isAuditing}
               onExitAudit={handleReturnToAdmin}
+              activeTab={activeTab}
+              onOpenPersonalization={() => setShowPersonaModal(true)}
             />
           </div>
         </div>
 
         {/* Content Body */}
         <section className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 bg-[#090d16]">
-          {/* Top Enrolled Subjects Quick Switcher (for Student & Faculty) */}
-          {!isAdmin && subjects.length > 0 && (
+          {/* Prominent Personalization Callout Banner for Students */}
+          {isStudent && !currentUser?.learningProfile?.questionnaireCompleted && (
+            <div className="bg-gradient-to-r from-purple-900/90 via-indigo-900/90 to-slate-900 border border-purple-500/50 rounded-xl p-4 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-white animate-in fade-in duration-200">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-purple-600/30 border border-purple-400/40 rounded-lg shrink-0">
+                  <Sparkles className="w-5 h-5 text-amber-300 animate-pulse" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                    <span>Personalize All Your Study Notes & AI Assistant</span>
+                    <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-purple-500/20 text-purple-200 border border-purple-400/30">
+                      1-Min Tuning
+                    </span>
+                  </h3>
+                  <p className="text-xs text-slate-300 mt-0.5 leading-relaxed">
+                    Take the 5-step cognitive questionnaire to calibrate note derivations, visual diagrams, exam difficulty, and coaching style across all courses.
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setShowPersonaModal(true)}
+                className="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-lg text-xs font-bold shadow-md transition-all shrink-0 cursor-pointer flex items-center justify-center gap-2 transform hover:scale-105"
+              >
+                <span>Launch Questionnaire</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
+          {/* Top Enrolled Subjects Quick Switcher (for Student & Faculty - hidden on universal AI Tutor tab) */}
+          {!isAdmin && subjects.length > 0 && activeTab !== 'tutor' && (
             <div className="bg-slate-900/90 border border-slate-800 rounded-sm p-3 shadow-xs">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2.5">
                 <div className="flex items-center gap-2">
@@ -1338,7 +1196,6 @@ export default function App() {
                   allSubmissions={allSubmissions}
                   onSubmitAssignment={handleSubmitAssignment}
                   onNavigateToNotes={() => setActiveTab('notes')}
-                  onNavigateToAssistant={() => setActiveTab('assistant')}
                 />
               )}
 
@@ -1346,22 +1203,24 @@ export default function App() {
                 <SmartNotePlayground
                   activeSubject={activeSubject}
                   notes={notes}
+                  currentUser={currentUser}
+                  onOpenPersonalization={() => setShowPersonaModal(true)}
                   onSaveNote={handleSaveNote}
                   onDeleteNote={handleDeleteNote}
                   onSummarizeNote={handleSummarizeNote}
                   onGenerateFlashcards={handleGenerateFlashcards}
                   onGenerateQuizFromNote={handleGenerateQuizFromNote}
+                  onGenerateNoteFromPrompt={handleGenerateNoteFromPrompt}
                 />
               )}
 
-              {activeTab === 'assistant' && (
-                <StudyAssistantChat
+              {activeTab === 'tutor' && (
+                <TutorLayout
+                  currentUser={currentUser}
                   activeSubject={activeSubject}
-                  messages={chatMessages}
-                  onSendMessage={handleSendMessage}
-                  isSending={isSendingChat}
-                  onClearChat={handleClearChat}
-                  onLaunchQuiz={(quiz) => setActiveQuizModal(quiz)}
+                  timelines={timelines}
+                  assignments={assignments}
+                  onOpenPersonalization={() => setShowPersonaModal(true)}
                 />
               )}
             </div>
@@ -1374,6 +1233,18 @@ export default function App() {
         <InteractiveQuizModal
           quiz={activeQuizModal}
           onClose={() => setActiveQuizModal(null)}
+        />
+      )}
+
+      {/* Learner Persona Questionnaire Modal */}
+      {currentUser && (
+        <LearnerPersonaModal
+          isOpen={showPersonaModal}
+          onClose={() => setShowPersonaModal(false)}
+          currentProfile={currentUser.learningProfile}
+          studentName={currentUser.name}
+          onSave={handleSaveLearningProfile}
+          onShowToast={(msg, type) => showToast(msg, type || 'success')}
         />
       )}
 

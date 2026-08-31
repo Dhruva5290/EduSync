@@ -22,7 +22,8 @@ import {
   Check,
   Filter,
   ArrowRight,
-  BookMarked
+  BookMarked,
+  Globe
 } from 'lucide-react';
 
 interface ResourceFeedProps {
@@ -41,7 +42,6 @@ interface ResourceFeedProps {
   allSubmissions?: Submission[];
   onSubmitAssignment: (assignmentId: string, text: string, file: string) => Promise<void>;
   onNavigateToNotes?: () => void;
-  onNavigateToAssistant?: () => void;
 }
 
 export const ResourceFeed: React.FC<ResourceFeedProps> = ({
@@ -59,8 +59,7 @@ export const ResourceFeed: React.FC<ResourceFeedProps> = ({
   submissions,
   allSubmissions = [],
   onSubmitAssignment,
-  onNavigateToNotes,
-  onNavigateToAssistant
+  onNavigateToNotes
 }) => {
   const [viewMode, setViewMode] = useState<'overview' | 'active-subject' | 'all-assignments' | 'master-schedule' | 'library'>('overview');
   const [selectedSubjectFilter, setSelectedSubjectFilter] = useState<string>('all');
@@ -974,15 +973,48 @@ export const ResourceFeed: React.FC<ResourceFeedProps> = ({
                     <p className="text-xs text-slate-400">{res.description}</p>
                   </div>
 
-                  <a
-                    href={res.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center justify-center gap-1.5 text-xs font-semibold text-blue-400 hover:text-blue-300 pt-2 border-t border-slate-800"
-                  >
-                    <span>Open Reference Document</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
+                  <div className="pt-3 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2">
+                    <a
+                      href={res.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-500 px-3 py-1.5 rounded-sm transition-all shadow-xs"
+                    >
+                      {res.url.endsWith('.pdf') ? (
+                        <>
+                          <FileText className="w-3.5 h-3.5 text-white" />
+                          <span>Open PDF Document</span>
+                        </>
+                      ) : res.url.includes('openstax.org') ? (
+                        <>
+                          <BookOpen className="w-3.5 h-3.5 text-white" />
+                          <span>Read Free on OpenStax</span>
+                        </>
+                      ) : res.url.includes('ocw.mit.edu') ? (
+                        <>
+                          <GraduationCap className="w-3.5 h-3.5 text-white" />
+                          <span>Explore MIT OCW Course</span>
+                        </>
+                      ) : (
+                        <>
+                          <Globe className="w-3.5 h-3.5 text-white" />
+                          <span>Access Full Reference</span>
+                        </>
+                      )}
+                      <ExternalLink className="w-3 h-3 ml-0.5" />
+                    </a>
+
+                    <a
+                      href={`https://scholar.google.com/scholar?q=${encodeURIComponent(res.title)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-xs font-medium text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 px-2.5 py-1.5 rounded-sm transition-all"
+                      title="Search Academic Papers on Google Scholar"
+                    >
+                      <span>Google Scholar</span>
+                      <ExternalLink className="w-2.5 h-2.5" />
+                    </a>
+                  </div>
                 </div>
               );
             })}

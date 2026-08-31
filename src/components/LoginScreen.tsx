@@ -19,15 +19,37 @@ import {
 
 interface LoginScreenProps {
   onLoginSuccess: (user: User, token: string) => void;
+  allUsers?: User[];
 }
 
-export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
+export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, allUsers: initialUsers }) => {
   const [selectedRole, setSelectedRole] = useState<UserRole>('student');
   const [identifier, setIdentifier] = useState('student.dhruva');
   const [password, setPassword] = useState('EduSync@260101');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [registeredUsers, setRegisteredUsers] = useState<User[]>(initialUsers || []);
+
+  // Fetch updated registered users list from server
+  React.useEffect(() => {
+    fetch('/api/auth/public-users')
+      .then(res => res.json())
+      .then(data => {
+        if (data?.users && Array.isArray(data.users)) {
+          setRegisteredUsers(data.users);
+        }
+      })
+      .catch(err => console.error('Failed to load registered users for login:', err));
+  }, []);
+
+  // Select any registered user from roster
+  const handleSelectUser = (user: User) => {
+    setSelectedRole(user.role);
+    setIdentifier(user.username || user.institutionalId || user.email);
+    setPassword(user.password || (user.role === 'admin' ? 'Dean@BMU2026!' : user.role === 'teacher' ? 'Teacher@ESS26' : 'EduSync@260101'));
+    setErrorMessage(null);
+  };
 
   // Quick preset loader
   const handleSelectRolePreset = (role: UserRole) => {
@@ -257,7 +279,10 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                   <KeyRound className="w-3.5 h-3.5 text-purple-400" />
-                  Hackathon One-Click Credentials
+                  Instant Role Credentials
+                </span>
+                <span className="text-[10px] text-slate-500 font-mono">
+                  {registeredUsers.length} Users Stored
                 </span>
               </div>
 
@@ -266,7 +291,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
                   type="button"
                   onClick={() => handleSelectRolePreset('student')}
                   className={`text-[11px] px-2.5 py-1.5 rounded-lg border font-mono transition-colors ${
-                    selectedRole === 'student'
+                    selectedRole === 'student' && identifier === 'student.dhruva'
                       ? 'bg-blue-950 border-blue-700 text-blue-300'
                       : 'bg-slate-950 border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-slate-200'
                   }`}
@@ -278,7 +303,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
                   type="button"
                   onClick={() => handleSelectRolePreset('teacher')}
                   className={`text-[11px] px-2.5 py-1.5 rounded-lg border font-mono transition-colors ${
-                    selectedRole === 'teacher'
+                    selectedRole === 'teacher' && identifier === 'prof.sanmitra'
                       ? 'bg-emerald-950 border-emerald-700 text-emerald-300'
                       : 'bg-slate-950 border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-slate-200'
                   }`}
@@ -290,7 +315,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
                   type="button"
                   onClick={() => handleSelectRolePreset('admin')}
                   className={`text-[11px] px-2.5 py-1.5 rounded-lg border font-mono transition-colors ${
-                    selectedRole === 'admin'
+                    selectedRole === 'admin' && identifier === 'dean.maneek'
                       ? 'bg-purple-950 border-purple-700 text-purple-300'
                       : 'bg-slate-950 border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-slate-200'
                   }`}
@@ -298,6 +323,46 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
                   Dean: Dr. Maneek Singh
                 </button>
               </div>
+
+              {/* Roster of Registered Users Dropdown / Quick Selector */}
+              {registeredUsers.length > 0 && (
+                <div className="pt-2">
+                  <label className="block text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1.5">
+                    Select From All Registered Users ({registeredUsers.length}):
+                  </label>
+                  <select
+                    value={registeredUsers.find(u => u.username === identifier || u.institutionalId === identifier || u.email === identifier)?.id || ''}
+                    onChange={(e) => {
+                      const u = registeredUsers.find(user => user.id === e.target.value);
+                      if (u) handleSelectUser(u);
+                    }}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-purple-500 font-mono"
+                  >
+                    <option value="">-- Choose Registered User ({registeredUsers.length} available) --</option>
+                    <optgroup label="Newly Registered & Custom Users">
+                      {registeredUsers.filter(u => !['admin-1', 'admin-2', 'teacher-1', 'teacher-2', 'teacher-3', 'teacher-4', 'teacher-5', 'student-1', 'student-2'].includes(u.id)).map(u => (
+                        <option key={u.id} value={u.id}>
+                          ⭐ [{u.role.toUpperCase()}] {u.name} ({u.institutionalId || u.username}) · Pass: {u.password || 'EduSync@260101'}
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="Default Student Roster">
+                      {registeredUsers.filter(u => u.role === 'student').map(u => (
+                        <option key={u.id} value={u.id}>
+                          [STUDENT] {u.name} ({u.institutionalId})
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="Faculty & Deans">
+                      {registeredUsers.filter(u => u.role !== 'student').map(u => (
+                        <option key={u.id} value={u.id}>
+                          [{u.role.toUpperCase()}] {u.name}
+                        </option>
+                      ))}
+                    </optgroup>
+                  </select>
+                </div>
+              )}
             </div>
 
             {/* Governance Policy Footer in Card */}

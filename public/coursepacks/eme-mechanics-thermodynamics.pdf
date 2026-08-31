@@ -1,0 +1,115 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 3 0 R >>
+endobj
+2 0 obj
+<< /Type /Outlines /Count 0 >>
+endobj
+3 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 3 0 R /MediaBox [0 0 612 792] /Contents 7 0 R /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /Name /F1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /Name /F2 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+7 0 obj
+<< /Length 1699 >>
+stream
+BT
+/F2 18 Tf
+50 750 Td
+(Mechanical Engineering: Stress Tensors, Mohrs Circle & Power Cycles) Tj
+ET
+BT
+/F1 11 Tf
+50 725 Td
+(Subject: EME - Elements of Mechanical Engineering | Author: MIT Mechanical Dept / EduSync Engineering Board) Tj
+ET
+BT
+/F1 9 Tf
+50 710 Td
+(EduSync Smart Academic Curriculum & Research Series | Official Coursepack) Tj
+ET
+BT
+/F1 10 Tf
+50 690 Td
+(-------------------------------------------------------------------------------------------------------------------) Tj
+ET
+BT
+/F2 13 Tf
+50 665 Td
+(1. Stress Transformation & Mohrs Circle) Tj
+ET
+BT
+/F1 10 Tf
+50 647 Td
+(State of 2D plane stress is governed by normal stresses \(sigma_x, sigma_y\) and shear stress \(tau_xy\).) Tj
+ET
+BT
+/F1 10 Tf
+50 631 Td
+(Mohrs circle graphically represents principal stresses \(sigma_1, sigma_2\) and max shear \(tau_max\).) Tj
+ET
+BT
+/F1 10 Tf
+50 615 Td
+(Principal planes experience zero shear stress and maximum tensile/compressive normal loads.) Tj
+ET
+BT
+/F2 13 Tf
+50 587 Td
+(2. Applied Thermodynamics & Air Standard Cycles) Tj
+ET
+BT
+/F1 10 Tf
+50 569 Td
+(First Law establishes conservation of energy \(dQ = dU + dW\); Second Law governs entropy growth.) Tj
+ET
+BT
+/F1 10 Tf
+50 553 Td
+(Otto Cycle \(constant volume heat addition\) models spark-ignition internal combustion engines.) Tj
+ET
+BT
+/F1 10 Tf
+50 537 Td
+(Diesel Cycle \(constant pressure heat addition\) achieves higher compression ratios.) Tj
+ET
+BT
+/F2 13 Tf
+50 509 Td
+(3. Mechanism Kinematics & Linkages) Tj
+ET
+BT
+/F1 10 Tf
+50 491 Td
+(Grashofs Law determines whether a four-bar linkage has at least one continuously rotating crank.) Tj
+ET
+BT
+/F1 10 Tf
+50 475 Td
+(Degree of freedom \(mobility\) is computed using Kutzbach criterion.) Tj
+ET
+
+endstream
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000104 00000 n 
+0000000161 00000 n 
+0000000297 00000 n 
+0000000404 00000 n 
+0000000516 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R >>
+startxref
+2267
+%%EOF

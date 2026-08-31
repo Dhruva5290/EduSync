@@ -1,0 +1,115 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 3 0 R >>
+endobj
+2 0 obj
+<< /Type /Outlines /Count 0 >>
+endobj
+3 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 3 0 R /MediaBox [0 0 612 792] /Contents 7 0 R /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /Name /F1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /Name /F2 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+7 0 obj
+<< /Length 1708 >>
+stream
+BT
+/F2 18 Tf
+50 750 Td
+(Multivariable Calculus: Lagrange Multipliers & Multiple Integrals) Tj
+ET
+BT
+/F1 11 Tf
+50 725 Td
+(Subject: CALC - Multivariable Calculus & Differential Equations | Author: Prof. Denis Auroux / Gilbert Strang / EduSync Faculty) Tj
+ET
+BT
+/F1 9 Tf
+50 710 Td
+(EduSync Smart Academic Curriculum & Research Series | Official Coursepack) Tj
+ET
+BT
+/F1 10 Tf
+50 690 Td
+(-------------------------------------------------------------------------------------------------------------------) Tj
+ET
+BT
+/F2 13 Tf
+50 665 Td
+(1. Constrained Optimization via Lagrange Multipliers) Tj
+ET
+BT
+/F1 10 Tf
+50 647 Td
+(To optimize f\(x, y, z\) subject to constraint g\(x, y, z\) = k, set grad\(f\) = lambda * grad\(g\).) Tj
+ET
+BT
+/F1 10 Tf
+50 631 Td
+(The scalar lambda represents the Lagrange multiplier \(marginal rate of change\).) Tj
+ET
+BT
+/F1 10 Tf
+50 615 Td
+(Gradient vector points in direction of greatest instantaneous rate of increase.) Tj
+ET
+BT
+/F2 13 Tf
+50 587 Td
+(2. Double & Triple Integration Transformations) Tj
+ET
+BT
+/F1 10 Tf
+50 569 Td
+(Cartesian double integrals over region R transform into Polar coordinates: dx dy = r dr dtheta.) Tj
+ET
+BT
+/F1 10 Tf
+50 553 Td
+(Cylindrical coordinates: dV = r dr dtheta dz; Spherical coordinates: dV = rho^2 sin\(phi\) drho dphi dtheta.) Tj
+ET
+BT
+/F1 10 Tf
+50 537 Td
+(Fubinis Theorem permits swapping integration bounds over continuous bounded domains.) Tj
+ET
+BT
+/F2 13 Tf
+50 509 Td
+(3. Vector Calculus & Surface Flux) Tj
+ET
+BT
+/F1 10 Tf
+50 491 Td
+(Greens Theorem converts boundary line integrals into double area integrals.) Tj
+ET
+BT
+/F1 10 Tf
+50 475 Td
+(Stokes Theorem equates the circulation of a vector field along a curve to the surface curl flux.) Tj
+ET
+
+endstream
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000104 00000 n 
+0000000161 00000 n 
+0000000297 00000 n 
+0000000404 00000 n 
+0000000516 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R >>
+startxref
+2276
+%%EOF

@@ -1,0 +1,221 @@
+{
+  "project_name": "EduSync",
+  "version": "1.0.0",
+  "last_updated": "2026-08-31T00:12:00.000Z",
+  "architecture": {
+    "frontend": "React 19 (SPA) + Tailwind CSS v4 + Vite 6 + Lucide Icons + Motion",
+    "backend": "Node.js + Express 4 + TypeScript (tsx / esbuild) + Vite Middleware",
+    "ai_providers": ["@google/genai (Gemini 2.5 Flash)", "Local Institutional Engineering Corpus Engine"],
+    "security": "Helmet-grade HTTP Headers, Recursive XSS/Prototype Pollution Sanitizer, Tiered Rate Limiters, Bearer Token RBAC"
+  },
+  "database": {
+    "type": "In-Memory Database + Synchronous Disk-Backed JSON Persistence",
+    "disk_path": "data/users.json",
+    "schema_file": "src/types.ts",
+    "db_service": "src/server/db.ts",
+    "entities": [
+      "User",
+      "Subject",
+      "TimelineItem",
+      "ReferenceResource",
+      "Assignment",
+      "Submission",
+      "StudentNote",
+      "ClassAnalytics",
+      "Flashcard",
+      "QuizQuestion",
+      "GeneratedQuiz"
+    ]
+  },
+  "api_endpoints": [
+    {
+      "route": "POST /api/auth/login",
+      "file": "server.ts",
+      "auth": "Public / Rate-limited",
+      "description": "Authenticates student, faculty, or admin and returns Base64 bearer token"
+    },
+    {
+      "route": "GET /api/auth/public-users",
+      "file": "server.ts",
+      "auth": "Public",
+      "description": "Returns list of all registered users for quick credential selection on login"
+    },
+    {
+      "route": "GET /api/auth/me",
+      "file": "server.ts",
+      "auth": "Bearer Token Optional",
+      "description": "Returns current session user and full user directory"
+    },
+    {
+      "route": "POST /api/auth/switch-user",
+      "file": "server.ts",
+      "auth": "Admin / Dean Bearer Token",
+      "description": "Switches active viewpoint to audit student or faculty workspace"
+    },
+    {
+      "route": "GET /api/users",
+      "file": "server.ts",
+      "auth": "Public / Filterable",
+      "description": "Fetches users filtered by role, department, or search query"
+    },
+    {
+      "route": "POST /api/users",
+      "file": "server.ts",
+      "auth": "Admin / Registrar",
+      "description": "Registers new student or faculty and auto-saves to data/users.json"
+    },
+    {
+      "route": "PUT /api/users/:id",
+      "file": "server.ts",
+      "auth": "Admin / User Self",
+      "description": "Updates profile details and auto-saves to disk"
+    },
+    {
+      "route": "DELETE /api/users/:id",
+      "file": "server.ts",
+      "auth": "Admin Only",
+      "description": "Unregisters user and cleans up class enrollment counts"
+    },
+    {
+      "route": "GET /api/subjects",
+      "file": "server.ts",
+      "auth": "Role-isolated",
+      "description": "Returns enrolled subjects for student, teaching subjects for faculty, all for admin"
+    },
+    {
+      "route": "POST /api/subjects",
+      "file": "server.ts",
+      "auth": "Teacher / Admin",
+      "description": "Creates a new academic course with credits and syllabus topics"
+    },
+    {
+      "route": "POST /api/subjects/:id/enroll",
+      "file": "server.ts",
+      "auth": "Admin / Teacher",
+      "description": "Enrolls students into a course and updates counters"
+    },
+    {
+      "route": "GET /api/timelines/:subjectId",
+      "file": "server.ts",
+      "auth": "General API",
+      "description": "Fetches schedule milestones, lectures, exams, and reference resources"
+    },
+    {
+      "route": "POST /api/timelines",
+      "file": "server.ts",
+      "auth": "Teacher Only",
+      "description": "Publishes a new lecture, exam, or practical milestone"
+    },
+    {
+      "route": "GET /api/assignments/:subjectId",
+      "file": "server.ts",
+      "auth": "General API",
+      "description": "Fetches assignments and problem sets for a course"
+    },
+    {
+      "route": "POST /api/assignments",
+      "file": "server.ts",
+      "auth": "Teacher Only",
+      "description": "Creates problem set with rubric items and due dates"
+    },
+    {
+      "route": "GET /api/submissions/:subjectId",
+      "file": "server.ts",
+      "auth": "Isolated (Student sees self, Teacher sees all)",
+      "description": "Fetches assignment submissions"
+    },
+    {
+      "route": "POST /api/submissions",
+      "file": "server.ts",
+      "auth": "Student",
+      "description": "Submits homework solution text or attachment"
+    },
+    {
+      "route": "POST /api/submissions/:id/grade",
+      "file": "server.ts",
+      "auth": "Teacher Only",
+      "description": "Grades student submission with points and feedback note"
+    },
+    {
+      "route": "GET /api/notes/:subjectId",
+      "file": "server.ts",
+      "auth": "Student Isolated",
+      "description": "Fetches student personal notes for active subject"
+    },
+    {
+      "route": "POST /api/notes",
+      "file": "server.ts",
+      "auth": "Student",
+      "description": "Creates or updates markdown note"
+    },
+    {
+      "route": "DELETE /api/notes/:id",
+      "file": "server.ts",
+      "auth": "Student",
+      "description": "Deletes student note"
+    },
+    {
+      "route": "POST /api/tutor",
+      "file": "src/api/tutor/route.js & server.ts",
+      "auth": "AI Rate-Limited",
+      "description": "Context-aware Socratic AI Tutor with follow-up reflection chips and resources"
+    },
+    {
+      "route": "POST /api/ai/chat",
+      "file": "server.ts -> src/server/gemini.ts",
+      "auth": "AI Rate-Limited",
+      "description": "Multi-modal RAG study assistant with practice questions and YouTube grounding"
+    },
+    {
+      "route": "POST /api/ai/research",
+      "file": "server.ts -> src/server/gemini.ts",
+      "auth": "AI Rate-Limited",
+      "description": "Deep topic research and verified academic video finder"
+    },
+    {
+      "route": "POST /api/ai/notes/summarize",
+      "file": "server.ts -> src/server/gemini.ts",
+      "auth": "AI Rate-Limited",
+      "description": "Summarizes note text into executive digest and key takeaways"
+    },
+    {
+      "route": "POST /api/ai/notes/flashcards",
+      "file": "server.ts -> src/server/gemini.ts",
+      "auth": "AI Rate-Limited",
+      "description": "Extracts Q&A flashcard study deck from notes"
+    },
+    {
+      "route": "POST /api/ai/notes/quiz",
+      "file": "server.ts -> src/server/gemini.ts",
+      "auth": "AI Rate-Limited",
+      "description": "Generates interactive 4-option practice quiz from notes"
+    },
+    {
+      "route": "POST /api/ai/class-diagnostics",
+      "file": "server.ts -> src/server/gemini.ts",
+      "auth": "AI Rate-Limited",
+      "description": "Generates class performance trends, weak topic alerts, and action items"
+    },
+    {
+      "route": "GET /api/security/audit",
+      "file": "server.ts -> src/server/security.ts",
+      "auth": "Public",
+      "description": "Executes 14-point automated security self-audit test"
+    }
+  ],
+  "notes_flow": "Desktop/User Input -> SmartNotePlayground.tsx -> POST /api/notes -> inputSanitizerMiddleware (security.ts) -> db.notes in-memory upsert -> Optional AI Summarize/Quiz/Flashcard trigger (gemini.ts) -> Note hydration via GET /api/notes/:subjectId -> UI Render in SmartNotePlayground and ResourceFeed",
+  "student_profiles": "User entity with role='student', institutionalId, program, academicYear, gpa, status, and enrolledSubjectIds. Managed via AdminDashboard.tsx, persisted in data/users.json, accessed via /api/users and /api/auth/me.",
+  "conversations": "Turn-by-turn history arrays (StudyChatMessage & ChatMessage). Client-side session state in ChatInterface.jsx and StudyAssistantChat.tsx with invisible context injection (currentSubject, upcomingExam, pendingAssignments) passed to POST /api/tutor and POST /api/ai/chat.",
+  "bot_system": "Socratic AI Tutor in src/api/tutor/route.js and RAG Study Assistant in src/server/gemini.ts. Enforces no-direct-answer Socratic guardrails, LaTeX mathematical rendering, followUpQuestions prompt chips, and grounding with YouTube videos and textbook chapters from knowledgeBase.ts.",
+  "ai_integration_points": [
+    "Doubt Extraction & Misconception Clustering in class diagnostics (gemini.ts)",
+    "External OCR Note Scanning & Batch Ingestion Webhook (/api/notes)",
+    "Automated Assignment Grading & Rubric Scoring Helper (/api/submissions/:id/grade)",
+    "Personalized Remedial Learning Path Generator in SmartAITutor (ResourceSidebar.jsx)"
+  ],
+  "todo": [
+    "TODO: Connect external OCR mobile app webhook to POST /api/notes for automated handwriting digitization",
+    "TODO: Add PostgreSQL / Supabase adapter in src/server/db.ts to replace local JSON disk storage for distributed production deployments",
+    "TODO: Implement WebSocket channel for real-time collaborative note editing between student study groups"
+  ]
+}
