@@ -723,10 +723,18 @@ export default function App() {
   const isAuditing = Boolean(auditAdmin && currentUser && currentUser.role !== 'admin');
 
   return (
-    <div className="flex h-screen w-full bg-[#090d16] text-slate-100 font-sans overflow-hidden transition-colors">
+    <div className="flex h-screen w-screen max-w-full bg-[#090d16] text-slate-100 font-sans overflow-hidden transition-colors">
+      {/* Mobile Drawer Backdrop */}
+      {mobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 z-40 md:hidden backdrop-blur-xs"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+
       {/* 1. Geometric Balance Dark Sidebar */}
-      <aside className={`w-64 bg-slate-950 text-white flex flex-col border-r border-slate-800 shrink-0 z-30 transition-all ${
-        mobileMenuOpen ? 'fixed inset-y-0 left-0 shadow-2xl' : 'hidden md:flex'
+      <aside className={`w-64 bg-slate-950 text-white flex flex-col border-r border-slate-800 shrink-0 transition-all ${
+        mobileMenuOpen ? 'fixed inset-y-0 left-0 shadow-2xl z-50' : 'hidden md:flex z-30'
       }`}>
         {/* Logo & Brand */}
         <div className="p-5 flex items-center justify-between border-b border-slate-800/80">
@@ -745,7 +753,7 @@ export default function App() {
           </div>
           <button
             onClick={() => setMobileMenuOpen(false)}
-            className="md:hidden text-slate-400 hover:text-white p-1"
+            className="md:hidden text-slate-400 hover:text-white p-1 cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -850,7 +858,7 @@ export default function App() {
                 }`}
               >
                 <Users className="w-4 h-4 shrink-0 text-emerald-400" />
-                <span>Student Roster & Classes</span>
+                <span>Students Roster ({allUsers.filter(u => u.role === 'student').length})</span>
               </button>
 
               <button
@@ -862,8 +870,8 @@ export default function App() {
                     : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                 }`}
               >
-                <Calendar className="w-4 h-4 shrink-0 text-slate-400" />
-                <span>Timeline & References</span>
+                <Calendar className="w-4 h-4 shrink-0 text-amber-400" />
+                <span>Syllabus & Milestones</span>
               </button>
 
               <button
@@ -875,8 +883,8 @@ export default function App() {
                     : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                 }`}
               >
-                <FileText className="w-4 h-4 shrink-0 text-slate-400" />
-                <span>Assignments Hub</span>
+                <FileCheck className="w-4 h-4 shrink-0 text-emerald-400" />
+                <span>Assignment Hub</span>
               </button>
             </>
           ) : (
@@ -891,7 +899,7 @@ export default function App() {
                 }`}
               >
                 <BookOpen className="w-4 h-4 shrink-0 text-blue-400" />
-                <span>Curriculum & Tasks</span>
+                <span>Academic Overview</span>
               </button>
 
               <button
@@ -971,22 +979,32 @@ export default function App() {
           </div>
         </nav>
 
-        {/* Sidebar Footer User Info */}
-        <div className="p-4 border-t border-slate-800 bg-slate-950">
-          <div className="flex items-center gap-3">
+        {/* Sidebar Footer User Info & Always-Accessible Sign Out Button */}
+        <div className="p-3 border-t border-slate-800 bg-slate-950 flex flex-col gap-2">
+          <div className="flex items-center gap-2.5 min-w-0">
             <div className="w-8 h-8 rounded-sm bg-slate-800 text-white flex items-center justify-center text-xs font-bold shrink-0 font-mono border border-slate-700">
               {currentUser.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
             </div>
-            <div className="flex-1 truncate">
+            <div className="flex-1 min-w-0 truncate">
               <p className="text-xs font-semibold text-white truncate">{currentUser.name}</p>
               <p className="text-[10px] text-slate-400 truncate font-mono">{currentUser.email}</p>
             </div>
           </div>
+          {/* Direct Sidebar Sign Out Button */}
+          <button
+            onClick={handleLogout}
+            id="sidebar-signout-btn"
+            className="w-full flex items-center justify-center gap-2 py-1.5 px-3 bg-rose-950/60 hover:bg-rose-900 text-rose-200 hover:text-white border border-rose-800/80 hover:border-rose-600 rounded text-xs font-bold transition-all cursor-pointer shadow-xs"
+            title="Sign out of EduSync"
+          >
+            <LogOut className="w-3.5 h-3.5 text-rose-300" />
+            <span>Sign Out</span>
+          </button>
         </div>
       </aside>
 
       {/* 2. Main Content Area */}
-      <main className="flex-1 flex flex-col h-full overflow-hidden bg-[#090d16]">
+      <main className="flex-1 min-w-0 flex flex-col h-full overflow-hidden bg-[#090d16]">
         {/* Persistent Dean Audit Banner */}
         {isAuditing && (
           <div className="bg-gradient-to-r from-purple-900 via-indigo-900 to-purple-950 text-white px-4 py-2 flex items-center justify-between border-b border-purple-500/40 shadow-md text-xs z-50 shrink-0">
@@ -1003,7 +1021,7 @@ export default function App() {
             </div>
             <button
               onClick={handleReturnToAdmin}
-              className="flex items-center gap-1.5 px-3 py-1 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-sm shadow-sm transition-all transform hover:scale-[1.02] cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-sm shadow-sm transition-all transform hover:scale-[1.02] cursor-pointer shrink-0"
             >
               <Shield className="w-3.5 h-3.5" />
               <span>Return to Registrar Portal ➔</span>
@@ -1011,15 +1029,15 @@ export default function App() {
           </div>
         )}
 
-        {/* Header */}
-        <div className="flex items-center">
+        {/* Header Container */}
+        <div className="flex items-center w-full min-w-0">
           <button
             onClick={() => setMobileMenuOpen(true)}
-            className="md:hidden p-4 text-slate-300 hover:bg-slate-800 border-b border-slate-800"
+            className="md:hidden p-4 text-slate-300 hover:bg-slate-800 border-b border-slate-800 shrink-0"
           >
             <Menu className="w-5 h-5" />
           </button>
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <Header
               currentUser={currentUser}
               allUsers={allUsers}
