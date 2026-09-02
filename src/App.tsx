@@ -29,6 +29,7 @@ import {
   BarChart3,
   Calendar,
   FileText,
+  FileCheck,
   BookOpen,
   Sparkles,
   Bot,
@@ -47,7 +48,8 @@ import {
   Users,
   UserPlus,
   Shield,
-  Building
+  Building,
+  LogOut
 } from 'lucide-react';
 
 export default function App() {
