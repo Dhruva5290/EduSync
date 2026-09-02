@@ -1465,7 +1465,27 @@ Guidelines:
     try {
       const { prompt, subjectId, depth, attachedText, documentName, learnerProfile } = req.body;
       const user = getCurrentUser(req);
-      const subject = db.subjects.find(s => s.id === subjectId) || db.subjects[0];
+      const isOthers = subjectId === 'others' || subjectId === 'subj-others';
+      const subject = isOthers
+        ? {
+            id: 'others',
+            code: 'OTHERS',
+            name: 'General & Electives / Other Topics',
+            department: 'Electives & Interdisciplinary Studies',
+            teacherId: 'teacher-general',
+            teacherName: 'Academic Faculty',
+            teacherEmail: 'academics@bmu.edu.in',
+            color: 'purple',
+            accentBg: 'bg-purple-500/10',
+            enrolledCount: 0,
+            semester: 'Universal',
+            room: 'Main Campus',
+            credits: 3,
+            description: 'General engineering, computer science, mathematics, and interdisciplinary topics.',
+            syllabusTopics: []
+          }
+        : (db.subjects.find(s => s.id === subjectId) || db.subjects[0]);
+
       const result = await generateDetailedTopicNoteAI({
         prompt,
         subject,

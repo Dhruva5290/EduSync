@@ -215,8 +215,8 @@ export default function App() {
           setSubmissions(subData);
         }
 
-        // 4. Notes
-        const noteData = await safeFetchJson<StudentNote[]>(`/api/notes/${activeSubjectId}`);
+        // 4. Notes (Fetch all student notes for unified playground)
+        const noteData = await safeFetchJson<StudentNote[]>('/api/notes');
         if (noteData) {
           setNotes(noteData);
         }
@@ -607,14 +607,25 @@ export default function App() {
     throw new Error('Failed to generate quiz');
   };
 
-  // 13.5 AI Generate Detailed Note from Topic Prompt / Document
-  const handleGenerateNoteFromPrompt = async (payload: { prompt: string; depth: string; attachedText?: string; documentName?: string; learnerProfile?: LearnerPersona }): Promise<StudentNote> => {
+  // 13.5 AI Generate Detailed Note from Topic Prompt / Document (Unified LLM with Cognitive Persona)
+  const handleGenerateNoteFromPrompt = async (payload: {
+    prompt: string;
+    depth: string;
+    targetSubjectId?: string;
+    attachedText?: string;
+    documentName?: string;
+    learnerProfile?: LearnerPersona;
+  }): Promise<StudentNote> => {
+    const targetSubjId = payload.targetSubjectId || activeSubject.id;
+    const targetSubj = subjects.find(s => s.id === targetSubjId) || allSubjects.find(s => s.id === targetSubjId);
+    const subjCode = targetSubj ? targetSubj.code : (targetSubjId === 'others' || targetSubjId === 'subj-others' ? 'OTHERS' : 'NOTE');
+
     const res = await fetch('/api/ai/notes/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         ...payload,
-        subjectId: activeSubject.id,
+        subjectId: targetSubjId,
         learnerProfile: payload.learnerProfile || currentUser?.learningProfile
       })
     });
@@ -622,10 +633,10 @@ export default function App() {
     if (res.ok) {
       const data = await res.json();
       const newNote = await handleSaveNote({
-        subjectId: activeSubject.id,
-        title: data.title || `${activeSubject.code}: ${payload.prompt}`,
+        subjectId: targetSubjId,
+        title: data.title || `${subjCode}: ${payload.prompt}`,
         content: data.content,
-        tags: data.tags || [activeSubject.code, 'AI-Generated'],
+        tags: data.tags || [subjCode, 'AI-Generated'],
         summary: data.summary,
         keyTakeaways: data.keyTakeaways,
         isPinned: true
@@ -1225,6 +1236,8 @@ export default function App() {
               {activeTab === 'notes' && (
                 <SmartNotePlayground
                   activeSubject={activeSubject}
+                  subjects={subjects}
+                  allSubjects={allSubjects}
                   notes={notes}
                   currentUser={currentUser}
                   onOpenPersonalization={() => setShowPersonaModal(true)}
