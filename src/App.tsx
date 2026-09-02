@@ -372,7 +372,10 @@ export default function App() {
     semester: 'Fall 2026 (Semester 1)',
     room: 'Science Block C - Room 101',
     credits: 3,
-    description: 'Ecology, renewable energy systems, climate change modeling, environmental impact assessment (EIA).'
+    description: 'Ecology, renewable energy systems, climate change modeling, environmental impact assessment (EIA).',
+    color: 'emerald',
+    accentBg: 'bg-emerald-500/10',
+    syllabusTopics: ['Ecology', 'Energy Systems', 'Climate Modeling']
   };
 
   // --- API Action Handlers ---

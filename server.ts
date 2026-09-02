@@ -1,5 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
+import fs from 'fs';
 import { createServer as createViteServer } from 'vite';
 import dotenv from 'dotenv';
 import { db, saveUsersToDisk } from './src/server/db';
@@ -1653,21 +1654,27 @@ Guidelines:
   });
 
   // ==========================================
-  // VITE MIDDLEWARE SETUP
+  // VITE & PRODUCTION STATIC ASSETS
   // ==========================================
 
-  if (process.env.NODE_ENV !== 'production') {
+  const distPath = path.join(process.cwd(), 'dist');
+  const distIndexHtml = path.join(distPath, 'index.html');
+  const hasDist = fs.existsSync(distIndexHtml);
+  const isProduction = process.env.NODE_ENV === 'production' || hasDist;
+
+  if (isProduction && hasDist) {
+    console.log(`EduSync serving production static build from: ${distPath}`);
+    app.use(express.static(distPath));
+    app.get('*', (req, res) => {
+      res.sendFile(distIndexHtml);
+    });
+  } else {
+    console.log('EduSync running in Development mode with Vite HMR.');
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: 'spa',
     });
     app.use(vite.middlewares);
-  } else {
-    const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
-    });
   }
 
   app.listen(PORT, '0.0.0.0', () => {
