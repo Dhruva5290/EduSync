@@ -3,7 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import { createServer as createViteServer } from 'vite';
 import dotenv from 'dotenv';
-import { db, saveUsersToDisk } from './src/server/db';
+import { db, saveUsersToDisk, saveNotesToDisk } from './src/server/db';
 import {
   generateStudyAssistantReply,
   summarizeNoteAI,
@@ -1074,9 +1074,19 @@ async function startServer() {
   const handleGetNotes = (req: express.Request, res: express.Response) => {
     const user = getCurrentUser(req);
     const subjectId = req.params.subjectId || (req.query.subjectId as string);
-    let userNotes = db.notes.filter(n => n.studentId === user.id);
-    if (subjectId) {
-      userNotes = userNotes.filter(n => n.subjectId === subjectId);
+    const requestedStudentId = (req.query.studentId as string) || user.id;
+
+    // Filter notes for the student (or allow shared view if admin/faculty)
+    let userNotes = db.notes.filter(n =>
+      !n.studentId || n.studentId === requestedStudentId || n.studentId === user.id || user.role === 'admin' || user.role === 'teacher'
+    );
+
+    if (subjectId && subjectId !== 'all') {
+      if (subjectId === 'others' || subjectId === 'subj-others') {
+        userNotes = userNotes.filter(n => n.subjectId === 'others' || n.subjectId === 'subj-others');
+      } else {
+        userNotes = userNotes.filter(n => n.subjectId === subjectId);
+      }
     }
     res.json(userNotes);
   };
@@ -1086,10 +1096,11 @@ async function startServer() {
 
   app.post('/api/notes', (req, res) => {
     const user = getCurrentUser(req);
-    const { id, subjectId, title, content, tags, isPinned, summary, keyTakeaways, flashcards, quiz } = req.body;
+    const { id, subjectId, title, content, tags, isPinned, summary, keyTakeaways, flashcards, quiz, studentId } = req.body;
+    const noteStudentId = studentId || user.id || 'student-1';
 
     if (id) {
-      const idx = db.notes.findIndex(n => n.id === id && n.studentId === user.id);
+      const idx = db.notes.findIndex(n => n.id === id);
       if (idx !== -1) {
         db.notes[idx] = {
           ...db.notes[idx],
@@ -1104,6 +1115,7 @@ async function startServer() {
           quiz: quiz !== undefined ? quiz : db.notes[idx].quiz,
           lastModified: new Date().toISOString()
         };
+        saveNotesToDisk(db.notes);
         res.json(db.notes[idx]);
         return;
       }
@@ -1111,9 +1123,9 @@ async function startServer() {
 
     // Create new note
     const newNote: StudentNote = {
-      id: `note-${Date.now()}`,
-      studentId: user.id,
-      subjectId: subjectId || 'subj-cs301',
+      id: id || `note-${Date.now()}`,
+      studentId: noteStudentId,
+      subjectId: subjectId || 'others',
       title: title || 'Untitled Study Note',
       content: content || '# New Note\n\nStart typing notes here...',
       tags: Array.isArray(tags) ? tags : ['Study'],
@@ -1125,14 +1137,15 @@ async function startServer() {
       quiz
     };
     db.notes.unshift(newNote);
+    saveNotesToDisk(db.notes);
     res.json(newNote);
   });
 
   app.delete('/api/notes/:id', (req, res) => {
-    const user = getCurrentUser(req);
-    const idx = db.notes.findIndex(n => n.id === req.params.id && n.studentId === user.id);
+    const idx = db.notes.findIndex(n => n.id === req.params.id);
     if (idx !== -1) {
       db.notes.splice(idx, 1);
+      saveNotesToDisk(db.notes);
       res.json({ success: true });
     } else {
       res.status(404).json({ error: 'Note not found' });
@@ -1447,6 +1460,7 @@ Guidelines:
           note.summary = result.summary;
           note.keyTakeaways = result.keyTakeaways;
           note.lastModified = new Date().toISOString();
+          saveNotesToDisk(db.notes);
         }
       }
 
@@ -1514,6 +1528,7 @@ Guidelines:
         if (note) {
           note.flashcards = flashcards;
           note.lastModified = new Date().toISOString();
+          saveNotesToDisk(db.notes);
         }
       }
 
@@ -1548,6 +1563,7 @@ Guidelines:
         if (note) {
           note.quiz = generatedQuiz;
           note.lastModified = new Date().toISOString();
+          saveNotesToDisk(db.notes);
         }
       }
 

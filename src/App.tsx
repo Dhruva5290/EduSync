@@ -522,12 +522,23 @@ export default function App() {
   };
 
   // 9. Save Student Note
+  // 9. Save Student Note
   const handleSaveNote = async (note: Partial<StudentNote>): Promise<StudentNote> => {
     try {
+      const token = authToken || localStorage.getItem('edusync_token');
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      if (currentUser?.id) headers['x-user-id'] = currentUser.id;
+
+      const finalSubjId = note.subjectId || activeSubjectId || 'others';
       const res = await fetch('/api/notes', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...note, subjectId: activeSubject.id })
+        headers,
+        body: JSON.stringify({
+          ...note,
+          subjectId: finalSubjId,
+          studentId: currentUser?.id
+        })
       });
       if (res.ok) {
         const saved = await res.json();
@@ -540,11 +551,11 @@ export default function App() {
           }
           return [saved, ...prev];
         });
-        showToast('Study note saved!');
+        showToast('Study note saved successfully!');
         return saved;
       }
     } catch (err) {
-      console.error(err);
+      console.error('Error saving note:', err);
     }
     return note as StudentNote;
   };
@@ -552,21 +563,31 @@ export default function App() {
   // 10. Delete Note
   const handleDeleteNote = async (noteId: string) => {
     try {
-      const res = await fetch(`/api/notes/${noteId}`, { method: 'DELETE' });
+      const token = authToken || localStorage.getItem('edusync_token');
+      const headers: Record<string, string> = {};
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      if (currentUser?.id) headers['x-user-id'] = currentUser.id;
+
+      const res = await fetch(`/api/notes/${noteId}`, { method: 'DELETE', headers });
       if (res.ok) {
         setNotes(prev => prev.filter(n => n.id !== noteId));
         showToast('Note deleted');
       }
     } catch (err) {
-      console.error(err);
+      console.error('Error deleting note:', err);
     }
   };
 
   // 11. AI Summarize Note
   const handleSummarizeNote = async (noteId: string, content: string, learnerProfile?: LearnerPersona) => {
+    const token = authToken || localStorage.getItem('edusync_token');
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    if (currentUser?.id) headers['x-user-id'] = currentUser.id;
+
     const res = await fetch('/api/ai/notes/summarize', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify({ noteId, content, learnerProfile: learnerProfile || currentUser?.learningProfile })
     });
     if (res.ok) {
@@ -579,9 +600,14 @@ export default function App() {
 
   // 12. AI Generate Flashcards
   const handleGenerateFlashcards = async (noteId: string, content: string, learnerProfile?: LearnerPersona): Promise<Flashcard[]> => {
+    const token = authToken || localStorage.getItem('edusync_token');
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    if (currentUser?.id) headers['x-user-id'] = currentUser.id;
+
     const res = await fetch('/api/ai/notes/flashcards', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify({ noteId, content, learnerProfile: learnerProfile || currentUser?.learningProfile })
     });
     if (res.ok) {
@@ -594,9 +620,14 @@ export default function App() {
 
   // 13. AI Note-to-Quiz Bridge
   const handleGenerateQuizFromNote = async (noteId: string, content: string, title: string, learnerProfile?: LearnerPersona): Promise<GeneratedQuiz> => {
+    const token = authToken || localStorage.getItem('edusync_token');
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    if (currentUser?.id) headers['x-user-id'] = currentUser.id;
+
     const res = await fetch('/api/ai/notes/quiz', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify({ noteId, content, title, learnerProfile: learnerProfile || currentUser?.learningProfile })
     });
     if (res.ok) {

@@ -24,6 +24,7 @@ export interface InMemoryDatabase {
 }
 
 const USERS_FILE_PATH = path.resolve(process.cwd(), 'data', 'users.json');
+const NOTES_FILE_PATH = path.resolve(process.cwd(), 'data', 'notes.json');
 
 export function saveUsersToDisk(users: User[]) {
   try {
@@ -61,6 +62,44 @@ export function loadUsersFromDisk(seed: User[]): User[] {
     console.error('Error loading users from disk:', err);
   }
   saveUsersToDisk(seed);
+  return seed;
+}
+
+export function saveNotesToDisk(notes: StudentNote[]) {
+  try {
+    const dir = path.dirname(NOTES_FILE_PATH);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(NOTES_FILE_PATH, JSON.stringify(notes, null, 2), 'utf-8');
+  } catch (err) {
+    console.error('Error saving notes to disk:', err);
+  }
+}
+
+export function loadNotesFromDisk(seed: StudentNote[]): StudentNote[] {
+  try {
+    const dir = path.dirname(NOTES_FILE_PATH);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    if (fs.existsSync(NOTES_FILE_PATH)) {
+      const content = fs.readFileSync(NOTES_FILE_PATH, 'utf-8');
+      const parsed = JSON.parse(content);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        const existingIds = new Set(parsed.map((n: any) => n.id));
+        const missingSeeds = seed.filter(s => !existingIds.has(s.id));
+        const merged = [...parsed, ...missingSeeds];
+        if (missingSeeds.length > 0) {
+          saveNotesToDisk(merged);
+        }
+        return merged;
+      }
+    }
+  } catch (err) {
+    console.error('Error loading notes from disk:', err);
+  }
+  saveNotesToDisk(seed);
   return seed;
 }
 
@@ -1140,7 +1179,7 @@ Valgrind Verification Summary:
     }
   ],
 
-  notes: [
+  notes: loadNotesFromDisk([
     {
       id: 'note-dhruva-1',
       studentId: 'student-1',
@@ -1239,7 +1278,7 @@ $$H = \\begin{pmatrix} f_{xx} & f_{xy} \\\\ f_{yx} & f_{yy} \\end{pmatrix}$$
         }
       ]
     }
-  ],
+  ]),
 
   analytics: {
     'subj-ess': {
