@@ -44,6 +44,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onLaun
         }
       }
     } catch {}
+    return base;
   });
 
   // Sync with initialUsers prop when updated by parent
@@ -121,11 +122,13 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onLaun
     }
   };
 
+  const safeUsers = Array.isArray(registeredUsers) ? registeredUsers : [];
+
   // Strictly verify credentials locally or in cloud without ever falling back to a default preset
   const verifyCredentialsLocallyAndLogin = async (loginId: string, loginPass: string): Promise<boolean> => {
     const normId = loginId.toLowerCase().trim();
 
-    let candidates = [...registeredUsers];
+    let candidates = [...safeUsers];
     try {
       const savedUsers = JSON.parse(localStorage.getItem('edusync_users') || '[]');
       if (Array.isArray(savedUsers)) {
@@ -440,7 +443,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onLaun
                   Instant Role Credentials
                 </span>
                 <span className="text-[10px] text-slate-500 font-mono">
-                  {registeredUsers.length} Users Stored
+                  {safeUsers.length} Users Stored
                 </span>
               </div>
 
@@ -483,36 +486,36 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onLaun
               </div>
 
               {/* Roster of Registered Users Dropdown / Quick Selector */}
-              {registeredUsers.length > 0 && (
+              {safeUsers.length > 0 && (
                 <div className="pt-2">
                   <label className="block text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1.5">
-                    Select From All Registered Users ({registeredUsers.length}):
+                    Select From All Registered Users ({safeUsers.length}):
                   </label>
                   <select
-                    value={registeredUsers.find(u => u.username === identifier || u.institutionalId === identifier || u.email === identifier)?.id || ''}
+                    value={safeUsers.find(u => u.username === identifier || u.institutionalId === identifier || u.email === identifier)?.id || ''}
                     onChange={(e) => {
-                      const u = registeredUsers.find(user => user.id === e.target.value);
+                      const u = safeUsers.find(user => user.id === e.target.value);
                       if (u) handleSelectUser(u);
                     }}
                     className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-purple-500 font-mono"
                   >
-                    <option value="">-- Choose Registered User ({registeredUsers.length} available) --</option>
+                    <option value="">-- Choose Registered User ({safeUsers.length} available) --</option>
                     <optgroup label="Newly Registered & Custom Users">
-                      {registeredUsers.filter(u => !['admin-1', 'admin-2', 'teacher-1', 'teacher-2', 'teacher-3', 'teacher-4', 'teacher-5', 'student-1', 'student-2'].includes(u.id)).map(u => (
+                      {safeUsers.filter(u => !['admin-1', 'admin-2', 'teacher-1', 'teacher-2', 'teacher-3', 'teacher-4', 'teacher-5', 'student-1', 'student-2'].includes(u.id)).map(u => (
                         <option key={u.id} value={u.id}>
                           ⭐ [{u.role.toUpperCase()}] {u.name} ({u.institutionalId || u.username}) · Pass: {u.password || 'EduSync@260101'}
                         </option>
                       ))}
                     </optgroup>
                     <optgroup label="Default Student Roster">
-                      {registeredUsers.filter(u => u.role === 'student').map(u => (
+                      {safeUsers.filter(u => u.role === 'student').map(u => (
                         <option key={u.id} value={u.id}>
                           [STUDENT] {u.name} ({u.institutionalId})
                         </option>
                       ))}
                     </optgroup>
                     <optgroup label="Faculty & Deans">
-                      {registeredUsers.filter(u => u.role !== 'student').map(u => (
+                      {safeUsers.filter(u => u.role !== 'student').map(u => (
                         <option key={u.id} value={u.id}>
                           [{u.role.toUpperCase()}] {u.name}
                         </option>
