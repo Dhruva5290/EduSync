@@ -37020,12 +37020,182 @@ var init_wrapper = __esm({
 });
 
 // node_modules/@google/genai/dist/node/index.mjs
+var node_exports = {};
+__export(node_exports, {
+  ActivityHandling: () => ActivityHandling,
+  AdapterSize: () => AdapterSize,
+  AggregationMetric: () => AggregationMetric,
+  ApiError: () => ApiError,
+  ApiSpec: () => ApiSpec,
+  AspectRatio: () => AspectRatio,
+  AudioResponseFormat: () => AudioResponseFormat,
+  AuthType: () => AuthType,
+  Batches: () => Batches,
+  Behavior: () => Behavior,
+  BlockedReason: () => BlockedReason,
+  Caches: () => Caches,
+  CancelTuningJobResponse: () => CancelTuningJobResponse,
+  Chat: () => Chat,
+  Chats: () => Chats,
+  ComputeTokensResponse: () => ComputeTokensResponse,
+  ContentReferenceImage: () => ContentReferenceImage,
+  ControlReferenceImage: () => ControlReferenceImage,
+  ControlReferenceType: () => ControlReferenceType,
+  CountTokensResponse: () => CountTokensResponse,
+  CreateFileResponse: () => CreateFileResponse,
+  DeleteCachedContentResponse: () => DeleteCachedContentResponse,
+  DeleteFileResponse: () => DeleteFileResponse,
+  DeleteModelResponse: () => DeleteModelResponse,
+  Delivery: () => Delivery,
+  DocumentState: () => DocumentState,
+  DynamicRetrievalConfigMode: () => DynamicRetrievalConfigMode,
+  EditImageResponse: () => EditImageResponse,
+  EditMode: () => EditMode,
+  EmbedContentResponse: () => EmbedContentResponse,
+  EmbeddingApiType: () => EmbeddingApiType,
+  EndSensitivity: () => EndSensitivity,
+  Environment: () => Environment,
+  EvaluateDatasetResponse: () => EvaluateDatasetResponse,
+  FeatureSelectionPreference: () => FeatureSelectionPreference,
+  FileSource: () => FileSource,
+  FileState: () => FileState,
+  Files: () => Files,
+  FinishReason: () => FinishReason,
+  FunctionCallingConfigMode: () => FunctionCallingConfigMode,
+  FunctionResponse: () => FunctionResponse,
+  FunctionResponseBlob: () => FunctionResponseBlob,
+  FunctionResponseFileData: () => FunctionResponseFileData,
+  FunctionResponsePart: () => FunctionResponsePart,
+  FunctionResponseScheduling: () => FunctionResponseScheduling,
+  GenerateContentResponse: () => GenerateContentResponse,
+  GenerateContentResponsePromptFeedback: () => GenerateContentResponsePromptFeedback,
+  GenerateContentResponseUsageMetadata: () => GenerateContentResponseUsageMetadata,
+  GenerateImagesResponse: () => GenerateImagesResponse,
+  GenerateVideosOperation: () => GenerateVideosOperation,
+  GenerateVideosResponse: () => GenerateVideosResponse,
+  GoogleGenAI: () => GoogleGenAI2,
+  HarmBlockMethod: () => HarmBlockMethod,
+  HarmBlockThreshold: () => HarmBlockThreshold,
+  HarmCategory: () => HarmCategory,
+  HarmProbability: () => HarmProbability,
+  HarmSeverity: () => HarmSeverity,
+  HttpElementLocation: () => HttpElementLocation,
+  HttpResponse: () => HttpResponse,
+  ImagePromptLanguage: () => ImagePromptLanguage,
+  ImageResizeMode: () => ImageResizeMode,
+  ImageResponseFormat: () => ImageResponseFormat,
+  ImageSize: () => ImageSize,
+  ImportFileOperation: () => ImportFileOperation,
+  ImportFileResponse: () => ImportFileResponse,
+  InlinedEmbedContentResponse: () => InlinedEmbedContentResponse,
+  InlinedResponse: () => InlinedResponse,
+  InteractionStatus: () => InteractionStatus,
+  JobState: () => JobState,
+  Language: () => Language,
+  ListBatchJobsResponse: () => ListBatchJobsResponse,
+  ListCachedContentsResponse: () => ListCachedContentsResponse,
+  ListDocumentsResponse: () => ListDocumentsResponse,
+  ListFileSearchStoresResponse: () => ListFileSearchStoresResponse,
+  ListFilesResponse: () => ListFilesResponse,
+  ListModelsResponse: () => ListModelsResponse,
+  ListTuningJobsResponse: () => ListTuningJobsResponse,
+  Live: () => Live,
+  LiveClientToolResponse: () => LiveClientToolResponse,
+  LiveMusicPlaybackControl: () => LiveMusicPlaybackControl,
+  LiveMusicServerMessage: () => LiveMusicServerMessage,
+  LiveSendToolResponseParameters: () => LiveSendToolResponseParameters,
+  LiveServerMessage: () => LiveServerMessage,
+  MaskReferenceImage: () => MaskReferenceImage,
+  MaskReferenceMode: () => MaskReferenceMode,
+  MatchOperation: () => MatchOperation,
+  MediaModality: () => MediaModality,
+  MediaResolution: () => MediaResolution,
+  Modality: () => Modality,
+  ModelStage: () => ModelStage,
+  Models: () => Models,
+  MusicGenerationMode: () => MusicGenerationMode,
+  Operations: () => Operations,
+  Outcome: () => Outcome,
+  PagedItem: () => PagedItem,
+  Pager: () => Pager,
+  PairwiseChoice: () => PairwiseChoice,
+  PartMediaResolutionLevel: () => PartMediaResolutionLevel,
+  PersonGeneration: () => PersonGeneration,
+  PhishBlockThreshold: () => PhishBlockThreshold,
+  ProminentPeople: () => ProminentPeople,
+  RawReferenceImage: () => RawReferenceImage,
+  RecontextImageResponse: () => RecontextImageResponse,
+  RegisterFilesResponse: () => RegisterFilesResponse,
+  ReinforcementTuningAutoraterScorerParsedResponseConversionScorer: () => ReinforcementTuningAutoraterScorerParsedResponseConversionScorer,
+  ReinforcementTuningParseResponseConfig: () => ReinforcementTuningParseResponseConfig,
+  ReinforcementTuningThinkingLevel: () => ReinforcementTuningThinkingLevel,
+  ReplayResponse: () => ReplayResponse,
+  ResourceScope: () => ResourceScope,
+  ResponseFormat: () => ResponseFormat,
+  ResponseParseType: () => ResponseParseType,
+  SafetyFilterLevel: () => SafetyFilterLevel,
+  SafetyPolicy: () => SafetyPolicy,
+  Scale: () => Scale,
+  SegmentImageResponse: () => SegmentImageResponse,
+  SegmentMode: () => SegmentMode,
+  ServiceTier: () => ServiceTier,
+  Session: () => Session,
+  SingleEmbedContentResponse: () => SingleEmbedContentResponse,
+  StartSensitivity: () => StartSensitivity,
+  StyleReferenceImage: () => StyleReferenceImage,
+  SubjectReferenceImage: () => SubjectReferenceImage,
+  SubjectReferenceType: () => SubjectReferenceType,
+  TextResponseFormat: () => TextResponseFormat,
+  ThinkingLevel: () => ThinkingLevel,
+  Tokens: () => Tokens,
+  ToolResponse: () => ToolResponse,
+  ToolType: () => ToolType,
+  TrafficType: () => TrafficType,
+  TuningJobState: () => TuningJobState,
+  TuningMethod: () => TuningMethod,
+  TuningMode: () => TuningMode,
+  TuningSpeed: () => TuningSpeed,
+  TuningTask: () => TuningTask,
+  TurnCompleteReason: () => TurnCompleteReason,
+  TurnCoverage: () => TurnCoverage,
+  Type: () => Type,
+  UploadToFileSearchStoreOperation: () => UploadToFileSearchStoreOperation,
+  UploadToFileSearchStoreResponse: () => UploadToFileSearchStoreResponse,
+  UploadToFileSearchStoreResumableResponse: () => UploadToFileSearchStoreResumableResponse,
+  UpscaleImageResponse: () => UpscaleImageResponse,
+  UrlRetrievalStatus: () => UrlRetrievalStatus,
+  VadSignalType: () => VadSignalType,
+  ValidateRewardResponse: () => ValidateRewardResponse,
+  VideoCompressionQuality: () => VideoCompressionQuality,
+  VideoGenerationMaskMode: () => VideoGenerationMaskMode,
+  VideoGenerationReferenceType: () => VideoGenerationReferenceType,
+  VideoOrientation: () => VideoOrientation,
+  VideoResponseFormat: () => VideoResponseFormat,
+  VoiceActivityType: () => VoiceActivityType,
+  createFunctionResponsePartFromBase64: () => createFunctionResponsePartFromBase64,
+  createFunctionResponsePartFromUri: () => createFunctionResponsePartFromUri,
+  createModelContent: () => createModelContent,
+  createPartFromBase64: () => createPartFromBase64,
+  createPartFromCodeExecutionResult: () => createPartFromCodeExecutionResult,
+  createPartFromExecutableCode: () => createPartFromExecutableCode,
+  createPartFromFunctionCall: () => createPartFromFunctionCall,
+  createPartFromFunctionResponse: () => createPartFromFunctionResponse,
+  createPartFromText: () => createPartFromText,
+  createPartFromUri: () => createPartFromUri,
+  createUserContent: () => createUserContent,
+  mcpToTool: () => mcpToTool,
+  setDefaultBaseUrls: () => setDefaultBaseUrls
+});
 import { createWriteStream } from "fs";
 import * as fs2 from "fs/promises";
 import { writeFile } from "fs/promises";
 import { Readable } from "node:stream";
 import { finished } from "node:stream/promises";
 import * as path from "path";
+function setDefaultBaseUrls(baseUrlParams) {
+  _defaultBaseGeminiUrl = baseUrlParams.geminiUrl;
+  _defaultBaseVertexUrl = baseUrlParams.vertexUrl;
+}
 function getDefaultBaseUrls() {
   return {
     geminiUrl: _defaultBaseGeminiUrl,
@@ -37498,6 +37668,110 @@ function videoFromVertex$1(fromObject) {
     setValueByPath(toObject, ["mimeType"], fromMimeType);
   }
   return toObject;
+}
+function createFunctionResponsePartFromBase64(data, mimeType) {
+  return {
+    inlineData: {
+      data,
+      mimeType
+    }
+  };
+}
+function createFunctionResponsePartFromUri(uri, mimeType) {
+  return {
+    fileData: {
+      fileUri: uri,
+      mimeType
+    }
+  };
+}
+function createPartFromUri(uri, mimeType, mediaResolution) {
+  return Object.assign({ fileData: {
+    fileUri: uri,
+    mimeType
+  } }, mediaResolution && { mediaResolution: { level: mediaResolution } });
+}
+function createPartFromText(text) {
+  return {
+    text
+  };
+}
+function createPartFromFunctionCall(name, args) {
+  return {
+    functionCall: {
+      name,
+      args
+    }
+  };
+}
+function createPartFromFunctionResponse(id, name, response, parts = []) {
+  return {
+    functionResponse: Object.assign({ id, name, response }, parts.length > 0 && { parts })
+  };
+}
+function createPartFromBase64(data, mimeType, mediaResolution) {
+  return Object.assign({ inlineData: {
+    data,
+    mimeType
+  } }, mediaResolution && { mediaResolution: { level: mediaResolution } });
+}
+function createPartFromCodeExecutionResult(outcome, output) {
+  return {
+    codeExecutionResult: {
+      outcome,
+      output
+    }
+  };
+}
+function createPartFromExecutableCode(code, language) {
+  return {
+    executableCode: {
+      code,
+      language
+    }
+  };
+}
+function _isPart(obj) {
+  if (typeof obj === "object" && obj !== null) {
+    return "fileData" in obj || "text" in obj || "functionCall" in obj || "functionResponse" in obj || "inlineData" in obj || "videoMetadata" in obj || "codeExecutionResult" in obj || "executableCode" in obj;
+  }
+  return false;
+}
+function _toParts(partOrString) {
+  const parts = [];
+  if (typeof partOrString === "string") {
+    parts.push(createPartFromText(partOrString));
+  } else if (_isPart(partOrString)) {
+    parts.push(partOrString);
+  } else if (Array.isArray(partOrString)) {
+    if (partOrString.length === 0) {
+      throw new Error("partOrString cannot be an empty array");
+    }
+    for (const part of partOrString) {
+      if (typeof part === "string") {
+        parts.push(createPartFromText(part));
+      } else if (_isPart(part)) {
+        parts.push(part);
+      } else {
+        throw new Error("element in PartUnion must be a Part object or string");
+      }
+    }
+  } else {
+    throw new Error("partOrString must be a Part object, string, or array");
+  }
+  return parts;
+}
+function createUserContent(partOrString) {
+  return {
+    role: "user",
+    parts: _toParts(partOrString)
+  };
+}
+function createModelContent(partOrString) {
+  return {
+    role: "model",
+    parts: _toParts(partOrString)
+  };
 }
 function tModel(apiClient, model) {
   if (!model || typeof model !== "string") {
@@ -46009,6 +46283,20 @@ function listAllTools(mcpClient_1) {
     }
   });
 }
+function isMcpClient(client) {
+  return client !== null && typeof client === "object" && "listTools" in client && typeof client.listTools === "function";
+}
+function mcpToTool(...args) {
+  hasMcpToolUsageFromMcpToTool = true;
+  if (args.length === 0) {
+    throw new Error("No MCP clients provided");
+  }
+  const maybeConfig = args[args.length - 1];
+  if (isMcpClient(maybeConfig)) {
+    return McpCallableTool.create(args, {});
+  }
+  return McpCallableTool.create(args.slice(0, args.length - 1), maybeConfig);
+}
 async function handleWebSocketMessage$1(apiClient, onmessage, event) {
   const serverMessage = new LiveMusicServerMessage();
   let data;
@@ -51626,7 +51914,7 @@ function getApiKeyFromEnv() {
   }
   return envGoogleApiKey || envGeminiApiKey || void 0;
 }
-var import_p_retry, import_google_auth_library, _defaultBaseGeminiUrl, _defaultBaseVertexUrl, BaseModule, Outcome, Language, FunctionResponseScheduling, Type, AuthType, HttpElementLocation, ApiSpec, Environment, SafetyPolicy, PhishBlockThreshold, Behavior, DynamicRetrievalConfigMode, ThinkingLevel, PersonGeneration, ProminentPeople, HarmCategory, HarmBlockMethod, HarmBlockThreshold, FunctionCallingConfigMode, FinishReason, HarmProbability, HarmSeverity, UrlRetrievalStatus, BlockedReason, TrafficType, MediaModality, ModelStage, MediaResolution, Modality, Delivery, AspectRatio, ImageSize, TuningMode, AdapterSize, ResponseParseType, MatchOperation, ReinforcementTuningThinkingLevel, JobState, TuningJobState, AggregationMetric, PairwiseChoice, VideoOrientation, TuningSpeed, TuningTask, DocumentState, ServiceTier, PartMediaResolutionLevel, ToolType, ResourceScope, FeatureSelectionPreference, EmbeddingApiType, SafetyFilterLevel, ImagePromptLanguage, MaskReferenceMode, ControlReferenceType, SubjectReferenceType, EditMode, SegmentMode, VideoGenerationReferenceType, VideoGenerationMaskMode, VideoCompressionQuality, ImageResizeMode, TuningMethod, FileState, FileSource, TurnCompleteReason, InteractionStatus, VadSignalType, VoiceActivityType, StartSensitivity, EndSensitivity, ActivityHandling, TurnCoverage, Scale, MusicGenerationMode, LiveMusicPlaybackControl, HttpResponse, GenerateContentResponse, EmbedContentResponse, GenerateImagesResponse, EditImageResponse, UpscaleImageResponse, RecontextImageResponse, SegmentImageResponse, ListModelsResponse, DeleteModelResponse, CountTokensResponse, ComputeTokensResponse, GenerateVideosOperation, ListTuningJobsResponse, CancelTuningJobResponse, ValidateRewardResponse, DeleteCachedContentResponse, ListCachedContentsResponse, ListDocumentsResponse, ListFileSearchStoresResponse, UploadToFileSearchStoreResumableResponse, ImportFileOperation, ListFilesResponse, CreateFileResponse, DeleteFileResponse, RegisterFilesResponse, ListBatchJobsResponse, LiveServerMessage, LiveMusicServerMessage, UploadToFileSearchStoreOperation, PagedItem, Pager, Batches, Caches, Chats, Chat, ApiError, Files, CONTENT_TYPE_HEADER, SERVER_TIMEOUT_HEADER, USER_AGENT_HEADER, GOOGLE_API_CLIENT_HEADER, SDK_VERSION, LIBRARY_LABEL, VERTEX_AI_API_DEFAULT_VERSION, GOOGLE_AI_API_DEFAULT_VERSION, MULTI_REGIONAL_LOCATIONS, DEFAULT_RETRY_ATTEMPTS, DEFAULT_RETRY_INITIAL_DELAY, DEFAULT_RETRY_MAX_DELAY, DEFAULT_RETRY_EXP_BASE, DEFAULT_RETRY_JITTER, DEFAULT_RETRY_HTTP_STATUS_CODES, ApiClient, MCP_LABEL, hasMcpToolUsageFromMcpToTool, McpCallableTool, LiveMusic, LiveMusicSession, FUNCTION_RESPONSE_REQUIRES_ID, Live, defaultLiveSendClientContentParamerters, Session, DEFAULT_MAX_REMOTE_CALLS, Models, Operations, Tokens, Documents, FileSearchStores, envMemo, GoogleGenAISecurityProvider, GoogleGenAIAuthHook, HTTPClientError, UnexpectedClientError, InvalidRequestError, RequestAbortedError, RequestTimeoutError, ConnectionError, GoogleGenAiError, GeminiNextGenAPIClientError, APIError, APIUserAbortError, APIConnectionError, APIConnectionTimeoutError, BadRequestError, AuthenticationError, PermissionDeniedError, NotFoundError, ConflictError, UnprocessableEntityError, RateLimitError, InternalServerError, SDKHooks, hasOwn, ServerList, SDK_METADATA, encodeForm, encodeSimple, encodeFormQuery, DEFAULT_FETCHER, HTTPClient, mediaParamSeparator, codeRangeRE$1, defaultBackoff, PermanentError, TemporaryError, codeRangeRE, gt, webWorkerLike, isBrowserLike, ClientSDK, jsonLikeContentTypeRE, jsonlLikeContentTypeRE, GoogleGenAiDefaultError, Stream3, CR2, LF2, BOUNDARIES, MAX_BOUNDARY_LEN, DEFAULT_CONTENT_TYPES, headerValRE, SecurityErrorCode, SecurityError, _a, APIPromise, Agents, Environments, CancelInteractionByIdServerError, CancelInteractionByIdClientError, CreateInteractionServerError, CreateInteractionClientError, DeleteInteractionServerError, DeleteInteractionClientError, GetInteractionByIdServerError, GetInteractionByIdClientError, Interactions, Triggers, Webhooks, GoogleGenAI$1, LEGACY_LYRIA_MODELS, GeminiNextGenInteractions, GeminiNextGenAgents, GeminiNextGenWebhooks, GeminiNextGenTriggers, GeminiNextGenEnvironments, GOOGLE_API_KEY_HEADER, REQUIRED_VERTEX_AI_SCOPE, NodeAuth, NodeDownloader, NodeWebSocketFactory, NodeWebSocket, Tunings, MAX_CHUNK_SIZE, MAX_RETRY_COUNT, INITIAL_RETRY_DELAY_MS, DELAY_MULTIPLIER, X_GOOG_UPLOAD_STATUS_HEADER_FIELD, NodeUploader, NodeFiles, LANGUAGE_LABEL_PREFIX, GoogleGenAI2;
+var import_p_retry, import_google_auth_library, _defaultBaseGeminiUrl, _defaultBaseVertexUrl, BaseModule, Outcome, Language, FunctionResponseScheduling, Type, AuthType, HttpElementLocation, ApiSpec, Environment, SafetyPolicy, PhishBlockThreshold, Behavior, DynamicRetrievalConfigMode, ThinkingLevel, PersonGeneration, ProminentPeople, HarmCategory, HarmBlockMethod, HarmBlockThreshold, FunctionCallingConfigMode, FinishReason, HarmProbability, HarmSeverity, UrlRetrievalStatus, BlockedReason, TrafficType, MediaModality, ModelStage, MediaResolution, Modality, Delivery, AspectRatio, ImageSize, TuningMode, AdapterSize, ResponseParseType, MatchOperation, ReinforcementTuningThinkingLevel, JobState, TuningJobState, AggregationMetric, PairwiseChoice, VideoOrientation, TuningSpeed, TuningTask, DocumentState, ServiceTier, PartMediaResolutionLevel, ToolType, ResourceScope, FeatureSelectionPreference, EmbeddingApiType, SafetyFilterLevel, ImagePromptLanguage, MaskReferenceMode, ControlReferenceType, SubjectReferenceType, EditMode, SegmentMode, VideoGenerationReferenceType, VideoGenerationMaskMode, VideoCompressionQuality, ImageResizeMode, TuningMethod, FileState, FileSource, TurnCompleteReason, InteractionStatus, VadSignalType, VoiceActivityType, StartSensitivity, EndSensitivity, ActivityHandling, TurnCoverage, Scale, MusicGenerationMode, LiveMusicPlaybackControl, ToolResponse, FunctionResponseFileData, FunctionResponseBlob, FunctionResponsePart, FunctionResponse, HttpResponse, GenerateContentResponsePromptFeedback, GenerateContentResponseUsageMetadata, GenerateContentResponse, EmbedContentResponse, GenerateImagesResponse, EditImageResponse, UpscaleImageResponse, RecontextImageResponse, SegmentImageResponse, ListModelsResponse, DeleteModelResponse, AudioResponseFormat, ImageResponseFormat, TextResponseFormat, VideoResponseFormat, ResponseFormat, CountTokensResponse, ComputeTokensResponse, GenerateVideosResponse, GenerateVideosOperation, ReinforcementTuningParseResponseConfig, ReinforcementTuningAutoraterScorerParsedResponseConversionScorer, EvaluateDatasetResponse, ListTuningJobsResponse, CancelTuningJobResponse, ValidateRewardResponse, DeleteCachedContentResponse, ListCachedContentsResponse, ListDocumentsResponse, ListFileSearchStoresResponse, UploadToFileSearchStoreResumableResponse, ImportFileResponse, ImportFileOperation, ListFilesResponse, CreateFileResponse, DeleteFileResponse, RegisterFilesResponse, InlinedResponse, SingleEmbedContentResponse, InlinedEmbedContentResponse, ListBatchJobsResponse, ReplayResponse, RawReferenceImage, MaskReferenceImage, ControlReferenceImage, StyleReferenceImage, SubjectReferenceImage, ContentReferenceImage, LiveServerMessage, LiveClientToolResponse, LiveSendToolResponseParameters, LiveMusicServerMessage, UploadToFileSearchStoreResponse, UploadToFileSearchStoreOperation, PagedItem, Pager, Batches, Caches, Chats, Chat, ApiError, Files, CONTENT_TYPE_HEADER, SERVER_TIMEOUT_HEADER, USER_AGENT_HEADER, GOOGLE_API_CLIENT_HEADER, SDK_VERSION, LIBRARY_LABEL, VERTEX_AI_API_DEFAULT_VERSION, GOOGLE_AI_API_DEFAULT_VERSION, MULTI_REGIONAL_LOCATIONS, DEFAULT_RETRY_ATTEMPTS, DEFAULT_RETRY_INITIAL_DELAY, DEFAULT_RETRY_MAX_DELAY, DEFAULT_RETRY_EXP_BASE, DEFAULT_RETRY_JITTER, DEFAULT_RETRY_HTTP_STATUS_CODES, ApiClient, MCP_LABEL, hasMcpToolUsageFromMcpToTool, McpCallableTool, LiveMusic, LiveMusicSession, FUNCTION_RESPONSE_REQUIRES_ID, Live, defaultLiveSendClientContentParamerters, Session, DEFAULT_MAX_REMOTE_CALLS, Models, Operations, Tokens, Documents, FileSearchStores, envMemo, GoogleGenAISecurityProvider, GoogleGenAIAuthHook, HTTPClientError, UnexpectedClientError, InvalidRequestError, RequestAbortedError, RequestTimeoutError, ConnectionError, GoogleGenAiError, GeminiNextGenAPIClientError, APIError, APIUserAbortError, APIConnectionError, APIConnectionTimeoutError, BadRequestError, AuthenticationError, PermissionDeniedError, NotFoundError, ConflictError, UnprocessableEntityError, RateLimitError, InternalServerError, SDKHooks, hasOwn, ServerList, SDK_METADATA, encodeForm, encodeSimple, encodeFormQuery, DEFAULT_FETCHER, HTTPClient, mediaParamSeparator, codeRangeRE$1, defaultBackoff, PermanentError, TemporaryError, codeRangeRE, gt, webWorkerLike, isBrowserLike, ClientSDK, jsonLikeContentTypeRE, jsonlLikeContentTypeRE, GoogleGenAiDefaultError, Stream3, CR2, LF2, BOUNDARIES, MAX_BOUNDARY_LEN, DEFAULT_CONTENT_TYPES, headerValRE, SecurityErrorCode, SecurityError, _a, APIPromise, Agents, Environments, CancelInteractionByIdServerError, CancelInteractionByIdClientError, CreateInteractionServerError, CreateInteractionClientError, DeleteInteractionServerError, DeleteInteractionClientError, GetInteractionByIdServerError, GetInteractionByIdClientError, Interactions, Triggers, Webhooks, GoogleGenAI$1, LEGACY_LYRIA_MODELS, GeminiNextGenInteractions, GeminiNextGenAgents, GeminiNextGenWebhooks, GeminiNextGenTriggers, GeminiNextGenEnvironments, GOOGLE_API_KEY_HEADER, REQUIRED_VERTEX_AI_SCOPE, NodeAuth, NodeDownloader, NodeWebSocketFactory, NodeWebSocket, Tunings, MAX_CHUNK_SIZE, MAX_RETRY_COUNT, INITIAL_RETRY_DELAY_MS, DELAY_MULTIPLIER, X_GOOG_UPLOAD_STATUS_HEADER_FIELD, NodeUploader, NodeFiles, LANGUAGE_LABEL_PREFIX, GoogleGenAI2;
 var init_node = __esm({
   "node_modules/@google/genai/dist/node/index.mjs"() {
     import_p_retry = __toESM(require_p_retry(), 1);
@@ -52196,6 +52484,16 @@ var init_node = __esm({
       LiveMusicPlaybackControl2["STOP"] = "STOP";
       LiveMusicPlaybackControl2["RESET_CONTEXT"] = "RESET_CONTEXT";
     })(LiveMusicPlaybackControl || (LiveMusicPlaybackControl = {}));
+    ToolResponse = class {
+    };
+    FunctionResponseFileData = class {
+    };
+    FunctionResponseBlob = class {
+    };
+    FunctionResponsePart = class {
+    };
+    FunctionResponse = class {
+    };
     HttpResponse = class {
       constructor(response) {
         const headers = {};
@@ -52208,6 +52506,10 @@ var init_node = __esm({
       json() {
         return this.responseInternal.json();
       }
+    };
+    GenerateContentResponsePromptFeedback = class {
+    };
+    GenerateContentResponseUsageMetadata = class {
     };
     GenerateContentResponse = class {
       /**
@@ -52446,9 +52748,21 @@ var init_node = __esm({
     };
     DeleteModelResponse = class {
     };
+    AudioResponseFormat = class {
+    };
+    ImageResponseFormat = class {
+    };
+    TextResponseFormat = class {
+    };
+    VideoResponseFormat = class {
+    };
+    ResponseFormat = class {
+    };
     CountTokensResponse = class {
     };
     ComputeTokensResponse = class {
+    };
+    GenerateVideosResponse = class {
     };
     GenerateVideosOperation = class _GenerateVideosOperation {
       /**
@@ -52467,6 +52781,12 @@ var init_node = __esm({
         return operation;
       }
     };
+    ReinforcementTuningParseResponseConfig = class {
+    };
+    ReinforcementTuningAutoraterScorerParsedResponseConversionScorer = class {
+    };
+    EvaluateDatasetResponse = class {
+    };
     ListTuningJobsResponse = class {
     };
     CancelTuningJobResponse = class {
@@ -52482,6 +52802,8 @@ var init_node = __esm({
     ListFileSearchStoresResponse = class {
     };
     UploadToFileSearchStoreResumableResponse = class {
+    };
+    ImportFileResponse = class {
     };
     ImportFileOperation = class _ImportFileOperation {
       /**
@@ -52503,7 +52825,85 @@ var init_node = __esm({
     };
     RegisterFilesResponse = class {
     };
+    InlinedResponse = class {
+    };
+    SingleEmbedContentResponse = class {
+    };
+    InlinedEmbedContentResponse = class {
+    };
     ListBatchJobsResponse = class {
+    };
+    ReplayResponse = class {
+    };
+    RawReferenceImage = class {
+      /** Internal method to convert to ReferenceImageAPIInternal. */
+      toReferenceImageAPI() {
+        const referenceImageAPI = {
+          referenceType: "REFERENCE_TYPE_RAW",
+          referenceImage: this.referenceImage,
+          referenceId: this.referenceId
+        };
+        return referenceImageAPI;
+      }
+    };
+    MaskReferenceImage = class {
+      /** Internal method to convert to ReferenceImageAPIInternal. */
+      toReferenceImageAPI() {
+        const referenceImageAPI = {
+          referenceType: "REFERENCE_TYPE_MASK",
+          referenceImage: this.referenceImage,
+          referenceId: this.referenceId,
+          maskImageConfig: this.config
+        };
+        return referenceImageAPI;
+      }
+    };
+    ControlReferenceImage = class {
+      /** Internal method to convert to ReferenceImageAPIInternal. */
+      toReferenceImageAPI() {
+        const referenceImageAPI = {
+          referenceType: "REFERENCE_TYPE_CONTROL",
+          referenceImage: this.referenceImage,
+          referenceId: this.referenceId,
+          controlImageConfig: this.config
+        };
+        return referenceImageAPI;
+      }
+    };
+    StyleReferenceImage = class {
+      /** Internal method to convert to ReferenceImageAPIInternal. */
+      toReferenceImageAPI() {
+        const referenceImageAPI = {
+          referenceType: "REFERENCE_TYPE_STYLE",
+          referenceImage: this.referenceImage,
+          referenceId: this.referenceId,
+          styleImageConfig: this.config
+        };
+        return referenceImageAPI;
+      }
+    };
+    SubjectReferenceImage = class {
+      /* Internal method to convert to ReferenceImageAPIInternal. */
+      toReferenceImageAPI() {
+        const referenceImageAPI = {
+          referenceType: "REFERENCE_TYPE_SUBJECT",
+          referenceImage: this.referenceImage,
+          referenceId: this.referenceId,
+          subjectImageConfig: this.config
+        };
+        return referenceImageAPI;
+      }
+    };
+    ContentReferenceImage = class {
+      /** Internal method to convert to ReferenceImageAPIInternal. */
+      toReferenceImageAPI() {
+        const referenceImageAPI = {
+          referenceType: "REFERENCE_TYPE_CONTENT",
+          referenceImage: this.referenceImage,
+          referenceId: this.referenceId
+        };
+        return referenceImageAPI;
+      }
     };
     LiveServerMessage = class {
       /**
@@ -52565,6 +52965,13 @@ var init_node = __esm({
         return data.length > 0 ? btoa(data) : void 0;
       }
     };
+    LiveClientToolResponse = class {
+    };
+    LiveSendToolResponseParameters = class {
+      constructor() {
+        this.functionResponses = [];
+      }
+    };
     LiveMusicServerMessage = class {
       /**
        * Returns the first audio chunk from the server content, if present.
@@ -52578,6 +52985,8 @@ var init_node = __esm({
         }
         return void 0;
       }
+    };
+    UploadToFileSearchStoreResponse = class {
     };
     UploadToFileSearchStoreOperation = class _UploadToFileSearchStoreOperation {
       /**
@@ -74695,6 +75104,238 @@ async function handler(req, res) {
       });
       const localAnalysis = evaluateQuizPerformance(quizTitle, questions, answersMap, learnerProfile);
       res.status(200).json(localAnalysis);
+      return;
+    }
+    if ((path3.includes("/api/tutor") || path3.endsWith("/tutor")) && req.method === "POST") {
+      const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body || {};
+      const { message, history = [], lectureContext, studentContext } = body;
+      if (!message || typeof message !== "string") {
+        res.status(400).json({ error: "Message is required" });
+        return;
+      }
+      const ctx = studentContext || lectureContext || {};
+      const persona = ctx?.learnerProfile;
+      const SOCRATIC_SYSTEM_PROMPT = `You are "EduSync Socratic AI Tutor", an elite, empathetic university teaching assistant and academic mentor.
+
+Your Mission:
+Help students genuinely master challenging concepts through active inquiry, scaffolded reasoning, and critical thinking.
+
+CRITICAL GUARDRAIL RULES:
+1. THE SOCRATIC METHOD IS MANDATORY:
+   - NEVER write complete essays, homework solutions, or direct final answers to assignment/exam problems.
+   - If a student asks for a direct answer, decline and instead break the problem into guiding steps.
+2. CONTEXT-AWARE INSTRUCTION:
+   - Leverage any provided student context to tailor explanations and difficulty.
+   - Relate abstract concepts back to real-world physical intuitions.
+3. STRUCTURED PEDAGOGICAL RESPONSES:
+   - Use clear, inviting Markdown with LaTeX equations ($...$ for inline, $$...$$ for blocks).
+   - Provide 2-3 focused follow-up reflection questions.
+   - Recommend 1-2 authoritative learning resources.
+
+OUTPUT FORMAT:
+Return your response as a valid JSON object:
+{
+  "reply": "Your Socratic explanation and guiding prompts in clean Markdown...",
+  "followUpQuestions": ["Question 1?", "Question 2?"],
+  "recommendedResources": [{ "id": "rec-1", "title": "...", "type": "video", "provider": "...", "duration": "...", "url": "...", "description": "..." }]
+}`;
+      const personaSnippet = persona ? `
+[STUDENT_LEARNING_PERSONA]
+- Learning Modality: ${(persona.learningStyle || "balanced").toUpperCase()}
+- Target Academic Level: ${persona.targetGrade || "A+"}
+- Coaching Tone: ${persona.explanationTone || "encouraging_mentor"}
+- Preferred Pace: ${persona.preferredPace || "steady"}
+- Strengths: ${persona.strengthsAndInterests || "General Sciences"}
+- Weak Areas: ${persona.painPoints || "None specified"}
+[END_LEARNING_PERSONA]` : "";
+      const subjectName = ctx?.currentSubject?.name || "General Studies";
+      const contextSnippet = `
+[STUDENT_ACADEMIC_CONTEXT]
+- Active Course: ${subjectName} (${ctx?.currentSubject?.code || "GEN-101"})
+- Current Unit: ${ctx?.currentSubject?.currentUnit || "General Studies"}
+[END_STUDENT_CONTEXT]
+${personaSnippet}`;
+      if (process.env.GEMINI_API_KEY) {
+        try {
+          const { GoogleGenAI: GoogleGenAI3 } = await Promise.resolve().then(() => (init_node(), node_exports));
+          const ai = new GoogleGenAI3({ apiKey: process.env.GEMINI_API_KEY });
+          const formattedHistory = (history || []).map((h2) => ({
+            role: h2.sender === "user" ? "user" : "model",
+            parts: [{ text: h2.text }]
+          }));
+          const fullPrompt = `${contextSnippet}
+
+Student Query: "${message}"
+
+Please formulate your Socratic guidance response following the JSON schema.`;
+          const result = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: [
+              ...formattedHistory,
+              { role: "user", parts: [{ text: fullPrompt }] }
+            ],
+            config: {
+              systemInstruction: SOCRATIC_SYSTEM_PROMPT,
+              responseMimeType: "application/json"
+            }
+          });
+          const rawText = result.text || "{}";
+          let parsedResult;
+          try {
+            parsedResult = JSON.parse(rawText);
+          } catch {
+            parsedResult = {
+              reply: rawText,
+              followUpQuestions: [
+                "What is the fundamental equation or definition governing this concept?",
+                "What variables are given, and what are you solving for?"
+              ],
+              recommendedResources: []
+            };
+          }
+          res.status(200).json(parsedResult);
+          return;
+        } catch (geminiErr) {
+          console.warn("[Tutor Gemini Error]", geminiErr?.message || geminiErr);
+        }
+      }
+      const clean = message.toLowerCase();
+      const KNOWLEDGE_CORPUS = [
+        {
+          keywords: ["carnot", "heat engine", "efficiency", "entropy", "second law", "kelvin", "thermodynamics", "refrigerator"],
+          reply: `### \u2699\uFE0F Exploring Heat Engine Efficiency & The Carnot Limit
+
+In any thermodynamic heat engine, efficiency $\\eta$ measures how effectively heat input ($Q_H$) is converted into mechanical work ($W = Q_H - Q_C$):
+
+$$\\eta = \\frac{W}{Q_H} = 1 - \\frac{Q_C}{Q_H}$$
+
+For a reversible **Carnot cycle**:
+$$\\eta_{\\text{Carnot}} = 1 - \\frac{T_C}{T_H}$$
+
+#### \u{1F4A1} Key Concept to Master:
+Why can a real heat engine never reach $100\\%$ efficiency? Notice that for $\\eta = 1$, either $Q_C = 0$ (violating the Kelvin-Planck statement) or $T_C = 0\\text{ K}$ (unreachable by the Third Law).`,
+          followUpQuestions: [
+            "If an engine operates between 600 K and 300 K, what is its maximum possible efficiency?",
+            "Why is internal energy a state function while Work and Heat depend on the specific path?"
+          ]
+        },
+        {
+          keywords: ["pointer", "malloc", "memory", "segfault", "array", "address", "dereference", "linked list", "c programming"],
+          reply: `### \u{1F9E0} Pointers & Memory Architecture in C
+
+In C, variables are stored at specific memory addresses. A **pointer** holds the memory address of another variable.
+
+\`\`\`c
+int val = 42;
+int *ptr = &val; // ptr holds the address of val
+*ptr = 100;      // Directly modifies memory at that address
+\`\`\`
+
+#### \u{1F50D} Critical Distinction:
+Pointer arithmetic (ptr + 1) advances by sizeof(*ptr) bytes, not 1 byte. For an int, that's 4 bytes.`,
+          followUpQuestions: [
+            "What happens in memory when you access an array as arr[i] versus *(arr + i)?",
+            "Why does passing a pointer to a function allow modifying the caller's original variables?"
+          ]
+        },
+        {
+          keywords: ["lagrange", "optimization", "partial derivative", "gradient", "integral", "contour", "extrema", "calculus"],
+          reply: `### \u{1F4D0} Constrained Optimization via Lagrange Multipliers
+
+When maximizing or minimizing $f(x, y)$ along a constraint $g(x, y) = c$, the optimal point occurs where the **level curves of $f$ are tangent to $g = c$**.
+
+Because $\\nabla f$ and $\\nabla g$ are perpendicular to their respective level curves, they must be parallel:
+
+$$\\nabla f(x, y) = \\lambda \\nabla g(x, y)$$
+
+Coupled with $g(x, y) = c$, this gives a system of equations for the critical points.`,
+          followUpQuestions: [
+            "Why would a point where the level curve crosses the constraint curve NOT be an extremum?",
+            "How do you set up the partial derivative equations from the Lagrangian?"
+          ]
+        },
+        {
+          keywords: ["nda", "ssb", "selection", "interview", "medical", "defence", "training", "academy"],
+          reply: `### \u{1F396}\uFE0F Understanding the NDA Selection Process
+
+The NDA Selection Process follows a structured multi-stage pipeline:
+
+1. **Written Exam** (UPSC): Tests Mathematics and General Ability (English, GK, Physics, Chemistry, etc.)
+2. **SSB Interview** (5 Days): Psychological tests, Group Testing, and Personal Interview to assess Officer-Like Qualities (OLQs)
+3. **Medical Examination**: Comprehensive fitness and health evaluation
+
+#### \u{1F4A1} Let's Think About This:
+The SSB doesn't just test knowledge \u2014 it evaluates **decision-making under pressure**, **leadership potential**, and **group dynamics**.
+
+**Executive Summary** covers the high-level pipeline overview.
+**Training Architecture** refers to how cadets are trained at NDA (Khadakwasla) across academics, physical training, and service-specific drills.
+
+Let's break down which specific area you found challenging. Can you tell me \u2014 was it the **exam structure and scoring**, the **SSB evaluation criteria**, or the **post-selection training flow**?`,
+          followUpQuestions: [
+            "Can you describe in your own words what Officer-Like Qualities (OLQs) the SSB evaluates?",
+            "What is the difference between the screening test and the main SSB 5-day testing process?",
+            "How does the training architecture at NDA differ from other military academies?"
+          ]
+        },
+        {
+          keywords: ["friction", "newton", "force", "motion", "inertia", "acceleration", "momentum"],
+          reply: `### \u{1F52C} Newton's Laws & Friction Analysis
+
+Newton's Laws form the foundation of classical mechanics:
+
+1. **First Law (Inertia)**: An object remains at rest or in uniform motion unless acted upon by a net external force.
+2. **Second Law**: $\\vec{F}_{\\text{net}} = m\\vec{a}$ \u2014 acceleration is directly proportional to net force and inversely proportional to mass.
+3. **Third Law**: For every action force, there is an equal and opposite reaction force.
+
+**Friction** resists relative motion between surfaces:
+- Static friction: $f_s \\leq \\mu_s N$
+- Kinetic friction: $f_k = \\mu_k N$
+
+The key insight: static friction is *self-adjusting* up to its maximum value, while kinetic friction is constant.`,
+          followUpQuestions: [
+            "Why is the coefficient of static friction typically greater than kinetic friction?",
+            "How would you draw a free-body diagram for an object on an inclined plane with friction?"
+          ]
+        }
+      ];
+      for (const item of KNOWLEDGE_CORPUS) {
+        if (item.keywords.some((kw) => clean.includes(kw))) {
+          res.status(200).json({
+            reply: item.reply,
+            followUpQuestions: item.followUpQuestions,
+            recommendedResources: []
+          });
+          return;
+        }
+      }
+      res.status(200).json({
+        reply: `### \u{1F4A1} Let's Explore This Together
+
+Great question! To master this concept from first principles:
+
+1. **Identify the Core Phenomenon**: What physical laws, governing equations, or computational rules define this topic?
+2. **Break Down the Knowns**: What parameters are given, and what boundary conditions must hold true?
+3. **Map the Relationships**: How do the variables connect through equations or logical dependencies?
+
+Tell me what you think the first step or governing relation is, and let's work through it together step by step!
+
+*I'm here to guide you through the reasoning process, not just give you the answer \u2014 that's how real mastery happens.* \u{1F680}`,
+        followUpQuestions: [
+          "What equations or formulas connect the variables in your question?",
+          "What happens at the boundary conditions (e.g., at zero or infinity)?"
+        ],
+        recommendedResources: [
+          {
+            id: "res-gen-1",
+            title: "Undergraduate Engineering Foundations Reference",
+            type: "book",
+            provider: "University Coursepack",
+            duration: "Core Modules",
+            url: "#",
+            description: "Comprehensive textbook reference with step-by-step conceptual walkthroughs."
+          }
+        ]
+      });
       return;
     }
     res.status(200).json({ status: "ok", time: (/* @__PURE__ */ new Date()).toISOString(), path: path3 });
