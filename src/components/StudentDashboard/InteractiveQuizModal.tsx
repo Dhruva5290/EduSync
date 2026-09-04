@@ -8,7 +8,8 @@ import {
   Sparkles,
   ArrowRight,
   RotateCcw,
-  BookOpen
+  BookOpen,
+  GraduationCap
 } from 'lucide-react';
 
 interface InteractiveQuizModalProps {
@@ -78,15 +79,23 @@ export const InteractiveQuizModal: React.FC<InteractiveQuizModalProps> = ({
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-blue-400" />
             <div>
-              <h3 className="text-sm font-bold uppercase tracking-tight text-white">
-                {quiz.title}
-              </h3>
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm font-bold uppercase tracking-tight text-white">
+                  {quiz.title}
+                </h3>
+                {quiz.hasTeacherQuestions && (
+                  <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-700 flex items-center gap-1">
+                    <GraduationCap className="w-3 h-3" />
+                    Faculty Bank Applied
+                  </span>
+                )}
+              </div>
               <p className="text-[11px] font-mono text-slate-400">
                 Note-to-Quiz Bridge · {quiz.questions.length} Diagnostic Questions
               </p>
             </div>
           </div>
-          <button onClick={onClose} className="text-slate-400 hover:text-white text-sm">
+          <button onClick={onClose} className="text-slate-400 hover:text-white text-sm cursor-pointer">
             ✕
           </button>
         </div>
@@ -108,7 +117,13 @@ export const InteractiveQuizModal: React.FC<InteractiveQuizModalProps> = ({
             </div>
 
             {/* Question Text */}
-            <div className="p-4 bg-slate-950 rounded-md border border-slate-800">
+            <div className="p-4 bg-slate-950 rounded-md border border-slate-800 space-y-2">
+              {currentQ.source === 'teacher_question_bank' && (
+                <div className="flex items-center gap-1.5 px-2 py-0.5 bg-emerald-950/80 border border-emerald-700/80 rounded text-[10px] font-bold text-emerald-300 w-fit">
+                  <GraduationCap className="w-3 h-3 text-emerald-400" />
+                  <span>Curated from Faculty Question Bank {currentQ.teacherName ? `(${currentQ.teacherName})` : ''}</span>
+                </div>
+              )}
               <p className="text-xs font-bold text-white leading-relaxed">
                 {currentQ.question}
               </p>

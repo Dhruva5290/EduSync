@@ -180,6 +180,25 @@ export interface QuizQuestion {
   explanation: string;
   topic: string;
   difficulty?: 'easy' | 'moderate' | 'hard';
+  source?: 'teacher_question_bank' | 'ai_generated';
+  questionBankTitle?: string;
+  teacherName?: string;
+}
+
+export interface QuestionBankItem extends QuizQuestion {
+  subjectId: string;
+}
+
+export interface QuestionBank {
+  id: string;
+  subjectId: string;
+  title: string;
+  description?: string;
+  teacherId: string;
+  teacherName: string;
+  uploadedAt: string;
+  questionsCount: number;
+  questions: QuizQuestion[];
 }
 
 export interface GeneratedQuiz {
@@ -188,6 +207,8 @@ export interface GeneratedQuiz {
   topic: string;
   questions: QuizQuestion[];
   createdAt: string;
+  hasTeacherQuestions?: boolean;
+  teacherQuestionsCount?: number;
 }
 
 export interface LectureQuizAnalysis {

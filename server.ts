@@ -2697,20 +2697,48 @@ By Newton's Second Law ($\vec{F}_{net} = m\vec{a}$), acceleration only exists wh
   app.post('/api/ai/generate-flashcards', aiRateLimiter.middleware, handleGenerateFlashcards);
   app.post('/api/ai/notes/flashcards', aiRateLimiter.middleware, handleGenerateFlashcards);
 
-  // 4. Note-to-Quiz Bridge (with Persona Adaptation)
+  // 4. Note-to-Quiz Bridge (with Teacher Question Bank Grounding & Persona Adaptation)
   const handleNoteToQuiz = async (req: express.Request, res: express.Response) => {
     try {
-      const { noteId, content, title, learnerProfile } = req.body;
+      const { noteId, content, title, learnerProfile, subjectId } = req.body;
       const user = getCurrentUser(req);
       const finalProfile = learnerProfile || user?.learningProfile;
-      const quizData = await generateNoteQuizAI(content, title, finalProfile);
+
+      // Identify relevant subject to ground quiz with teacher's uploaded questions
+      let targetSubjectId = subjectId;
+      if (!targetSubjectId && noteId) {
+        const foundNote = db.notes.find(n => n.id === noteId);
+        if (foundNote?.subjectId) {
+          targetSubjectId = foundNote.subjectId;
+        }
+      }
+      if (!targetSubjectId && title) {
+        const tLower = title.toLowerCase();
+        if (tLower.includes('phys') || tLower.includes('mechanic') || tLower.includes('friction') || tLower.includes('force')) {
+          targetSubjectId = 'subj-phy';
+        } else if (tLower.includes('chem') || tLower.includes('thermo') || tLower.includes('aldol') || tLower.includes('reaction')) {
+          targetSubjectId = 'subj-che';
+        } else if (tLower.includes('math') || tLower.includes('calculus') || tLower.includes('integral') || tLower.includes('vector')) {
+          targetSubjectId = 'subj-mat';
+        }
+      }
+
+      // Collect teacher questions from matching question banks
+      const relevantBanks = targetSubjectId
+        ? db.questionBanks.filter(qb => qb.subjectId === targetSubjectId)
+        : db.questionBanks;
+      const teacherQuestions = (relevantBanks || []).flatMap(qb => qb.questions || []);
+
+      const quizData = await generateNoteQuizAI(content, title, finalProfile, teacherQuestions);
 
       const generatedQuiz = {
         id: `quiz-${Date.now()}`,
         title: quizData.title,
         topic: title || 'Custom Note Practice',
         questions: quizData.questions,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        hasTeacherQuestions: quizData.hasTeacherQuestions,
+        teacherQuestionsCount: quizData.teacherQuestionsCount
       };
 
       if (noteId) {
@@ -2731,6 +2759,74 @@ By Newton's Second Law ($\vec{F}_{net} = m\vec{a}$), acceleration only exists wh
 
   app.post('/api/ai/note-to-quiz', aiRateLimiter.middleware, handleNoteToQuiz);
   app.post('/api/ai/notes/quiz', aiRateLimiter.middleware, handleNoteToQuiz);
+
+  // ==========================================
+  // QUESTION BANKS API (Teacher Upload & AI Grounding)
+  // ==========================================
+
+  app.get('/api/question-banks', (req: Request, res: Response) => {
+    try {
+      const { subjectId } = req.query;
+      if (subjectId && typeof subjectId === 'string' && subjectId !== 'all') {
+        const filtered = (db.questionBanks || []).filter(qb => qb.subjectId === subjectId);
+        return res.json(filtered);
+      }
+      return res.json(db.questionBanks || []);
+    } catch (err: any) {
+      console.error('Error fetching question banks:', err);
+      res.status(500).json({ error: 'Failed to fetch question banks' });
+    }
+  });
+
+  app.post('/api/question-banks', (req: Request, res: Response) => {
+    try {
+      const { subjectId, title, description, questions } = req.body;
+      const user = getCurrentUser(req);
+      if (!title || !subjectId || !Array.isArray(questions)) {
+        return res.status(400).json({ error: 'Missing title, subjectId, or questions array' });
+      }
+
+      const newBank = {
+        id: `qb-${Date.now()}`,
+        subjectId,
+        title: String(title).trim(),
+        description: description ? String(description).trim() : 'Faculty question bank',
+        teacherId: user?.id || 'teacher-phy',
+        teacherName: user?.name || 'Department Faculty',
+        uploadedAt: new Date().toISOString(),
+        questionsCount: questions.length,
+        questions: questions.map((q: any, i: number) => ({
+          ...q,
+          id: q.id || `q-${Date.now()}-${i}`,
+          source: 'teacher_question_bank' as const,
+          questionBankTitle: String(title).trim(),
+          teacherName: user?.name || 'Department Faculty'
+        }))
+      };
+
+      if (!db.questionBanks) db.questionBanks = [];
+      db.questionBanks.unshift(newBank);
+      res.status(201).json(newBank);
+    } catch (err: any) {
+      console.error('Error creating question bank:', err);
+      res.status(500).json({ error: 'Failed to create question bank' });
+    }
+  });
+
+  app.delete('/api/question-banks/:id', (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const initialLen = (db.questionBanks || []).length;
+      db.questionBanks = (db.questionBanks || []).filter(qb => qb.id !== id);
+      if (db.questionBanks.length === initialLen) {
+        return res.status(404).json({ error: 'Question bank not found' });
+      }
+      res.json({ success: true, message: 'Question bank deleted' });
+    } catch (err: any) {
+      console.error('Error deleting question bank:', err);
+      res.status(500).json({ error: 'Failed to delete question bank' });
+    }
+  });
 
   // 5. AI Class Diagnostics (Teacher Analytics)
   const handleClassDiagnostics = async (req: express.Request, res: express.Response) => {

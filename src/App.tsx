@@ -10,7 +10,8 @@ import {
   ClassAnalytics,
   Flashcard,
   GeneratedQuiz,
-  LearnerPersona
+  LearnerPersona,
+  QuestionBank
 } from './types';
 import { Header } from './components/Header';
 import { AIClassAnalytics } from './components/TeacherDashboard/AIClassAnalytics';
@@ -29,7 +30,18 @@ import { LectureNotesStudio } from './components/VisionNoteLectures/LectureNotes
 import { StudentHomeDashboard } from './components/StudentDashboard/StudentHomeDashboard';
 import { LectureExperiencePage } from './components/LecturePage/LectureExperiencePage';
 import { BoardVisualsHub } from './components/BoardVisuals/BoardVisualsHub';
+import { QuestionBankManager } from './components/TeacherDashboard/QuestionBankManager';
 import { subscribeToVisionNotes, fetchVisionNotesFromSupabase, isSupabaseConfigured } from './lib/supabase';
+import {
+  FAKE_SUBJECTS,
+  FAKE_USERS,
+  FAKE_NOTES,
+  FAKE_QUESTION_BANKS,
+  FAKE_ASSIGNMENTS,
+  FAKE_TIMELINES,
+  FAKE_RESOURCES,
+  FAKE_ANALYTICS
+} from './mock/fakeData';
 
 
 import {
@@ -57,7 +69,8 @@ import {
   Shield,
   Building,
   LogOut,
-  Camera
+  Camera,
+  BrainCircuit
 } from 'lucide-react';
 
 export default function App() {
@@ -75,10 +88,17 @@ export default function App() {
       return null;
     }
   });
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [allUsers, setAllUsers] = useState<User[]>([]);
-  const [subjects, setSubjects] = useState<Subject[]>([]);
-  const [activeSubjectId, setActiveSubjectId] = useState<string>('subj-1');
+  const [currentUser, setCurrentUser] = useState<User | null>(() => {
+    const savedUserId = localStorage.getItem('edusync_user_id');
+    if (savedUserId) {
+      const matched = FAKE_USERS.find(u => u.id === savedUserId);
+      if (matched) return matched;
+    }
+    return null;
+  });
+  const [allUsers, setAllUsers] = useState<User[]>(FAKE_USERS);
+  const [subjects, setSubjects] = useState<Subject[]>(FAKE_SUBJECTS);
+  const [activeSubjectId, setActiveSubjectId] = useState<string>('subj-phy');
   const [activeTab, setActiveTab] = useState<string>('overview');
   const [selectedLectureId, setSelectedLectureId] = useState<string>('lec-phy-101');
   const [selectedLectureTimestamp, setSelectedLectureTimestamp] = useState<string | undefined>(undefined);
@@ -103,20 +123,37 @@ export default function App() {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');
   };
 
-  // Course Data
-  const [timelines, setTimelines] = useState<TimelineItem[]>([]);
-  const [resources, setResources] = useState<ReferenceResource[]>([]);
-  const [assignments, setAssignments] = useState<Assignment[]>([]);
+  // Course Data (Defaulted to Full Rich Fake Data so Vercel is Never Reset / Blank)
+  const [timelines, setTimelines] = useState<TimelineItem[]>(FAKE_TIMELINES);
+  const [resources, setResources] = useState<ReferenceResource[]>(FAKE_RESOURCES);
+  const [assignments, setAssignments] = useState<Assignment[]>(FAKE_ASSIGNMENTS);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
-  const [notes, setNotes] = useState<StudentNote[]>([]);
-  const [analytics, setAnalytics] = useState<ClassAnalytics | null>(null);
+  const [notes, setNotes] = useState<StudentNote[]>(() => {
+    const saved = localStorage.getItem('edusync_notes');
+    try {
+      return saved ? JSON.parse(saved) : FAKE_NOTES;
+    } catch {
+      return FAKE_NOTES;
+    }
+  });
+  const [analytics, setAnalytics] = useState<ClassAnalytics | null>(FAKE_ANALYTICS['subj-phy']);
 
   // Master Multi-Course Semester Datasets
-  const [allSubjects, setAllSubjects] = useState<Subject[]>([]);
-  const [allTimelines, setAllTimelines] = useState<TimelineItem[]>([]);
-  const [allResources, setAllResources] = useState<ReferenceResource[]>([]);
-  const [allAssignments, setAllAssignments] = useState<Assignment[]>([]);
+  const [allSubjects, setAllSubjects] = useState<Subject[]>(FAKE_SUBJECTS);
+  const [allTimelines, setAllTimelines] = useState<TimelineItem[]>(FAKE_TIMELINES);
+  const [allResources, setAllResources] = useState<ReferenceResource[]>(FAKE_RESOURCES);
+  const [allAssignments, setAllAssignments] = useState<Assignment[]>(FAKE_ASSIGNMENTS);
   const [allSubmissions, setAllSubmissions] = useState<Submission[]>([]);
+
+  // Question Banks (Faculty-Uploaded & Grounded in AI Quizzes)
+  const [questionBanks, setQuestionBanks] = useState<QuestionBank[]>(() => {
+    const saved = localStorage.getItem('edusync_question_banks');
+    try {
+      return saved ? JSON.parse(saved) : FAKE_QUESTION_BANKS;
+    } catch {
+      return FAKE_QUESTION_BANKS;
+    }
+  });
 
   const [activeQuizModal, setActiveQuizModal] = useState<GeneratedQuiz | null>(null);
 
@@ -180,17 +217,39 @@ export default function App() {
   useEffect(() => {
     const initApp = async () => {
       setIsLoading(true);
-      // Clean start: always begin at the Login Screen on page load/refresh
-      setCurrentUser(null);
-      setAuthToken(null);
-      localStorage.removeItem('edusync_token');
+
+      // Check for saved session so page reload on Vercel doesn't kick the user out
+      const savedToken = authToken || localStorage.getItem('edusync_token');
+      const savedUserId = localStorage.getItem('edusync_user_id');
+      if (savedToken && savedUserId && !currentUser) {
+        const matched = FAKE_USERS.find(u => u.id === savedUserId);
+        if (matched) {
+          setCurrentUser(matched);
+          setAuthToken(savedToken);
+        }
+      }
 
       try {
         // Fetch all registered users list so LoginScreen and rosters have up-to-date data
         const publicData = await safeFetchJson<{ users: User[] }>('/api/auth/public-users');
-        if (publicData?.users && Array.isArray(publicData.users)) {
+        if (publicData?.users && Array.isArray(publicData.users) && publicData.users.length > 0) {
           setAllUsers(publicData.users);
         }
+
+        // Fetch subjects if available
+        const subjData = await safeFetchJson<Subject[]>('/api/subjects');
+        if (subjData && Array.isArray(subjData) && subjData.length > 0) {
+          setSubjects(subjData);
+          setAllSubjects(subjData);
+        }
+
+        // Fetch question banks if available
+        const qbData = await safeFetchJson<QuestionBank[]>('/api/question-banks');
+        if (qbData && Array.isArray(qbData) && qbData.length > 0) {
+          setQuestionBanks(qbData);
+        }
+
+        await fetchMasterData();
       } catch (err) {
         console.error('Error initializing user roster:', err);
       } finally {
@@ -684,24 +743,114 @@ export default function App() {
     throw new Error('Failed to generate flashcards');
   };
 
-  // 13. AI Note-to-Quiz Bridge
+  // 13. AI Note-to-Quiz Bridge (Grounding in Teacher Question Banks)
   const handleGenerateQuizFromNote = async (noteId: string, content: string, title: string, learnerProfile?: LearnerPersona): Promise<GeneratedQuiz> => {
     const token = authToken || localStorage.getItem('edusync_token');
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
     if (token) headers['Authorization'] = `Bearer ${token}`;
     if (currentUser?.id) headers['x-user-id'] = currentUser.id;
 
-    const res = await fetch('/api/ai/notes/quiz', {
-      method: 'POST',
-      headers,
-      body: JSON.stringify({ noteId, content, title, learnerProfile: learnerProfile || currentUser?.learningProfile })
-    });
-    if (res.ok) {
-      const data = await res.json();
-      showToast(`Generated Note-to-Quiz interactive assessment!`);
-      return data.quiz;
+    const note = notes.find(n => n.id === noteId);
+    const targetSubjId = note?.subjectId || activeSubjectId;
+
+    try {
+      const res = await fetch('/api/ai/notes/quiz', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          noteId,
+          content,
+          title,
+          subjectId: targetSubjId,
+          learnerProfile: learnerProfile || currentUser?.learningProfile
+        })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        showToast(
+          data.quiz?.hasTeacherQuestions
+            ? `✨ Quiz generated with verified faculty question bank!`
+            : `Generated Note-to-Quiz interactive assessment!`
+        );
+        return data.quiz;
+      }
+    } catch (err) {
+      console.warn('Backend quiz endpoint error, synthesizing locally with faculty question bank:', err);
     }
-    throw new Error('Failed to generate quiz');
+
+    // Local fallback utilizing questions from matching teacher question banks
+    const matchingBanks = questionBanks.filter(qb => qb.subjectId === targetSubjId);
+    const facultyQs = matchingBanks.flatMap(qb => qb.questions || []);
+    const chosenQs = facultyQs.length > 0 ? facultyQs.slice(0, 4) : [
+      {
+        id: `q-loc-1`,
+        question: `Based on "${title}", what is the primary invariant condition required?`,
+        options: ['State equilibrium and conservation of energy', 'Arbitrary divergence', 'Infinite entropy growth', 'Unbounded recursion'],
+        correctIndex: 0,
+        explanation: 'The fundamental concept maintains rigorous conservation and state boundary conditions.',
+        topic: title.slice(0, 20),
+        difficulty: 'moderate' as const
+      }
+    ];
+
+    const fallbackQuiz: GeneratedQuiz = {
+      id: `quiz-fb-${Date.now()}`,
+      title: facultyQs.length > 0 ? `Faculty Curated Assessment: ${title}` : `Practice Quiz: ${title}`,
+      topic: title,
+      questions: chosenQs,
+      createdAt: new Date().toISOString(),
+      hasTeacherQuestions: facultyQs.length > 0,
+      teacherQuestionsCount: chosenQs.filter(q => q.source === 'teacher_question_bank').length
+    };
+
+    showToast(
+      fallbackQuiz.hasTeacherQuestions
+        ? `✨ Quiz loaded with verified faculty question bank!`
+        : `Generated Note-to-Quiz interactive assessment!`
+    );
+    return fallbackQuiz;
+  };
+
+  // 13.2 Question Bank Handlers (Faculty Upload & Storage)
+  const handleSaveQuestionBank = async (bank: QuestionBank) => {
+    setQuestionBanks(prev => {
+      const next = [bank, ...prev.filter(b => b.id !== bank.id)];
+      localStorage.setItem('edusync_question_banks', JSON.stringify(next));
+      return next;
+    });
+
+    try {
+      const token = authToken || localStorage.getItem('edusync_token');
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      await fetch('/api/question-banks', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(bank)
+      });
+    } catch (err) {
+      console.warn('Backend question bank sync offline, saved in local state:', err);
+    }
+  };
+
+  const handleDeleteQuestionBank = async (bankId: string) => {
+    setQuestionBanks(prev => {
+      const next = prev.filter(b => b.id !== bankId);
+      localStorage.setItem('edusync_question_banks', JSON.stringify(next));
+      return next;
+    });
+
+    try {
+      const token = authToken || localStorage.getItem('edusync_token');
+      const headers: Record<string, string> = {};
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      await fetch(`/api/question-banks/${bankId}`, {
+        method: 'DELETE',
+        headers
+      });
+    } catch (err) {
+      console.warn('Backend question bank delete failed:', err);
+    }
   };
 
   // 13.5 AI Generate Detailed Note from Topic Prompt / Document (Unified LLM with Cognitive Persona)
@@ -1015,6 +1164,19 @@ export default function App() {
               >
                 <FileCheck className="w-4 h-4 shrink-0 text-emerald-400" />
                 <span>Assignment Hub</span>
+              </button>
+
+              <button
+                id="sidebar-tab-question-banks"
+                onClick={() => { setActiveTab('question-banks'); setMobileMenuOpen(false); }}
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-sm text-xs font-semibold transition-colors text-left ${
+                  activeTab === 'question-banks'
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                }`}
+              >
+                <BrainCircuit className="w-4 h-4 shrink-0 text-cyan-400" />
+                <span>Question Bank Hub ({questionBanks.filter(qb => qb.subjectId === activeSubjectId).length})</span>
               </button>
             </>
           ) : (
@@ -1383,6 +1545,19 @@ export default function App() {
                   onCreateAssignment={handleCreateAssignment}
                   onGradeSubmission={handleGradeSubmission}
                   fetchSubmissionsForAssignment={fetchSubmissionsForAssignment}
+                />
+              )}
+
+              {activeTab === 'question-banks' && (
+                <QuestionBankManager
+                  currentUser={currentUser}
+                  subjects={subjects}
+                  activeSubjectId={activeSubjectId}
+                  onSelectSubject={(id) => setActiveSubjectId(id)}
+                  questionBanks={questionBanks}
+                  onSaveQuestionBank={handleSaveQuestionBank}
+                  onDeleteQuestionBank={handleDeleteQuestionBank}
+                  onShowToast={(msg, type) => showToast(msg, type || 'success')}
                 />
               )}
             </div>

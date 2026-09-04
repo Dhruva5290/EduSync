@@ -10,8 +10,10 @@ import {
   ClassSarthiLecture,
   BoardCapture,
   LectureMasteryQuiz,
-  StudentConceptMastery
+  StudentConceptMastery,
+  QuestionBank
 } from '../types';
+import { FAKE_QUESTION_BANKS } from '../mock/fakeData';
 import {
   seedLectures,
   seedBoardCaptures,
@@ -41,6 +43,7 @@ export interface InMemoryDatabase {
   conceptMastery: Record<string, StudentConceptMastery[]>;
   lectureProgress: Record<string, Record<string, any>>;
   masteryQuizzes: Record<string, LectureMasteryQuiz>;
+  questionBanks: QuestionBank[];
 }
 
 const isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
@@ -2147,6 +2150,7 @@ $$2I = \\int_{0}^{\\pi/2} 1 \\, dx = \\frac{\\pi}{2} \\implies I = \\frac{\\pi}{
   boardCaptures: seedBoardCaptures,
   conceptMastery: seedConceptMastery,
   lectureProgress: loadProgressFromDisk(seedStudentLectureProgress),
-  masteryQuizzes: seedMasteryQuizzes
+  masteryQuizzes: seedMasteryQuizzes,
+  questionBanks: [...FAKE_QUESTION_BANKS]
 };
 

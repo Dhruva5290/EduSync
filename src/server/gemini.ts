@@ -967,9 +967,30 @@ export async function generateFlashcardsAI(noteContent: string, count: number = 
 /**
  * 5. Generate Note-to-Quiz Diagnostic
  */
-export async function generateNoteQuizAI(noteContent: string, title?: string, learnerProfile?: LearnerPersona): Promise<{ title: string; questions: QuizQuestion[] }> {
+export async function generateNoteQuizAI(
+  noteContent: string,
+  title?: string,
+  learnerProfile?: LearnerPersona,
+  teacherQuestions?: QuizQuestion[]
+): Promise<{ title: string; questions: QuizQuestion[]; hasTeacherQuestions?: boolean; teacherQuestionsCount?: number }> {
   const apiKey = process.env.GEMINI_API_KEY;
+  const facultyQuestions = (teacherQuestions && teacherQuestions.length > 0)
+    ? teacherQuestions.map((tq, i) => ({
+        ...tq,
+        id: tq.id || `q-fac-${Date.now()}-${i}`,
+        source: 'teacher_question_bank' as const
+      }))
+    : [];
+
   if (!apiKey) {
+    if (facultyQuestions.length > 0) {
+      return {
+        title: title ? `Faculty Verified Quiz: ${title}` : 'Faculty Curated Assessment',
+        questions: facultyQuestions.slice(0, 5),
+        hasTeacherQuestions: true,
+        teacherQuestionsCount: Math.min(facultyQuestions.length, 5)
+      };
+    }
     return {
       title: title ? `Practice Quiz: ${title}` : 'Personalized Note-to-Quiz Practice',
       questions: [
@@ -977,38 +998,47 @@ export async function generateNoteQuizAI(noteContent: string, title?: string, le
           id: 'q1',
           question: 'Which of the following best characterizes the invariant condition discussed in the notes?',
           options: [
-            'All operational paths maintain equal black-height or thermal equilibrium',
-            'Every state is guaranteed to be unconstrained without bounds',
-            'Operations require O(n^2) worst-case time without exception',
-            'State transitions alter the fundamental ordering of keys arbitrarily'
+            'All operational paths maintain equal energy, momentum, or state conservation bounds',
+            'Every state is guaranteed to be unconstrained without physical bounds',
+            'Operations require arbitrary parameter adjustments without verification',
+            'State transitions violate thermodynamic and kinematic laws arbitrarily'
           ],
           correctIndex: 0,
-          explanation: 'The fundamental invariant guarantees balanced depth and preserves strict ordered properties.',
-          topic: 'Invariants'
+          explanation: 'The fundamental invariant guarantees balanced conservation laws and preserves strict physical constraints.',
+          topic: 'Physical Invariants',
+          difficulty: 'moderate'
         },
         {
           id: 'q2',
-          question: 'What is the primary design trade-off in this approach?',
+          question: 'What is the primary trade-off and boundary check required in this concept?',
           options: [
-            'Time efficiency vs memory/space overhead',
-            'Infinite recursion vs zero computation',
-            'Complete neglect of boundary safety',
-            'Random execution without verification'
+            'Accuracy and stability vs dissipative losses or computational overhead',
+            'Infinite energy creation vs zero output work',
+            'Complete neglect of boundary safety constraints',
+            'Arbitrary random outcomes without deterministic formulation'
           ],
           correctIndex: 0,
-          explanation: 'Standard engineering design balances algorithmic speed against memory storage requirements.',
-          topic: 'Trade-offs'
+          explanation: 'Standard engineering and science formulations balance physical performance against systemic losses or limits.',
+          topic: 'Boundary Analysis',
+          difficulty: 'moderate'
         }
-      ]
+      ],
+      hasTeacherQuestions: false,
+      teacherQuestionsCount: 0
     };
   }
 
   const ai = getAI();
   try {
     const personaGuidance = buildPersonaPromptInstructions(learnerProfile);
+    const teacherContext = facultyQuestions.length > 0
+      ? `\n\nFACULTY QUESTION BANK EXAMPLES TO PRIORITIZE OR MATCH STYLE:\n${facultyQuestions.map((q, idx) => `Question ${idx+1}: ${q.question}\nOptions: ${q.options.join(', ')}\nAnswer Index: ${q.correctIndex}\nTopic: ${q.topic}`).join('\n\n')}`
+      : '';
+
+    const neededAiCount = Math.max(2, 5 - Math.min(facultyQuestions.length, 3));
     const response = await ai.models.generateContent({
       model: 'gemini-3.6-flash',
-      contents: `Generate a 4-to-5 question interactive multiple-choice practice quiz based strictly on the following student notes:\n\n${noteContent}`,
+      contents: `Generate ${neededAiCount} high-yield multiple-choice practice questions based on the following notes:${teacherContext}\n\nSTUDENT NOTES:\n${noteContent}`,
       config: {
         systemInstruction: `You are an educational quiz generation engine. Tailor the question difficulty and conceptual depth to match the student's target learning goals.\n\n${personaGuidance}`,
         responseMimeType: 'application/json',
@@ -1030,7 +1060,8 @@ export async function generateNoteQuizAI(noteContent: string, title?: string, le
                   },
                   correctIndex: { type: Type.INTEGER, description: '0-based index of the single correct answer' },
                   explanation: { type: Type.STRING, description: 'Step-by-step conceptual rationale' },
-                  topic: { type: Type.STRING, description: 'Topic category' }
+                  topic: { type: Type.STRING, description: 'Topic category' },
+                  difficulty: { type: Type.STRING, description: 'easy, moderate, or hard' }
                 },
                 required: ['id', 'question', 'options', 'correctIndex', 'explanation', 'topic']
               }
@@ -1042,38 +1073,54 @@ export async function generateNoteQuizAI(noteContent: string, title?: string, le
     });
 
     const parsed = JSON.parse(response.text || '{}') as { title: string; questions: any[] };
-    const questions: QuizQuestion[] = (parsed.questions || []).map((q: any, i: number) => ({
+    const aiQuestions: QuizQuestion[] = (parsed.questions || []).map((q: any, i: number) => ({
       id: `quiz-q-${Date.now()}-${i}`,
       question: q.question,
       options: Array.isArray(q.options) ? q.options : ['Option A', 'Option B', 'Option C', 'Option D'],
       correctIndex: typeof q.correctIndex === 'number' ? q.correctIndex : 0,
       explanation: q.explanation || 'Step-by-step conceptual rationale.',
-      topic: q.topic || 'Concept Mastery'
+      topic: q.topic || 'Note Concept',
+      difficulty: q.difficulty || 'moderate',
+      source: 'ai_generated' as const
     }));
 
+    // Combine teacher's questions with AI-generated questions
+    const combinedQuestions = [
+      ...facultyQuestions.slice(0, 3),
+      ...aiQuestions
+    ].slice(0, 5);
+
     return {
-      title: parsed.title || title || 'Personalized Practice Quiz',
-      questions: questions.length > 0 ? questions : []
+      title: parsed.title || (facultyQuestions.length > 0 ? `Faculty Curated Assessment: ${title || 'Subject Quiz'}` : (title ? `Practice Quiz: ${title}` : 'Note-to-Quiz Practice')),
+      questions: combinedQuestions,
+      hasTeacherQuestions: facultyQuestions.length > 0,
+      teacherQuestionsCount: Math.min(facultyQuestions.length, 3)
     };
   } catch (err) {
-    console.error('Error generating quiz:', err);
+    console.error('Error in generateNoteQuizAI:', err);
+    if (facultyQuestions.length > 0) {
+      return {
+        title: title ? `Faculty Question Bank: ${title}` : 'Faculty Curated Assessment',
+        questions: facultyQuestions.slice(0, 5),
+        hasTeacherQuestions: true,
+        teacherQuestionsCount: Math.min(facultyQuestions.length, 5)
+      };
+    }
     return {
-      title: title || 'Concept Check Quiz',
+      title: title ? `Practice Quiz: ${title}` : 'Practice Assessment',
       questions: [
         {
-          id: 'q-fallback-1',
-          question: 'What is the primary invariant discussed in the notes?',
-          options: [
-            'Structural balance and asymptotic bounds',
-            'Arbitrary linear chaining without termination',
-            'Unbounded recursive depth',
-            'Random key dispersal'
-          ],
+          id: 'q-fb-1',
+          question: 'What is the primary governing principle established in this note?',
+          options: ['Conservation of energy and momentum', 'Unbounded entropy creation', 'Unconstrained parameter divergence', 'Non-deterministic state transitions'],
           correctIndex: 0,
-          explanation: 'The notes describe structural invariants that enforce balance and prevent degenerate worst-case depths.',
-          topic: 'Fundamentals'
+          explanation: 'Physical and mathematical laws enforce strict conservation constraints across state transitions.',
+          topic: 'Foundational Theory',
+          difficulty: 'easy'
         }
-      ]
+      ],
+      hasTeacherQuestions: false,
+      teacherQuestionsCount: 0
     };
   }
 }

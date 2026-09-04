@@ -18,62 +18,15 @@ import {
   Camera
 } from 'lucide-react';
 
+import { FAKE_USERS } from '../mock/fakeData';
+
 interface LoginScreenProps {
   onLoginSuccess: (user: User, token: string) => void;
   onLaunchVisionNoteDirectly?: (user: User, token: string) => void;
   allUsers?: User[];
 }
 
-const DEFAULT_PRESET_USERS: User[] = [
-  {
-    id: 'student-1788461612290',
-    name: 'Student Dhruva',
-    email: 'student.dhruva@bmu.edu.in',
-    username: 'student.dhruva',
-    password: 'EduSync@260101',
-    role: 'student',
-    gender: 'Male',
-    institutionalId: 'BMU-2026-7052',
-    department: 'School of Engineering & Technology',
-    designation: 'B.Tech First Year Student',
-    enrolledSubjectIds: ['subj-ess', 'subj-calc', 'subj-eme', 'subj-engeth', 'subj-cpc', 'subj-pyconfig'],
-    teachingSubjectIds: [],
-    officeLocation: 'Student Hall B',
-    status: 'active'
-  },
-  {
-    id: 'teacher-ess',
-    name: 'Dr. Sanmitra Bhattacharya',
-    email: 'sanmitra@bmu.edu.in',
-    username: 'prof.sanmitra',
-    password: 'Teacher@ESS26',
-    role: 'teacher',
-    gender: 'Male',
-    institutionalId: 'FAC-ESS-042',
-    department: 'Environmental & Earth Sciences',
-    designation: 'Associate Professor',
-    enrolledSubjectIds: [],
-    teachingSubjectIds: ['subj-ess'],
-    officeLocation: 'Science Block C - Room 304',
-    status: 'active'
-  },
-  {
-    id: 'admin-1',
-    name: 'Dr. Maneek Singh',
-    email: 'dean.maneek@edusync.edu.in',
-    username: 'dean.maneek',
-    password: 'Dean@BMU2026!',
-    role: 'admin',
-    gender: 'Male',
-    institutionalId: 'EDU-ADM-1001',
-    department: 'Office of the Dean & Academic Registrar',
-    designation: 'Dean of Academic Welfare & Institutional Registrar',
-    enrolledSubjectIds: [],
-    teachingSubjectIds: [],
-    officeLocation: 'Academic Block A - Room 102',
-    status: 'active'
-  }
-];
+const DEFAULT_PRESET_USERS: User[] = FAKE_USERS;
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onLaunchVisionNoteDirectly, allUsers: initialUsers }) => {
   const [selectedRole, setSelectedRole] = useState<UserRole>('student');
@@ -83,7 +36,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onLaun
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [registeredUsers, setRegisteredUsers] = useState<User[]>(
-    (initialUsers && initialUsers.length > 0) ? initialUsers : DEFAULT_PRESET_USERS
+    (initialUsers && initialUsers.length > 0) ? initialUsers : FAKE_USERS
   );
 
   // Fetch updated registered users list from server
@@ -106,7 +59,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onLaun
   const handleSelectUser = (user: User) => {
     setSelectedRole(user.role);
     setIdentifier(user.username || user.institutionalId || user.email);
-    setPassword(user.password || (user.role === 'admin' ? 'Dean@BMU2026!' : user.role === 'teacher' ? 'Teacher@ESS26' : 'EduSync@260101'));
+    setPassword(user.password || (user.role === 'admin' ? 'Dean@EduSync2026!' : user.role === 'teacher' ? 'Physics@2026!' : 'EduSync@260101'));
     setErrorMessage(null);
   };
 
@@ -118,11 +71,11 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onLaun
       setIdentifier('student.dhruva');
       setPassword('EduSync@260101');
     } else if (role === 'teacher') {
-      setIdentifier('prof.sanmitra');
-      setPassword('Teacher@ESS26');
+      setIdentifier('prof.rajesh');
+      setPassword('Physics@2026!');
     } else {
       setIdentifier('dean.maneek');
-      setPassword('Dean@BMU2026!');
+      setPassword('Dean@EduSync2026!');
     }
   };
 
@@ -136,7 +89,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onLaun
     setIsLoading(true);
     setErrorMessage(null);
 
-    const effectivePass = password.trim() || (selectedRole === 'admin' ? 'Dean@BMU2026!' : selectedRole === 'teacher' ? 'Teacher@ESS26' : 'EduSync@260101');
+    const effectivePass = password.trim() || (selectedRole === 'admin' ? 'Dean@EduSync2026!' : selectedRole === 'teacher' ? 'Physics@2026!' : 'EduSync@260101');
 
     try {
       const response = await fetch('/api/auth/login', {
