@@ -6,6 +6,7 @@ import {
   deleteUserFromCloud
 } from '../src/server/supabaseUsers';
 import { User } from '../src/types';
+import { synthesizeMasteryQuizFromContent, evaluateQuizPerformance } from '../src/lib/quizGenerator';
 
 export default async function handler(req: any, res: any) {
   // Enable CORS
@@ -147,7 +148,60 @@ export default async function handler(req: any, res: any) {
       return;
     }
 
-    // 6. Default health status
+    // 6. POST /api/ai/quiz/generate-mastery-quiz
+    if (path.includes('/api/ai/quiz/generate-mastery-quiz') && req.method === 'POST') {
+      const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body || {};
+      const { noteContent = '', title = 'Lecture Checkpoint', count = 5, learnerProfile } = body;
+
+      if (process.env.GEMINI_API_KEY) {
+        try {
+          const { generateMasteryQuizAI } = await import('../src/server/gemini');
+          const result = await generateMasteryQuizAI(noteContent, title, learnerProfile, count);
+          if (result && Array.isArray(result.questions) && result.questions.length >= 3) {
+            res.status(200).json(result);
+            return;
+          }
+        } catch (geminiErr) {
+          console.warn('[Serverless Gemini Quiz Warning]', geminiErr);
+        }
+      }
+
+      const questions = synthesizeMasteryQuizFromContent(noteContent, title, learnerProfile, count);
+      res.status(200).json({
+        title: `Mastery Quiz: ${title}`,
+        questions
+      });
+      return;
+    }
+
+    // 7. POST /api/ai/quiz/analyze-performance
+    if (path.includes('/api/ai/quiz/analyze-performance') && req.method === 'POST') {
+      const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body || {};
+      const { quizTitle = 'Quiz', questions = [], userAnswers = [], learnerProfile } = body;
+
+      if (process.env.GEMINI_API_KEY) {
+        try {
+          const { analyzeQuizPerformanceAI } = await import('../src/server/gemini');
+          const analysis = await analyzeQuizPerformanceAI(quizTitle, questions, userAnswers, learnerProfile);
+          if (analysis) {
+            res.status(200).json(analysis);
+            return;
+          }
+        } catch (geminiErr) {
+          console.warn('[Serverless Gemini Analysis Warning]', geminiErr);
+        }
+      }
+
+      const answersMap: Record<number, number> = {};
+      (userAnswers || []).forEach((ans: number, idx: number) => {
+        answersMap[idx] = ans;
+      });
+      const localAnalysis = evaluateQuizPerformance(quizTitle, questions, answersMap, learnerProfile);
+      res.status(200).json(localAnalysis);
+      return;
+    }
+
+    // 8. Default health status
     res.status(200).json({ status: 'ok', time: new Date().toISOString(), path });
   } catch (err: any) {
     console.error('[Serverless Error]', err);

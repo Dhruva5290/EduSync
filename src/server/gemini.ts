@@ -1407,7 +1407,12 @@ export async function generateMasteryQuizAI(
 
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    throw new Error('GEMINI_API_KEY is not configured in the server environment.');
+    console.warn('[Gemini] GEMINI_API_KEY is not configured in server environment, synthesizing structured mastery quiz.');
+    const { synthesizeMasteryQuizFromContent } = await import('../lib/quizGenerator');
+    return {
+      title: `Mastery Quiz: ${sanitizedTitle}`,
+      questions: synthesizeMasteryQuizFromContent(noteContent, sanitizedTitle, learnerProfile, targetCount)
+    };
   }
   const ai = getAI();
   const personaGuidance = buildPersonaPromptInstructions(learnerProfile);
@@ -1474,7 +1479,12 @@ export async function generateMasteryQuizAI(
     }
   }
 
-  throw new Error('Gemini AI was unable to generate quiz questions from the provided note at this time.');
+  console.warn('[Gemini] All Gemini candidate models failed or rate limited, falling back to structured synthesis.');
+  const { synthesizeMasteryQuizFromContent } = await import('../lib/quizGenerator');
+  return {
+    title: `Mastery Quiz: ${sanitizedTitle}`,
+    questions: synthesizeMasteryQuizFromContent(noteContent, sanitizedTitle, learnerProfile, targetCount)
+  };
 }
 
 /**
