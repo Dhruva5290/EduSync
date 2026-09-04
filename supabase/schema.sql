@@ -1,9 +1,25 @@
--- =========================================================================
--- Supabase Schema Migration: public.notes
--- Realtime Synchronization & AI Personalization Pipeline
--- =========================================================================
+-- ======================================================================================
+-- EduSync & VisionNote: Complete Master Database Setup Script
+-- Paste this entire script into your Supabase SQL Editor and click "Run".
+-- ======================================================================================
 
--- 1. Create the notes table with strict status constraints
+-- 1. Enable Required Extensions
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- 2. Drop existing triggers & policies if recreating
+DROP TRIGGER IF EXISTS tr_notes_updated_at ON public.notes;
+DROP FUNCTION IF EXISTS public.handle_notes_updated_at();
+
+DROP POLICY IF EXISTS "Users can select own notes" ON public.notes;
+DROP POLICY IF EXISTS "Users can insert own notes" ON public.notes;
+DROP POLICY IF EXISTS "Users can update own notes" ON public.notes;
+DROP POLICY IF EXISTS "Users can delete own notes" ON public.notes;
+DROP POLICY IF EXISTS "Service role full access" ON public.notes;
+DROP POLICY IF EXISTS "Anon client access" ON public.notes;
+DROP POLICY IF EXISTS "Allow authenticated and service role" ON public.notes;
+
+-- 3. Create the `public.notes` Table
 CREATE TABLE IF NOT EXISTS public.notes (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
@@ -18,12 +34,16 @@ CREATE TABLE IF NOT EXISTS public.notes (
     updated_at TIMESTAMPTZ DEFAULT timezone('utc', now()) NOT NULL
 );
 
--- 2. Indexes for fast querying & realtime updates
+-- 4. Set REPLICA IDENTITY FULL
+-- (Crucial: Guarantees that Supabase Realtime emits full record payload on UPDATE events)
+ALTER TABLE public.notes REPLICA IDENTITY FULL;
+
+-- 5. Create Performance Indexes
 CREATE INDEX IF NOT EXISTS idx_notes_user_id ON public.notes(user_id);
 CREATE INDEX IF NOT EXISTS idx_notes_status ON public.notes(status);
 CREATE INDEX IF NOT EXISTS idx_notes_created_at ON public.notes(created_at DESC);
 
--- 3. Auto-update `updated_at` trigger
+-- 6. Trigger to automatically keep `updated_at` current on row updates
 CREATE OR REPLACE FUNCTION public.handle_notes_updated_at()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -32,55 +52,51 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-DROP TRIGGER IF EXISTS tr_notes_updated_at ON public.notes;
 CREATE TRIGGER tr_notes_updated_at
     BEFORE UPDATE ON public.notes
     FOR EACH ROW
     EXECUTE FUNCTION public.handle_notes_updated_at();
 
--- 4. Enable Row Level Security (RLS)
+-- 7. Enable Row Level Security (RLS)
 ALTER TABLE public.notes ENABLE ROW LEVEL SECURITY;
 
--- 5. Strict RLS Policies
--- Policy: Students can view only their own notes
-DROP POLICY IF EXISTS "Users can select own notes" ON public.notes;
+-- 8. Row Level Security Policies
+-- (A) Authenticated users: restricted to their own notes
 CREATE POLICY "Users can select own notes"
-    ON public.notes
-    FOR SELECT
+    ON public.notes FOR SELECT
+    TO authenticated
     USING (auth.uid() = user_id);
 
--- Policy: Students can insert their own notes
-DROP POLICY IF EXISTS "Users can insert own notes" ON public.notes;
 CREATE POLICY "Users can insert own notes"
-    ON public.notes
-    FOR INSERT
+    ON public.notes FOR INSERT
+    TO authenticated
     WITH CHECK (auth.uid() = user_id);
 
--- Policy: Students can delete their own notes
-DROP POLICY IF EXISTS "Users can delete own notes" ON public.notes;
-CREATE POLICY "Users can delete own notes"
-    ON public.notes
-    FOR DELETE
-    USING (auth.uid() = user_id);
-
--- Policy: Students can update their own notes
-DROP POLICY IF EXISTS "Users can update own notes" ON public.notes;
 CREATE POLICY "Users can update own notes"
-    ON public.notes
-    FOR UPDATE
+    ON public.notes FOR UPDATE
+    TO authenticated
     USING (auth.uid() = user_id);
 
--- Policy: Service role has full access (Edge Function)
-DROP POLICY IF EXISTS "Service role has full access" ON public.notes;
-CREATE POLICY "Service role has full access"
-    ON public.notes
-    FOR ALL
+CREATE POLICY "Users can delete own notes"
+    ON public.notes FOR DELETE
+    TO authenticated
+    USING (auth.uid() = user_id);
+
+-- (B) Service Role: Full unrestricted access for the Edge Function
+CREATE POLICY "Service role full access"
+    ON public.notes FOR ALL
     TO service_role
     USING (true)
     WITH CHECK (true);
 
--- 6. Enable Realtime Replication for public.notes
--- This permits @supabase/supabase-js to listen for INSERT and UPDATE events
+-- (C) Optional Anon Access: Allows Python Desktop Client with Anon Key to push notes
+CREATE POLICY "Anon client access"
+    ON public.notes FOR ALL
+    TO anon
+    USING (true)
+    WITH CHECK (true);
+
+-- 9. Add Table to Supabase Realtime Publication
 DO $$
 BEGIN
     IF NOT EXISTS (
@@ -91,14 +107,5 @@ BEGIN
     END IF;
 END $$;
 
--- =========================================================================
--- Instructions to configure Database Webhook in Supabase Dashboard:
--- 1. In your Supabase Project, go to Database -> Webhooks.
--- 2. Click "Create a new webhook".
--- 3. Name: "personalize_note_on_insert".
--- 4. Table: public.notes.
--- 5. Events: [x] Insert.
--- 6. Webhook Type: "Supabase Edge Function".
--- 7. Edge Function: select "personalize-note".
--- 8. Method: POST, Timeout: 30000ms.
--- =========================================================================
+-- Verification query
+SELECT 'Success! public.notes is created with RLS, Realtime, and Triggers.' AS status;
