@@ -14296,6 +14296,81 @@ function synthesizeMasteryQuizFromContent(noteContent, noteTitle, _persona, coun
       difficulty: "hard"
     });
   }
+  const defaultTemplates = [
+    {
+      q: `What is the core diagnostic takeaway emphasized throughout "${cleanTitle}"?`,
+      opts: [
+        `Mastery of sequential procedures, foundational definitions, and precise quantitative standards`,
+        `Relying on arbitrary heuristics without verifying intermediate constraints`,
+        `Skipping conceptual derivation steps during problem sets`,
+        `Treating core formulas as optional historical references`
+      ],
+      expl: `Academic mastery of ${cleanTitle} requires rigorous comprehension of both conceptual definitions and procedural constraints.`,
+      top: "Core Pedagogical Objective",
+      diff: "easy"
+    },
+    {
+      q: `How should a student verify intermediate steps when solving problems in "${cleanTitle}"?`,
+      opts: [
+        `Cross-check boundary conditions, unit consistency, and governing principles outlined in the lecture`,
+        `Assume intermediate states are identical across all scenarios`,
+        `Skip dimensional analysis and rely on numerical approximations`,
+        `Verify only the final numeric digit without checking physical validity`
+      ],
+      expl: `Dimensional analysis, boundary condition inspection, and invariant conservation checks are critical verification habits.`,
+      top: "Analytical Verification Methods",
+      diff: "moderate"
+    },
+    {
+      q: `Which pitfall must be strictly avoided when approaching assessments in "${cleanTitle}"?`,
+      opts: [
+        `Conflating foundational assumptions with generalized conditions and incurring penalty deductions`,
+        `Solving equations systematically from first principles`,
+        `Validating assumptions before applying specialized formulas`,
+        `Allocating dedicated time for high-accuracy questions`
+      ],
+      expl: `Misidentifying edge-case assumptions or violating prerequisite criteria is the most frequent source of errors in competitive examinations.`,
+      top: "Common Misconceptions & Traps",
+      diff: "hard"
+    },
+    {
+      q: `In competitive examination contexts, what is the best time-management practice for "${cleanTitle}"?`,
+      opts: [
+        `Identify and prioritize high-confidence items first, avoiding prolonged dwell time on high-friction edge cases`,
+        `Attempt questions in rigid sequence without skipping complex multi-part traps`,
+        `Spend over 50% of the allocated duration on the first three questions`,
+        `Guess answers to all remaining questions in the final two minutes without evaluating penalties`
+      ],
+      expl: `Strategic exam management dictates rapid triage of high-yield items to maximize cumulative accuracy and mitigate penalty deductions.`,
+      top: "Strategic Examination Management",
+      diff: "moderate"
+    },
+    {
+      q: `How does mastery of "${cleanTitle}" connect with advanced downstream coursework?`,
+      opts: [
+        `It forms the prerequisite analytical framework for subsequent applied engineering and technical problem solving`,
+        `It has no connection to subsequent modules or professional benchmarks`,
+        `It is relevant only for historical interest and is not utilized in practical engineering`,
+        `It is completely superseded by computer simulations without needing analytical intuition`
+      ],
+      expl: `Fundamental principles in ${cleanTitle} establish the governing equations and reasoning required across advanced technical topics.`,
+      top: "Curricular Continuity & Applications",
+      diff: "easy"
+    }
+  ];
+  let templateIdx = 0;
+  while (questions.length < Math.max(5, count) && templateIdx < defaultTemplates.length) {
+    const t2 = defaultTemplates[templateIdx++];
+    questions.push({
+      id: `synth-q-fill-${questions.length + 1}`,
+      question: t2.q,
+      options: t2.opts,
+      correctIndex: 0,
+      explanation: t2.expl,
+      topic: t2.top,
+      difficulty: t2.diff
+    });
+  }
   return questions.slice(0, Math.max(5, count));
 }
 async function fetchAIQuizQuestions(note, persona, count = 5) {
