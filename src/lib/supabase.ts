@@ -626,7 +626,7 @@ export const saveUserToSupabaseCloud = async (user: User): Promise<boolean> => {
 
     const userTitle = `__EDUSYNC_USER__:${user.id}`;
     const payload = {
-      user_id: '00000000-0000-0000-0000-000000000000',
+      user_id: null,
       title: userTitle,
       generalised_notes: JSON.stringify(user),
       personalised_notes: JSON.stringify(user),

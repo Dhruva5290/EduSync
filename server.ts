@@ -127,67 +127,20 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
       }
     }
 
-    if (user) {
-      // If user exists and has a password, verify it
-      if (user.password && loginPass && user.password !== loginPass) {
-        // If password does not match, check if it's the standard default password
-        if (loginPass !== 'EduSync@260101' && loginPass !== 'Dean@BMU2026!' && loginPass !== 'Teacher@ESS26') {
-          res.status(401).json({ error: 'Incorrect password. Please try again.' });
-          return;
-        }
-      }
-    } else {
-      // Auto-provision straightforwardly for any custom ID entered by the user
-      const isEmail = loginId.includes('@');
-      const cleanName = rawId
-        .replace(/@.*/, '')
-        .replace(/[._-]/g, ' ')
-        .split(' ')
-        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-        .join(' ');
-      
-      const newUserId = `${targetRole}-${Date.now()}`;
-      const newEmail = isEmail ? rawId : `${loginId.replace(/\s+/g, '')}@bmu.edu.in`;
-      const newUsername = isEmail ? rawId.split('@')[0] : loginId.replace(/\s+/g, '.');
+    if (!user) {
+      res.status(401).json({
+        error: `No registered account found matching "${rawId}". Please check your credentials or register as a new user.`
+      });
+      return;
+    }
 
-      const allSubjectIds = ['subj-ess', 'subj-calc', 'subj-eme', 'subj-engeth', 'subj-cpc'];
-
-      user = {
-        id: newUserId,
-        name: cleanName || (targetRole === 'admin' ? 'University Dean' : targetRole === 'teacher' ? 'Faculty Member' : 'Enrolled Student'),
-        email: newEmail,
-        username: newUsername,
-        password: loginPass || 'EduSync@260101',
-        role: targetRole,
-        gender: 'Male',
-        institutionalId: targetRole === 'admin' 
-          ? `BMU-ADM-${Math.floor(1000 + Math.random() * 9000)}`
-          : targetRole === 'teacher'
-          ? `BMU-FAC-${Math.floor(1000 + Math.random() * 9000)}`
-          : `BMU-2026-${Math.floor(1000 + Math.random() * 9000)}`,
-        department: targetRole === 'admin' 
-          ? 'Office of the Registrar & Academic Affairs'
-          : 'School of Engineering & Technology',
-        designation: targetRole === 'admin'
-          ? 'Associate Dean & Registrar'
-          : targetRole === 'teacher'
-          ? 'Assistant Professor of Engineering'
-          : 'B.Tech First Year Student',
-        enrolledSubjectIds: targetRole === 'student' ? allSubjectIds : [],
-        teachingSubjectIds: targetRole === 'teacher' ? ['subj-ess'] : [],
-        officeLocation: targetRole === 'student' ? 'Student Hall B' : 'Academic Block A - Room 204',
-        officeHours: targetRole === 'teacher' ? 'Tue-Thu 02:00 PM - 04:00 PM' : 'Mon-Fri 09:00 AM - 05:00 PM',
-        status: 'active',
-        joinedDate: new Date().toISOString().split('T')[0],
-        phone: '+91 98765 43210'
-      };
-
-      // Add to database
-      db.users.push(user);
-      saveUsersToDisk(db.users);
-
-      // Persist to Supabase Cloud so user is saved FOREVER and can log in from ANYWHERE
-      await persistUserToCloud(user);
+    // Verify Password strictly!
+    const expectedPassword = user.password || 'EduSync@260101';
+    if (expectedPassword !== loginPass) {
+      res.status(401).json({
+        error: 'Incorrect password. Please verify your credentials and try again.'
+      });
+      return;
     }
 
     // Create Base64 Session Token

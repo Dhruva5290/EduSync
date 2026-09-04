@@ -97,6 +97,9 @@ export default function App() {
     }
   });
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
+    const token = localStorage.getItem('edusync_token');
+    if (!token) return null; // No active session token -> show login screen
+
     try {
       const savedUser = localStorage.getItem('edusync_user');
       if (savedUser) {
@@ -114,16 +117,22 @@ export default function App() {
     return null;
   });
   const [allUsers, setAllUsers] = useState<User[]>(() => {
-    let base = [...FAKE_USERS];
+    let customList: User[] = [];
     try {
       const saved = JSON.parse(localStorage.getItem('edusync_users') || '[]');
       if (Array.isArray(saved) && saved.length > 0) {
-        for (const s of saved) {
-          if (!base.some(b => b.id === s.id)) base.push(s);
-        }
+        customList = saved;
       }
     } catch {}
-    return base;
+
+    const base = [...FAKE_USERS];
+    const combined = [...customList];
+    for (const b of base) {
+      if (!combined.some(c => c.id === b.id)) {
+        combined.push(b);
+      }
+    }
+    return combined;
   });
   const [subjects, setSubjects] = useState<Subject[]>(() => {
     try {
@@ -1283,51 +1292,49 @@ export default function App() {
   // Helper to re-fetch all users and current session
   const refreshUsersList = async () => {
     try {
-      let combined: User[] = [...allUsers];
+      const [res, cloudUsers] = await Promise.all([
+        safeFetchJson<{ user?: User; allUsers?: User[]; users?: User[] }>('/api/auth/public-users'),
+        fetchUsersFromSupabaseCloud().catch(() => [] as User[])
+      ]);
 
-      // 1. Try server endpoint
-      const res = await safeFetchJson<{ user?: User; allUsers?: User[]; users?: User[] }>('/api/auth/public-users');
-      if (res?.users && Array.isArray(res.users)) {
-        for (const u of res.users) {
-          const existingIdx = combined.findIndex(c => c.id === u.id);
-          if (existingIdx !== -1) {
-            combined[existingIdx] = u;
-          } else {
-            combined.push(u);
+      const savedUsers: User[] = (() => {
+        try {
+          return JSON.parse(localStorage.getItem('edusync_users') || '[]');
+        } catch {
+          return [];
+        }
+      })();
+
+      setAllUsers(prev => {
+        const map = new Map<string, User>();
+        // 1. Saved localStorage users
+        for (const u of savedUsers) {
+          if (u && u.id) map.set(u.id, u);
+        }
+        // 2. Supabase Cloud users
+        for (const u of cloudUsers) {
+          if (u && u.id) map.set(u.id, u);
+        }
+        // 3. API endpoint users
+        if (res?.users && Array.isArray(res.users)) {
+          for (const u of res.users) {
+            if (!map.has(u.id)) map.set(u.id, u);
           }
         }
-      }
-
-      // 2. Try Supabase Cloud
-      try {
-        const cloudUsers = await fetchUsersFromSupabaseCloud();
-        for (const cu of cloudUsers) {
-          const existingIdx = combined.findIndex(c => c.id === cu.id);
-          if (existingIdx !== -1) {
-            combined[existingIdx] = cu;
-          } else {
-            combined.push(cu);
-          }
+        // 4. Any users in current React state
+        for (const p of prev) {
+          if (!map.has(p.id)) map.set(p.id, p);
         }
-      } catch {}
-
-      // 3. Try localStorage
-      try {
-        const saved = JSON.parse(localStorage.getItem('edusync_users') || '[]');
-        if (Array.isArray(saved)) {
-          for (const s of saved) {
-            if (!combined.some(c => c.id === s.id)) combined.push(s);
-          }
+        // 5. Always ensure FAKE_USERS seed is present
+        for (const f of FAKE_USERS) {
+          if (!map.has(f.id)) map.set(f.id, f);
         }
-      } catch {}
 
-      if (combined.length > 0) {
-        setAllUsers(combined);
-        if (currentUser) {
-          const updatedSelf = combined.find(u => u.id === currentUser.id);
-          if (updatedSelf) setCurrentUser(updatedSelf);
-        }
-      }
+        const all = Array.from(map.values());
+        const custom = all.filter(u => u.id.includes('-17') || !FAKE_USERS.some(f => f.id === u.id));
+        const standard = all.filter(u => !custom.some(c => c.id === u.id));
+        return [...custom, ...standard];
+      });
     } catch (err) {
       console.error('Error refreshing users list:', err);
     }

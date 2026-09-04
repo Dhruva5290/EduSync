@@ -142,21 +142,28 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const teachersList = allUsers.filter(u => u.role === 'teacher');
   const totalEnrolledSpots = subjects.reduce((sum, s) => sum + (s.enrolledCount || 0), 0);
 
-  // Filtered directory list
+  // Filtered directory list - safely handling missing fields and sorting newly registered users to the top
   const filteredUsers = allUsers.filter(u => {
     if (roleFilter !== 'all' && u.role !== roleFilter) return false;
-    if (deptFilter !== 'all' && !u.department.toLowerCase().includes(deptFilter.toLowerCase())) return false;
+    if (deptFilter !== 'all' && !(u.department || '').toLowerCase().includes(deptFilter.toLowerCase())) return false;
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       return (
-        u.name.toLowerCase().includes(q) ||
-        u.email.toLowerCase().includes(q) ||
-        u.institutionalId.toLowerCase().includes(q) ||
+        (u.name || '').toLowerCase().includes(q) ||
+        (u.email || '').toLowerCase().includes(q) ||
+        (u.institutionalId || '').toLowerCase().includes(q) ||
         (u.username && u.username.toLowerCase().includes(q)) ||
-        u.department.toLowerCase().includes(q)
+        (u.department || '').toLowerCase().includes(q)
       );
     }
     return true;
+  }).sort((a, b) => {
+    // Newly registered & custom users sorted to the top
+    const aIsCustom = a.id.includes('-17') || !FAKE_USERS.some(f => f.id === a.id);
+    const bIsCustom = b.id.includes('-17') || !FAKE_USERS.some(f => f.id === b.id);
+    if (aIsCustom && !bIsCustom) return -1;
+    if (!aIsCustom && bIsCustom) return 1;
+    return 0;
   });
 
   // Handle Registration Submit
@@ -248,6 +255,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       setEmail('');
       setPassword('');
       setSelectedSubjectIds([]);
+      setRoleFilter('all');
+      setDeptFilter('all');
+      setSearchQuery('');
       onRefreshUsers();
       onRefreshSubjects();
       setActiveTab('directory');
@@ -1202,10 +1212,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       ? user.teachingSubjectIds?.includes(s.id) || s.teacherId === user.id
                       : user.enrolledSubjectIds?.includes(s.id)
                   );
-                  const isDhruva = user.name.toLowerCase().includes('dhruva');
+                  const isDhruva = (user.name || '').toLowerCase().includes('dhruva');
+                  const isCustom = user.id.includes('-17') || !FAKE_USERS.some(f => f.id === user.id);
 
                   return (
-                    <tr key={user.id} className="hover:bg-slate-800/50 transition-colors">
+                    <tr key={user.id} className={`transition-colors ${isCustom ? 'bg-emerald-950/20 hover:bg-emerald-900/30' : 'hover:bg-slate-800/50'}`}>
                       <td className="py-3 px-3">
                         <div className="flex items-center gap-3">
                           {/* Monogram Badge (no face photo) */}
@@ -1216,16 +1227,23 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                               ? 'bg-blue-950 text-blue-300 border-blue-700'
                               : isDhruva
                               ? 'bg-amber-950 text-amber-300 border-amber-600'
+                              : isCustom
+                              ? 'bg-emerald-950 text-emerald-300 border-emerald-600'
                               : 'bg-slate-800 text-slate-300 border-slate-700'
                           }`}>
-                            {user.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                            {(user.name || 'U').split(' ').map(n => n[0]).join('').slice(0, 2)}
                           </div>
                           <div>
-                            <div className="flex items-center gap-1.5">
+                            <div className="flex items-center gap-1.5 flex-wrap">
                               <p className="font-bold text-white">{user.name}</p>
                               {isDhruva && (
                                 <span className="px-1.5 py-0.2 bg-amber-950 text-amber-300 border border-amber-700 text-[9px] font-bold rounded-xs">
                                   Top Rank
+                                </span>
+                              )}
+                              {isCustom && (
+                                <span className="px-1.5 py-0.2 bg-emerald-950 text-emerald-300 border border-emerald-600 text-[9px] font-bold rounded-xs flex items-center gap-1">
+                                  ⭐ Newly Registered
                                 </span>
                               )}
                             </div>

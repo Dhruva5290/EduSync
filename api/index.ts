@@ -1,4 +1,4 @@
-import seedUsers from '../data/users.json';
+import { FAKE_USERS } from '../src/mock/fakeData';
 import {
   persistUserToCloud,
   findUserInCloud,
@@ -32,7 +32,7 @@ export default async function handler(req: any, res: any) {
     // 1. GET /api/auth/public-users
     if (path.includes('/api/auth/public-users') || path.endsWith('/public-users')) {
       const cloudUsers = await loadUsersFromCloud();
-      const all = [...(seedUsers as User[])];
+      const all = [...FAKE_USERS];
       for (const cu of cloudUsers) {
         const idx = all.findIndex(u => u.id === cu.id);
         if (idx !== -1) all[idx] = cu;
@@ -56,7 +56,7 @@ export default async function handler(req: any, res: any) {
       }
 
       // 1. Search in local seed users
-      let user = (seedUsers as User[]).find(u =>
+      let user = FAKE_USERS.find(u =>
         (u.username && u.username.toLowerCase() === loginId) ||
         (u.email && u.email.toLowerCase() === loginId) ||
         (u.institutionalId && u.institutionalId.toLowerCase() === loginId) ||
@@ -68,51 +68,19 @@ export default async function handler(req: any, res: any) {
         user = await findUserInCloud(loginId);
       }
 
-      if (user) {
-        const expectedPass = user.password || 'EduSync@260101';
-        if (expectedPass !== loginPass && loginPass !== 'Dean@EduSync2026!' && loginPass !== 'Physics@2026!' && loginPass !== 'EduSync@260101') {
-          res.status(401).json({ error: 'Incorrect password. Please try again.' });
-          return;
-        }
-      } else {
-        // Auto-provision new user and persist to Cloud forever
-        const targetRole = role || 'student';
-        const isEmail = loginId.includes('@');
-        const cleanName = rawId
-          .replace(/@.*/, '')
-          .replace(/[._-]/g, ' ')
-          .split(' ')
-          .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
-          .join(' ');
-        const newUserId = `${targetRole}-${Date.now()}`;
-        const newEmail = isEmail ? rawId : `${loginId.replace(/\s+/g, '')}@bmu.edu.in`;
-        const newUsername = isEmail ? rawId.split('@')[0] : loginId.replace(/\s+/g, '.');
+      if (!user) {
+        res.status(401).json({
+          error: `No registered account found matching "${rawId}". Please check your credentials or register as a new user.`
+        });
+        return;
+      }
 
-        user = {
-          id: newUserId,
-          name: cleanName || (targetRole === 'admin' ? 'University Dean' : targetRole === 'teacher' ? 'Faculty Member' : 'Enrolled Student'),
-          email: newEmail,
-          username: newUsername,
-          password: loginPass || 'EduSync@260101',
-          role: targetRole,
-          gender: 'Male',
-          institutionalId: targetRole === 'admin'
-            ? `BMU-ADM-${Math.floor(1000 + Math.random() * 9000)}`
-            : targetRole === 'teacher'
-            ? `BMU-FAC-${Math.floor(1000 + Math.random() * 9000)}`
-            : `BMU-2026-${Math.floor(1000 + Math.random() * 9000)}`,
-          department: targetRole === 'admin' ? 'Office of the Registrar' : 'School of Engineering & Technology',
-          designation: targetRole === 'admin' ? 'Associate Dean & Registrar' : targetRole === 'teacher' ? 'Assistant Professor' : 'B.Tech Student',
-          enrolledSubjectIds: ['subj-ess', 'subj-calc', 'subj-eme', 'subj-engeth', 'subj-cpc'],
-          teachingSubjectIds: targetRole === 'teacher' ? ['subj-ess'] : [],
-          officeLocation: targetRole === 'student' ? 'Student Hall B' : 'Academic Block A',
-          officeHours: 'Mon-Fri 09:00 AM - 05:00 PM',
-          status: 'active',
-          joinedDate: new Date().toISOString().split('T')[0],
-          phone: '+91 98765 43210'
-        };
-
-        await persistUserToCloud(user);
+      const expectedPass = user.password || 'EduSync@260101';
+      if (expectedPass !== loginPass) {
+        res.status(401).json({
+          error: 'Incorrect password. Please verify your credentials and try again.'
+        });
+        return;
       }
 
       const token = Buffer.from(JSON.stringify({ userId: user.id, role: user.role, time: Date.now() })).toString('base64');
@@ -121,7 +89,7 @@ export default async function handler(req: any, res: any) {
     }
 
     // 3. POST /api/users (Register User)
-    if (path.endsWith('/api/users') && req.method === 'POST') {
+    if ((path.includes('/api/users') || path.endsWith('/users')) && !path.includes('/api/users/') && req.method === 'POST') {
       const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body || {};
       const { name, email, password, role, department, program, designation, phone, gender, academicYear, gpa, initialSubjectIds, teachingSubjectIds } = body;
       const targetRole = role || 'student';

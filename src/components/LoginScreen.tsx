@@ -44,8 +44,20 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onLaun
         }
       }
     } catch {}
-    return base;
   });
+
+  // Sync with initialUsers prop when updated by parent
+  React.useEffect(() => {
+    if (initialUsers && initialUsers.length > 0) {
+      setRegisteredUsers(prev => {
+        const merged = [...initialUsers];
+        for (const p of prev) {
+          if (!merged.some(m => m.id === p.id)) merged.push(p);
+        }
+        return merged;
+      });
+    }
+  }, [initialUsers]);
 
   // Fetch updated registered users list from server and Supabase Cloud
   React.useEffect(() => {
