@@ -288,13 +288,6 @@ $$\\frac{P(x)}{(x - a)(x^2 + bx + c)} = \\frac{A}{x - a} + \\frac{Bx + C}{x^2 + 
               <Camera className="w-4 h-4" />
               Simulate VN Camera Scan
             </button>
-            <button
-              onClick={() => setShowImportModal(true)}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold shadow-lg shadow-indigo-600/30 transition-all hover:scale-[1.02] active:scale-[0.98]"
-            >
-              <UploadCloud className="w-4 h-4" />
-              Import from VN
-            </button>
           </div>
         </div>
 

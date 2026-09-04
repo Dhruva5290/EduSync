@@ -28,9 +28,11 @@
     "gender": "Male",
     "institutionalId": "EDU-FAC-201",
     "department": "Department of Physics",
-    "designation": "Senior Faculty of Physics (Grades 11 & 12)",
+    "designation": "Senior Faculty of Physics (Mechanics & Electromagnetism)",
     "enrolledSubjectIds": [],
     "teachingSubjectIds": [
+      "subj-phy",
+      "subj-misc",
       "subj-phy-11",
       "subj-phy-12",
       "subj-pyconfig"
@@ -51,9 +53,11 @@
     "gender": "Female",
     "institutionalId": "EDU-FAC-202",
     "department": "Department of Chemistry",
-    "designation": "Lead Faculty of Chemistry (Grades 11 & 12)",
+    "designation": "Lead Faculty of Chemistry (Physical & Organic)",
     "enrolledSubjectIds": [],
     "teachingSubjectIds": [
+      "subj-che",
+      "subj-misc",
       "subj-che-11",
       "subj-che-12"
     ],
@@ -73,9 +77,11 @@
     "gender": "Male",
     "institutionalId": "EDU-FAC-203",
     "department": "Department of Mathematics",
-    "designation": "Senior Professor of Mathematics (Grades 11 & 12)",
+    "designation": "Senior Professor of Mathematics (Calculus & Vectors)",
     "enrolledSubjectIds": [],
     "teachingSubjectIds": [
+      "subj-mat",
+      "subj-misc",
       "subj-mat-11",
       "subj-mat-12"
     ],
@@ -94,15 +100,18 @@
     "role": "student",
     "gender": "Male",
     "institutionalId": "EDU-STU-1101",
-    "department": "Senior Secondary Science (Grade 11 PCM)",
-    "program": "CBSE / JEE Prep Track",
-    "academicYear": "Grade 11",
+    "department": "Department of Physical Sciences & Mathematics",
+    "program": "Science Core Track (PCM)",
+    "academicYear": "Year 2026",
     "gpa": 9.4,
     "enrolledSubjectIds": [
+      "subj-phy",
+      "subj-che",
+      "subj-mat",
+      "subj-misc",
       "subj-phy-11",
       "subj-che-11",
-      "subj-mat-11",
-      "subj-pyconfig"
+      "subj-mat-11"
     ],
     "teachingSubjectIds": [],
     "status": "active",
@@ -113,10 +122,10 @@
       "targetGrade": "A+",
       "explanationTone": "encouraging_mentor",
       "preferredPace": "steady",
-      "strengthsAndInterests": "Visual mindmaps, free-body force diagrams, geometric graphs",
+      "strengthsAndInterests": "Visual concept maps, free-body force diagrams, geometric graphs",
       "painPoints": "Abstract algebra without spatial diagrams, sign conventions",
       "questionnaireCompleted": true,
-      "completedAt": "2026-09-03T18:29:57.480Z"
+      "completedAt": "2026-09-04T10:00:00.000Z"
     }
   },
   {
@@ -128,15 +137,18 @@
     "role": "student",
     "gender": "Female",
     "institutionalId": "EDU-STU-1102",
-    "department": "Senior Secondary Science (Grade 11 PCM)",
-    "program": "CBSE / JEE Prep Track",
-    "academicYear": "Grade 11",
+    "department": "Department of Physical Sciences & Mathematics",
+    "program": "Science Core Track (PCM)",
+    "academicYear": "Year 2026",
     "gpa": 9.1,
     "enrolledSubjectIds": [
+      "subj-phy",
+      "subj-che",
+      "subj-mat",
+      "subj-misc",
       "subj-phy-11",
       "subj-che-11",
-      "subj-mat-11",
-      "subj-pyconfig"
+      "subj-mat-11"
     ],
     "teachingSubjectIds": [],
     "status": "active",
@@ -150,7 +162,7 @@
       "strengthsAndInterests": "First-principles calculus derivations, organic mechanisms, thermodynamics proofs",
       "painPoints": "Skipped intermediate steps in mathematical proofs, ambiguous notation",
       "questionnaireCompleted": true,
-      "completedAt": "2026-09-03T18:29:57.481Z"
+      "completedAt": "2026-09-04T10:15:00.000Z"
     }
   },
   {
@@ -162,15 +174,18 @@
     "role": "student",
     "gender": "Male",
     "institutionalId": "EDU-STU-1103",
-    "department": "Senior Secondary Science (Grade 11 PCM)",
-    "program": "CBSE / JEE Prep Track",
-    "academicYear": "Grade 11",
+    "department": "Department of Physical Sciences & Mathematics",
+    "program": "Science Core Track (PCM)",
+    "academicYear": "Year 2026",
     "gpa": 8.8,
     "enrolledSubjectIds": [
+      "subj-phy",
+      "subj-che",
+      "subj-mat",
+      "subj-misc",
       "subj-phy-11",
       "subj-che-11",
-      "subj-mat-11",
-      "subj-pyconfig"
+      "subj-mat-11"
     ],
     "teachingSubjectIds": [],
     "status": "active",
@@ -184,7 +199,7 @@
       "strengthsAndInterests": "Real-world physical analogies, thought experiments, inquiry",
       "painPoints": "Rote formula memorization under timed conditions",
       "questionnaireCompleted": true,
-      "completedAt": "2026-09-03T18:29:57.481Z"
+      "completedAt": "2026-09-04T10:30:00.000Z"
     }
   },
   {
@@ -196,15 +211,18 @@
     "role": "student",
     "gender": "Female",
     "institutionalId": "EDU-STU-1201",
-    "department": "Senior Secondary Science (Grade 12 PCM)",
-    "program": "CBSE / JEE Advanced Track",
-    "academicYear": "Grade 12",
+    "department": "Department of Physical Sciences & Mathematics",
+    "program": "Competitive JEE / Advanced Track",
+    "academicYear": "Year 2026",
     "gpa": 9.6,
     "enrolledSubjectIds": [
+      "subj-phy",
+      "subj-che",
+      "subj-mat",
+      "subj-misc",
       "subj-phy-12",
       "subj-che-12",
-      "subj-mat-12",
-      "subj-pyconfig"
+      "subj-mat-12"
     ],
     "teachingSubjectIds": [],
     "status": "active",
@@ -218,7 +236,7 @@
       "strengthsAndInterests": "High-yield numerical problem solving, integration shortcuts, circuit analysis",
       "painPoints": "Lengthy descriptive theory questions, coordination compound nomenclature",
       "questionnaireCompleted": true,
-      "completedAt": "2026-09-03T18:29:57.481Z"
+      "completedAt": "2026-09-04T11:00:00.000Z"
     }
   },
   {
@@ -230,15 +248,18 @@
     "role": "student",
     "gender": "Male",
     "institutionalId": "EDU-STU-1202",
-    "department": "Senior Secondary Science (Grade 12 PCM)",
-    "program": "CBSE / JEE Advanced Track",
-    "academicYear": "Grade 12",
+    "department": "Department of Physical Sciences & Mathematics",
+    "program": "Competitive JEE / Advanced Track",
+    "academicYear": "Year 2026",
     "gpa": 8.9,
     "enrolledSubjectIds": [
+      "subj-phy",
+      "subj-che",
+      "subj-mat",
+      "subj-misc",
       "subj-phy-12",
       "subj-che-12",
-      "subj-mat-12",
-      "subj-pyconfig"
+      "subj-mat-12"
     ],
     "teachingSubjectIds": [],
     "status": "active",
@@ -252,7 +273,7 @@
       "strengthsAndInterests": "Electromagnetism, electromagnetic induction, wave optics experiments",
       "painPoints": "3D spatial coordinate rotations and plane vectors",
       "questionnaireCompleted": true,
-      "completedAt": "2026-09-03T18:29:57.481Z"
+      "completedAt": "2026-09-04T11:30:00.000Z"
     }
   },
   {
@@ -264,15 +285,18 @@
     "role": "student",
     "gender": "Male",
     "institutionalId": "EDU-STU-1203",
-    "department": "Senior Secondary Science (Grade 12 PCM)",
-    "program": "CBSE / JEE Advanced Track",
-    "academicYear": "Grade 12",
-    "gpa": 9,
+    "department": "Department of Physical Sciences & Mathematics",
+    "program": "Competitive JEE / Advanced Track",
+    "academicYear": "Year 2026",
+    "gpa": 9.0,
     "enrolledSubjectIds": [
+      "subj-phy",
+      "subj-che",
+      "subj-mat",
+      "subj-misc",
       "subj-phy-12",
       "subj-che-12",
-      "subj-mat-12",
-      "subj-pyconfig"
+      "subj-mat-12"
     ],
     "teachingSubjectIds": [],
     "status": "active",
@@ -286,7 +310,7 @@
       "strengthsAndInterests": "Organic reaction flowcharts, optical ray diagrams, crystal lattices",
       "painPoints": "Equilibrium constants and multistep redox titrations",
       "questionnaireCompleted": true,
-      "completedAt": "2026-09-03T18:29:57.481Z"
+      "completedAt": "2026-09-04T11:45:00.000Z"
     }
   },
   {
@@ -298,13 +322,16 @@
     "role": "student",
     "gender": "Male",
     "institutionalId": "BMU-2026-7052",
-    "department": "School of Engineering & Technology",
-    "designation": "B.Tech First Year Student",
+    "department": "Department of Physical Sciences & Engineering",
+    "designation": "B.Tech Science & Engineering Scholar",
     "enrolledSubjectIds": [
+      "subj-phy",
+      "subj-che",
+      "subj-mat",
+      "subj-misc",
       "subj-ess",
       "subj-calc",
       "subj-eme",
-      "subj-engeth",
       "subj-cpc",
       "subj-pyconfig"
     ],
@@ -319,10 +346,10 @@
       "targetGrade": "A",
       "explanationTone": "strict_coach",
       "preferredPace": "steady",
-      "strengthsAndInterests": "",
-      "painPoints": "",
+      "strengthsAndInterests": "High-yield derivations, rapid formula evaluation, exam shortcuts",
+      "painPoints": "Ambiguous boundary definitions, unstated sign conventions",
       "questionnaireCompleted": true,
-      "completedAt": "2026-09-03T18:54:07.691Z"
+      "completedAt": "2026-09-04T12:00:00.000Z"
     }
   }
 ]

@@ -219,6 +219,9 @@ export interface StudentNote {
   source?: 'manual' | 'visionnote' | 'ocr_stream';
   cameraSnapshotUrl?: string;
   doubtsDetected?: string[];
+  generalisedNotes?: string;
+  personalisedNotes?: string;
+  rawOcrText?: string;
 }
 
 export interface VisionNotePayload {

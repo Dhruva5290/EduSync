@@ -744,7 +744,7 @@ export default function App() {
     throw new Error('Failed to generate detailed note');
   };
 
-  // 14. Save Student Personalized Learning Profile
+  // 14. Save Student Personalized Learning Profile & Immediately Recraft Notes
   const handleSaveLearningProfile = async (profile: LearnerPersona) => {
     if (!currentUser) return;
     const res = await fetch(`/api/students/${currentUser.id}/learning-profile`, {
@@ -753,8 +753,16 @@ export default function App() {
       body: JSON.stringify({ learningProfile: profile })
     });
     if (res.ok) {
+      const data = await res.json();
       setCurrentUser(prev => prev ? { ...prev, learningProfile: profile } : null);
       setAllUsers(prev => prev.map(u => u.id === currentUser.id ? { ...u, learningProfile: profile } : u));
+      if (data.updatedNotes && Array.isArray(data.updatedNotes)) {
+        setNotes(prevNotes => {
+          const updatedMap = new Map<string, StudentNote>(data.updatedNotes.map((n: StudentNote) => [n.id, n]));
+          return prevNotes.map(n => updatedMap.get(n.id) || n);
+        });
+      }
+      showToast(data.message || `✨ Notes immediately re-crafted for ${profile.learningStyle.replace('_', ' ').toUpperCase()} style!`, 'success');
     } else {
       throw new Error('Failed to update learning persona');
     }

@@ -204,7 +204,7 @@ const seedUsers: User[] = [
     department: 'Department of Physics',
     designation: 'Senior Faculty of Physics (Grades 11 & 12)',
     enrolledSubjectIds: [],
-    teachingSubjectIds: ['subj-phy-11', 'subj-phy-12'],
+    teachingSubjectIds: ['subj-phy', 'subj-misc', 'subj-phy-11', 'subj-phy-12'],
     officeLocation: 'Physics Block P - Lab 201',
     officeHours: 'Mon & Thu 02:00 PM - 04:00 PM',
     status: 'active',
@@ -223,7 +223,7 @@ const seedUsers: User[] = [
     department: 'Department of Chemistry',
     designation: 'Lead Faculty of Chemistry (Grades 11 & 12)',
     enrolledSubjectIds: [],
-    teachingSubjectIds: ['subj-che-11', 'subj-che-12'],
+    teachingSubjectIds: ['subj-che', 'subj-misc', 'subj-che-11', 'subj-che-12'],
     officeLocation: 'Chemistry Block C - Hall 2',
     officeHours: 'Tue & Fri 11:00 AM - 01:00 PM',
     status: 'active',
@@ -242,7 +242,7 @@ const seedUsers: User[] = [
     department: 'Department of Mathematics',
     designation: 'Senior Professor of Mathematics (Grades 11 & 12)',
     enrolledSubjectIds: [],
-    teachingSubjectIds: ['subj-mat-11', 'subj-mat-12'],
+    teachingSubjectIds: ['subj-mat', 'subj-misc', 'subj-mat-11', 'subj-mat-12'],
     officeLocation: 'Ramanujan Block M - Room 101',
     officeHours: 'Wed & Fri 03:00 PM - 05:00 PM',
     status: 'active',
@@ -264,7 +264,7 @@ const seedUsers: User[] = [
     program: 'CBSE / JEE Prep Track',
     academicYear: 'Grade 11',
     gpa: 9.4,
-    enrolledSubjectIds: ['subj-phy-11', 'subj-che-11', 'subj-mat-11'],
+    enrolledSubjectIds: ['subj-phy', 'subj-che', 'subj-mat', 'subj-misc', 'subj-phy-11', 'subj-che-11', 'subj-mat-11'],
     teachingSubjectIds: [],
     status: 'active',
     joinedDate: '2026-04-01',
@@ -293,7 +293,7 @@ const seedUsers: User[] = [
     program: 'CBSE / JEE Prep Track',
     academicYear: 'Grade 11',
     gpa: 9.1,
-    enrolledSubjectIds: ['subj-phy-11', 'subj-che-11', 'subj-mat-11'],
+    enrolledSubjectIds: ['subj-phy', 'subj-che', 'subj-mat', 'subj-misc', 'subj-phy-11', 'subj-che-11', 'subj-mat-11'],
     teachingSubjectIds: [],
     status: 'active',
     joinedDate: '2026-04-01',
@@ -322,7 +322,7 @@ const seedUsers: User[] = [
     program: 'CBSE / JEE Prep Track',
     academicYear: 'Grade 11',
     gpa: 8.8,
-    enrolledSubjectIds: ['subj-phy-11', 'subj-che-11', 'subj-mat-11'],
+    enrolledSubjectIds: ['subj-phy', 'subj-che', 'subj-mat', 'subj-misc', 'subj-phy-11', 'subj-che-11', 'subj-mat-11'],
     teachingSubjectIds: [],
     status: 'active',
     joinedDate: '2026-04-01',
@@ -351,7 +351,7 @@ const seedUsers: User[] = [
     program: 'CBSE / JEE Advanced Track',
     academicYear: 'Grade 12',
     gpa: 9.6,
-    enrolledSubjectIds: ['subj-phy-12', 'subj-che-12', 'subj-mat-12'],
+    enrolledSubjectIds: ['subj-phy', 'subj-che', 'subj-mat', 'subj-misc', 'subj-phy-12', 'subj-che-12', 'subj-mat-12'],
     teachingSubjectIds: [],
     status: 'active',
     joinedDate: '2025-04-01',
@@ -380,7 +380,7 @@ const seedUsers: User[] = [
     program: 'CBSE / JEE Advanced Track',
     academicYear: 'Grade 12',
     gpa: 8.9,
-    enrolledSubjectIds: ['subj-phy-12', 'subj-che-12', 'subj-mat-12'],
+    enrolledSubjectIds: ['subj-phy', 'subj-che', 'subj-mat', 'subj-misc', 'subj-phy-12', 'subj-che-12', 'subj-mat-12'],
     teachingSubjectIds: [],
     status: 'active',
     joinedDate: '2025-04-01',
@@ -409,7 +409,7 @@ const seedUsers: User[] = [
     program: 'CBSE / JEE Advanced Track',
     academicYear: 'Grade 12',
     gpa: 9.0,
-    enrolledSubjectIds: ['subj-phy-12', 'subj-che-12', 'subj-mat-12'],
+    enrolledSubjectIds: ['subj-phy', 'subj-che', 'subj-mat', 'subj-misc', 'subj-phy-12', 'subj-che-12', 'subj-mat-12'],
     teachingSubjectIds: [],
     status: 'active',
     joinedDate: '2025-04-01',
@@ -430,6 +430,101 @@ const seedUsers: User[] = [
 export const db: InMemoryDatabase = {
   users: loadUsersFromDisk(seedUsers),
   subjects: [
+    // ==========================================
+    // CORE UNIFIED SUBJECTS (PHY, CHEM, MATHS + MISC)
+    // ==========================================
+    {
+      id: 'subj-phy',
+      code: 'PHY',
+      name: 'Physics',
+      description: 'Foundational Newtonian mechanics, kinematics, rotational dynamics, work-energy theorem, universal gravitation, thermodynamics, and electromagnetism.',
+      teacherId: 'teacher-phy',
+      teacherName: 'Dr. Rajesh Kulkarni',
+      teacherEmail: 'rajesh.kulkarni@edusync.edu.in',
+      color: 'blue',
+      accentBg: 'bg-blue-500/10 border-blue-500/30 text-blue-400',
+      enrolledCount: 7,
+      semester: 'Academic Year 2026-27',
+      room: 'Physics Block P - Lecture Theatre 1',
+      credits: 4,
+      department: 'Department of Physics',
+      syllabusTopics: [
+        'Kinematics, Laws of Motion & Friction Mechanics',
+        'Work, Energy and Power & Conservation Principles',
+        'Rotational Dynamics & Moment of Inertia of Rigid Bodies',
+        'Thermodynamics, Carnot Heat Engines & Kinetic Theory',
+        'Electromagnetic Induction, Flux & Faraday-Lenz Law'
+      ]
+    },
+    {
+      id: 'subj-che',
+      code: 'CHEM',
+      name: 'Chemistry',
+      description: 'Quantum atomic models, chemical bonding (VSEPR), chemical thermodynamics, electrochemistry (Nernst equation), chemical kinetics, and reaction mechanisms.',
+      teacherId: 'teacher-che',
+      teacherName: 'Dr. Ananya Sen',
+      teacherEmail: 'ananya.sen@edusync.edu.in',
+      color: 'emerald',
+      accentBg: 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400',
+      enrolledCount: 7,
+      semester: 'Academic Year 2026-27',
+      room: 'Chemistry Block C - Hall 2',
+      credits: 4,
+      department: 'Department of Chemistry',
+      syllabusTopics: [
+        'Chemical Bonding, VSEPR Theory & Hybridization',
+        'Electrochemistry, Galvanic Cells & Nernst Equation',
+        'Chemical Kinetics, Rate Laws & Arrhenius Activation',
+        'Chemical Thermodynamics & Hess Law',
+        'Organic Reaction Mechanisms & Carbonyl Chemistry'
+      ]
+    },
+    {
+      id: 'subj-mat',
+      code: 'MATH',
+      name: 'Mathematics',
+      description: 'Techniques of integration, definite integrals, vector cross products, 3D geometry of planes, limits, continuity, and differential equations.',
+      teacherId: 'teacher-mat',
+      teacherName: 'Prof. Vikramaditya Roy',
+      teacherEmail: 'vikram.roy@edusync.edu.in',
+      color: 'violet',
+      accentBg: 'bg-violet-500/10 border-violet-500/30 text-violet-400',
+      enrolledCount: 7,
+      semester: 'Academic Year 2026-27',
+      room: 'Ramanujan Block M - Room 101',
+      credits: 4,
+      department: 'Department of Mathematics',
+      syllabusTopics: [
+        'Techniques of Integration (Parts, Partial Fractions)',
+        'Definite Integrals & King Reflection Property',
+        'Vector Algebra & 3D Geometry of Planes',
+        'Fundamental Limits, Squeeze Theorem & Continuity',
+        'Matrices, Inverses & Differential Modeling'
+      ]
+    },
+    {
+      id: 'subj-misc',
+      code: 'MISC',
+      name: 'Miscellaneous & General Notes',
+      description: 'Central designated repository where all cross-disciplinary, general studies, electives, lab journals, and other notes are organized.',
+      teacherId: 'teacher-phy',
+      teacherName: 'Dr. Rajesh Kulkarni',
+      teacherEmail: 'rajesh.kulkarni@edusync.edu.in',
+      color: 'purple',
+      accentBg: 'bg-purple-500/10 border-purple-500/30 text-purple-400',
+      enrolledCount: 7,
+      semester: 'Academic Year 2026-27',
+      room: 'Central Learning Commons - Suite 1',
+      credits: 3,
+      department: 'Interdisciplinary & General Studies',
+      syllabusTopics: [
+        'Scientific Research Methodology & Error Propagation',
+        'Scientific Computing with Python, NumPy & Visualizations',
+        'Laboratory Safety Protocols & Experimental Design',
+        'General Studies & Cross-Curricular Projects'
+      ]
+    },
+
     // ==========================================
     // GRADE 11 SCIENCE SUBJECTS (PCM)
     // ==========================================
@@ -1232,6 +1327,193 @@ $$H = \\begin{pmatrix} f_{xx} & f_{xy} \\\\ f_{yx} & f_{yy} \\end{pmatrix}$$
           hint: 'Consider the tangent planes to level surfaces.',
           topic: 'Lagrange Multipliers'
         }
+      ]
+    },
+
+    // ==========================================
+    // CORE SUBJECT NOTES (PHY, CHEM, MATHS, MISC)
+    // ==========================================
+    {
+      id: 'note-phy-01',
+      studentId: 'student-1',
+      subjectId: 'subj-phy',
+      title: "Newton's Laws of Motion & Friction Mechanics on Inclined Planes",
+      content: `# Newton's Laws of Motion & Friction Mechanics on Inclined Planes\n\n## 1. Governing First Principles & Force Vector Balance\nWhen a body of mass $m$ rests on an incline of angle $\\theta$ with coefficient of friction $\\mu$:\n$$\\sum \\vec{F} = m\\vec{a}$$\n\nResolving forces along and perpendicular to the incline:\n- **Perpendicular to incline (Normal Reaction)**:\n  $$N = mg \\cos\\theta$$\n- **Along the incline (Driving Component)**:\n  $$F_{\\text{down}} = mg \\sin\\theta$$\n\n## 2. Static vs Kinetic Friction Conditions\n- Static friction condition ($f_s$ adjusts dynamically):\n  $$f_s \\le \\mu_s N = \\mu_s mg \\cos\\theta$$\n- **Angle of Repose ($\\phi$)**: The critical incline angle at which impending slipping occurs:\n  $$\\tan\\phi = \\mu_s$$\n- If $\\theta > \\phi$, the body accelerates down the incline with kinetic friction $f_k = \\mu_k mg \\cos\\theta$:\n  $$a = g(\\sin\\theta - \\mu_k \\cos\\theta)$$\n\n## 3. Work-Energy Verification on the Incline\nTotal work done by all forces as the mass slides a distance $d$:\n$$W_{\\text{net}} = W_{\\text{gravity}} + W_{\\text{friction}} = (mg\\sin\\theta) d - (\\mu_k mg\\cos\\theta) d = \\Delta K = \\frac{1}{2}m v_f^2$$\n$$\\implies v_f = \\sqrt{2gd(\\sin\\theta - \\mu_k \\cos\\theta)}$$`,
+      generalisedNotes: "Analysis of force components on an inclined plane with static and kinetic friction thresholds.",
+      tags: ['Physics', 'Mechanics', 'NewtonsLaws', 'Friction', 'Incline'],
+      lastModified: '2026-09-04T12:00:00.000Z',
+      isPinned: true,
+      source: 'visionnote',
+      doubtsDetected: [
+        'Why is normal force mg cos(theta) and not mg / cos(theta)?',
+        'Does static friction perform work when a cylinder rolls without slipping?'
+      ],
+      summary: "Core derivations of normal force, static vs kinetic friction, angle of repose, and acceleration on inclined planes.",
+      keyTakeaways: [
+        'Normal force scales with cos(theta), reducing frictional capacity at steeper inclines.',
+        'Angle of repose depends strictly on the static friction coefficient: tan(phi) = mu_s.',
+        'Work done by kinetic friction is non-conservative and dissipates into thermal energy.'
+      ]
+    },
+    {
+      id: 'note-phy-02',
+      studentId: 'student-5',
+      subjectId: 'subj-phy',
+      title: 'Electromagnetic Induction & Faraday-Lenz Law',
+      content: `# Electromagnetic Induction & Faraday-Lenz Law\n\n## 1. Magnetic Flux Formulation\nThe magnetic flux $\\Phi_B$ through a flat planar surface of area $A$ in a uniform magnetic field $\\vec{B}$:\n$$\\Phi_B = \\iint_S \\vec{B} \\cdot d\\vec{A} = B A \\cos\\theta$$\n\n## 2. Faraday's Law of Induction & Lenz's Law\nThe induced electromotive force (EMF) $\\mathcal{E}$ in a closed circuit of $N$ tightly wound turns:\n$$\\mathcal{E} = -N \\frac{d\\Phi_B}{dt}$$\n\n- The negative sign represents **Lenz's Law** (Conservation of Energy):\n  *The induced current always creates an opposing magnetic field that counters the change in external flux that induced it.*\n\n## 3. Motional EMF in a Conducting Rod\nFor a conducting rod of length $L$ moving at velocity $v$ perpendicular to uniform field $B$ along rails of resistance $R$:\n$$\\mathcal{E} = B v L$$\n\n- Induced current: $I = \\frac{\\mathcal{E}}{R} = \\frac{B v L}{R}$\n- Retarding Lorentz Magnetic Force: $F_{\\text{mag}} = I L B = \\frac{B^2 L^2 v}{R}$\n- Mechanical Power Balance: $P_{\\text{mech}} = F_{\\text{ext}} v = \\frac{B^2 L^2 v^2}{R} = I^2 R = P_{\\text{diss}}$`,
+      tags: ['Physics', 'Electromagnetism', 'FaradayLaw', 'Induction', 'MotionalEMF'],
+      lastModified: '2026-09-04T12:05:00.000Z',
+      isPinned: true,
+      source: 'visionnote',
+      summary: 'Mathematical derivation of Faraday Law, magnetic flux differentiation, Lenz law energy conservation, and motional EMF power balance.',
+      keyTakeaways: [
+        'Induced EMF is driven strictly by time variation of flux.',
+        'Mechanical input power exactly matches Joule heat dissipation in motional EMF.',
+        'Lenz law is a fundamental manifestation of the law of conservation of energy.'
+      ]
+    },
+    {
+      id: 'note-phy-03',
+      studentId: 'student-2',
+      subjectId: 'subj-phy',
+      title: 'Thermodynamics & Carnot Heat Engine Cycle',
+      content: `# Thermodynamics & Carnot Heat Engine Cycle\n\n## 1. First & Second Laws of Thermodynamics\n- **First Law (Energy Balance)**: $\\Delta U = Q - W \\iff dQ = dU + P\\,dV$\n- **Second Law (Kelvin-Planck)**: No cyclic engine can absorb heat from a single reservoir and convert 100% of it into mechanical work without waste heat rejection.\n\n## 2. Four Reversible Stages of the Carnot Cycle\n1. **Isothermal Expansion ($A \\to B$) at $T_H$**: $Q_H = n R T_H \\ln(V_B / V_A)$\n2. **Adiabatic Expansion ($B \\to C$) from $T_H \\to T_C$**: $Q = 0, T_H V_B^{\\gamma - 1} = T_C V_C^{\\gamma - 1}$\n3. **Isothermal Compression ($C \\to D$) at $T_C$**: $Q_C = n R T_C \\ln(V_C / V_D)$\n4. **Adiabatic Compression ($D \\to A$) from $T_C \\to T_H$**: Returns gas to original state at $T_H$\n\n## 3. Maximum Theoretical Efficiency\n$$\\eta = \\frac{W_{\\text{net}}}{Q_H} = 1 - \\frac{T_C}{T_H}$$`,
+      tags: ['Physics', 'Thermodynamics', 'CarnotCycle', 'HeatEngine', 'Entropy'],
+      lastModified: '2026-09-04T12:10:00.000Z',
+      isPinned: false,
+      source: 'visionnote',
+      summary: 'Stepwise thermodynamic derivations of the 4 reversible stages of a Carnot cycle and theoretical efficiency limits.',
+      keyTakeaways: [
+        'Carnot efficiency represents the absolute upper limit for any heat engine operating between two thermal baths.',
+        'Efficiency can only reach 100% if the cold reservoir is at absolute zero (0 K).'
+      ]
+    },
+    {
+      id: 'note-che-01',
+      studentId: 'student-4',
+      subjectId: 'subj-che',
+      title: 'Electrochemistry & Nernst Equation Calculations',
+      content: `# Electrochemistry & Nernst Equation Calculations\n\n## 1. Standard Cell Potential & Gibbs Free Energy\n$$E^\\circ_{\\text{cell}} = E^\\circ_{\\text{cathode}} - E^\\circ_{\\text{anode}}$$\n$$\\Delta G^\\circ = -n F E^\\circ_{\\text{cell}}$$\n\n## 2. Nernst Equation for Non-Standard Concentrations\n$$E_{\\text{cell}} = E^\\circ_{\\text{cell}} - \\frac{RT}{nF} \\ln Q = E^\\circ_{\\text{cell}} - \\frac{0.0591}{n} \\log_{10} Q$$\n\n## 3. Electrochemical Equilibrium\nAt equilibrium, $E_{\\text{cell}} = 0$:\n$$\\log_{10} K_{eq} = \\frac{n E^\\circ_{\\text{cell}}}{0.0591}$$`,
+      tags: ['Chemistry', 'Electrochemistry', 'NernstEquation', 'Redox', 'PhysicalChemistry'],
+      lastModified: '2026-09-04T12:15:00.000Z',
+      isPinned: true,
+      source: 'visionnote',
+      summary: 'Derivation of cell electromotive force, Nernst concentration dependencies, and Gibbs free energy relationships.',
+      keyTakeaways: [
+        'Cell potential decreases as reaction proceeds forward because Q increases.',
+        'Concentration cells generate voltage solely from ion concentration gradients.'
+      ]
+    },
+    {
+      id: 'note-che-02',
+      studentId: 'student-6',
+      subjectId: 'subj-che',
+      title: 'VSEPR Theory & Molecular Geometry Hybridization',
+      content: `# Chemical Bonding: VSEPR Theory & Hybridization Schemes\n\n## 1. VSEPR Repulsion Hierarchy\n$$\\text{Lone Pair - Lone Pair} > \\text{Lone Pair - Bond Pair} > \\text{Bond Pair - Bond Pair}$$\n\n## 2. Steric Number Formula & Hybridization Matrix\n$$\\text{Steric Number (SN)} = (\\sigma\\text{-bonds}) + (\\text{Lone Pairs on Central Atom})$$\n\n- SN = 2 ($sp$ Linear, $180^\\circ$)\n- SN = 3 ($sp^2$ Trigonal Planar, $120^\\circ$)\n- SN = 4 ($sp^3$ Tetrahedral, $109.5^\\circ$)\n- SN = 5 ($sp^3d$ Trigonal Bipyramidal, $90^\\circ, 120^\\circ$)\n- SN = 6 ($sp^3d^2$ Octahedral, $90^\\circ$)`,
+      tags: ['Chemistry', 'ChemicalBonding', 'VSEPR', 'Hybridization', 'InorganicChemistry'],
+      lastModified: '2026-09-04T12:20:00.000Z',
+      isPinned: true,
+      source: 'visionnote',
+      summary: 'Systematic guide to steric number calculations, orbital hybridization, and VSEPR repulsion geometries.',
+      keyTakeaways: [
+        'Lone pairs exert stronger repulsions than bonding pairs, compressing adjacent bond angles.',
+        'In trigonal bipyramidal molecules, axial bonds are longer and more reactive than equatorial bonds.'
+      ]
+    },
+    {
+      id: 'note-che-03',
+      studentId: 'student-3',
+      subjectId: 'subj-che',
+      title: 'Chemical Kinetics & Reaction Rate Laws',
+      content: `# Chemical Kinetics & Reaction Rate Laws\n\n## 1. Rate of Reaction & Rate Law Expression\n$$\\text{Rate} = -\\frac{1}{a}\\frac{d[A]}{dt} = k [A]^x [B]^y$$\n\n## 2. Integrated Rate Laws & Half-Life Equations\n- Zero Order: $[A]_t = [A]_0 - kt, \\quad t_{1/2} = [A]_0 / (2k)$\n- First Order: $\\ln[A]_t = \\ln[A]_0 - kt, \\quad t_{1/2} = 0.693 / k$\n- Second Order: $1/[A]_t = 1/[A]_0 + kt, \\quad t_{1/2} = 1 / (k[A]_0)$\n\n## 3. Temperature Dependence: Arrhenius Equation\n$$\\ln\\left(\\frac{k_2}{k_1}\\right) = \\frac{E_a}{R} \\left(\\frac{1}{T_1} - \\frac{1}{T_2}\\right)$$`,
+      tags: ['Chemistry', 'PhysicalChemistry', 'ChemicalKinetics', 'RateLaws', 'Arrhenius'],
+      lastModified: '2026-09-04T12:25:00.000Z',
+      isPinned: false,
+      source: 'visionnote',
+      summary: 'Integrated rate equations, half-life relationships across zero, first, and second order reactions, and Arrhenius activation energy.',
+      keyTakeaways: [
+        'First-order half-life is independent of initial concentration.',
+        'Arrhenius plot of ln(k) vs 1/T yields a straight line with slope equal to -E_a / R.'
+      ]
+    },
+    {
+      id: 'note-mat-01',
+      studentId: 'student-2',
+      subjectId: 'subj-mat',
+      title: 'Techniques of Integration: Integration by Parts & Partial Fractions',
+      content: `# Techniques of Integration: Integration by Parts & Partial Fractions\n\n## 1. Integration by Parts Formula\n$$\\int u \\, dv = u v - \\int v \\, du$$\nLIATE Priority: **L**ogarithmic > **I**nverse Trig > **A**lgebraic > **T**rigonometric > **E**xponential.\n\n## 2. The King's Property of Definite Integrals\n$$\\int_{a}^{b} f(x) \\, dx = \\int_{a}^{b} f(a + b - x) \\, dx$$\n\n## 3. Partial Fractions Decomposition\n$$\\frac{1}{(x - a)(x - b)} = \\frac{A}{x - a} + \\frac{B}{x - b}$$`,
+      tags: ['Mathematics', 'Calculus', 'Integration', 'DefiniteIntegrals', 'LIATE'],
+      lastModified: '2026-09-04T12:30:00.000Z',
+      isPinned: true,
+      source: 'visionnote',
+      summary: 'Integration by parts with the LIATE priority scheme, King property of definite integrals, and partial fraction templates.',
+      keyTakeaways: [
+        'The LIATE rule provides a deterministic algorithm for choosing u(x).',
+        'The King property reflects the integrand across its interval midpoint without altering total enclosed area.'
+      ]
+    },
+    {
+      id: 'note-mat-02',
+      studentId: 'student-5',
+      subjectId: 'subj-mat',
+      title: 'Vector Cross Product & 3D Geometry of Planes',
+      content: `# Vector Cross Product & 3D Geometry of Planes\n\n## 1. Vector Cross Product Determinant Formulation\n$$\\vec{a} \\times \\vec{b} = \\begin{vmatrix} \\hat{i} & \\hat{j} & \\hat{k} \\\\ a_1 & a_2 & a_3 \\\\ b_1 & b_2 & b_3 \\end{vmatrix}$$\nArea of parallelogram formed by $\\vec{a}$ and $\\vec{b}$: $|\\vec{a} \\times \\vec{b}|$.\n\n## 2. 3D Plane Equation\n$$A(x - x_1) + B(y - y_1) + C(z - z_1) = 0 \\iff Ax + By + Cz + D = 0$$\nDistance from point $(x_0, y_0, z_0)$ to plane:\n$$d = \\frac{|A x_0 + B y_0 + C z_0 + D|}{\\sqrt{A^2 + B^2 + C^2}}$$`,
+      tags: ['Mathematics', 'Vectors', '3DGeometry', 'Planes', 'LinearAlgebra'],
+      lastModified: '2026-09-04T12:35:00.000Z',
+      isPinned: true,
+      source: 'visionnote',
+      summary: 'Vector cross product determinant formulas, normal vectors, 3D Cartesian plane equations, and perpendicular distance formulas.',
+      keyTakeaways: [
+        'The cross product vector is strictly orthogonal to both constituent vectors.',
+        'The coefficients of x, y, z in a plane equation directly specify its normal vector coordinates.'
+      ]
+    },
+    {
+      id: 'note-mat-03',
+      studentId: 'student-1',
+      subjectId: 'subj-mat',
+      title: 'Fundamental Limits, Continuity & Squeeze Theorem',
+      content: `# Fundamental Limits, Continuity & Squeeze Theorem\n\n## 1. Standard Trigonometric Limits\n$$\\lim_{x \\to 0} \\frac{\\sin x}{x} = 1, \\quad \\lim_{x \\to 0} \\frac{\\tan x}{x} = 1, \\quad \\lim_{x \\to 0} \\frac{1 - \\cos x}{x^2} = \\frac{1}{2}$$\n\n## 2. Sandwich (Squeeze) Theorem\nIf $g(x) \\le f(x) \\le h(x)$ and $\\lim_{x \\to c} g(x) = \\lim_{x \\to c} h(x) = L$, then $\\lim_{x \\to c} f(x) = L$.\n\n## 3. L'Hôpital's Rule for Indeterminate Forms [0/0] and [∞/∞]\n$$\\lim_{x \\to c} \\frac{f(x)}{g(x)} = \\lim_{x \\to c} \\frac{f'(x)}{g'(x)}$$`,
+      tags: ['Mathematics', 'Calculus', 'Limits', 'SqueezeTheorem', 'LHopital'],
+      lastModified: '2026-09-04T12:40:00.000Z',
+      isPinned: false,
+      source: 'visionnote',
+      summary: 'Geometric inequality proof of sin(x)/x, Sandwich theorem rigor, and L Hopital rule application rules.',
+      keyTakeaways: [
+        'Trigonometric limit proofs strictly require angles measured in radians.',
+        'Squeeze Theorem traps intermediate limits between known converging functions.'
+      ]
+    },
+    {
+      id: 'note-misc-01',
+      studentId: 'student-3',
+      subjectId: 'subj-misc',
+      title: 'Scientific Research Methodology & Experimental Error Analysis',
+      content: `# Scientific Research Methodology & Experimental Error Analysis\n\n## 1. Systematic vs Random Experimental Errors\n- **Systematic Errors**: Inaccuracies in calibration or zero-offset; eliminated via calibration.\n- **Random Errors**: Statistical fluctuations; quantified with standard deviation $\\sigma$ and standard error $\\sigma / \\sqrt{N}$.\n\n## 2. Error Propagation Calculus\n$$\\Delta Z = \\sqrt{\\left(\\frac{\\partial f}{\\partial X} \\Delta X\\right)^2 + \\left(\\frac{\\partial f}{\\partial Y} \\Delta Y\\right)^2}$$\n\n- Sum / Difference: $\\Delta Z = \\sqrt{(\\Delta X)^2 + (\\Delta Y)^2}$\n- Product / Quotient: $\\frac{\\Delta Z}{Z} = \\sqrt{(\\frac{\\Delta X}{X})^2 + (\\frac{\\Delta Y}{Y})^2}$`,
+      tags: ['GeneralNotes', 'ResearchMethodology', 'ErrorAnalysis', 'Statistics', 'LabPractice'],
+      lastModified: '2026-09-04T12:42:00.000Z',
+      isPinned: true,
+      source: 'visionnote',
+      summary: 'Systematic vs random errors, partial derivative error propagation, and research documentation standards.',
+      keyTakeaways: [
+        'Random errors diminish with sample size N by 1/sqrt(N).',
+        'Report experimental values with uncertainty precision matched to the last significant digit.'
+      ]
+    },
+    {
+      id: 'note-misc-02',
+      studentId: 'student-6',
+      subjectId: 'subj-misc',
+      title: 'Scientific Computing with Python, NumPy & Visualizations',
+      content: `# Scientific Computing with Python, NumPy & Visualizations\n\n## 1. Vectorized Numerical Computing with NumPy\n\`\`\`python\nimport numpy as np\nx = np.linspace(0, 10, 1000)\npsi = np.exp(-0.25 * (x - 5)**2) * np.cos(3 * np.pi * x)\n\`\`\`\n\n## 2. Solving ODEs with SciPy\n\`\`\`python\nfrom scipy.integrate import solve_ivp\ndef oscillator(t, state, gamma=0.15, omega0=1.2):\n    x, v = state\n    return [v, -2 * gamma * v - (omega0**2) * x]\nsol = solve_ivp(oscillator, [0, 40], [1.5, 0.0], t_eval=np.linspace(0, 40, 2000))\n\`\`\`\n\n## 3. Publication Plotting with Matplotlib\n\`\`\`python\nimport matplotlib.pyplot as plt\nplt.plot(sol.t, sol.y[0], label='x(t)', color='#6366f1')\nplt.xlabel('Time (s)'); plt.ylabel('Position (m)'); plt.grid(True)\n\`\`\``,
+      tags: ['GeneralNotes', 'Python', 'ScientificComputing', 'NumPy', 'Simulation'],
+      lastModified: '2026-09-04T12:45:00.000Z',
+      isPinned: false,
+      source: 'visionnote',
+      summary: 'Practical scientific computing patterns in Python covering vectorized array math, ODE integration, and visualization.',
+      keyTakeaways: [
+        'NumPy vectorization achieves massive speedups over Python for-loops.',
+        'solve_ivp reduces second-order ODEs to first-order state vectors.'
       ]
     },
 

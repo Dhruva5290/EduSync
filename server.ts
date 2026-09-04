@@ -16,6 +16,7 @@ import {
   generateMasteryQuizAI,
   analyzeQuizPerformanceAI,
   personalizeNoteAI,
+  recraftNoteForPersona,
   askMyClassLectureAI,
   personalizeLectureNotesFromClassSarthi
 } from './src/server/gemini';
@@ -196,8 +197,12 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
       // 1. Synthesize with Gemini AI
       let personalized = '';
       try {
-        const aiReply = await generateDetailedTopicNoteAI(title, `${generalisedNotes}\n${rawOcrText}`, 'engineering');
-        personalized = aiReply || generalisedNotes;
+        const aiReply = await generateDetailedTopicNoteAI({
+          prompt: title,
+          attachedText: `${generalisedNotes}\n${rawOcrText}`,
+          depth: 'exam_prep'
+        });
+        personalized = aiReply.content || generalisedNotes;
       } catch (aiErr) {
         console.warn('[Webhook] Gemini AI call fallback:', aiErr);
         personalized = `## 🎯 Core Conceptual Synthesis: ${title}\n\n${generalisedNotes}\n\n$$\\sum \\vec{F}_{ext} = m\\vec{a}$$`;
@@ -540,10 +545,90 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
       };
 
       saveUsersToDisk(db.users);
-      res.json({ success: true, message: 'Learning profile saved successfully', user: student });
+
+      // Immediately recraft all relevant notes for this student to match their calibrated persona!
+      const studentNotes = db.notes.filter(n =>
+        !n.studentId ||
+        n.source === 'visionnote' ||
+        n.studentId === student.id ||
+        n.studentId === student.institutionalId ||
+        n.studentId.startsWith('student-') ||
+        student.role === 'admin' ||
+        student.role === 'student'
+      );
+
+      for (const note of studentNotes) {
+        const recrafted = recraftNoteForPersona(note, student.learningProfile);
+        note.content = recrafted.content;
+        note.personalisedNotes = recrafted.personalisedNotes;
+        note.summary = recrafted.summary;
+        note.keyTakeaways = recrafted.keyTakeaways;
+        note.lastModified = new Date().toISOString();
+      }
+
+      saveNotesToDisk(db.notes);
+
+      res.json({
+        success: true,
+        message: `Learning persona calibrated! All notes immediately re-crafted for ${student.learningProfile.learningStyle.replace('_', ' ').toUpperCase()} style.`,
+        user: student,
+        updatedNotes: studentNotes
+      });
     } catch (err: any) {
       console.error('Error saving learning profile:', err);
       res.status(500).json({ error: 'Failed to update learning profile' });
+    }
+  });
+
+  // Direct Note Re-Personalization Endpoint
+  app.post('/api/notes/repersonalize', (req, res) => {
+    try {
+      const { noteId, studentId, persona } = req.body;
+      const user = getCurrentUser(req);
+      const targetStudent = (studentId && db.users.find(u => u.id === studentId)) || user;
+      const targetPersona = persona || targetStudent?.learningProfile;
+
+      if (noteId) {
+        const note = db.notes.find(n => n.id === noteId);
+        if (!note) {
+          res.status(404).json({ error: 'Note not found' });
+          return;
+        }
+        const recrafted = recraftNoteForPersona(note, targetPersona);
+        note.content = recrafted.content;
+        note.personalisedNotes = recrafted.personalisedNotes;
+        note.summary = recrafted.summary;
+        note.keyTakeaways = recrafted.keyTakeaways;
+        note.lastModified = new Date().toISOString();
+        saveNotesToDisk(db.notes);
+        res.json({ success: true, note });
+        return;
+      }
+
+      // Recraft all notes accessible to this student
+      const notesToRecraft = db.notes.filter(n =>
+        !n.studentId ||
+        n.source === 'visionnote' ||
+        n.studentId === targetStudent.id ||
+        n.studentId === targetStudent.institutionalId ||
+        targetStudent.role === 'admin' ||
+        targetStudent.role === 'student'
+      );
+
+      for (const note of notesToRecraft) {
+        const recrafted = recraftNoteForPersona(note, targetPersona);
+        note.content = recrafted.content;
+        note.personalisedNotes = recrafted.personalisedNotes;
+        note.summary = recrafted.summary;
+        note.keyTakeaways = recrafted.keyTakeaways;
+        note.lastModified = new Date().toISOString();
+      }
+
+      saveNotesToDisk(db.notes);
+      res.json({ success: true, updatedNotes: notesToRecraft });
+    } catch (err: any) {
+      console.error('Error re-personalizing notes:', err);
+      res.status(500).json({ error: 'Failed to re-personalize notes' });
     }
   });
 
@@ -1144,19 +1229,37 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
     const subjectId = req.params.subjectId || (req.query.subjectId as string);
     const requestedStudentId = (req.query.studentId as string) || user.id;
 
-    // Filter notes for the student (or allow shared view if admin/faculty, or class-wide VisionNote notes)
+    // Filter notes for the student (allow full access across students to study shared curriculum notes)
     let userNotes = db.notes.filter(n =>
       !n.studentId ||
       n.source === 'visionnote' ||
       n.studentId === requestedStudentId ||
       n.studentId === user.id ||
+      n.studentId.startsWith('student-') ||
       user.role === 'admin' ||
-      user.role === 'teacher'
+      user.role === 'teacher' ||
+      user.role === 'student'
     );
 
     if (subjectId && subjectId !== 'all') {
-      if (subjectId === 'others' || subjectId === 'subj-others') {
-        userNotes = userNotes.filter(n => n.subjectId === 'others' || n.subjectId === 'subj-others');
+      if (subjectId === 'others' || subjectId === 'subj-others' || subjectId === 'subj-misc' || subjectId === 'misc') {
+        userNotes = userNotes.filter(n =>
+          n.subjectId === 'subj-misc' ||
+          n.subjectId === 'others' ||
+          n.subjectId === 'subj-others' ||
+          n.subjectId === 'misc' ||
+          ![
+            'subj-phy', 'subj-phy-11', 'subj-phy-12',
+            'subj-che', 'subj-che-11', 'subj-che-12',
+            'subj-mat', 'subj-mat-11', 'subj-mat-12'
+          ].includes(n.subjectId)
+        );
+      } else if (subjectId === 'subj-phy') {
+        userNotes = userNotes.filter(n => n.subjectId === 'subj-phy' || n.subjectId === 'subj-phy-11' || n.subjectId === 'subj-phy-12');
+      } else if (subjectId === 'subj-che') {
+        userNotes = userNotes.filter(n => n.subjectId === 'subj-che' || n.subjectId === 'subj-che-11' || n.subjectId === 'subj-che-12');
+      } else if (subjectId === 'subj-mat') {
+        userNotes = userNotes.filter(n => n.subjectId === 'subj-mat' || n.subjectId === 'subj-mat-11' || n.subjectId === 'subj-mat-12');
       } else {
         userNotes = userNotes.filter(n => n.subjectId === subjectId);
       }
@@ -1352,19 +1455,18 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
       return explicitSubjectId;
     }
     const cleanSub = (subjectName || '').toLowerCase();
-    const isGrade12 = grade === '12' || cleanSub.includes('12') || cleanSub.includes('xii');
 
     if (cleanSub.includes('phy')) {
-      return isGrade12 ? 'subj-phy-12' : 'subj-phy-11';
+      return 'subj-phy';
     }
     if (cleanSub.includes('chem') || cleanSub.includes('che')) {
-      return isGrade12 ? 'subj-che-12' : 'subj-che-11';
+      return 'subj-che';
     }
     if (cleanSub.includes('math') || cleanSub.includes('mat') || cleanSub.includes('calc')) {
-      return isGrade12 ? 'subj-mat-12' : 'subj-mat-11';
+      return 'subj-mat';
     }
 
-    return isGrade12 ? 'subj-phy-12' : 'subj-phy-11';
+    return 'subj-misc';
   }
 
   // Helper to resolve student from studentId, grade, or name

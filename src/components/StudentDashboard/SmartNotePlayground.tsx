@@ -77,6 +77,42 @@ export const SUBJECT_THEMES: Record<string, {
   activeRing: string;
   accentDot: string;
 }> = {
+  'subj-phy': {
+    name: 'Physics',
+    code: 'PHY',
+    badgeBg: 'bg-blue-950/70',
+    textColor: 'text-blue-300',
+    borderColor: 'border-blue-700/80',
+    activeRing: 'border-blue-500 bg-blue-950/30 text-blue-200',
+    accentDot: 'bg-blue-400'
+  },
+  'subj-che': {
+    name: 'Chemistry',
+    code: 'CHEM',
+    badgeBg: 'bg-emerald-950/70',
+    textColor: 'text-emerald-300',
+    borderColor: 'border-emerald-700/80',
+    activeRing: 'border-emerald-500 bg-emerald-950/30 text-emerald-200',
+    accentDot: 'bg-emerald-400'
+  },
+  'subj-mat': {
+    name: 'Mathematics',
+    code: 'MATH',
+    badgeBg: 'bg-violet-950/70',
+    textColor: 'text-violet-300',
+    borderColor: 'border-violet-700/80',
+    activeRing: 'border-violet-500 bg-violet-950/30 text-violet-200',
+    accentDot: 'bg-violet-400'
+  },
+  'subj-misc': {
+    name: 'Miscellaneous & General Notes',
+    code: 'MISC',
+    badgeBg: 'bg-purple-950/70',
+    textColor: 'text-purple-300',
+    borderColor: 'border-purple-700/80',
+    activeRing: 'border-purple-500 bg-purple-950/30 text-purple-200',
+    accentDot: 'bg-purple-400'
+  },
   'subj-ess': {
     name: 'Environmental Studies',
     code: 'ESS',
@@ -190,21 +226,21 @@ export const SmartNotePlayground: React.FC<SmartNotePlaygroundProps> = ({
   const [activeQuiz, setActiveQuiz] = useState<GeneratedQuiz | null>(null);
   const [activeDeck, setActiveDeck] = useState<Flashcard[] | null>(null);
 
-  // Update local editor state when active note changes
+  // Update local editor state when active note changes or is re-personalized
   useEffect(() => {
     if (activeNote) {
       setTitle(activeNote.title);
-      setContent(activeNote.content);
-      setNoteSubjectId(activeNote.subjectId || 'others');
+      setContent(activeNote.personalisedNotes || activeNote.content);
+      setNoteSubjectId(activeNote.subjectId || 'subj-misc');
       setTagsInput(activeNote.tags?.join(', ') || '');
       setIsPinned(activeNote.isPinned || false);
     }
-  }, [selectedNoteId, activeNote?.id]);
+  }, [selectedNoteId, activeNote?.id, activeNote?.lastModified, activeNote?.content, activeNote?.personalisedNotes]);
 
   // Helper to get styling theme for any subject ID
   const getSubjectTheme = (subjId: string) => {
-    if (!subjId || subjId === 'others' || subjId === 'subj-others') {
-      return SUBJECT_THEMES['others'];
+    if (!subjId || subjId === 'others' || subjId === 'subj-others' || subjId === 'misc' || subjId === 'subj-misc') {
+      return SUBJECT_THEMES['subj-misc'] || SUBJECT_THEMES['others'];
     }
     if (SUBJECT_THEMES[subjId]) {
       return SUBJECT_THEMES[subjId];
@@ -223,18 +259,31 @@ export const SmartNotePlayground: React.FC<SmartNotePlaygroundProps> = ({
         accentDot: 'bg-blue-400'
       };
     }
-    return SUBJECT_THEMES['others'];
+    return SUBJECT_THEMES['subj-misc'] || SUBJECT_THEMES['others'];
   };
 
   // Filter notes based on subject category and search text
   const filteredNotes = notes.filter(n => {
     // Subject filter
     if (subjectFilter !== 'all') {
-      if (subjectFilter === 'others') {
-        const isKnownSubj = availableSubjects.some(s => s.id === n.subjectId);
-        if (isKnownSubj && n.subjectId !== 'others' && n.subjectId !== 'subj-others') {
+      if (subjectFilter === 'others' || subjectFilter === 'subj-misc') {
+        const isCoreScience = [
+          'subj-phy', 'subj-phy-11', 'subj-phy-12',
+          'subj-che', 'subj-che-11', 'subj-che-12',
+          'subj-mat', 'subj-mat-11', 'subj-mat-12'
+        ].includes(n.subjectId);
+        if (isCoreScience) {
           return false;
         }
+      } else if (subjectFilter === 'subj-phy') {
+        const isPhy = n.subjectId === 'subj-phy' || n.subjectId === 'subj-phy-11' || n.subjectId === 'subj-phy-12';
+        if (!isPhy) return false;
+      } else if (subjectFilter === 'subj-che') {
+        const isChe = n.subjectId === 'subj-che' || n.subjectId === 'subj-che-11' || n.subjectId === 'subj-che-12';
+        if (!isChe) return false;
+      } else if (subjectFilter === 'subj-mat') {
+        const isMat = n.subjectId === 'subj-mat' || n.subjectId === 'subj-mat-11' || n.subjectId === 'subj-mat-12';
+        if (!isMat) return false;
       } else if (n.subjectId !== subjectFilter) {
         return false;
       }
@@ -255,7 +304,8 @@ export const SmartNotePlayground: React.FC<SmartNotePlaygroundProps> = ({
   };
 
   const handleCreateNewNote = async () => {
-    const targetSubj = subjectFilter !== 'all' ? subjectFilter : activeSubject.id;
+    const rawTarget = subjectFilter !== 'all' ? subjectFilter : activeSubject.id;
+    const targetSubj = (rawTarget === 'others' || !rawTarget) ? 'subj-misc' : rawTarget;
     const theme = getSubjectTheme(targetSubj);
 
     const created = await onSaveNote({
@@ -487,18 +537,7 @@ export const SmartNotePlayground: React.FC<SmartNotePlaygroundProps> = ({
             </button>
           )}
 
-          {onNavigateToVisionNote && (
-            <button
-              id="notes-import-vn-btn"
-              type="button"
-              onClick={onNavigateToVisionNote}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-xs font-bold transition-all shadow-md cursor-pointer animate-pulse"
-              title="Open VisionNote Hub to push/pull camera notes"
-            >
-              <Camera className="w-3.5 h-3.5 text-cyan-200" />
-              <span>Import from VN</span>
-            </button>
-          )}
+
 
           <button
             id="notes-ai-generate-btn"
@@ -574,19 +613,25 @@ export const SmartNotePlayground: React.FC<SmartNotePlaygroundProps> = ({
             );
           })}
 
-          {/* OTHERS / ELECTIVES CATEGORY */}
+          {/* MISCELLANEOUS & GENERAL NOTES CATEGORY */}
           {(() => {
             const othersCount = notes.filter(n =>
+              n.subjectId === 'subj-misc' ||
               n.subjectId === 'others' ||
               n.subjectId === 'subj-others' ||
-              !availableSubjects.some(s => s.id === n.subjectId)
+              n.subjectId === 'misc' ||
+              ![
+                'subj-phy', 'subj-phy-11', 'subj-phy-12',
+                'subj-che', 'subj-che-11', 'subj-che-12',
+                'subj-mat', 'subj-mat-11', 'subj-mat-12'
+              ].includes(n.subjectId)
             ).length;
-            const isSelected = subjectFilter === 'others';
-            const theme = SUBJECT_THEMES['others'];
+            const isSelected = subjectFilter === 'others' || subjectFilter === 'subj-misc';
+            const theme = SUBJECT_THEMES['subj-misc'] || SUBJECT_THEMES['others'];
 
             return (
               <button
-                onClick={() => setSubjectFilter('others')}
+                onClick={() => setSubjectFilter('subj-misc')}
                 className={`px-3 py-2 rounded-lg text-xs font-semibold transition-all shrink-0 flex items-center gap-2 border cursor-pointer ${
                   isSelected
                     ? `${theme.activeRing} shadow-md font-bold`
@@ -594,7 +639,7 @@ export const SmartNotePlayground: React.FC<SmartNotePlaygroundProps> = ({
                 }`}
               >
                 <Globe className="w-3.5 h-3.5 text-purple-400" />
-                <span>Others & Electives</span>
+                <span>Misc & General Notes</span>
                 <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
                   isSelected ? 'bg-purple-900 text-white font-bold' : 'bg-purple-950/80 text-purple-300 border border-purple-800/60'
                 }`}>
@@ -1048,7 +1093,7 @@ export const SmartNotePlayground: React.FC<SmartNotePlaygroundProps> = ({
                     📚 {s.code} — {s.name}
                   </option>
                 ))}
-                <option value="others">🌐 Others (General / Electives / Cross-Disciplinary)</option>
+                <option value="subj-misc">🌐 Miscellaneous & General Notes (Cross-Disciplinary / Electives)</option>
               </select>
             </div>
 
