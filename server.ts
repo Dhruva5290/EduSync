@@ -48,6 +48,7 @@ import {
   ClassLevelInsight
 } from './src/types';
 import { archiveAndResetWorkspace, listVaultSnapshots, restoreFromVaultSnapshot } from './src/server/vaultArchive';
+import { generateDiverseSocraticReply } from './src/server/socraticKnowledge';
 
 
 dotenv.config();
@@ -2431,64 +2432,13 @@ If $d = 0 \\implies$ Lines are coplanar and intersect.`,
 
       const apiKey = process.env.GEMINI_API_KEY;
 
-      // Smart Socratic answer generator for any topic (Physics, Chemistry, Maths, General)
+      // Diverse Socratic answer generator for any topic across Physics, Chemistry, Maths, CS, and Engineering
       const generateSmartSocraticFallback = (userMsg: string) => {
-        const m = userMsg.toLowerCase();
-        if (m.includes('aldol') || m.includes('enolate') || m.includes('organic')) {
-          return `In Aldol Condensations, the key driving mechanism is the **acidity of the $\\alpha$-hydrogen** ($\text{p}K_a \\approx 19 - 20$).
-
-1. **Enolate Formation**: A strong base deprotonates the $\\alpha$-carbon, forming a resonance-stabilized enolate ion.
-2. **Nucleophilic Attack**: The enolate attacks the electrophilic carbonyl carbon of another aldehyde molecule.
-3. **Dehydration**: Heating eliminates water, yielding an $\\alpha,\\beta$-unsaturated carbonyl driven by extended $\\pi$-conjugation.
-
-💭 **Socratic Check**: Why is the $\\alpha$-hydrogen so much more acidic than the $\\beta$ or $\\gamma$-hydrogens in the same aldehyde?`;
-        }
-
-        if (m.includes('king') || m.includes('integral') || m.includes('calculus') || m.includes('derivative')) {
-          return `The **King Property** (Reflection Identity) is one of the most powerful symmetry tools in definite integration:
-
-$$\\int_{a}^{b} f(x)\\,dx = \\int_{a}^{b} f(a + b - x)\\,dx$$
-
-**How to exploit it in problem-solving**:
-1. Label your integral as $I$.
-2. Apply the substitution $x \\to a + b - x$.
-3. Add the two equations together ($2I = \\int_{a}^{b} [f(x) + f(a + b - x)]\\,dx$).
-4. In many competitive exam problems, $f(x) + f(a + b - x)$ simplifies into a constant or cancels the denominator entirely!
-
-💭 **Try this**: How would you apply this to evaluate $\\int_{0}^{\\pi/2} \\frac{\\sin x}{\\sin x + \\cos x}\\,dx$?`;
-        }
-
-        if (m.includes('gibbs') || m.includes('thermo') || m.includes('entropy')) {
-          return `**Gibbs Free Energy ($\\Delta G$)** determines the spontaneous direction of a system at constant temperature and pressure:
-
-$$\\Delta G = \\Delta H - T\\Delta S$$
-
-- If $\\Delta G < 0$, the process is **exergonic** and thermodynamically spontaneous.
-- At equilibrium, $\\Delta G = 0$, directly relating to the equilibrium constant: $\\Delta G^\\circ = -RT \\ln K_{eq}$.
-
-💭 **Reflect**: If a reaction has an endothermic enthalpy ($\\Delta H > 0$), under what temperature condition could it still become spontaneous?`;
-        }
-
-        if (m.includes('force') || m.includes('acceleration') || m.includes('newton')) {
-          return `Great physics question! The key principle to keep clear is cause versus kinematic effect:
-
-1. **Force ($\vec{F}$)** is the **cause**: a physical interaction exerted on a mass (measured in Newtons, $N$).
-2. **Acceleration ($\vec{a}$)** is the **kinematic effect**: the time rate of change of velocity ($\frac{d\vec{v}}{dt}$ in $\text{m/s}^2$).
-
-By Newton's Second Law: $\\sum \\vec{F} = m\\vec{a}$. Acceleration only exists when there is a net unbalanced force.
-
-💭 **Socratic Reflection**: When an object moves in a circular path at a constant speed, is there a net force acting on it? Why or why not?`;
-        }
-
-        // General academic Socratic response
-        return `That's a thoughtful question about **"${userMsg.slice(0, 40)}"**!
-
-To understand this systematically, let's break it down into core principles:
-1. **Identify the Core Invariant**: What physical quantity, mathematical symmetry, or governing rule remains constant here?
-2. **Boundary Conditions**: What happens at the extremes (e.g. as $t \\to 0$ or $x \\to \\infty$)?
-3. **Step-by-Step Logic**: Trace the relationship between causes and observable outcomes.
-
-💭 **Guiding Question**: What is your initial intuition about what happens first, and which formula or definition from our course syllabus relates closest to this?`;
+        return generateDiverseSocraticReply(userMsg, {
+          studentContext,
+          lectureContext: lectureInfo,
+          history
+        });
       };
 
       if (!apiKey) {
@@ -2508,7 +2458,7 @@ To understand this systematically, let's break it down into core principles:
 
       try {
         const tutorPromise = ai.models.generateContent({
-          model: 'gemini-2.5-flash',
+          model: 'gemini-2.0-flash',
           contents: [
             ...chatHistory,
             { role: 'user', parts: [{ text: `${lectureContextPrompt}\n\nSTUDENT QUESTION: "${message}"` }] }
@@ -2525,7 +2475,7 @@ CRITICAL PEDAGOGY:
         });
 
         const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Tutor AI timeout')), 7500)
+          setTimeout(() => reject(new Error('Tutor AI timeout')), 6500)
         );
 
         const result: any = await Promise.race([tutorPromise, timeoutPromise]);

@@ -9,6 +9,14 @@ export function cleanAndFormatMath(text) {
   if (!text) return '';
   let str = text;
 
+  // 0. Recover accidentally unescaped JS control characters and unicode replacement glyphs:
+  str = str.replace(/\x0Bec\{([a-zA-Z0-9])\}/g, '$1⃗');
+  str = str.replace(/\x0Bec\s*([a-zA-Z0-9])/g, '$1⃗');
+  str = str.replace(/[\uFFFD\u25A1\u25AF\u25A0]?ec\{([a-zA-Z0-9])\}/g, '$1⃗');
+  str = str.replace(/\x0Crac/g, '\\frac');
+  str = str.replace(/[\uFFFD\u25A1\u25AF\u25A0]?rac/g, '\\frac');
+  str = str.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, ' ');
+
   // 1. Remove enclosing $$ ... $$ or $ ... $ delimiters
   str = str.replace(/\$\$([\s\S]*?)\$\$/g, '$1');
   str = str.replace(/\$([^\$\n]+?)\$/g, '$1');
@@ -125,8 +133,9 @@ export function cleanAndFormatMath(text) {
     '\\}': '}'
   };
 
-  // Vectors: \vec{F} -> F⃗
-  str = str.replace(/\\vec\{([a-zA-Z])\}/g, '$1⃗');
+  // Vectors: \vec{F} -> F⃗, \vec F -> F⃗
+  str = str.replace(/\\vec\{([a-zA-Z0-9])\}/g, '$1⃗');
+  str = str.replace(/\\vec\s+([a-zA-Z0-9])/g, '$1⃗');
 
   for (const [tex, sym] of Object.entries(symbolMap)) {
     str = str.replaceAll(tex, sym);

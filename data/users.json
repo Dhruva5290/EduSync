@@ -288,7 +288,7 @@
     "department": "Department of Physical Sciences & Mathematics",
     "program": "Competitive JEE / Advanced Track",
     "academicYear": "Year 2026",
-    "gpa": 9.0,
+    "gpa": 9,
     "enrolledSubjectIds": [
       "subj-phy",
       "subj-che",
@@ -342,14 +342,14 @@
     "joinedDate": "2026-09-03",
     "phone": "+91 98765 43210",
     "learningProfile": {
-      "learningStyle": "exam_focused",
-      "targetGrade": "A",
-      "explanationTone": "strict_coach",
-      "preferredPace": "steady",
-      "strengthsAndInterests": "High-yield derivations, rapid formula evaluation, exam shortcuts",
-      "painPoints": "Ambiguous boundary definitions, unstated sign conventions",
+      "learningStyle": "step_by_step",
+      "targetGrade": "A+",
+      "explanationTone": "practical_engineer",
+      "preferredPace": "thorough",
+      "strengthsAndInterests": "Interactive coding, mathematical graphs, physical models",
+      "painPoints": "Complex integration, multi-variable calculus",
       "questionnaireCompleted": true,
-      "completedAt": "2026-09-04T12:00:00.000Z"
+      "completedAt": "2026-09-04T09:46:29.624Z"
     }
   }
 ]

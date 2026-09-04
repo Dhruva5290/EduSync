@@ -50,5 +50,32 @@
         "Outstanding! Full conceptual mastery demonstrated. Ready to proceed to advanced problem sets."
       ]
     }
+  },
+  "student-1788461612290": {
+    "lec-phy-101": {
+      "lectureId": "lec-phy-101",
+      "completed": false,
+      "lastTimestamp": "05:32",
+      "progressPercent": 75,
+      "lastViewedAt": "2026-09-04T09:45:34.466Z",
+      "quizCompleted": true,
+      "quizScore": 3,
+      "quizTotal": 6,
+      "understoodConcepts": [
+        "Newton's First Law",
+        "Inertia",
+        "Newton's Second Law"
+      ],
+      "weakConcepts": [
+        "Free Body Diagram",
+        "Force vs acceleration",
+        "Newton's Second Law"
+      ],
+      "recommendations": [
+        "Revise concept: \"Free Body Diagram\". Launch AI Tutor to understand boundary conditions and physical reasoning.",
+        "Revise concept: \"Force vs acceleration\". Launch AI Tutor to understand boundary conditions and physical reasoning.",
+        "Revise concept: \"Newton's Second Law\". Launch AI Tutor to understand boundary conditions and physical reasoning."
+      ]
+    }
   }
 }
