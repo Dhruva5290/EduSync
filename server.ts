@@ -50,7 +50,7 @@ import {
 import { archiveAndResetWorkspace, listVaultSnapshots, restoreFromVaultSnapshot } from './src/server/vaultArchive';
 import { generateDiverseSocraticReply } from './src/server/socraticKnowledge';
 import { startSupabaseRealtimeWorker } from './src/server/supabaseWorker';
-
+import { persistUserToCloud, findUserInCloud, loadUsersFromCloud, deleteUserFromCloud } from './src/server/supabaseUsers';
 
 dotenv.config();
 
@@ -83,7 +83,7 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
   // ==========================================
 
   // 1. Password Login Endpoint (Supports preloaded credentials + Straightforward Instant Login for any user ID)
-  app.post('/api/auth/login', authRateLimiter.middleware, (req, res) => {
+  app.post('/api/auth/login', authRateLimiter.middleware, async (req, res) => {
     const { identifier, username, email, password, role } = req.body;
     const rawId = (identifier || username || email || '').trim();
     const loginId = rawId.toLowerCase();
@@ -95,7 +95,7 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
       return;
     }
 
-    // Match user by username, email, institutionalId, or name
+    // 1. Match user in memory by username, email, institutionalId, or name
     let user = db.users.find(u => {
       const matchId =
         (u.username && u.username.toLowerCase() === loginId) ||
@@ -106,6 +106,26 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
       if (role && role !== 'all' && u.role !== role) return false;
       return true;
     });
+
+    // 2. If not in memory (e.g. serverless cold start / cross-device login), search Supabase Cloud Store!
+    if (!user) {
+      try {
+        const cloudUser = await findUserInCloud(loginId);
+        if (cloudUser) {
+          user = cloudUser;
+          // Hydrate memory and disk
+          const existingIdx = db.users.findIndex(u => u.id === cloudUser.id);
+          if (existingIdx !== -1) {
+            db.users[existingIdx] = cloudUser;
+          } else {
+            db.users.push(cloudUser);
+          }
+          saveUsersToDisk(db.users);
+        }
+      } catch (cloudErr) {
+        console.warn('[Cloud Auth] Error querying cloud user store:', cloudErr);
+      }
+    }
 
     if (user) {
       // If user exists and has a password, verify it
@@ -165,6 +185,9 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
       // Add to database
       db.users.push(user);
       saveUsersToDisk(db.users);
+
+      // Persist to Supabase Cloud so user is saved FOREVER and can log in from ANYWHERE
+      await persistUserToCloud(user);
     }
 
     // Create Base64 Session Token
@@ -231,7 +254,21 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
   });
 
   // Public endpoint for LoginScreen to display registered accounts list
-  app.get('/api/auth/public-users', (req, res) => {
+  app.get('/api/auth/public-users', async (req, res) => {
+    try {
+      const cloudUsers = await loadUsersFromCloud();
+      for (const cu of cloudUsers) {
+        const idx = db.users.findIndex(u => u.id === cu.id);
+        if (idx !== -1) {
+          db.users[idx] = cu;
+        } else {
+          db.users.push(cu);
+        }
+      }
+    } catch (err) {
+      console.warn('[Cloud Auth] Error syncing public users:', err);
+    }
+
     res.json({
       users: db.users.map(u => ({
         id: u.id,
@@ -407,6 +444,7 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
     db.users.push(newUser);
     saveUsersToDisk(db.users);
+    persistUserToCloud(newUser).catch(e => console.warn('[Supabase Users] Async create persist error:', e));
 
     // Update enrolled counts in subjects if student
     if (role === 'student' && initialSubjectIds.length > 0) {
@@ -461,6 +499,7 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
     }
 
     saveUsersToDisk(db.users);
+    persistUserToCloud(user).catch(e => console.warn('[Supabase Users] Async update persist error:', e));
     res.json({ success: true, user });
   });
 
@@ -477,6 +516,7 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
         });
       }
       saveUsersToDisk(db.users);
+      deleteUserFromCloud(req.params.id).catch(e => console.warn('[Supabase Users] Async delete error:', e));
       res.json({ success: true, message: 'User successfully unregistered' });
     } else {
       res.status(404).json({ error: 'User not found' });
@@ -568,6 +608,7 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
       };
 
       saveUsersToDisk(db.users);
+      persistUserToCloud(student).catch(e => console.warn('[Supabase Users] Async profile persist error:', e));
 
       // Immediately recraft all relevant notes for this student to match their calibrated persona!
       const studentNotes = db.notes.filter(n =>

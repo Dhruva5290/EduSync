@@ -434,6 +434,7 @@ export const subscribeToVisionNotes = (
     const raw = payload.new;
     if (!raw) return;
     if (raw.is_archived) return;
+    if (raw.title?.startsWith('__EDUSYNC_USER__') || raw.metadata?.entity_type === 'edusync_user') return;
 
     const meta = raw.metadata || {};
     const noteContent = raw.personalised_notes || raw.generalised_notes || raw.content || raw.raw_ocr_text || '';
@@ -544,6 +545,7 @@ export const fetchVisionNotesFromSupabase = async (options?: {
     let query = sb
       .from('notes')
       .select('*')
+      .not('title', 'like', '__EDUSYNC_USER__%')
       .order('created_at', { ascending: false });
 
     if (options?.studentId && isUuid(options.studentId)) {

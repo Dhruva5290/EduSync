@@ -331,17 +331,23 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     }
   };
 
-  // Handle Delete User
+  // Handle Delete User (Dean Authorization)
   const handleDeleteUser = async (userId: string, userName: string) => {
     if (!window.confirm(`Are you sure you want to remove ${userName} from the institution directory?`)) return;
     try {
-      const res = await fetch(`/api/users/${userId}`, { method: 'DELETE' });
+      const token = localStorage.getItem('edusync_token');
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      if (currentUser?.id) headers['x-user-id'] = currentUser.id;
+
+      const res = await fetch(`/api/users/${userId}`, { method: 'DELETE', headers });
       if (res.ok) {
-        onShowToast(`Unregistered ${userName}`, 'success');
+        onShowToast(`Permanently removed ${userName} from institution directory and cloud`, 'success');
         onRefreshUsers();
         onRefreshSubjects();
       } else {
-        onShowToast('Failed to remove user', 'error');
+        const errData = await res.json().catch(() => ({}));
+        onShowToast(errData.error || 'Failed to remove user', 'error');
       }
     } catch (err) {
       console.error(err);

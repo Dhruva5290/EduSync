@@ -117,6 +117,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onLaun
           const fallbackToken = `edusync_session_${Date.now()}`;
           localStorage.setItem('edusync_token', fallbackToken);
           localStorage.setItem('edusync_user_id', matched.id);
+          try { localStorage.setItem('edusync_user', JSON.stringify(matched)); } catch (e) {}
           onLoginSuccess(matched, fallbackToken);
           setIsLoading(false);
           return;
@@ -139,6 +140,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onLaun
       if (data.token && data.user) {
         localStorage.setItem('edusync_token', data.token);
         localStorage.setItem('edusync_user_id', data.user.id);
+        try { localStorage.setItem('edusync_user', JSON.stringify(data.user)); } catch (e) {}
         onLoginSuccess(data.user, data.token);
       }
     } catch (err) {
@@ -155,6 +157,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onLaun
         const fallbackToken = `edusync_session_${Date.now()}`;
         localStorage.setItem('edusync_token', fallbackToken);
         localStorage.setItem('edusync_user_id', matched.id);
+        try { localStorage.setItem('edusync_user', JSON.stringify(matched)); } catch (e) {}
         onLoginSuccess(matched, fallbackToken);
         setIsLoading(false);
         return;
@@ -182,6 +185,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onLaun
       if (data.token && data.user) {
         localStorage.setItem('edusync_token', data.token);
         localStorage.setItem('edusync_user_id', data.user.id);
+        try { localStorage.setItem('edusync_user', JSON.stringify(data.user)); } catch (e) {}
         if (onLaunchVisionNoteDirectly) {
           onLaunchVisionNoteDirectly(data.user, data.token);
         } else {

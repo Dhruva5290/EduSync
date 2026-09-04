@@ -97,6 +97,15 @@ export default function App() {
     }
   });
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
+    try {
+      const savedUser = localStorage.getItem('edusync_user');
+      if (savedUser) {
+        const parsed = JSON.parse(savedUser);
+        if (parsed && parsed.id) return parsed;
+      }
+    } catch (e) {
+      console.warn('Failed to parse saved user from localStorage:', e);
+    }
     const savedUserId = localStorage.getItem('edusync_user_id');
     if (savedUserId) {
       const matched = FAKE_USERS.find(u => u.id === savedUserId);
@@ -300,19 +309,50 @@ export default function App() {
       // Check for saved session so page reload on Vercel doesn't kick the user out
       const savedToken = authToken || localStorage.getItem('edusync_token');
       const savedUserId = localStorage.getItem('edusync_user_id');
-      if (savedToken && savedUserId && !currentUser) {
-        const matched = FAKE_USERS.find(u => u.id === savedUserId);
-        if (matched) {
-          setCurrentUser(matched);
-          setAuthToken(savedToken);
-        }
+      const savedUserJson = localStorage.getItem('edusync_user');
+
+      let restoredUser: User | null = currentUser;
+      if (!restoredUser && savedUserJson) {
+        try {
+          restoredUser = JSON.parse(savedUserJson);
+        } catch (e) {}
+      }
+      if (!restoredUser && savedUserId) {
+        restoredUser = FAKE_USERS.find(u => u.id === savedUserId) || null;
+      }
+
+      if (savedToken && restoredUser && !currentUser) {
+        setCurrentUser(restoredUser);
+        setAuthToken(savedToken);
       }
 
       try {
-        // Fetch all registered users list so LoginScreen and rosters have up-to-date data
+        // Fetch all registered users list so LoginScreen and rosters have up-to-date data from Cloud
         const publicData = await safeFetchJson<{ users: User[] }>('/api/auth/public-users');
         if (publicData?.users && Array.isArray(publicData.users) && publicData.users.length > 0) {
           setAllUsers(publicData.users);
+
+          // If we have an active or restored user, sync their profile from the cloud roster
+          const activeId = restoredUser?.id || currentUser?.id || savedUserId;
+          if (activeId) {
+            const freshCloudUser = publicData.users.find(u => u.id === activeId);
+            if (freshCloudUser) {
+              setCurrentUser(freshCloudUser);
+              try {
+                localStorage.setItem('edusync_user', JSON.stringify(freshCloudUser));
+              } catch (e) {}
+              restoredUser = freshCloudUser;
+            }
+          }
+        }
+
+        // Prompt student user immediately if AI learning persona is not yet tuned
+        const activeProfile = currentUser || restoredUser;
+        if (activeProfile && activeProfile.role === 'student' && !activeProfile.learningProfile?.questionnaireCompleted) {
+          setTimeout(() => {
+            setShowPersonaModal(true);
+            showToast(`🎯 Welcome ${activeProfile.name}! Please tune your AI tutor to match your learning style.`, 'info');
+          }, 800);
         }
 
         // Fetch subjects if available
@@ -446,14 +486,8 @@ export default function App() {
       })();
       if (deletedIds.includes(incomingNote.id)) return;
 
-      const isTarget = !incomingNote.studentId ||
-        incomingNote.studentId === currentUser.id ||
-        incomingNote.studentId === currentUser.institutionalId ||
-        incomingNote.source === 'visionnote' ||
-        currentUser.role === 'admin' ||
-        currentUser.role === 'teacher';
-
-      if (!isTarget) return;
+      // Every student and user has full, unrestricted access to all notes!
+      const isTarget = true;
 
       const categorizedIncoming: StudentNote = {
         ...incomingNote,
@@ -555,6 +589,13 @@ export default function App() {
     setAuthToken(token);
     setCurrentUser(user);
 
+    // Save credentials to localStorage for permanent persistence across browser sessions
+    localStorage.setItem('edusync_token', token);
+    localStorage.setItem('edusync_user_id', user.id);
+    try {
+      localStorage.setItem('edusync_user', JSON.stringify(user));
+    } catch (e) {}
+
     try {
       // Fetch subjects and data for the logged-in user
       const [allSubjData, userSubjData, authData] = await Promise.all([
@@ -589,6 +630,14 @@ export default function App() {
 
       await fetchMasterData();
       showToast(`Welcome back, ${user.name}! Access granted to ${user.role.toUpperCase()} workspace.`, 'success');
+
+      // Prompt new or untuned student immediately to tune their AI learning persona!
+      if (user.role === 'student' && !user.learningProfile?.questionnaireCompleted) {
+        setTimeout(() => {
+          setShowPersonaModal(true);
+          showToast(`🎯 Welcome ${user.name}! Let's tune your AI tutor to match your learning style first.`, 'info');
+        }, 500);
+      }
     } catch (err) {
       console.error('Error hydrating user workspace after login:', err);
     } finally {
@@ -599,6 +648,7 @@ export default function App() {
   const handleLogout = () => {
     localStorage.removeItem('edusync_token');
     localStorage.removeItem('edusync_user_id');
+    localStorage.removeItem('edusync_user');
     localStorage.removeItem('edusync_audit_admin');
     setAuditAdmin(null);
     setAuthToken(null);
