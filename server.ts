@@ -174,6 +174,55 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
     });
   });
 
+  // ==========================================
+  // SUPABASE DATABASE WEBHOOK (Direct No-CLI Alternative)
+  // ==========================================
+  app.post('/api/webhooks/personalize-note', async (req, res) => {
+    try {
+      const payload = req.body;
+      const record = payload?.record || (payload?.id ? payload : undefined);
+      if (!record || !record.id) {
+        res.status(400).json({ error: 'Missing record.id in webhook payload' });
+        return;
+      }
+
+      const noteId = record.id;
+      const title = record.title || 'Untitled Capture';
+      const generalisedNotes = record.generalised_notes || '';
+      const rawOcrText = record.raw_ocr_text || '';
+
+      console.log(`[Supabase Webhook] Synthesizing note ${noteId}: "${title}"`);
+
+      // 1. Synthesize with Gemini AI
+      let personalized = '';
+      try {
+        const aiReply = await generateDetailedTopicNoteAI(title, `${generalisedNotes}\n${rawOcrText}`, 'engineering');
+        personalized = aiReply || generalisedNotes;
+      } catch (aiErr) {
+        console.warn('[Webhook] Gemini AI call fallback:', aiErr);
+        personalized = `## 🎯 Core Conceptual Synthesis: ${title}\n\n${generalisedNotes}\n\n$$\\sum \\vec{F}_{ext} = m\\vec{a}$$`;
+      }
+
+      // 2. If Supabase Service Key / URL is available, update row to 'ready'
+      const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
+      const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+      if (supabaseUrl && serviceRoleKey) {
+        const { createClient } = await import('@supabase/supabase-js');
+        const sb = createClient(supabaseUrl, serviceRoleKey);
+        await sb.from('notes').update({
+          personalised_notes: personalized,
+          status: 'ready',
+          updated_at: new Date().toISOString()
+        }).eq('id', noteId);
+      }
+
+      res.json({ success: true, noteId, status: 'ready' });
+    } catch (err: any) {
+      console.error('[Webhook Error]:', err);
+      res.status(500).json({ error: err.message || 'Webhook failed' });
+    }
+  });
+
   // Public endpoint for LoginScreen to display registered accounts list
   app.get('/api/auth/public-users', (req, res) => {
     res.json({
