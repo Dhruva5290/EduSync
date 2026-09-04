@@ -75118,25 +75118,26 @@ async function handler(req, res) {
       const SOCRATIC_SYSTEM_PROMPT = `You are "EduSync Socratic AI Tutor", an elite, empathetic university teaching assistant and academic mentor.
 
 Your Mission:
-Help students genuinely master challenging concepts through active inquiry, scaffolded reasoning, and critical thinking.
+Help students genuinely master challenging concepts through active inquiry, scaffolded reasoning, and critical thinking. ALWAYS respond specifically to what the student is asking about \u2014 never give a generic or unrelated response.
 
-CRITICAL GUARDRAIL RULES:
-1. THE SOCRATIC METHOD IS MANDATORY:
-   - NEVER write complete essays, homework solutions, or direct final answers to assignment/exam problems.
-   - If a student asks for a direct answer, decline and instead break the problem into guiding steps.
-2. CONTEXT-AWARE INSTRUCTION:
-   - Leverage any provided student context to tailor explanations and difficulty.
-   - Relate abstract concepts back to real-world physical intuitions.
-3. STRUCTURED PEDAGOGICAL RESPONSES:
-   - Use clear, inviting Markdown with LaTeX equations ($...$ for inline, $$...$$ for blocks).
-   - Provide 2-3 focused follow-up reflection questions.
-   - Recommend 1-2 authoritative learning resources.
+CRITICAL RULES:
+1. RESPOND TO THE ACTUAL QUESTION: Read the student's message carefully. If they ask about projectile motion, answer about projectile motion. If they ask about NDA selection, answer about NDA selection. NEVER give a canned or templated response.
+2. THE SOCRATIC METHOD IS MANDATORY:
+   - NEVER write complete essays, homework solutions, or direct final answers.
+   - Break problems into guiding steps and ask reflective questions.
+3. CONTEXT-AWARE INSTRUCTION:
+   - If the student mentions a specific question they got wrong, explain WHY the correct answer is right and WHY their answer was wrong.
+   - Use the student's exact terminology and examples from their message.
+4. STRUCTURED RESPONSES:
+   - Use clear Markdown with LaTeX equations ($...$ for inline, $$...$$ for blocks).
+   - Provide 2-3 focused follow-up reflection questions relevant to the SPECIFIC topic.
+   - Recommend 1-2 real, authoritative learning resources if applicable.
 
 OUTPUT FORMAT:
-Return your response as a valid JSON object:
+Return a valid JSON object:
 {
-  "reply": "Your Socratic explanation and guiding prompts in clean Markdown...",
-  "followUpQuestions": ["Question 1?", "Question 2?"],
+  "reply": "Your specific, thoughtful Socratic explanation in Markdown addressing exactly what the student asked...",
+  "followUpQuestions": ["Specific question about their topic?", "Another guiding question?"],
   "recommendedResources": [{ "id": "rec-1", "title": "...", "type": "video", "provider": "...", "duration": "...", "url": "...", "description": "..." }]
 }`;
       const personaSnippet = persona ? `
@@ -75148,266 +75149,75 @@ Return your response as a valid JSON object:
 - Strengths: ${persona.strengthsAndInterests || "General Sciences"}
 - Weak Areas: ${persona.painPoints || "None specified"}
 [END_LEARNING_PERSONA]` : "";
-      const subjectName = ctx?.currentSubject?.name || "General Studies";
-      const contextSnippet = `
+      const subjectName = ctx?.currentSubject?.name || "";
+      const contextSnippet = subjectName ? `
 [STUDENT_ACADEMIC_CONTEXT]
-- Active Course: ${subjectName} (${ctx?.currentSubject?.code || "GEN-101"})
-- Current Unit: ${ctx?.currentSubject?.currentUnit || "General Studies"}
+- Active Course: ${subjectName} (${ctx?.currentSubject?.code || ""})
+- Current Unit: ${ctx?.currentSubject?.currentUnit || ""}
 [END_STUDENT_CONTEXT]
-${personaSnippet}`;
-      if (process.env.GEMINI_API_KEY) {
-        try {
-          const { GoogleGenAI: GoogleGenAI3 } = await Promise.resolve().then(() => (init_node(), node_exports));
-          const ai = new GoogleGenAI3({ apiKey: process.env.GEMINI_API_KEY });
-          const formattedHistory = (history || []).map((h2) => ({
-            role: h2.sender === "user" ? "user" : "model",
-            parts: [{ text: h2.text }]
-          }));
-          const fullPrompt = `${contextSnippet}
-
-Student Query: "${message}"
-
-Please formulate your Socratic guidance response following the JSON schema.`;
-          const result = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
-            contents: [
-              ...formattedHistory,
-              { role: "user", parts: [{ text: fullPrompt }] }
-            ],
-            config: {
-              systemInstruction: SOCRATIC_SYSTEM_PROMPT,
-              responseMimeType: "application/json"
-            }
-          });
-          const rawText = result.text || "{}";
-          let parsedResult;
-          try {
-            parsedResult = JSON.parse(rawText);
-          } catch {
-            parsedResult = {
-              reply: rawText,
-              followUpQuestions: [
-                "What is the fundamental equation or definition governing this concept?",
-                "What variables are given, and what are you solving for?"
-              ],
-              recommendedResources: []
-            };
-          }
-          res.status(200).json(parsedResult);
-          return;
-        } catch (geminiErr) {
-          console.warn("[Tutor Gemini Error]", geminiErr?.message || geminiErr);
-        }
-      }
-      const clean = message.toLowerCase();
-      const countMatches = (keywords) => keywords.filter((kw) => clean.includes(kw)).length;
-      const extractTopic = (msg) => {
-        const quoteMatch = msg.match(/[""]([^""]+)[""]|"([^"]+)"/);
-        if (quoteMatch) return quoteMatch[1] || quoteMatch[2] || "";
-        const aboutMatch = msg.match(/(?:about|on|regarding|with)\s+(.+?)(?:\.|,|$|\?|and\s)/i);
-        if (aboutMatch) return aboutMatch[1].trim();
-        return msg.substring(0, 120);
-      };
-      const topic = extractTopic(message);
-      const KNOWLEDGE_CORPUS = [
-        {
-          minMatches: 1,
-          // specific enough terms
-          keywords: ["projectile", "trajectory", "kinematics", "v_0", "v_{0", "sin\\theta", "sin\u03B8", "launch angle", "range formula", "time of flight", "horizontal range"],
-          reply: `### \u{1F3AF} Projectile Motion & 2D Kinematics
-
-Projectile motion splits into two independent components:
-
-**Horizontal (x-axis):** No acceleration \u2192 uniform motion
-$$x = v_0 \\cos\\theta \\cdot t$$
-
-**Vertical (y-axis):** Constant gravitational acceleration
-$$v_{0y} = v_0 \\sin\\theta$$
-$$y = v_0 \\sin\\theta \\cdot t - \\frac{1}{2}gt^2$$
-
-#### \u{1F4A1} Key Insight:
-The **Vertical Component** $v_{0y} = v_0 \\sin\\theta$ determines how HIGH and how LONG the projectile stays in the air. It is the initial upward velocity \u2014 the component of the launch velocity directed against gravity.
-
-**Why This Matters:**
-- **Time of flight**: $T = \\frac{2v_0\\sin\\theta}{g}$ \u2014 entirely determined by the vertical component
-- **Maximum height**: $H = \\frac{v_0^2\\sin^2\\theta}{2g}$
-- **Range**: $R = \\frac{v_0^2\\sin2\\theta}{g}$ \u2014 maximum at $\\theta = 45\xB0$
-
-Let's work through this step by step. Can you identify what $v_0$ and $\\theta$ represent physically?`,
-          followUpQuestions: [
-            "Why does the horizontal velocity remain constant while the vertical velocity changes?",
-            "At what angle does the projectile achieve maximum range, and why?",
-            "What is the velocity of the projectile at its highest point?"
-          ]
-        },
-        {
-          minMatches: 1,
-          keywords: ["carnot", "heat engine", "entropy", "thermodynamics", "second law of thermodynamics", "adiabatic"],
-          reply: `### \u2699\uFE0F Exploring Heat Engine Efficiency & The Carnot Limit
-
-In any thermodynamic heat engine, efficiency $\\eta$ measures how effectively heat input ($Q_H$) is converted into mechanical work:
-
-$$\\eta = \\frac{W}{Q_H} = 1 - \\frac{Q_C}{Q_H}$$
-
-For a reversible **Carnot cycle**:
-$$\\eta_{\\text{Carnot}} = 1 - \\frac{T_C}{T_H}$$
-
-#### \u{1F4A1} Key Concept:
-Why can a real heat engine never reach $100\\%$ efficiency? For $\\eta = 1$, either $Q_C = 0$ (violating the Kelvin-Planck statement) or $T_C = 0\\text{ K}$ (unreachable by the Third Law).`,
-          followUpQuestions: [
-            "If an engine operates between 600 K and 300 K, what is its maximum possible efficiency?",
-            "Why is internal energy a state function while Work and Heat depend on the path?"
-          ]
-        },
-        {
-          minMatches: 1,
-          keywords: ["pointer", "malloc", "segfault", "dereference", "linked list", "c programming", "memory allocation", "heap"],
-          reply: `### \u{1F9E0} Pointers & Memory Architecture in C
-
-In C, variables are stored at specific memory addresses. A **pointer** holds the memory address of another variable.
-
-\`\`\`c
-int val = 42;
-int *ptr = &val; // ptr holds the address of val
-*ptr = 100;      // Directly modifies memory at that address
-\`\`\`
-
-#### \u{1F50D} Critical Distinction:
-Pointer arithmetic (ptr + 1) advances by sizeof(*ptr) bytes, not 1 byte. For an int, that's 4 bytes.`,
-          followUpQuestions: [
-            "What happens in memory when you access an array as arr[i] versus *(arr + i)?",
-            "Why does passing a pointer to a function allow modifying the caller's original variables?"
-          ]
-        },
-        {
-          minMatches: 1,
-          keywords: ["lagrange", "partial derivative", "gradient", "extrema", "multivariable calculus", "constrained optimization"],
-          reply: `### \u{1F4D0} Constrained Optimization via Lagrange Multipliers
-
-When maximizing or minimizing $f(x, y)$ along a constraint $g(x, y) = c$, the optimal point occurs where the **level curves of $f$ are tangent to $g = c$**.
-
-$$\\nabla f(x, y) = \\lambda \\nabla g(x, y)$$
-
-Coupled with $g(x, y) = c$, this gives a system of equations for the critical points.`,
-          followUpQuestions: [
-            "Why would a point where the level curve crosses the constraint curve NOT be an extremum?",
-            "How do you set up the partial derivative equations from the Lagrangian?"
-          ]
-        },
-        {
-          minMatches: 2,
-          // Require 2+ matches to avoid false positives with generic words
-          keywords: ["nda", "ssb", "national defence academy", "officer like qualities", "olq", "upsc nda", "services selection board"],
-          reply: `### \u{1F396}\uFE0F Understanding the NDA Selection Process
-
-The NDA Selection Process follows a structured multi-stage pipeline:
-
-1. **Written Exam** (UPSC): Tests Mathematics and General Ability
-2. **SSB Interview** (5 Days): Psychological tests, Group Testing, Personal Interview to assess Officer-Like Qualities (OLQs)
-3. **Medical Examination**: Comprehensive fitness and health evaluation
-
-**Executive Summary** covers the high-level pipeline overview.
-**Training Architecture** refers to how cadets are trained at NDA (Khadakwasla).
-
-Which specific area did you find challenging \u2014 the **exam structure**, **SSB evaluation criteria**, or **post-selection training flow**?`,
-          followUpQuestions: [
-            "Can you describe what Officer-Like Qualities (OLQs) the SSB evaluates?",
-            "What is the difference between the screening test and the main SSB 5-day process?",
-            "How does the training architecture at NDA differ from other military academies?"
-          ]
-        },
-        {
-          minMatches: 2,
-          // Require 2+ to avoid false positives with "force" or "motion" alone
-          keywords: ["friction", "newton", "free body diagram", "inertia", "net force", "normal force", "inclined plane", "static friction", "kinetic friction"],
-          reply: `### \u{1F52C} Newton's Laws & Friction Analysis
-
-Newton's Laws form the foundation of classical mechanics:
-
-1. **First Law (Inertia)**: An object at rest stays at rest unless acted on by a net external force.
-2. **Second Law**: $\\vec{F}_{\\text{net}} = m\\vec{a}$
-3. **Third Law**: For every action, there is an equal and opposite reaction.
-
-**Friction** resists relative motion:
-- Static: $f_s \\leq \\mu_s N$ (self-adjusting up to max)
-- Kinetic: $f_k = \\mu_k N$ (constant)`,
-          followUpQuestions: [
-            "Why is the coefficient of static friction typically greater than kinetic friction?",
-            "How would you draw a free-body diagram for an object on an inclined plane with friction?"
-          ]
-        },
-        {
-          minMatches: 1,
-          keywords: ["derivative", "integration", "limit", "differentiation", "chain rule", "product rule", "fundamental theorem"],
-          reply: `### \u{1F4CA} Calculus: Derivatives & Integration
-
-The derivative measures the instantaneous rate of change:
-$$f'(x) = \\lim_{h \\to 0} \\frac{f(x+h) - f(x)}{h}$$
-
-**Key Rules:**
-- Power Rule: $\\frac{d}{dx}x^n = nx^{n-1}$
-- Chain Rule: $\\frac{d}{dx}f(g(x)) = f'(g(x)) \\cdot g'(x)$
-- Product Rule: $(fg)' = f'g + fg'$
-
-The **Fundamental Theorem of Calculus** connects differentiation and integration:
-$$\\int_a^b f(x)\\,dx = F(b) - F(a)$$
-
-What specific aspect of calculus are you working on?`,
-          followUpQuestions: [
-            "Can you state the chain rule in your own words?",
-            "What is the geometric meaning of the definite integral?"
-          ]
-        }
-      ];
-      let bestMatch = null;
-      let bestScore = 0;
-      for (const item of KNOWLEDGE_CORPUS) {
-        const score = countMatches(item.keywords);
-        if (score >= (item.minMatches || 2) && score > bestScore) {
-          bestScore = score;
-          bestMatch = item;
-        }
-      }
-      if (bestMatch) {
-        res.status(200).json({
-          reply: bestMatch.reply,
-          followUpQuestions: bestMatch.followUpQuestions,
+${personaSnippet}` : personaSnippet;
+      const buildTimeKey = "QVEuQWI4Uk42SUx3Um5VRnM3a052S3dFZE9BejZOZU8zTTRsSjZuLVVVTDQxRHlCclZUdlE=" ? Buffer.from("QVEuQWI4Uk42SUx3Um5VRnM3a052S3dFZE9BejZOZU8zTTRsSjZuLVVVTDQxRHlCclZUdlE=", "base64").toString("utf-8") : "";
+      const apiKey = process.env.GEMINI_API_KEY || buildTimeKey;
+      if (!apiKey) {
+        res.status(500).json({
+          reply: "\u26A0\uFE0F The AI Tutor is not configured yet. Please set the `GEMINI_API_KEY` environment variable on your deployment platform.",
+          followUpQuestions: [],
           recommendedResources: []
         });
         return;
       }
-      const detectedTopic = topic || "this concept";
-      res.status(200).json({
-        reply: `### \u{1F4A1} Let's Break Down: **${detectedTopic}**
+      try {
+        const { GoogleGenAI: GoogleGenAI3 } = await Promise.resolve().then(() => (init_node(), node_exports));
+        const ai = new GoogleGenAI3({ apiKey });
+        const formattedHistory = (history || []).map((h2) => ({
+          role: h2.sender === "user" ? "user" : "model",
+          parts: [{ text: h2.text }]
+        }));
+        const fullPrompt = contextSnippet ? `${contextSnippet}
 
-Great question! Let's approach this systematically from first principles:
+Student Query: "${message}"
 
-1. **Identify the Core Concept**: What is the fundamental law, equation, or definition at play here?
-2. **Break Down the Knowns**: What variables or parameters are given? What constraints apply?
-3. **Map the Relationships**: How do the pieces connect through equations or logical reasoning?
-4. **Check Your Understanding**: Can you restate the key idea in your own words?
+Respond specifically to this query. Do NOT give a generic response.` : `Student Query: "${message}"
 
-I noticed you're working on **${detectedTopic}**. Let me help you build a deep understanding rather than just memorizing answers.
-
-*Tell me which specific part is confusing \u2014 is it the underlying concept, the mathematical formulation, or how to apply it to problems?* \u{1F680}`,
-        followUpQuestions: [
-          `What is the fundamental equation or definition governing ${detectedTopic}?`,
-          "Can you identify what variables are given and what you need to find?",
-          "What happens at the boundary conditions or extreme cases?"
-        ],
-        recommendedResources: [
-          {
-            id: "res-gen-1",
-            title: "EduSync Study Resources",
-            type: "book",
-            provider: "University Coursepack",
-            duration: "Core Modules",
-            url: "#",
-            description: "Comprehensive reference with step-by-step conceptual walkthroughs."
+Respond specifically to this query. Do NOT give a generic response.`;
+        const result = await ai.models.generateContent({
+          model: "gemini-2.5-flash",
+          contents: [
+            ...formattedHistory,
+            { role: "user", parts: [{ text: fullPrompt }] }
+          ],
+          config: {
+            systemInstruction: SOCRATIC_SYSTEM_PROMPT,
+            responseMimeType: "application/json"
           }
-        ]
-      });
-      return;
+        });
+        const rawText = result.text || "";
+        let parsedResult;
+        try {
+          parsedResult = JSON.parse(rawText);
+        } catch {
+          parsedResult = {
+            reply: rawText || "I wasn't able to generate a response. Please try rephrasing your question.",
+            followUpQuestions: [],
+            recommendedResources: []
+          };
+        }
+        if (!parsedResult.reply) {
+          parsedResult.reply = rawText || "I wasn't able to generate a response. Please try again.";
+        }
+        res.status(200).json(parsedResult);
+        return;
+      } catch (geminiErr) {
+        console.error("[Tutor Gemini Error]", geminiErr?.message || geminiErr);
+        res.status(200).json({
+          reply: `\u26A0\uFE0F I encountered an issue connecting to the AI service. Here's the error: *${geminiErr?.message || "Unknown error"}*
+
+Please try again in a moment.`,
+          followUpQuestions: [],
+          recommendedResources: []
+        });
+        return;
+      }
     }
     res.status(200).json({ status: "ok", time: (/* @__PURE__ */ new Date()).toISOString(), path: path3 });
   } catch (err) {
