@@ -21,6 +21,7 @@ import {
 import confetti from 'canvas-confetti';
 import { Subject, StudentNote, User, QuizQuestion, LectureQuizAnalysis } from '../../types';
 import { isSupabaseConfigured } from '../../lib/supabase';
+import { FAKE_SUBJECTS } from '../../mock/fakeData';
 import { MathRenderer } from '../Common/MathRenderer';
 
 interface LectureNotesStudioProps {
@@ -35,6 +36,24 @@ interface LectureNotesStudioProps {
   onNavigateToBack?: () => void;
 }
 
+const MISC_SUBJECT: Subject = {
+  id: 'subj-misc',
+  name: 'Miscellaneous & General',
+  code: 'MISC',
+  description: 'General study notes, aptitude, exams, lab protocols, and unassigned lectures.',
+  teacherId: 'teacher-gen',
+  teacherName: 'Academic General Studies',
+  teacherEmail: 'academic@edusync.edu.in',
+  color: 'violet',
+  accentBg: 'bg-purple-500/10 border-purple-500/30 text-purple-400',
+  enrolledCount: 7,
+  semester: 'Academic Year 2026-27',
+  room: 'General Resource Centre',
+  credits: 2,
+  department: 'Multidisciplinary Studies',
+  syllabusTopics: ['Aptitude & General Studies', 'Exam Preparation & Selection Strategy', 'Research Methodology']
+};
+
 export const LectureNotesStudio: React.FC<LectureNotesStudioProps> = ({
   activeSubject,
   subjects,
@@ -46,41 +65,72 @@ export const LectureNotesStudio: React.FC<LectureNotesStudioProps> = ({
   onOpenSocraticTutor,
   onNavigateToBack
 }) => {
-  // Available subjects for fast switching
+  // Available subjects for fast switching (Physics, Chemistry, Math, Misc)
   const displayedSubjects = useMemo(() => {
-    return subjects.length > 0 ? subjects : allSubjects;
+    const baseList = subjects.length > 0 ? subjects : (allSubjects.length > 0 ? allSubjects : FAKE_SUBJECTS);
+    const list = [...baseList];
+    if (!list.some(s => s.id === 'subj-misc' || s.code === 'MISC')) {
+      list.push(MISC_SUBJECT);
+    }
+    return list;
   }, [subjects, allSubjects]);
 
-  // Filter notes belonging to this subject or tagged with it
+  // Filter notes strictly belonging to this subject
   const subjectNotes = useMemo(() => {
     return notes.filter(n => {
-      const matchesSubject = n.subjectId === activeSubject.id;
+      // Direct subject match
+      if (n.subjectId === activeSubject.id) return true;
+
+      // Handle common aliases/variations (e.g. subj-phy vs subj-phy-11)
+      if (activeSubject.id.startsWith('subj-phy') && n.subjectId?.startsWith('subj-phy')) return true;
+      if (activeSubject.id.startsWith('subj-che') && n.subjectId?.startsWith('subj-che')) return true;
+      if (activeSubject.id.startsWith('subj-mat') && n.subjectId?.startsWith('subj-mat')) return true;
+      if ((activeSubject.id === 'subj-misc' || activeSubject.code === 'MISC') && (n.subjectId === 'subj-misc' || !n.subjectId)) return true;
+
+      // Strict tag check only if subjectId isn't set to a different major subject
       const cleanSubName = activeSubject.name.toLowerCase();
-      const matchesTag = n.tags?.some(t => {
-        const cleanT = t.toLowerCase();
-        return cleanT.includes(cleanSubName) ||
-          cleanSubName.includes(cleanT) ||
-          (cleanSubName.includes('physics') && cleanT.includes('physics')) ||
-          (cleanSubName.includes('chemistry') && cleanT.includes('chemistry')) ||
-          (cleanSubName.includes('math') && cleanT.includes('math')) ||
-          (cleanSubName.includes('c programming') && (cleanT.includes('c') || cleanT.includes('pointer')));
-      });
-      return matchesSubject || matchesTag || n.source === 'visionnote';
+      const isPhy = cleanSubName.includes('physics') || activeSubject.code === 'PHY';
+      const isChem = cleanSubName.includes('chemistry') || activeSubject.code === 'CHEM';
+      const isMath = cleanSubName.includes('math') || activeSubject.code === 'MATH';
+      const isMisc = cleanSubName.includes('misc') || activeSubject.code === 'MISC';
+
+      if (isMisc) {
+        return n.subjectId === 'subj-misc' || !n.subjectId;
+      }
+
+      if (n.tags && n.tags.length > 0) {
+        const matchesTag = n.tags.some(t => {
+          const cleanT = t.toLowerCase();
+          if (isPhy && (cleanT.includes('physics') || cleanT.includes('kinematic') || cleanT.includes('newton') || cleanT.includes('thermo'))) return true;
+          if (isChem && (cleanT.includes('chemistry') || cleanT.includes('vsepr') || cleanT.includes('nernst') || cleanT.includes('hybridization'))) return true;
+          if (isMath && (cleanT.includes('math') || cleanT.includes('calculus') || cleanT.includes('integral') || cleanT.includes('algebra'))) return true;
+          return false;
+        });
+        if (matchesTag) return true;
+      }
+
+      return false;
     });
   }, [notes, activeSubject]);
+
+  // Toggle to view all sessions across all subjects if desired, defaults to false (clean subject view)
+  const [showAllNotes, setShowAllNotes] = useState<boolean>(false);
+  const displayedNotes = useMemo(() => {
+    return showAllNotes ? notes : subjectNotes;
+  }, [showAllNotes, notes, subjectNotes]);
 
   // Selected active note
   const [selectedNoteId, setSelectedNoteId] = useState<string>('');
 
   useEffect(() => {
-    if (subjectNotes.length > 0 && !subjectNotes.some(n => n.id === selectedNoteId)) {
-      setSelectedNoteId(subjectNotes[0].id);
+    if (displayedNotes.length > 0 && !displayedNotes.some(n => n.id === selectedNoteId)) {
+      setSelectedNoteId(displayedNotes[0].id);
     }
-  }, [subjectNotes, activeSubject.id]);
+  }, [displayedNotes, activeSubject.id]);
 
   const activeNote = useMemo(() => {
-    return subjectNotes.find(n => n.id === selectedNoteId) || subjectNotes[0] || null;
-  }, [subjectNotes, selectedNoteId]);
+    return displayedNotes.find(n => n.id === selectedNoteId) || displayedNotes[0] || null;
+  }, [displayedNotes, selectedNoteId]);
 
   // Personalization state
   const persona = currentUser.learningProfile;
@@ -306,25 +356,29 @@ export const LectureNotesStudio: React.FC<LectureNotesStudioProps> = ({
             <div className="flex items-center gap-2">
               <FileText className="w-4 h-4 text-blue-400" />
               <h3 className="text-sm font-bold text-white uppercase tracking-wider">
-                Lectures & Sessions ({subjectNotes.length})
+                {showAllNotes ? `All Notes (${notes.length})` : `${activeSubject.code} Lectures (${subjectNotes.length})`}
               </h3>
             </div>
-            <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-400">
-              VisionNote
-            </span>
+            <button
+              onClick={() => setShowAllNotes(prev => !prev)}
+              className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors border border-slate-700 cursor-pointer"
+              title="Toggle between active subject and all notes"
+            >
+              {showAllNotes ? `Filter to ${activeSubject.code}` : `Show All (${notes.length})`}
+            </button>
           </div>
 
-          {subjectNotes.length === 0 ? (
+          {displayedNotes.length === 0 ? (
             <div className="py-10 text-center space-y-2">
               <Compass className="w-8 h-8 text-slate-600 mx-auto" />
               <p className="text-xs text-slate-400">No recorded lectures yet for {activeSubject.name}.</p>
               <p className="text-[11px] text-slate-500">
-                Lectures captured in VisionNote will automatically sync and appear here.
+                Lectures captured in VisionNote will automatically be categorized and appear here.
               </p>
             </div>
           ) : (
             <div className="space-y-2 max-h-[720px] overflow-y-auto pr-1">
-              {subjectNotes.map((note, index) => {
+              {displayedNotes.map((note, index) => {
                 const isSelected = note.id === selectedNoteId;
                 const dateStr = note.lastModified ? new Date(note.lastModified).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : 'Recent';
                 const hasDoubts = note.doubtsDetected && note.doubtsDetected.length > 0;

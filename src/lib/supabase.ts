@@ -298,42 +298,126 @@ export function usePersonalizedNotesRealtime(
 // =========================================================================
 // 4. LEGACY / UTILITY HELPERS (Kept for full backward compatibility)
 // =========================================================================
+// SMART SUBJECT CATEGORIZATION
+// =========================================================================
 
-function resolveSubjectIdFromRaw(raw: any): string {
-  const meta = raw.metadata || {};
-  const explicit = (raw.subject_id || raw.subjectId || meta.subject_id || meta.subjectId || '').trim();
-  const validIds = [
-    'subj-phy-11', 'subj-che-11', 'subj-mat-11',
-    'subj-phy-12', 'subj-che-12', 'subj-mat-12',
-    'subj-phy', 'subj-che', 'subj-mat', 'subj-misc',
-    'others', 'subj-others', 'subj-cpc', 'subj-calc',
-    'subj-eme', 'subj-ess', 'subj-ethics'
-  ];
-  if (validIds.includes(explicit)) return explicit;
+export function smartCategorizeNote(note: {
+  title?: string;
+  content?: string;
+  tags?: string[];
+  subjectId?: string;
+}): string {
+  const metaSubject = (note.subjectId || '').trim();
+  const text = `${note.title || ''} ${(note.tags || []).join(' ')} ${(note.content || '').slice(0, 800)}`.toLowerCase();
 
-  const text = `${explicit} ${meta.subject || ''} ${meta.course || ''} ${raw.title || ''} ${raw.generalised_notes || ''}`.toLowerCase();
-  const isGrade12 = text.includes('12') || text.includes('xii');
-
+  // 1. Explicit Misc / Defence / General Studies / Unrelated topics -> strictly Misc!
   if (
     text.includes('nda') ||
     text.includes('defense') ||
     text.includes('defence') ||
     text.includes('military') ||
     text.includes('ssb') ||
-    text.includes('general') ||
+    text.includes('upsc') ||
+    text.includes('army') ||
+    text.includes('navy') ||
+    text.includes('air force') ||
+    text.includes('sepoy') ||
+    text.includes('cadet') ||
+    text.includes('research methodology') ||
+    text.includes('error propagation') ||
+    text.includes('lab safety') ||
+    text.includes('engineering ethics') ||
+    text.includes('general studies') ||
     text.includes('aptitude') ||
-    text.includes('misc')
+    text.includes('general notes')
   ) {
     return 'subj-misc';
   }
 
-  if (text.includes('chem') || text.includes('che')) return isGrade12 ? 'subj-che-12' : 'subj-che';
-  if (text.includes('math') || text.includes('mat') || text.includes('calc')) return isGrade12 ? 'subj-mat-12' : 'subj-mat';
-  if (text.includes('phy')) return isGrade12 ? 'subj-phy-12' : 'subj-phy';
-  if (text.includes('c programming') || text.includes('pointer')) return 'subj-cpc';
-  if (text.includes('mechanic') || text.includes('eme')) return 'subj-eme';
+  // 2. Physics Indicators
+  const hasPhy =
+    text.includes('physics') ||
+    text.includes('projectile') ||
+    text.includes('kinematics') ||
+    text.includes('newton') ||
+    text.includes('friction') ||
+    text.includes('galileo') ||
+    text.includes('electromagnet') ||
+    text.includes('faraday') ||
+    text.includes('lenz') ||
+    text.includes('carnot') ||
+    text.includes('heat engine') ||
+    text.includes('thermodynamics') ||
+    text.includes('free body') ||
+    text.includes('fbd') ||
+    text.includes('pulley') ||
+    text.includes('momentum') ||
+    text.includes('work-kinetic') ||
+    text.includes('incline');
 
+  // 3. Chemistry Indicators
+  const hasChem =
+    text.includes('chemistry') ||
+    text.includes('vsepr') ||
+    text.includes('hybridization') ||
+    text.includes('nernst') ||
+    text.includes('electrochem') ||
+    text.includes('molecular geometry') ||
+    text.includes('bonding') ||
+    text.includes('redox') ||
+    text.includes('galvanic') ||
+    text.includes('chemical thermodynamics') ||
+    text.includes('hess law') ||
+    text.includes('gibbs');
+
+  // 4. Mathematics Indicators
+  const hasMath =
+    text.includes('mathematics') ||
+    text.includes('calculus') ||
+    text.includes('integration') ||
+    text.includes('integral') ||
+    text.includes('derivative') ||
+    text.includes('differentiation') ||
+    text.includes('liate') ||
+    text.includes('partial fraction') ||
+    text.includes('definite integral') ||
+    text.includes('matrix') ||
+    text.includes('matrices') ||
+    text.includes('determinant') ||
+    text.includes('squeeze theorem') ||
+    text.includes('limits');
+
+  if (hasPhy && !hasChem && !hasMath) return 'subj-phy';
+  if (hasChem && !hasPhy && !hasMath) return 'subj-che';
+  if (hasMath && !hasPhy && !hasChem) return 'subj-mat';
+
+  // Check explicit subjectId if provided
+  if (metaSubject) {
+    const s = metaSubject.toLowerCase();
+    if (s.includes('phy')) return 'subj-phy';
+    if (s.includes('che')) return 'subj-che';
+    if (s.includes('mat') || s.includes('calc')) return 'subj-mat';
+    if (s.includes('cpc')) return 'subj-cpc';
+    if (s.includes('eme')) return 'subj-eme';
+  }
+
+  // Fallback to highest keyword match
+  if (hasPhy) return 'subj-phy';
+  if (hasChem) return 'subj-che';
+  if (hasMath) return 'subj-mat';
+
+  // Unrelated or uncategorized notes go in Misc
   return 'subj-misc';
+}
+
+export function resolveSubjectIdFromRaw(raw: any): string {
+  const meta = raw.metadata || {};
+  return smartCategorizeNote({
+    title: raw.title,
+    content: raw.personalised_notes || raw.generalised_notes || raw.raw_ocr_text,
+    tags: Array.isArray(meta.tags) ? meta.tags : [],
+    subjectId: raw.subject_id || raw.subjectId || meta.subject_id || meta.subjectId || meta.subject
+  });
 }
 
 export const subscribeToVisionNotes = (

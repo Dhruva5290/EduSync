@@ -33,7 +33,7 @@ import { BoardVisualsHub } from './components/BoardVisuals/BoardVisualsHub';
 import { QuestionBankManager } from './components/TeacherDashboard/QuestionBankManager';
 import { ErrorBoundary } from './components/Common/ErrorBoundary';
 import { VisionNoteImportModal } from './components/VisionNoteImport/VisionNoteImportModal';
-import { subscribeToVisionNotes, fetchVisionNotesFromSupabase, isSupabaseConfigured } from './lib/supabase';
+import { subscribeToVisionNotes, fetchVisionNotesFromSupabase, isSupabaseConfigured, smartCategorizeNote } from './lib/supabase';
 import {
   FAKE_SUBJECTS,
   FAKE_USERS,
@@ -161,7 +161,15 @@ export default function App() {
         baseNotes.push(fn);
       }
     }
-    return baseNotes.filter(n => !deletedIds.includes(n.id));
+    // Smartly categorize every note into its respected subject, routing unrelated ones to Misc
+    const categorized = baseNotes.map(n => ({
+      ...n,
+      subjectId: smartCategorizeNote(n)
+    }));
+    try {
+      localStorage.setItem('edusync_notes', JSON.stringify(categorized));
+    } catch (e) {}
+    return categorized.filter(n => !deletedIds.includes(n.id));
   });
 
   // Undo tracking for note deletion
@@ -401,14 +409,20 @@ export default function App() {
               }
             })();
 
-            // Filter out user-deleted notes
-            const eligibleCloud = cloudNotes.filter(n => !deletedIds.includes(n.id));
+            // Filter out user-deleted notes and ensure clean categorization
+            const eligibleCloud = cloudNotes.map(n => ({
+              ...n,
+              subjectId: smartCategorizeNote(n)
+            })).filter(n => !deletedIds.includes(n.id));
 
             // Merge cloud notes and existing notes without overwriting
             const merged = [...eligibleCloud];
             for (const prev of prevNotes) {
               if (!merged.some(m => m.id === prev.id) && !deletedIds.includes(prev.id)) {
-                merged.push(prev);
+                merged.push({
+                  ...prev,
+                  subjectId: smartCategorizeNote(prev)
+                });
               }
             }
             try {
@@ -440,19 +454,24 @@ export default function App() {
 
       if (!isTarget) return;
 
+      const categorizedIncoming: StudentNote = {
+        ...incomingNote,
+        subjectId: smartCategorizeNote(incomingNote)
+      };
+
       setNotes((prevNotes) => {
         let updated: StudentNote[];
-        if (prevNotes.some(n => n.id === incomingNote.id)) {
-          updated = prevNotes.map(n => n.id === incomingNote.id ? incomingNote : n);
+        if (prevNotes.some(n => n.id === categorizedIncoming.id)) {
+          updated = prevNotes.map(n => n.id === categorizedIncoming.id ? categorizedIncoming : n);
         } else {
-          updated = [incomingNote, ...prevNotes];
+          updated = [categorizedIncoming, ...prevNotes];
         }
         try {
           localStorage.setItem('edusync_notes', JSON.stringify(updated));
         } catch (e) {}
         return updated;
       });
-      showToast(`📸 VisionNote Cloud Sync: "${incomingNote.title}" synced!`, 'info');
+      showToast(`📸 VisionNote Cloud Sync: "${categorizedIncoming.title}" synced!`, 'info');
     });
 
     return () => {

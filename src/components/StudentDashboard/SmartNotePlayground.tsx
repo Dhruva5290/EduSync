@@ -587,34 +587,41 @@ export const SmartNotePlayground: React.FC<SmartNotePlaygroundProps> = ({
           </button>
 
           {/* INDIVIDUAL SUBJECT PILLS */}
-          {availableSubjects.map((subj) => {
-            const count = notes.filter(n => n.subjectId === subj.id).length;
-            const isSelected = subjectFilter === subj.id;
-            const theme = getSubjectTheme(subj.id);
+          {availableSubjects
+            .filter(subj => subj.id !== 'subj-misc' && subj.id !== 'others' && subj.id !== 'subj-others' && subj.id !== 'misc')
+            .map((subj) => {
+              const count = notes.filter(n => {
+                if (subj.id === 'subj-phy') return n.subjectId === 'subj-phy' || n.subjectId === 'subj-phy-11' || n.subjectId === 'subj-phy-12';
+                if (subj.id === 'subj-che') return n.subjectId === 'subj-che' || n.subjectId === 'subj-che-11' || n.subjectId === 'subj-che-12';
+                if (subj.id === 'subj-mat') return n.subjectId === 'subj-mat' || n.subjectId === 'subj-mat-11' || n.subjectId === 'subj-mat-12';
+                return n.subjectId === subj.id;
+              }).length;
+              const isSelected = subjectFilter === subj.id;
+              const theme = getSubjectTheme(subj.id);
 
-            return (
-              <button
-                key={subj.id}
-                onClick={() => setSubjectFilter(subj.id)}
-                className={`px-3 py-2 rounded-lg text-xs font-semibold transition-all shrink-0 flex items-center gap-2 border cursor-pointer ${
-                  isSelected
-                    ? `${theme.activeRing} shadow-md font-bold`
-                    : 'bg-slate-900/90 border-slate-800 text-slate-300 hover:text-white hover:bg-slate-800/90'
-                }`}
-              >
-                <span className={`w-2 h-2 rounded-full ${theme.accentDot}`} />
-                <span className="font-mono font-bold tracking-tight">{subj.code}</span>
-                <span className="hidden md:inline text-[11px] opacity-80 max-w-[130px] truncate">
-                  {subj.name.split(' ')[0]}
-                </span>
-                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
-                  isSelected ? 'bg-black/30 text-white font-bold' : 'bg-slate-800 text-slate-400'
-                }`}>
-                  {count}
-                </span>
-              </button>
-            );
-          })}
+              return (
+                <button
+                  key={subj.id}
+                  onClick={() => setSubjectFilter(subj.id)}
+                  className={`px-3 py-2 rounded-lg text-xs font-semibold transition-all shrink-0 flex items-center gap-2 border cursor-pointer ${
+                    isSelected
+                      ? `${theme.activeRing} shadow-md font-bold`
+                      : 'bg-slate-900/90 border-slate-800 text-slate-300 hover:text-white hover:bg-slate-800/90'
+                  }`}
+                >
+                  <span className={`w-2 h-2 rounded-full ${theme.accentDot}`} />
+                  <span className="font-mono font-bold tracking-tight">{subj.code}</span>
+                  <span className="hidden md:inline text-[11px] opacity-80 max-w-[130px] truncate">
+                    {subj.name.split(' ')[0]}
+                  </span>
+                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+                    isSelected ? 'bg-black/30 text-white font-bold' : 'bg-slate-800 text-slate-400'
+                  }`}>
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
 
           {/* MISCELLANEOUS & GENERAL NOTES CATEGORY */}
           {(() => {
@@ -634,6 +641,7 @@ export const SmartNotePlayground: React.FC<SmartNotePlaygroundProps> = ({
 
             return (
               <button
+                id="notes-tab-misc"
                 onClick={() => setSubjectFilter('subj-misc')}
                 className={`px-3 py-2 rounded-lg text-xs font-semibold transition-all shrink-0 flex items-center gap-2 border cursor-pointer ${
                   isSelected
@@ -744,18 +752,23 @@ export const SmartNotePlayground: React.FC<SmartNotePlaygroundProps> = ({
                   {/* Clean Subject Picker Pill */}
                   <div className="flex items-center shrink-0">
                     <select
-                      value={noteSubjectId}
+                      id="note-subject-selector"
+                      value={noteSubjectId === 'others' || noteSubjectId === 'subj-others' || !noteSubjectId ? 'subj-misc' : noteSubjectId}
                       onChange={(e) => setNoteSubjectId(e.target.value)}
                       className={`font-mono font-bold text-xs rounded-lg px-2.5 py-1.5 border focus:outline-none cursor-pointer transition-colors ${activeTheme.badgeBg} ${activeTheme.textColor} ${activeTheme.borderColor}`}
                       title="Change course category for this note"
                     >
-                      {availableSubjects.map((s) => (
-                        <option key={s.id} value={s.id} className="bg-slate-950 text-white">
-                          📁 {s.code} — {s.name}
-                        </option>
-                      ))}
-                      <option value="others" className="bg-slate-950 text-purple-300">
-                        🌐 OTHERS — General / Electives
+                      <option value="subj-phy" className="bg-slate-950 text-blue-300">
+                        📁 PHY — Physics
+                      </option>
+                      <option value="subj-che" className="bg-slate-950 text-emerald-300">
+                        📁 CHEM — Chemistry
+                      </option>
+                      <option value="subj-mat" className="bg-slate-950 text-violet-300">
+                        📁 MATH — Mathematics
+                      </option>
+                      <option value="subj-misc" className="bg-slate-950 text-purple-300">
+                        🌐 MISC — Miscellaneous & General Notes
                       </option>
                     </select>
                   </div>
