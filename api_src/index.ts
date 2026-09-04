@@ -315,19 +315,49 @@ ${personaSnippet}`;
         }
       }
 
-      // Fallback: Local Socratic knowledge corpus
+      // Fallback: Intelligent local Socratic responder
       const clean = message.toLowerCase();
+
+      // Helper: count how many keywords match in the message
+      const countMatches = (keywords: string[]) => keywords.filter(kw => clean.includes(kw)).length;
+
+      // Extract the likely topic from the message
+      const extractTopic = (msg: string): string => {
+        // Try to find quoted topic names
+        const quoteMatch = msg.match(/[""]([^""]+)[""]|"([^"]+)"/);
+        if (quoteMatch) return quoteMatch[1] || quoteMatch[2] || '';
+        // Try to find "about X" or "on X"
+        const aboutMatch = msg.match(/(?:about|on|regarding|with)\s+(.+?)(?:\.|,|$|\?|and\s)/i);
+        if (aboutMatch) return aboutMatch[1].trim();
+        return msg.substring(0, 120);
+      };
+
+      const topic = extractTopic(message);
+
+      // Knowledge corpus with MINIMUM match threshold (require 2+ keywords to match)
       const KNOWLEDGE_CORPUS = [
         {
-          keywords: ['carnot', 'heat engine', 'efficiency', 'entropy', 'second law', 'kelvin', 'thermodynamics', 'refrigerator'],
-          reply: `### ⚙️ Exploring Heat Engine Efficiency & The Carnot Limit\n\nIn any thermodynamic heat engine, efficiency $\\eta$ measures how effectively heat input ($Q_H$) is converted into mechanical work ($W = Q_H - Q_C$):\n\n$$\\eta = \\frac{W}{Q_H} = 1 - \\frac{Q_C}{Q_H}$$\n\nFor a reversible **Carnot cycle**:\n$$\\eta_{\\text{Carnot}} = 1 - \\frac{T_C}{T_H}$$\n\n#### 💡 Key Concept to Master:\nWhy can a real heat engine never reach $100\\%$ efficiency? Notice that for $\\eta = 1$, either $Q_C = 0$ (violating the Kelvin-Planck statement) or $T_C = 0\\text{ K}$ (unreachable by the Third Law).`,
+          minMatches: 1, // specific enough terms
+          keywords: ['projectile', 'trajectory', 'kinematics', 'v_0', 'v_{0', 'sin\\theta', 'sinθ', 'launch angle', 'range formula', 'time of flight', 'horizontal range'],
+          reply: `### 🎯 Projectile Motion & 2D Kinematics\n\nProjectile motion splits into two independent components:\n\n**Horizontal (x-axis):** No acceleration → uniform motion\n$$x = v_0 \\cos\\theta \\cdot t$$\n\n**Vertical (y-axis):** Constant gravitational acceleration\n$$v_{0y} = v_0 \\sin\\theta$$\n$$y = v_0 \\sin\\theta \\cdot t - \\frac{1}{2}gt^2$$\n\n#### 💡 Key Insight:\nThe **Vertical Component** $v_{0y} = v_0 \\sin\\theta$ determines how HIGH and how LONG the projectile stays in the air. It is the initial upward velocity — the component of the launch velocity directed against gravity.\n\n**Why This Matters:**\n- **Time of flight**: $T = \\frac{2v_0\\sin\\theta}{g}$ — entirely determined by the vertical component\n- **Maximum height**: $H = \\frac{v_0^2\\sin^2\\theta}{2g}$\n- **Range**: $R = \\frac{v_0^2\\sin2\\theta}{g}$ — maximum at $\\theta = 45°$\n\nLet's work through this step by step. Can you identify what $v_0$ and $\\theta$ represent physically?`,
           followUpQuestions: [
-            'If an engine operates between 600 K and 300 K, what is its maximum possible efficiency?',
-            'Why is internal energy a state function while Work and Heat depend on the specific path?'
+            'Why does the horizontal velocity remain constant while the vertical velocity changes?',
+            'At what angle does the projectile achieve maximum range, and why?',
+            'What is the velocity of the projectile at its highest point?'
           ]
         },
         {
-          keywords: ['pointer', 'malloc', 'memory', 'segfault', 'array', 'address', 'dereference', 'linked list', 'c programming'],
+          minMatches: 1,
+          keywords: ['carnot', 'heat engine', 'entropy', 'thermodynamics', 'second law of thermodynamics', 'adiabatic'],
+          reply: `### ⚙️ Exploring Heat Engine Efficiency & The Carnot Limit\n\nIn any thermodynamic heat engine, efficiency $\\eta$ measures how effectively heat input ($Q_H$) is converted into mechanical work:\n\n$$\\eta = \\frac{W}{Q_H} = 1 - \\frac{Q_C}{Q_H}$$\n\nFor a reversible **Carnot cycle**:\n$$\\eta_{\\text{Carnot}} = 1 - \\frac{T_C}{T_H}$$\n\n#### 💡 Key Concept:\nWhy can a real heat engine never reach $100\\%$ efficiency? For $\\eta = 1$, either $Q_C = 0$ (violating the Kelvin-Planck statement) or $T_C = 0\\text{ K}$ (unreachable by the Third Law).`,
+          followUpQuestions: [
+            'If an engine operates between 600 K and 300 K, what is its maximum possible efficiency?',
+            'Why is internal energy a state function while Work and Heat depend on the path?'
+          ]
+        },
+        {
+          minMatches: 1,
+          keywords: ['pointer', 'malloc', 'segfault', 'dereference', 'linked list', 'c programming', 'memory allocation', 'heap'],
           reply: `### 🧠 Pointers & Memory Architecture in C\n\nIn C, variables are stored at specific memory addresses. A **pointer** holds the memory address of another variable.\n\n\`\`\`c\nint val = 42;\nint *ptr = &val; // ptr holds the address of val\n*ptr = 100;      // Directly modifies memory at that address\n\`\`\`\n\n#### 🔍 Critical Distinction:\nPointer arithmetic (ptr + 1) advances by sizeof(*ptr) bytes, not 1 byte. For an int, that's 4 bytes.`,
           followUpQuestions: [
             'What happens in memory when you access an array as arr[i] versus *(arr + i)?',
@@ -335,67 +365,88 @@ ${personaSnippet}`;
           ]
         },
         {
-          keywords: ['lagrange', 'optimization', 'partial derivative', 'gradient', 'integral', 'contour', 'extrema', 'calculus'],
-          reply: `### 📐 Constrained Optimization via Lagrange Multipliers\n\nWhen maximizing or minimizing $f(x, y)$ along a constraint $g(x, y) = c$, the optimal point occurs where the **level curves of $f$ are tangent to $g = c$**.\n\nBecause $\\nabla f$ and $\\nabla g$ are perpendicular to their respective level curves, they must be parallel:\n\n$$\\nabla f(x, y) = \\lambda \\nabla g(x, y)$$\n\nCoupled with $g(x, y) = c$, this gives a system of equations for the critical points.`,
+          minMatches: 1,
+          keywords: ['lagrange', 'partial derivative', 'gradient', 'extrema', 'multivariable calculus', 'constrained optimization'],
+          reply: `### 📐 Constrained Optimization via Lagrange Multipliers\n\nWhen maximizing or minimizing $f(x, y)$ along a constraint $g(x, y) = c$, the optimal point occurs where the **level curves of $f$ are tangent to $g = c$**.\n\n$$\\nabla f(x, y) = \\lambda \\nabla g(x, y)$$\n\nCoupled with $g(x, y) = c$, this gives a system of equations for the critical points.`,
           followUpQuestions: [
             'Why would a point where the level curve crosses the constraint curve NOT be an extremum?',
             'How do you set up the partial derivative equations from the Lagrangian?'
           ]
         },
         {
-          keywords: ['nda', 'ssb', 'selection', 'interview', 'medical', 'defence', 'training', 'academy'],
-          reply: `### 🎖️ Understanding the NDA Selection Process\n\nThe NDA Selection Process follows a structured multi-stage pipeline:\n\n1. **Written Exam** (UPSC): Tests Mathematics and General Ability (English, GK, Physics, Chemistry, etc.)\n2. **SSB Interview** (5 Days): Psychological tests, Group Testing, and Personal Interview to assess Officer-Like Qualities (OLQs)\n3. **Medical Examination**: Comprehensive fitness and health evaluation\n\n#### 💡 Let's Think About This:\nThe SSB doesn't just test knowledge — it evaluates **decision-making under pressure**, **leadership potential**, and **group dynamics**.\n\n**Executive Summary** covers the high-level pipeline overview.\n**Training Architecture** refers to how cadets are trained at NDA (Khadakwasla) across academics, physical training, and service-specific drills.\n\nLet's break down which specific area you found challenging. Can you tell me — was it the **exam structure and scoring**, the **SSB evaluation criteria**, or the **post-selection training flow**?`,
+          minMatches: 2, // Require 2+ matches to avoid false positives with generic words
+          keywords: ['nda', 'ssb', 'national defence academy', 'officer like qualities', 'olq', 'upsc nda', 'services selection board'],
+          reply: `### 🎖️ Understanding the NDA Selection Process\n\nThe NDA Selection Process follows a structured multi-stage pipeline:\n\n1. **Written Exam** (UPSC): Tests Mathematics and General Ability\n2. **SSB Interview** (5 Days): Psychological tests, Group Testing, Personal Interview to assess Officer-Like Qualities (OLQs)\n3. **Medical Examination**: Comprehensive fitness and health evaluation\n\n**Executive Summary** covers the high-level pipeline overview.\n**Training Architecture** refers to how cadets are trained at NDA (Khadakwasla).\n\nWhich specific area did you find challenging — the **exam structure**, **SSB evaluation criteria**, or **post-selection training flow**?`,
           followUpQuestions: [
-            'Can you describe in your own words what Officer-Like Qualities (OLQs) the SSB evaluates?',
-            'What is the difference between the screening test and the main SSB 5-day testing process?',
+            'Can you describe what Officer-Like Qualities (OLQs) the SSB evaluates?',
+            'What is the difference between the screening test and the main SSB 5-day process?',
             'How does the training architecture at NDA differ from other military academies?'
           ]
         },
         {
-          keywords: ['friction', 'newton', 'force', 'motion', 'inertia', 'acceleration', 'momentum'],
-          reply: `### 🔬 Newton's Laws & Friction Analysis\n\nNewton's Laws form the foundation of classical mechanics:\n\n1. **First Law (Inertia)**: An object remains at rest or in uniform motion unless acted upon by a net external force.\n2. **Second Law**: $\\vec{F}_{\\text{net}} = m\\vec{a}$ — acceleration is directly proportional to net force and inversely proportional to mass.\n3. **Third Law**: For every action force, there is an equal and opposite reaction force.\n\n**Friction** resists relative motion between surfaces:\n- Static friction: $f_s \\leq \\mu_s N$\n- Kinetic friction: $f_k = \\mu_k N$\n\nThe key insight: static friction is *self-adjusting* up to its maximum value, while kinetic friction is constant.`,
+          minMatches: 2, // Require 2+ to avoid false positives with "force" or "motion" alone
+          keywords: ['friction', 'newton', 'free body diagram', 'inertia', 'net force', 'normal force', 'inclined plane', 'static friction', 'kinetic friction'],
+          reply: `### 🔬 Newton's Laws & Friction Analysis\n\nNewton's Laws form the foundation of classical mechanics:\n\n1. **First Law (Inertia)**: An object at rest stays at rest unless acted on by a net external force.\n2. **Second Law**: $\\vec{F}_{\\text{net}} = m\\vec{a}$\n3. **Third Law**: For every action, there is an equal and opposite reaction.\n\n**Friction** resists relative motion:\n- Static: $f_s \\leq \\mu_s N$ (self-adjusting up to max)\n- Kinetic: $f_k = \\mu_k N$ (constant)`,
           followUpQuestions: [
             'Why is the coefficient of static friction typically greater than kinetic friction?',
             'How would you draw a free-body diagram for an object on an inclined plane with friction?'
           ]
+        },
+        {
+          minMatches: 1,
+          keywords: ['derivative', 'integration', 'limit', 'differentiation', 'chain rule', 'product rule', 'fundamental theorem'],
+          reply: `### 📊 Calculus: Derivatives & Integration\n\nThe derivative measures the instantaneous rate of change:\n$$f'(x) = \\lim_{h \\to 0} \\frac{f(x+h) - f(x)}{h}$$\n\n**Key Rules:**\n- Power Rule: $\\frac{d}{dx}x^n = nx^{n-1}$\n- Chain Rule: $\\frac{d}{dx}f(g(x)) = f'(g(x)) \\cdot g'(x)$\n- Product Rule: $(fg)' = f'g + fg'$\n\nThe **Fundamental Theorem of Calculus** connects differentiation and integration:\n$$\\int_a^b f(x)\\,dx = F(b) - F(a)$$\n\nWhat specific aspect of calculus are you working on?`,
+          followUpQuestions: [
+            'Can you state the chain rule in your own words?',
+            'What is the geometric meaning of the definite integral?'
+          ]
         }
       ];
 
-      // Match against knowledge corpus
+      // Find BEST matching corpus entry (most keyword hits, above its threshold)
+      let bestMatch: any = null;
+      let bestScore = 0;
       for (const item of KNOWLEDGE_CORPUS) {
-        if (item.keywords.some(kw => clean.includes(kw))) {
-          res.status(200).json({
-            reply: item.reply,
-            followUpQuestions: item.followUpQuestions,
-            recommendedResources: []
-          });
-          return;
+        const score = countMatches(item.keywords);
+        if (score >= (item.minMatches || 2) && score > bestScore) {
+          bestScore = score;
+          bestMatch = item;
         }
       }
 
-      // Generic Socratic fallback
+      if (bestMatch) {
+        res.status(200).json({
+          reply: bestMatch.reply,
+          followUpQuestions: bestMatch.followUpQuestions,
+          recommendedResources: []
+        });
+        return;
+      }
+
+      // Smart generic fallback: extract topic from message and create contextual response
+      const detectedTopic = topic || 'this concept';
       res.status(200).json({
-        reply: `### 💡 Let's Explore This Together\n\nGreat question! To master this concept from first principles:\n\n1. **Identify the Core Phenomenon**: What physical laws, governing equations, or computational rules define this topic?\n2. **Break Down the Knowns**: What parameters are given, and what boundary conditions must hold true?\n3. **Map the Relationships**: How do the variables connect through equations or logical dependencies?\n\nTell me what you think the first step or governing relation is, and let's work through it together step by step!\n\n*I'm here to guide you through the reasoning process, not just give you the answer — that's how real mastery happens.* 🚀`,
+        reply: `### 💡 Let's Break Down: **${detectedTopic}**\n\nGreat question! Let's approach this systematically from first principles:\n\n1. **Identify the Core Concept**: What is the fundamental law, equation, or definition at play here?\n2. **Break Down the Knowns**: What variables or parameters are given? What constraints apply?\n3. **Map the Relationships**: How do the pieces connect through equations or logical reasoning?\n4. **Check Your Understanding**: Can you restate the key idea in your own words?\n\nI noticed you're working on **${detectedTopic}**. Let me help you build a deep understanding rather than just memorizing answers.\n\n*Tell me which specific part is confusing — is it the underlying concept, the mathematical formulation, or how to apply it to problems?* 🚀`,
         followUpQuestions: [
-          'What equations or formulas connect the variables in your question?',
-          'What happens at the boundary conditions (e.g., at zero or infinity)?'
+          `What is the fundamental equation or definition governing ${detectedTopic}?`,
+          'Can you identify what variables are given and what you need to find?',
+          'What happens at the boundary conditions or extreme cases?'
         ],
         recommendedResources: [
           {
             id: 'res-gen-1',
-            title: 'Undergraduate Engineering Foundations Reference',
+            title: 'EduSync Study Resources',
             type: 'book',
             provider: 'University Coursepack',
             duration: 'Core Modules',
             url: '#',
-            description: 'Comprehensive textbook reference with step-by-step conceptual walkthroughs.'
+            description: 'Comprehensive reference with step-by-step conceptual walkthroughs.'
           }
         ]
       });
       return;
     }
 
-    // 9. Default health status
     res.status(200).json({ status: 'ok', time: new Date().toISOString(), path });
   } catch (err: any) {
     console.error('[Serverless Error]', err);
