@@ -140,35 +140,34 @@ export function usePersonalizedNotesRealtime(
     const channel = supabase
       .channel(channelName)
       .on(
-        'postgres_changes',
+        'postgres_changes' as any,
         {
           event: 'INSERT',
           schema: 'public',
           table: 'notes',
           ...(userId ? { filter: `user_id=eq.${userId}` } : {})
         },
-        (payload: { new: SupabaseNoteRow }) => {
-          const newRow = payload.new;
+        (payload: any) => {
+          const newRow = payload.new as SupabaseNoteRow;
           if (!newRow) return;
 
           console.log('[Realtime Note INSERT]:', newRow.id, newRow.status);
           setNotes(prev => {
-            // Avoid duplicate insert
             if (prev.some(n => n.id === newRow.id)) return prev;
             return [newRow, ...prev];
           });
         }
       )
       .on(
-        'postgres_changes',
+        'postgres_changes' as any,
         {
           event: 'UPDATE',
           schema: 'public',
           table: 'notes',
           ...(userId ? { filter: `user_id=eq.${userId}` } : {})
         },
-        (payload: { new: SupabaseNoteRow; old: Partial<SupabaseNoteRow> }) => {
-          const updatedRow = payload.new;
+        (payload: any) => {
+          const updatedRow = payload.new as SupabaseNoteRow;
           if (!updatedRow) return;
 
           console.log('[Realtime Note UPDATE]:', updatedRow.id, updatedRow.status);
@@ -177,21 +176,20 @@ export function usePersonalizedNotesRealtime(
             prev.map(note => (note.id === updatedRow.id ? updatedRow : note))
           );
 
-          // If status transitioned to 'ready', fire completion callback
           if (updatedRow.status === 'ready' && onNoteReady) {
             onNoteReady(updatedRow);
           }
         }
       )
       .on(
-        'postgres_changes',
+        'postgres_changes' as any,
         {
           event: 'DELETE',
           schema: 'public',
           table: 'notes',
           ...(userId ? { filter: `user_id=eq.${userId}` } : {})
         },
-        (payload: { old: { id: string } }) => {
+        (payload: any) => {
           if (!payload.old?.id) return;
           setNotes(prev => prev.filter(note => note.id !== payload.old.id));
         }

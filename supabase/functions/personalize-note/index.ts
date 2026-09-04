@@ -8,7 +8,15 @@
 //   3. Calls Gemini 2.5 Flash API for pedagogical personalization
 //   4. Updates row: personalised_notes = <result>, status = 'ready'
 // =========================================================================
+// Ambient Deno declaration for IDE TypeScript language servers
+declare const Deno: {
+  env: {
+    get(key: string): string | undefined;
+  };
+  serve(handler: (req: Request) => Promise<Response> | Response): void;
+};
 
+// @ts-ignore
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.48.1";
 
 // CORS Headers for secure cross-origin invocation
