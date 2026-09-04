@@ -22,6 +22,10 @@ import {
 
 import fs from 'fs';
 import path from 'path';
+import seedUsersJson from '../../data/users.json';
+import seedLecturesJson from '../../data/lectures.json';
+import seedNotesJson from '../../data/notes.json';
+import seedProgressJson from '../../data/student_progress.json';
 
 export interface InMemoryDatabase {
   users: User[];
@@ -39,12 +43,14 @@ export interface InMemoryDatabase {
   masteryQuizzes: Record<string, LectureMasteryQuiz>;
 }
 
+const isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
 const USERS_FILE_PATH = path.resolve(process.cwd(), 'data', 'users.json');
 const NOTES_FILE_PATH = path.resolve(process.cwd(), 'data', 'notes.json');
 const LECTURES_FILE_PATH = path.resolve(process.cwd(), 'data', 'lectures.json');
 const PROGRESS_FILE_PATH = path.resolve(process.cwd(), 'data', 'student_progress.json');
 
 export function saveLecturesToDisk(lectures: ClassSarthiLecture[]) {
+  if (isServerless) return;
   try {
     const dir = path.dirname(LECTURES_FILE_PATH);
     if (!fs.existsSync(dir)) {
@@ -57,32 +63,25 @@ export function saveLecturesToDisk(lectures: ClassSarthiLecture[]) {
 }
 
 export function loadLecturesFromDisk(seed: ClassSarthiLecture[]): ClassSarthiLecture[] {
+  const fallbackSeed = (Array.isArray(seedLecturesJson) && seedLecturesJson.length > 0) ? (seedLecturesJson as unknown as ClassSarthiLecture[]) : seed;
   try {
-    const dir = path.dirname(LECTURES_FILE_PATH);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
     if (fs.existsSync(LECTURES_FILE_PATH)) {
       const content = fs.readFileSync(LECTURES_FILE_PATH, 'utf-8');
       const parsed = JSON.parse(content);
       if (Array.isArray(parsed) && parsed.length > 0) {
         const existingIds = new Set(parsed.map((l: any) => l.id));
-        const missing = seed.filter(s => !existingIds.has(s.id));
-        const merged = [...parsed, ...missing];
-        if (missing.length > 0) {
-          saveLecturesToDisk(merged);
-        }
-        return merged;
+        const missing = fallbackSeed.filter(s => !existingIds.has(s.id));
+        return [...parsed, ...missing];
       }
     }
   } catch (err) {
     console.error('Error loading lectures from disk:', err);
   }
-  saveLecturesToDisk(seed);
-  return seed;
+  return fallbackSeed;
 }
 
 export function saveProgressToDisk(progress: Record<string, Record<string, any>>) {
+  if (isServerless) return;
   try {
     const dir = path.dirname(PROGRESS_FILE_PATH);
     if (!fs.existsSync(dir)) {
@@ -95,27 +94,23 @@ export function saveProgressToDisk(progress: Record<string, Record<string, any>>
 }
 
 export function loadProgressFromDisk(seed: Record<string, Record<string, any>>): Record<string, Record<string, any>> {
+  const fallbackSeed = (seedProgressJson && typeof seedProgressJson === 'object') ? (seedProgressJson as Record<string, Record<string, any>>) : seed;
   try {
-    const dir = path.dirname(PROGRESS_FILE_PATH);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
     if (fs.existsSync(PROGRESS_FILE_PATH)) {
       const content = fs.readFileSync(PROGRESS_FILE_PATH, 'utf-8');
       const parsed = JSON.parse(content);
       if (parsed && typeof parsed === 'object') {
-        return { ...seed, ...parsed };
+        return { ...fallbackSeed, ...parsed };
       }
     }
   } catch (err) {
     console.error('Error loading progress from disk:', err);
   }
-  saveProgressToDisk(seed);
-  return seed;
+  return fallbackSeed;
 }
 
-
 export function saveUsersToDisk(users: User[]) {
+  if (isServerless) return;
   try {
     const dir = path.dirname(USERS_FILE_PATH);
     if (!fs.existsSync(dir)) {
@@ -128,11 +123,8 @@ export function saveUsersToDisk(users: User[]) {
 }
 
 export function loadUsersFromDisk(seed: User[]): User[] {
+  const fallbackSeed = (Array.isArray(seedUsersJson) && seedUsersJson.length > 0) ? (seedUsersJson as unknown as User[]) : seed;
   try {
-    const dir = path.dirname(USERS_FILE_PATH);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
     if (fs.existsSync(USERS_FILE_PATH)) {
       const content = fs.readFileSync(USERS_FILE_PATH, 'utf-8');
       const parsed = JSON.parse(content);
@@ -143,11 +135,11 @@ export function loadUsersFromDisk(seed: User[]): User[] {
   } catch (err) {
     console.error('Error loading users from disk:', err);
   }
-  saveUsersToDisk(seed);
-  return seed;
+  return fallbackSeed;
 }
 
 export function saveNotesToDisk(notes: StudentNote[]) {
+  if (isServerless) return;
   try {
     const dir = path.dirname(NOTES_FILE_PATH);
     if (!fs.existsSync(dir)) {
@@ -160,29 +152,21 @@ export function saveNotesToDisk(notes: StudentNote[]) {
 }
 
 export function loadNotesFromDisk(seed: StudentNote[]): StudentNote[] {
+  const fallbackSeed = (Array.isArray(seedNotesJson) && seedNotesJson.length > 0) ? (seedNotesJson as unknown as StudentNote[]) : seed;
   try {
-    const dir = path.dirname(NOTES_FILE_PATH);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
     if (fs.existsSync(NOTES_FILE_PATH)) {
       const content = fs.readFileSync(NOTES_FILE_PATH, 'utf-8');
       const parsed = JSON.parse(content);
       if (Array.isArray(parsed) && parsed.length > 0) {
         const existingIds = new Set(parsed.map((n: any) => n.id));
-        const missingSeeds = seed.filter(s => !existingIds.has(s.id));
-        const merged = [...parsed, ...missingSeeds];
-        if (missingSeeds.length > 0) {
-          saveNotesToDisk(merged);
-        }
-        return merged;
+        const missingSeeds = fallbackSeed.filter(s => !existingIds.has(s.id));
+        return [...parsed, ...missingSeeds];
       }
     }
   } catch (err) {
     console.error('Error loading notes from disk:', err);
   }
-  saveNotesToDisk(seed);
-  return seed;
+  return fallbackSeed;
 }
 
 const seedUsers: User[] = [
