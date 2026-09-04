@@ -1885,7 +1885,7 @@ export async function personalizeNoteAI(
   try {
     const personaGuidance = buildPersonaPromptInstructions(learnerProfile);
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3.7-flash',
       contents: `Please re-frame and personalize the following lecture notes to match the student's cognitive learning profile:\n\nTITLE: ${sanitizedTitle}\n\nORIGINAL CONTENT:\n${noteContent}\n\nSTYLE INSTRUCTIONS:
 - If visual: emphasize ASCII schematics, real-world analogies, and geometric interpretations.
 - If step_by_step: provide thorough step-by-step mathematical derivations with no skipped algebra.

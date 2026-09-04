@@ -2430,60 +2430,113 @@ If $d = 0 \\implies$ Lines are coplanar and intersect.`,
 `;
       }
 
+      // 1. Build Learner Personalization Scaffolding
+      const profile = studentContext?.learnerProfile || studentContext?.learnerContext || {};
+      const personaDirectives: string[] = [];
+      if (profile.learningStyle === 'visual') {
+        personaDirectives.push('Prioritize vivid mental models, structural analogies, and clear visual/geometric perspectives.');
+      } else if (profile.learningStyle === 'step_by_step') {
+        personaDirectives.push('Deconstruct complex concepts into clean, sequential, numbered deduction steps.');
+      } else if (profile.learningStyle === 'socratic_dialogue') {
+        personaDirectives.push('Use intuitive guiding questions to draw out the student understanding.');
+      } else if (profile.learningStyle === 'analogies') {
+        personaDirectives.push('Use intuitive everyday analogies to make complex theories click.');
+      } else if (profile.learningStyle === 'exam_focused') {
+        personaDirectives.push('Highlight high-frequency exam patterns, scoring rubrics, and common student traps.');
+      }
+
+      if (profile.targetGrade) {
+        personaDirectives.push(`Target academic aspiration: ${profile.targetGrade}.`);
+      }
+      if (profile.explanationTone === 'strict_coach') {
+        personaDirectives.push('Adopt a rigorous, high-standard coaching tone that challenges the student.');
+      } else if (profile.explanationTone === 'practical_engineer') {
+        personaDirectives.push('Ground concepts in real-world systems, machines, circuits, and practical trade-offs.');
+      } else {
+        personaDirectives.push('Maintain a warm, encouraging, supportive, and patient mentor tone.');
+      }
+      if (profile.interests || profile.strengthsAndInterests) {
+        personaDirectives.push(`Student interests/strengths: ${profile.interests || profile.strengthsAndInterests}.`);
+      }
+      if (profile.painPoints) {
+        personaDirectives.push(`Student weak areas/pain points: ${profile.painPoints}. Provide extra clarity here.`);
+      }
+
+      const personaSummary = personaDirectives.length > 0
+        ? personaDirectives.map(d => `   * ${d}`).join('\n')
+        : '   * Warm, encouraging, and natural companion tone.';
+
+      const systemInstruction = `You are EduSync AI, a natural, empathetic, and exceptionally capable AI tutor and conversational study companion.
+
+CORE INSTRUCTIONS:
+1. Talk like a real, intelligent, friendly AI (like ChatGPT or Gemini) — warm, natural, and directly conversational. Never use robotic templates, canned scripts, or forced artificial barriers.
+2. You can discuss and answer ANY question under the sun — STEM subjects, humanities, literature, coding, career advice, exam anxiety, general knowledge, philosophy, creative brainstorming, or casual friendly chatting.
+3. When the question is academic or technical, provide clear, intuitive, and accurate explanations. Use clean Markdown and LaTeX formulas where appropriate ($...$ for inline, $$...$$ for blocks).
+4. Personalization: Adapt your style to the student's cognitive learning profile:
+${personaSummary}
+5. Keep answers conversational, helpful, and concise without unnecessary walls of text. Feel free to ask a natural follow-up or check if they want to explore further.`;
+
+      // 2. Format conversation history for full multi-turn conversational memory
+      const formattedHistory = (Array.isArray(history) ? history : [])
+        .slice(-8)
+        .filter((h: any) => (h.text || h.content))
+        .map((h: any) => {
+          const role = (h.sender === 'user' || h.role === 'user') ? 'Student' : 'EduSync AI';
+          return `${role}: ${h.text || h.content}`;
+        })
+        .join('\n\n');
+
+      let classroomContextSnippet = '';
+      if (activeLecture && (message.toLowerCase().includes('lecture') || message.toLowerCase().includes('class') || message.toLowerCase().includes('quiz') || message.toLowerCase().includes('mistake'))) {
+        classroomContextSnippet = `\n[Classroom Context: Active lecture "${activeLecture.title}", Subject: ${activeLecture.subjectName}${mistakeContext ? `, Recent Quiz Mistake: "${mistakeContext.question}" - Misconception: "${mistakeContext.misconception}"` : ''}]\n`;
+      }
+
+      const fullInput = formattedHistory
+        ? `[Conversation History]\n${formattedHistory}\n${classroomContextSnippet}\nStudent: ${message}`
+        : `${classroomContextSnippet ? classroomContextSnippet + '\n' : ''}${message}`;
+
       const apiKey = process.env.GEMINI_API_KEY;
 
-      // Diverse Socratic answer generator for any topic across Physics, Chemistry, Maths, CS, and Engineering
-      const generateSmartSocraticFallback = (userMsg: string) => {
-        return generateDiverseSocraticReply(userMsg, {
-          studentContext,
-          lectureContext: lectureInfo,
-          history
-        });
-      };
-
       if (!apiKey) {
-        return res.json({ reply: generateSmartSocraticFallback(message) });
+        // Fallback when no API key is provided
+        return res.json({ reply: generateDiverseSocraticReply(message, { studentContext, lectureContext: lectureInfo, history }) });
       }
 
       const { GoogleGenAI } = await import('@google/genai');
       const ai = new GoogleGenAI({ apiKey });
 
-      // Format chat history for Gemini API
-      const chatHistory = (Array.isArray(history) ? history : [])
-        .filter((h: any) => (h.text || h.content) && (h.sender || h.role))
-        .map((h: any) => ({
-          role: (h.sender === 'user' || h.role === 'user') ? 'user' : 'model',
-          parts: [{ text: h.text || h.content }]
-        }));
-
       try {
-        const tutorPromise = ai.models.generateContent({
-          model: 'gemini-2.0-flash',
-          contents: [
-            ...chatHistory,
-            { role: 'user', parts: [{ text: `${lectureContextPrompt}\n\nSTUDENT QUESTION: "${message}"` }] }
-          ],
-          config: {
-            systemInstruction: `You are the EduSync Socratic AI Tutor. You help students understand ANY concept in Physics, Chemistry, Mathematics, Engineering, or general academic topics.
-CRITICAL PEDAGOGY:
-1. If the student asks about a quiz mistake, use the classroom context to address it directly.
-2. If the student asks ANY general question (e.g. concepts, homework, proofs, formulas, analogies), answer it thoroughly, encouragingly, and clearly.
-3. Use clean Markdown and LaTeX formulas ($...$ for inline, $$...$$ for block formulas).
-4. Always end with an engaging guiding reflection question that encourages the student to think deeper.`,
-            temperature: 0.6
-          }
+        // Primary: Gemini 3.7 Flash via Interactions API
+        const interaction = await ai.interactions.create({
+          model: 'gemini-3.7-flash',
+          input: fullInput,
+          system_instruction: systemInstruction
         });
 
-        const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Tutor AI timeout')), 6500)
-        );
+        if (interaction && interaction.output_text) {
+          return res.json({ reply: interaction.output_text });
+        }
+        throw new Error('Empty response from Gemini 3.7 Flash');
+      } catch (interactionErr: any) {
+        console.warn('Gemini 3.7 Flash interaction failed, trying gemini-3.5-flash-lite:', interactionErr?.message);
 
-        const result: any = await Promise.race([tutorPromise, timeoutPromise]);
-        const reply = result.text || generateSmartSocraticFallback(message);
-        return res.json({ reply });
-      } catch (geminiError: any) {
-        console.warn('Gemini API call failed, using intelligent Socratic fallback:', geminiError?.message);
-        return res.json({ reply: generateSmartSocraticFallback(message) });
+        try {
+          // Secondary fallback model
+          const fallbackInteraction = await ai.interactions.create({
+            model: 'gemini-3.5-flash-lite',
+            input: fullInput,
+            system_instruction: systemInstruction
+          });
+
+          if (fallbackInteraction && fallbackInteraction.output_text) {
+            return res.json({ reply: fallbackInteraction.output_text });
+          }
+        } catch (liteErr: any) {
+          console.warn('Gemini 3.5 Flash-Lite interaction failed:', liteErr?.message);
+        }
+
+        // Final safety net: intelligent multi-domain knowledge synthesis
+        return res.json({ reply: generateDiverseSocraticReply(message, { studentContext, lectureContext: lectureInfo, history }) });
       }
 
     } catch (err: any) {
