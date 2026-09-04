@@ -24,6 +24,7 @@ import { isSupabaseConfigured } from '../../lib/supabase';
 import { FAKE_SUBJECTS } from '../../mock/fakeData';
 import { MathRenderer } from '../Common/MathRenderer';
 import { recraftNoteForPersona } from '../../lib/personaRecraft';
+import { getOrGenerateQuizQuestions } from '../../lib/quizGenerator';
 
 interface LectureNotesStudioProps {
   activeSubject: Subject;
@@ -258,27 +259,32 @@ export const LectureNotesStudio: React.FC<LectureNotesStudioProps> = ({
     setQuizAnalysis(null);
     setUserAnswers({});
     setCurrentQuestionIdx(0);
-    setQuizLoading(true);
 
+    // 1. Immediately prepare verified high-yield topic questions so questions are NEVER empty!
+    const immediateQuestions = getOrGenerateQuizQuestions(activeNote, persona);
+    setQuizQuestions(immediateQuestions);
+    setQuizLoading(false);
+
+    // 2. Also try fetching AI generated questions asynchronously
     try {
       const res = await fetch('/api/ai/quiz/generate-mastery-quiz', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          noteContent: personalizedContent || activeNote.content,
+          noteContent: displayedContent || activeNote.content,
           title: activeNote.title,
           count: 6,
           learnerProfile: persona
         })
       });
-      const data = await res.json();
-      if (Array.isArray(data.questions) && data.questions.length > 0) {
-        setQuizQuestions(data.questions);
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.questions) && data.questions.length > 0) {
+          setQuizQuestions(data.questions);
+        }
       }
     } catch (err) {
-      console.error('Failed to generate mastery quiz:', err);
-    } finally {
-      setQuizLoading(false);
+      console.warn('Using instant verified topic questions for quiz:', err);
     }
   };
 
@@ -738,8 +744,24 @@ export const LectureNotesStudio: React.FC<LectureNotesStudioProps> = ({
                 </p>
               </div>
             ) : !quizSubmitted ? (
-              /* Quiz Runner Interface */
-              <div className="space-y-6">
+              quizQuestions.length === 0 ? (
+                <div className="py-12 text-center space-y-3">
+                  <Brain className="w-8 h-8 text-emerald-400 mx-auto" />
+                  <p className="text-sm font-semibold text-white">Preparing Quiz Questions...</p>
+                  <button
+                    onClick={() => {
+                      if (activeNote) {
+                        setQuizQuestions(getOrGenerateQuizQuestions(activeNote, persona));
+                      }
+                    }}
+                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition-all cursor-pointer"
+                  >
+                    Load Questions
+                  </button>
+                </div>
+              ) : (
+                /* Quiz Runner Interface */
+                <div className="space-y-6">
                 {/* Progress Bar & Difficulty Badge */}
                 <div className="flex items-center justify-between text-xs text-slate-400">
                   <span>Question {currentQuestionIdx + 1} of {quizQuestions.length}</span>
@@ -827,7 +849,7 @@ export const LectureNotesStudio: React.FC<LectureNotesStudioProps> = ({
                   )}
                 </div>
               </div>
-            ) : (
+            )) : (
               /* Quiz Results & AI Diagnostic Analysis */
               <div className="space-y-6">
                 {/* Score & Mastery Level Banner */}

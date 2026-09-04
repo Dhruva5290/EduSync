@@ -1504,7 +1504,7 @@ export async function generateMasteryQuizAI(
   try {
     const personaGuidance = buildPersonaPromptInstructions(learnerProfile);
     const response = await ai.models.generateContent({
-      model: 'gemini-3.6-flash',
+      model: 'gemini-2.5-flash',
       contents: `Generate exactly ${targetCount} high-yield multiple-choice questions for an academic lecture mastery quiz based strictly on the following lecture notes:\n\nTITLE: ${sanitizedTitle}\n\nCONTENT:\n${noteContent}\n\nREQUIREMENTS:
 - Include a balanced distribution of difficulties: 2 Easy (definitions/core formulas), 2-3 Moderate (derivations/applications), 2 Hard (edge cases, tricky constraints, cross-topic implications).
 - Each question must have exactly 4 options, a 0-based correctIndex, a conceptual explanation, a concise topic label, and a difficulty ('easy' | 'moderate' | 'hard').`,
