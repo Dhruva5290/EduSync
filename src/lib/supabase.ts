@@ -36,6 +36,9 @@ export const isSupabaseConfigured = (): boolean => {
   );
 };
 
+export const isUuid = (val?: string | null): boolean =>
+  typeof val === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val);
+
 // =========================================================================
 // 2. CLIENT INITIALIZATION
 // =========================================================================
@@ -224,14 +227,20 @@ export function usePersonalizedNotesRealtime(
     }
 
     try {
-      const newRecord = {
-        user_id: params.userId,
+      const newRecord: any = {
         title: params.title || 'Untitled Capture',
         generalised_notes: params.generalised_notes,
         raw_ocr_text: params.raw_ocr_text || '',
         status: 'uploaded',
-        metadata: params.metadata || {}
+        metadata: {
+          ...(params.metadata || {}),
+          student_id: params.userId
+        }
       };
+
+      if (isUuid(params.userId)) {
+        newRecord.user_id = params.userId;
+      }
 
       const { data, error: insertError } = await supabase
         .from('notes')
@@ -342,23 +351,29 @@ export const pushNoteToSupabase = async (note: StudentNote): Promise<{ success: 
   }
 
   try {
-    const { error } = await supabase.from('notes').insert([
-      {
-        id: note.id,
-        user_id: note.studentId,
-        title: note.title,
-        generalised_notes: note.content,
-        raw_ocr_text: note.content,
-        status: 'uploaded',
-        metadata: {
-          subject_id: note.subjectId,
-          camera_snapshot_url: note.cameraSnapshotUrl,
-          doubts_detected: note.doubtsDetected || [],
-          source: note.source || 'visionnote',
-          summary: note.summary
-        }
+    const row: any = {
+      title: note.title,
+      generalised_notes: note.content,
+      raw_ocr_text: note.content,
+      status: 'uploaded',
+      metadata: {
+        subject_id: note.subjectId,
+        student_id: note.studentId,
+        camera_snapshot_url: note.cameraSnapshotUrl,
+        doubts_detected: note.doubtsDetected || [],
+        source: note.source || 'visionnote',
+        summary: note.summary
       }
-    ]);
+    };
+
+    if (isUuid(note.id)) {
+      row.id = note.id;
+    }
+    if (isUuid(note.studentId)) {
+      row.user_id = note.studentId;
+    }
+
+    const { error } = await supabase.from('notes').insert([row]);
 
     if (error) throw error;
     return { success: true };

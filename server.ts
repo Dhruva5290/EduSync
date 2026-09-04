@@ -49,6 +49,7 @@ import {
 } from './src/types';
 import { archiveAndResetWorkspace, listVaultSnapshots, restoreFromVaultSnapshot } from './src/server/vaultArchive';
 import { generateDiverseSocraticReply } from './src/server/socraticKnowledge';
+import { startSupabaseRealtimeWorker } from './src/server/supabaseWorker';
 
 
 dotenv.config();
@@ -2979,6 +2980,7 @@ ${personaSummary}
       });
       app.listen(PORT, '0.0.0.0', () => {
         console.log(`EduSync Server running on http://0.0.0.0:${PORT}`);
+        startSupabaseRealtimeWorker();
       });
     } else {
       console.log('EduSync running in Development mode with Vite HMR.');
@@ -2990,6 +2992,7 @@ ${personaSummary}
       app.use(vite.middlewares);
       app.listen(PORT, '0.0.0.0', () => {
         console.log(`EduSync Server running on http://0.0.0.0:${PORT}`);
+        startSupabaseRealtimeWorker();
       });
     }
   }
