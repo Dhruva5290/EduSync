@@ -75108,120 +75108,56 @@ async function handler(req, res) {
     }
     if ((path3.includes("/api/tutor") || path3.endsWith("/tutor")) && req.method === "POST") {
       const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body || {};
-      const { message, history = [], lectureContext, studentContext } = body;
+      const { message, history = [] } = body;
       if (!message || typeof message !== "string") {
         res.status(400).json({ error: "Message is required" });
         return;
       }
-      const ctx = studentContext || lectureContext || {};
-      const persona = ctx?.learnerProfile;
-      const SOCRATIC_SYSTEM_PROMPT = `You are an intelligent, thoughtful, and insightful AI Academic Mentor and Tutor.
-You think deeply and dynamically about whatever question, topic, or doubt the student brings to you.
-
-Key Principles:
-1. THINK & ADAPT DYNAMICALLY: Truly analyze the student's exact prompt and context. Provide genuine, thoughtful explanations tailored directly to what they ask.
-2. NO CANNED OR ROBOTIC TEMPLATES: Never recite fixed pre-made scripts, boilerplate disclaimers, or generic lectures. Answer what is asked clearly, engagingly, and helpfully.
-3. CLEAR FORMATTING: Use Markdown with proper headings, bullet points, and LaTeX ($...$ for inline, $$...$$ for math formulas) where relevant.
-
-Format your output strictly as a JSON object:
-{
-  "reply": "Your intelligent, deep, thoughtful explanation and response to the student...",
-  "followUpQuestions": ["A relevant follow-up thought or question?", "Another conceptual question?"],
-  "recommendedResources": []
-}`;
-      const personaSnippet = persona ? `
-[STUDENT_LEARNING_PERSONA]
-- Learning Modality: ${(persona.learningStyle || "balanced").toUpperCase()}
-- Target Academic Level: ${persona.targetGrade || "A+"}
-- Coaching Tone: ${persona.explanationTone || "encouraging_mentor"}
-- Preferred Pace: ${persona.preferredPace || "steady"}
-- Strengths: ${persona.strengthsAndInterests || "General Sciences"}
-- Weak Areas: ${persona.painPoints || "None specified"}
-[END_LEARNING_PERSONA]` : "";
-      const subjectName = ctx?.currentSubject?.name || "";
-      const contextSnippet = subjectName ? `
-[STUDENT_ACADEMIC_CONTEXT]
-- Active Course: ${subjectName} (${ctx?.currentSubject?.code || ""})
-- Current Unit: ${ctx?.currentSubject?.currentUnit || ""}
-[END_STUDENT_CONTEXT]
-${personaSnippet}` : personaSnippet;
       const buildTimeKey = "QVEuQWI4Uk42SUx3Um5VRnM3a052S3dFZE9BejZOZU8zTTRsSjZuLVVVTDQxRHlCclZUdlE=" ? Buffer.from("QVEuQWI4Uk42SUx3Um5VRnM3a052S3dFZE9BejZOZU8zTTRsSjZuLVVVTDQxRHlCclZUdlE=", "base64").toString("utf-8") : "";
       const apiKey = process.env.GEMINI_API_KEY || buildTimeKey;
       if (!apiKey) {
-        res.status(500).json({
-          reply: "\u26A0\uFE0F The AI Tutor is not configured yet. Please set the `GEMINI_API_KEY` environment variable on your deployment platform.",
-          followUpQuestions: [],
-          recommendedResources: []
+        res.status(200).json({
+          reply: "\u26A0\uFE0F The AI Tutor requires a `GEMINI_API_KEY`. Please make sure it is configured."
         });
         return;
       }
       try {
         const { GoogleGenAI: GoogleGenAI3 } = await Promise.resolve().then(() => (init_node(), node_exports));
         const ai = new GoogleGenAI3({ apiKey });
-        const formattedHistory = (history || []).map((h2) => ({
-          role: h2.sender === "user" ? "user" : "model",
-          parts: [{ text: h2.text }]
+        const formattedHistory = (Array.isArray(history) ? history : []).slice(-10).filter((h2) => h2.text).map((h2) => ({
+          role: h2.sender === "user" || h2.role === "user" ? "user" : "model",
+          parts: [{ text: String(h2.text) }]
         }));
-        const fullPrompt = contextSnippet ? `${contextSnippet}
-
-Student Query: "${message}"
-
-Respond specifically to this query. Do NOT give a generic response.` : `Student Query: "${message}"
-
-Respond specifically to this query. Do NOT give a generic response.`;
+        const systemInstruction = "You are EduSync AI, a helpful, intelligent, natural, and thoughtful AI academic tutor. Answer the student's question clearly, accurately, and dynamically. Use Markdown formatting and LaTeX for formulas ($...$ or $$...$$).";
         const candidateModels = ["gemini-3.6-flash", "gemini-2.5-flash", "gemini-2.0-flash"];
-        let resultText = "";
-        for (const modelName of candidateModels) {
+        let reply = "";
+        for (const model of candidateModels) {
           try {
-            const result = await ai.models.generateContent({
-              model: modelName,
+            const response = await ai.models.generateContent({
+              model,
               contents: [
                 ...formattedHistory,
-                { role: "user", parts: [{ text: fullPrompt }] }
+                { role: "user", parts: [{ text: message }] }
               ],
-              config: {
-                systemInstruction: SOCRATIC_SYSTEM_PROMPT
-              }
+              config: { systemInstruction }
             });
-            if (result && result.text) {
-              resultText = result.text;
+            if (response && response.text) {
+              reply = response.text;
               break;
             }
           } catch (modelErr) {
-            console.warn(`[Tutor Serverless] Model ${modelName} error:`, modelErr?.message || modelErr);
+            console.warn(`[Tutor] Model ${model} failed:`, modelErr?.message || modelErr);
           }
         }
-        let parsedResult = { reply: "", followUpQuestions: [], recommendedResources: [] };
-        if (resultText) {
-          try {
-            const cleaned = resultText.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
-            const parsed = JSON.parse(cleaned);
-            parsedResult = {
-              reply: parsed.reply || resultText,
-              followUpQuestions: parsed.followUpQuestions || [],
-              recommendedResources: parsed.recommendedResources || []
-            };
-          } catch {
-            parsedResult = {
-              reply: resultText,
-              followUpQuestions: [],
-              recommendedResources: []
-            };
-          }
+        if (!reply) {
+          reply = "I was unable to generate a response. Please try again.";
         }
-        if (!parsedResult.reply) {
-          parsedResult.reply = "I am thinking through your question, but could not generate a response. Please try asking again.";
-        }
-        res.status(200).json(parsedResult);
+        res.status(200).json({ reply });
         return;
       } catch (geminiErr) {
         console.error("[Tutor Gemini Error]", geminiErr?.message || geminiErr);
         res.status(200).json({
-          reply: `\u26A0\uFE0F I encountered an issue connecting to the AI service. Here's the error: *${geminiErr?.message || "Unknown error"}*
-
-Please try again in a moment.`,
-          followUpQuestions: [],
-          recommendedResources: []
+          reply: `\u26A0\uFE0F Error generating response: ${geminiErr?.message || "Unknown error"}. Please try again.`
         });
         return;
       }
