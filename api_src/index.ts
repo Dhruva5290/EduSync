@@ -166,7 +166,18 @@ export default async function handler(req: any, res: any) {
         }
       }
 
-      const questions = synthesizeMasteryQuizFromContent(noteContent, title, learnerProfile, count);
+      let questions: any[] = [];
+      const cleanT = (title || '').toLowerCase();
+      if (cleanT.includes('nda') || cleanT.includes('selection') || cleanT.includes('ssb')) {
+        const { getOrGenerateQuizQuestions } = await import('../src/lib/quizGenerator');
+        questions = getOrGenerateQuizQuestions({ id: 'note-misc-nda', title, content: noteContent, subjectId: 'subj-misc', tags: [], lastModified: '' }, learnerProfile);
+      } else if (cleanT.includes('friction') || cleanT.includes('newton')) {
+        const { getOrGenerateQuizQuestions } = await import('../src/lib/quizGenerator');
+        questions = getOrGenerateQuizQuestions({ id: 'note-phy-01', title, content: noteContent, subjectId: 'subj-phy', tags: [], lastModified: '' }, learnerProfile);
+      } else {
+        questions = synthesizeMasteryQuizFromContent(noteContent, title, learnerProfile, count);
+      }
+
       res.status(200).json({
         title: `Mastery Quiz: ${title}`,
         questions

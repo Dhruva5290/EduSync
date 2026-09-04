@@ -74657,7 +74657,17 @@ async function handler(req, res) {
           console.warn("[Serverless Gemini Quiz Warning]", geminiErr);
         }
       }
-      const questions = synthesizeMasteryQuizFromContent(noteContent, title, learnerProfile, count);
+      let questions = [];
+      const cleanT = (title || "").toLowerCase();
+      if (cleanT.includes("nda") || cleanT.includes("selection") || cleanT.includes("ssb")) {
+        const { getOrGenerateQuizQuestions: getOrGenerateQuizQuestions2 } = await Promise.resolve().then(() => (init_quizGenerator(), quizGenerator_exports));
+        questions = getOrGenerateQuizQuestions2({ id: "note-misc-nda", title, content: noteContent, subjectId: "subj-misc", tags: [], lastModified: "" }, learnerProfile);
+      } else if (cleanT.includes("friction") || cleanT.includes("newton")) {
+        const { getOrGenerateQuizQuestions: getOrGenerateQuizQuestions2 } = await Promise.resolve().then(() => (init_quizGenerator(), quizGenerator_exports));
+        questions = getOrGenerateQuizQuestions2({ id: "note-phy-01", title, content: noteContent, subjectId: "subj-phy", tags: [], lastModified: "" }, learnerProfile);
+      } else {
+        questions = synthesizeMasteryQuizFromContent(noteContent, title, learnerProfile, count);
+      }
       res.status(200).json({
         title: `Mastery Quiz: ${title}`,
         questions
