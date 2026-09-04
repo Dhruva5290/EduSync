@@ -17,7 +17,8 @@ import {
   Eye,
   Camera,
   UploadCloud,
-  Palette
+  Palette,
+  Key
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -66,8 +67,23 @@ export const Header: React.FC<HeaderProps> = ({
   onChangeAccentColor
 }) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showKeyModal, setShowKeyModal] = useState(false);
+  const [tempKey, setTempKey] = useState('');
+  const [hasKey, setHasKey] = useState(() => Boolean(localStorage.getItem('edusync_user_gemini_key')));
   const activeSubject = subjects.find(s => s.id === activeSubjectId) || subjects[0];
   const isTutorTab = activeTab === 'tutor';
+
+  const handleSaveKey = () => {
+    const trimmed = tempKey.trim();
+    if (trimmed) {
+      localStorage.setItem('edusync_user_gemini_key', trimmed);
+      setHasKey(true);
+    } else {
+      localStorage.removeItem('edusync_user_gemini_key');
+      setHasKey(false);
+    }
+    setShowKeyModal(false);
+  };
 
   const toggleRole = () => {
     // Only admins have the authority to cycle between perspectives
@@ -177,6 +193,24 @@ export const Header: React.FC<HeaderProps> = ({
                 <span className="hidden lg:inline">Audit Student View</span>
               </button>
             )}
+
+            {/* Universal API Key Configuration Trigger */}
+            <button
+              id="header-api-key-btn"
+              onClick={() => {
+                setTempKey(localStorage.getItem('edusync_user_gemini_key') || '');
+                setShowKeyModal(true);
+              }}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 shadow-sm cursor-pointer border ${
+                hasKey
+                  ? 'bg-emerald-950/80 hover:bg-emerald-900/80 border-emerald-700/80 text-emerald-300'
+                  : 'bg-amber-950/80 hover:bg-amber-900/80 border-amber-700/80 text-amber-300 animate-pulse'
+              }`}
+              title="Set Gemini API Key for Instant AI Features"
+            >
+              <Key className="w-3.5 h-3.5 shrink-0" />
+              <span>{hasKey ? 'Gemini Key ✓' : '🔑 Set API Key'}</span>
+            </button>
 
             {/* VisionNote Direct Import Button */}
             {onOpenVNImport && (
@@ -401,6 +435,46 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Global API Key Configuration Modal */}
+      {showKeyModal && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-700 rounded-xl p-6 max-w-md w-full shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center gap-2 text-indigo-400 font-bold text-base">
+              <Key className="w-5 h-5 text-indigo-400" />
+              <span>Configure Gemini API Key</span>
+            </div>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              Paste your Google Gemini API key below to activate the live AI Tutor, VisionNote synthesis, and AI Quiz generator without depending on cloud environment variables.
+            </p>
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-mono text-slate-400 uppercase tracking-wider block">Google AI API Key</label>
+              <input
+                type="password"
+                placeholder="Paste AIzaSy... or AQ... key"
+                value={tempKey}
+                onChange={(e) => setTempKey(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-hidden focus:border-indigo-500 font-mono"
+                autoFocus
+              />
+            </div>
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <button
+                onClick={() => setShowKeyModal(false)}
+                className="px-3.5 py-2 text-xs font-semibold text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveKey}
+                className="px-4 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors shadow-sm cursor-pointer"
+              >
+                Save & Activate Key
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 };
