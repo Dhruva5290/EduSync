@@ -1,26 +1,18 @@
 -- ======================================================================================
--- EduSync & VisionNote: Complete Master Database Setup Script
--- Paste this entire script into your Supabase SQL Editor and click "Run".
+-- EduSync & VisionNote: Master Database Clean Reset & Setup Script
+-- Fixes: ERROR 42703: column "user_id" does not exist by dropping old table schema first.
 -- ======================================================================================
 
 -- 1. Enable Required Extensions
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- 2. Drop existing triggers & policies if recreating
-DROP TRIGGER IF EXISTS tr_notes_updated_at ON public.notes;
-DROP FUNCTION IF EXISTS public.handle_notes_updated_at();
+-- 2. Drop any pre-existing legacy notes table and triggers cleanly
+DROP TABLE IF EXISTS public.notes CASCADE;
+DROP FUNCTION IF EXISTS public.handle_notes_updated_at() CASCADE;
 
-DROP POLICY IF EXISTS "Users can select own notes" ON public.notes;
-DROP POLICY IF EXISTS "Users can insert own notes" ON public.notes;
-DROP POLICY IF EXISTS "Users can update own notes" ON public.notes;
-DROP POLICY IF EXISTS "Users can delete own notes" ON public.notes;
-DROP POLICY IF EXISTS "Service role full access" ON public.notes;
-DROP POLICY IF EXISTS "Anon client access" ON public.notes;
-DROP POLICY IF EXISTS "Allow authenticated and service role" ON public.notes;
-
--- 3. Create the `public.notes` Table
-CREATE TABLE IF NOT EXISTS public.notes (
+-- 3. Create the `public.notes` Table with exact user_id schema
+CREATE TABLE public.notes (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
     title TEXT NOT NULL DEFAULT 'Untitled Capture',
@@ -35,13 +27,13 @@ CREATE TABLE IF NOT EXISTS public.notes (
 );
 
 -- 4. Set REPLICA IDENTITY FULL
--- (Crucial: Guarantees that Supabase Realtime emits full record payload on UPDATE events)
+-- (Guarantees Supabase Realtime emits full record payload on UPDATE events)
 ALTER TABLE public.notes REPLICA IDENTITY FULL;
 
 -- 5. Create Performance Indexes
-CREATE INDEX IF NOT EXISTS idx_notes_user_id ON public.notes(user_id);
-CREATE INDEX IF NOT EXISTS idx_notes_status ON public.notes(status);
-CREATE INDEX IF NOT EXISTS idx_notes_created_at ON public.notes(created_at DESC);
+CREATE INDEX idx_notes_user_id ON public.notes(user_id);
+CREATE INDEX idx_notes_status ON public.notes(status);
+CREATE INDEX idx_notes_created_at ON public.notes(created_at DESC);
 
 -- 6. Trigger to automatically keep `updated_at` current on row updates
 CREATE OR REPLACE FUNCTION public.handle_notes_updated_at()
@@ -107,5 +99,5 @@ BEGIN
     END IF;
 END $$;
 
--- Verification query
+-- Verification output
 SELECT 'Success! public.notes is created with RLS, Realtime, and Triggers.' AS status;
