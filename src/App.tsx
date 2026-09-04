@@ -34,6 +34,7 @@ import { QuestionBankManager } from './components/TeacherDashboard/QuestionBankM
 import { ErrorBoundary } from './components/Common/ErrorBoundary';
 import { VisionNoteImportModal } from './components/VisionNoteImport/VisionNoteImportModal';
 import { subscribeToVisionNotes, fetchVisionNotesFromSupabase, isSupabaseConfigured, smartCategorizeNote } from './lib/supabase';
+import { recraftNoteForPersona } from './lib/personaRecraft';
 import {
   FAKE_SUBJECTS,
   FAKE_USERS,
@@ -1125,19 +1126,18 @@ export default function App() {
     // 2. Client-side immediate note recrafting for instant responsiveness
     setNotes(prevNotes => {
       const nextNotes = prevNotes.map(n => {
-        let styleHeader = '';
-        if (profile.learningStyle === 'visual') {
-          styleHeader = `> 🎨 **Visual Intuition Blueprint**\n> Concept Flow: Axioms ➔ Boundary Conditions ➔ Governing Law ➔ Practical Applications\n\n`;
-        } else if (profile.learningStyle === 'step_by_step') {
-          styleHeader = `> 📐 **Step-by-Step Derivation Breakdown**\n> 1. Foundational Axioms ➔ 2. Analytical Expansion ➔ 3. Proof Verification\n\n`;
-        } else if (profile.learningStyle === 'exam_focused') {
-          styleHeader = `> ⚡ **High-Yield Exam Matrix**\n> Key formulas, invariants, and common pitfalls for Grade ${profile.targetGrade}.\n\n`;
+        try {
+          const recrafted = recraftNoteForPersona(n, profile);
+          return {
+            ...n,
+            personalisedNotes: recrafted.personalisedNotes,
+            summary: recrafted.summary,
+            keyTakeaways: recrafted.keyTakeaways,
+            lastModified: new Date().toISOString()
+          };
+        } catch (e) {
+          return n;
         }
-        return {
-          ...n,
-          personalisedNotes: `${styleHeader}${n.content}`,
-          lastModified: new Date().toISOString()
-        };
       });
       try {
         localStorage.setItem('edusync_notes', JSON.stringify(nextNotes));

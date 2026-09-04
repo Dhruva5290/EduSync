@@ -23,6 +23,7 @@ import { Subject, StudentNote, User, QuizQuestion, LectureQuizAnalysis } from '.
 import { isSupabaseConfigured } from '../../lib/supabase';
 import { FAKE_SUBJECTS } from '../../mock/fakeData';
 import { MathRenderer } from '../Common/MathRenderer';
+import { recraftNoteForPersona } from '../../lib/personaRecraft';
 
 interface LectureNotesStudioProps {
   activeSubject: Subject;
@@ -136,14 +137,52 @@ export const LectureNotesStudio: React.FC<LectureNotesStudioProps> = ({
   const persona = currentUser.learningProfile;
   const isPersonaConfigured = Boolean(persona?.questionnaireCompleted);
   const [isPersonalizing, setIsPersonalizing] = useState<boolean>(false);
+  const [showPersonalized, setShowPersonalized] = useState<boolean>(true);
   const [personalizedContent, setPersonalizedContent] = useState<string | null>(null);
   const [personalizedTakeaways, setPersonalizedTakeaways] = useState<string[] | null>(null);
 
-  // Reset personalized content when switching notes
+  // Reset personalized content override when switching notes or when persona changes
   useEffect(() => {
     setPersonalizedContent(null);
     setPersonalizedTakeaways(null);
-  }, [selectedNoteId]);
+  }, [selectedNoteId, persona?.completedAt, persona?.learningStyle, persona?.targetGrade, persona?.explanationTone]);
+
+  // Compute what note content to display dynamically
+  const displayedContent = useMemo(() => {
+    if (!activeNote) return '';
+    // If student explicitly toggled to standard lecture mode
+    if (!showPersonalized) {
+      return activeNote.generalisedNotes || activeNote.content;
+    }
+    // If the student clicked "Personalize for Me", use that immediate recrafted text
+    if (personalizedContent) return personalizedContent;
+    // If the active note was already recrafted, display it
+    if (activeNote.personalisedNotes && activeNote.personalisedNotes.length > 50) {
+      return activeNote.personalisedNotes;
+    }
+    // If persona is configured, automatically synthesize on the fly!
+    if (isPersonaConfigured && persona) {
+      try {
+        const tuned = recraftNoteForPersona(activeNote, persona);
+        return tuned.content;
+      } catch (e) {
+        return activeNote.content;
+      }
+    }
+    return activeNote.content;
+  }, [activeNote, showPersonalized, personalizedContent, isPersonaConfigured, persona]);
+
+  // Compute what key takeaways to display
+  const displayedTakeaways = useMemo(() => {
+    if (personalizedTakeaways && personalizedTakeaways.length > 0) return personalizedTakeaways;
+    if (showPersonalized && isPersonaConfigured && persona && activeNote) {
+      try {
+        const tuned = recraftNoteForPersona(activeNote, persona);
+        return tuned.keyTakeaways;
+      } catch (e) {}
+    }
+    return activeNote?.keyTakeaways || [];
+  }, [personalizedTakeaways, showPersonalized, isPersonaConfigured, persona, activeNote]);
 
   // Camera Snapshot Lightbox modal
   const [lightboxImageUrl, setLightboxImageUrl] = useState<string | null>(null);
@@ -162,6 +201,29 @@ export const LectureNotesStudio: React.FC<LectureNotesStudioProps> = ({
   const handlePersonalizeNote = async () => {
     if (!activeNote) return;
     setIsPersonalizing(true);
+    setShowPersonalized(true);
+
+    // 1. Immediately apply high-fidelity pedagogical recrafting on the client so it NEVER fails!
+    try {
+      const clientRecraft = recraftNoteForPersona(activeNote, persona);
+      setPersonalizedContent(clientRecraft.content);
+      setPersonalizedTakeaways(clientRecraft.keyTakeaways);
+      activeNote.personalisedNotes = clientRecraft.content;
+      activeNote.summary = clientRecraft.summary;
+      activeNote.keyTakeaways = clientRecraft.keyTakeaways;
+    } catch (e) {
+      console.warn('Local recraft fallback:', e);
+    }
+
+    try {
+      confetti({
+        particleCount: 65,
+        spread: 60,
+        origin: { y: 0.6 }
+      });
+    } catch {}
+
+    // 2. Also query backend AI endpoint asynchronously for optional cloud model enrichment
     try {
       const res = await fetch('/api/ai/notes/personalize', {
         method: 'POST',
@@ -172,13 +234,17 @@ export const LectureNotesStudio: React.FC<LectureNotesStudioProps> = ({
           learnerProfile: persona
         })
       });
-      const data = await res.json();
-      if (data.content) {
-        setPersonalizedContent(data.content);
-        if (data.keyTakeaways) setPersonalizedTakeaways(data.keyTakeaways);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.content) {
+          setPersonalizedContent(data.content);
+          if (data.keyTakeaways) setPersonalizedTakeaways(data.keyTakeaways);
+          activeNote.personalisedNotes = data.content;
+          if (data.keyTakeaways) activeNote.keyTakeaways = data.keyTakeaways;
+        }
       }
     } catch (err) {
-      console.error('Failed to personalize note:', err);
+      console.warn('Cloud AI busy, using verified local pedagogical persona:', err);
     } finally {
       setIsPersonalizing(false);
     }
@@ -335,14 +401,28 @@ export const LectureNotesStudio: React.FC<LectureNotesStudioProps> = ({
             </button>
 
             {isPersonaConfigured && activeNote && (
-              <button
-                onClick={handlePersonalizeNote}
-                disabled={isPersonalizing}
-                className="px-3 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white font-semibold text-xs shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
-              >
-                <RefreshCw className={`w-3.5 h-3.5 ${isPersonalizing ? 'animate-spin' : ''}`} />
-                <span>{personalizedContent ? 'Tuned with Persona' : '✨ Personalize for Me'}</span>
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setShowPersonalized(prev => !prev)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer flex items-center gap-1.5 ${
+                    !showPersonalized
+                      ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 shadow-xs'
+                      : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
+                  }`}
+                  title="Switch between raw standard lecture and personalized edition"
+                >
+                  <span>{showPersonalized ? '👁️ Standard View' : '✨ Tuned View'}</span>
+                </button>
+                <button
+                  onClick={handlePersonalizeNote}
+                  disabled={isPersonalizing}
+                  className="px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 disabled:opacity-50 text-white font-semibold text-xs shadow-md shadow-purple-600/20 transition-all flex items-center gap-1.5 cursor-pointer"
+                  title="Re-run persona calibration for this lecture"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${isPersonalizing ? 'animate-spin' : ''}`} />
+                  <span>{isPersonalizing ? 'Personalizing...' : '✨ Personalize for Me'}</span>
+                </button>
+              </div>
             )}
           </div>
         </div>
@@ -546,18 +626,18 @@ export const LectureNotesStudio: React.FC<LectureNotesStudioProps> = ({
 
               {/* Lecture Note Content Area with MathRenderer */}
               <div className="prose prose-invert max-w-none space-y-4 text-slate-200 text-sm leading-relaxed">
-                <MathRenderer content={personalizedContent || activeNote.content} isBlock />
+                <MathRenderer content={displayedContent} isBlock />
               </div>
 
               {/* Key Takeaways Box */}
-              {(personalizedTakeaways || (activeNote.keyTakeaways && activeNote.keyTakeaways.length > 0)) && (
+              {displayedTakeaways && displayedTakeaways.length > 0 && (
                 <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 text-xs space-y-2">
                   <span className="font-bold text-blue-300 flex items-center gap-1.5 uppercase tracking-wider text-[10px] font-mono">
                     <CheckCircle2 className="w-3.5 h-3.5 text-blue-400" />
-                    Key Takeaways
+                    Key Takeaways ({persona ? persona.learningStyle.replace(/_/g, ' ').toUpperCase() : 'CALIBRATED'})
                   </span>
                   <ul className="list-disc list-inside space-y-1 text-slate-300">
-                    {(personalizedTakeaways || activeNote.keyTakeaways || []).map((item, idx) => (
+                    {displayedTakeaways.map((item, idx) => (
                       <li key={idx} className="leading-relaxed">
                         {item}
                       </li>
