@@ -836,6 +836,35 @@ export const LectureNotesStudio: React.FC<LectureNotesStudioProps> = ({
                           <p className="text-[11px] text-slate-400 leading-relaxed">
                             <strong>Explanation:</strong> {q.explanation}
                           </p>
+
+                          {!isCorrect && (
+                            <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-t border-rose-900/50">
+                              <span className="text-[10px] text-rose-300 font-mono">
+                                Your choice: <span className="line-through">{q.options[userChoice] ?? 'None'}</span> • Correct: <span className="text-emerald-300 font-bold">{q.options[q.correctIndex]}</span>
+                              </span>
+                              <button
+                                onClick={() => {
+                                  setShowQuizModal(false);
+                                  onOpenSocraticTutor(
+                                    activeSubject.id,
+                                    `I took the lecture checkpoint on "${activeNote?.title || activeSubject.name}" and struggled with Question ${qIdx + 1}:
+
+Question: "${q.question}"
+My Answer: "${q.options[userChoice] ?? 'None'}"
+Correct Answer: "${q.options[q.correctIndex]}"
+Teacher's Explanation: "${q.explanation}"
+
+Please guide me step-by-step to understand why my answer was wrong and help me master this concept.`
+                                  );
+                                }}
+                                className="px-2.5 py-1.5 rounded-lg bg-gradient-to-r from-rose-900 to-indigo-900 hover:from-rose-800 hover:to-indigo-800 text-rose-200 border border-rose-700/80 text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs shrink-0"
+                              >
+                                <Sparkles className="w-3 h-3 text-amber-300" />
+                                <span>Ask AI Tutor Why I Was Wrong</span>
+                                <ArrowRight className="w-3 h-3" />
+                              </button>
+                            </div>
+                          )}
                         </div>
                       );
                     })}

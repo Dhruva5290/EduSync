@@ -58,6 +58,7 @@ interface SmartNotePlaygroundProps {
   onSummarizeNote: (noteId: string, content: string, learnerProfile?: LearnerPersona) => Promise<{ summary: string; keyTakeaways: string[] }>;
   onGenerateFlashcards: (noteId: string, content: string, learnerProfile?: LearnerPersona) => Promise<Flashcard[]>;
   onGenerateQuizFromNote: (noteId: string, content: string, title: string, learnerProfile?: LearnerPersona) => Promise<GeneratedQuiz>;
+  onOpenTutor?: (prompt: string, context?: any) => void;
   onGenerateNoteFromPrompt?: (payload: {
     prompt: string;
     depth: string;
@@ -183,6 +184,7 @@ export const SmartNotePlayground: React.FC<SmartNotePlaygroundProps> = ({
   onSummarizeNote,
   onGenerateFlashcards,
   onGenerateQuizFromNote,
+  onOpenTutor,
   onGenerateNoteFromPrompt
 }) => {
   // Merge subjects list
@@ -1252,6 +1254,7 @@ export const SmartNotePlayground: React.FC<SmartNotePlaygroundProps> = ({
         <InteractiveQuizModal
           quiz={activeQuiz}
           onClose={() => setActiveQuiz(null)}
+          onAskAITutor={onOpenTutor}
         />
       )}
 

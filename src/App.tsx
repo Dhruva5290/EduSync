@@ -1777,6 +1777,11 @@ export default function App() {
                   onGenerateFlashcards={handleGenerateFlashcards}
                   onGenerateQuizFromNote={handleGenerateQuizFromNote}
                   onGenerateNoteFromPrompt={handleGenerateNoteFromPrompt}
+                  onOpenTutor={(prompt, context) => {
+                    setTutorInitialPrompt(prompt);
+                    if (context) setTutorLectureContext(context);
+                    setActiveTab('tutor');
+                  }}
                 />
               )}
 
@@ -1802,6 +1807,12 @@ export default function App() {
         <InteractiveQuizModal
           quiz={activeQuizModal}
           onClose={() => setActiveQuizModal(null)}
+          onAskAITutor={(prompt, context) => {
+            setActiveQuizModal(null);
+            setTutorInitialPrompt(prompt);
+            if (context) setTutorLectureContext(context);
+            setActiveTab('tutor');
+          }}
         />
       )}
 

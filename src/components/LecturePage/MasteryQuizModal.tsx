@@ -287,6 +287,38 @@ export const MasteryQuizModal: React.FC<MasteryQuizModalProps> = ({
                           <strong>Common Misconception:</strong> {q.misconception}
                         </p>
                       )}
+                      {!q.isCorrect && (
+                        <div className="pt-2 mt-2 border-t border-rose-900/40 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                          <span className="text-[10px] text-rose-300 font-mono">
+                            Need targeted scaffolding for this mistake?
+                          </span>
+                          <button
+                            onClick={() => {
+                              onClose();
+                              onOpenTutorWithMistake(
+                                `I missed Question ${idx + 1} on "${q.conceptTag}" in lecture "${lectureTitle}":
+Question: "${q.question}"
+Teacher's Explanation: "${q.explanation}"
+${q.misconception ? `Misconception: ${q.misconception}` : ''}
+
+Can you walk me through this concept step-by-step using interactive Socratic questioning?`,
+                                {
+                                  lectureId,
+                                  lectureTitle,
+                                  weakConcepts: [q.conceptTag],
+                                  quizMistake: q,
+                                  timestampRef: q.timestampRef
+                                }
+                              );
+                            }}
+                            className="px-2.5 py-1 rounded bg-gradient-to-r from-rose-900/90 to-indigo-900/90 hover:from-rose-800 hover:to-indigo-800 text-rose-200 border border-rose-700/80 text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs shrink-0"
+                          >
+                            <Brain className="w-3 h-3 text-rose-300" />
+                            <span>Ask AI Tutor Why I Was Wrong</span>
+                            <ArrowRight className="w-3 h-3" />
+                          </button>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
