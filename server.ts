@@ -2068,7 +2068,7 @@ If $d = 0 \\implies$ Lines are coplanar and intersect.`,
     const recentLectures = db.lectures || [];
 
     // Unfinished lectures
-    const studentProgressMap = db.lectureProgress[studentId] || {};
+    const studentProgressMap = db.lectureProgress[studentId] || db.lectureProgress['student-1'] || db.lectureProgress['student-g11-1'] || {};
     const unfinishedLectures = recentLectures
       .filter(l => {
         const prog = studentProgressMap[l.id];
@@ -2078,7 +2078,7 @@ If $d = 0 \\implies$ Lines are coplanar and intersect.`,
         const prog = studentProgressMap[l.id];
         return {
           lecture: l,
-          lastTimestamp: prog?.lastTimestamp || '12:48',
+          lastTimestamp: prog?.lastTimestamp || '21:05',
           progressPercent: prog?.progressPercent || 45
         };
       });
@@ -2087,7 +2087,7 @@ If $d = 0 \\implies$ Lines are coplanar and intersect.`,
     const assignments = [
       {
         id: 'asg-hc-verma-5',
-        title: 'HC Verma Ch 5: Problems 4-9 on Connected Pulleys',
+        title: 'HC Verma Ch 5: Problems 4-9 on Connected Pulleys & Inclined Planes',
         subjectName: 'Physics 11',
         dueDate: 'Friday at 17:00 IST',
         status: 'pending' as const,
@@ -2104,7 +2104,13 @@ If $d = 0 \\implies$ Lines are coplanar and intersect.`,
     ];
 
     // Topics that need revision (based on student mastery)
-    const masteryList = db.conceptMastery[studentId] || [];
+    const masteryList = (db.conceptMastery[studentId] && db.conceptMastery[studentId].length > 0)
+      ? db.conceptMastery[studentId]
+      : (db.conceptMastery['student-1'] || db.conceptMastery['student-g11-1'] || [
+          { concept: "Newton's Second Law & Acceleration Distinction", needsRevision: true, masteryScore: 62 },
+          { concept: "Air Resistance & Parabolic Trajectory Distortion", needsRevision: true, masteryScore: 58 }
+        ]);
+
     const topicsNeedingRevision = masteryList
       .filter(m => m.needsRevision)
       .map(m => ({

@@ -302,17 +302,38 @@ export function usePersonalizedNotesRealtime(
 function resolveSubjectIdFromRaw(raw: any): string {
   const meta = raw.metadata || {};
   const explicit = (raw.subject_id || raw.subjectId || meta.subject_id || meta.subjectId || '').trim();
-  const validIds = ['subj-phy-11', 'subj-che-11', 'subj-mat-11', 'subj-phy-12', 'subj-che-12', 'subj-mat-12'];
+  const validIds = [
+    'subj-phy-11', 'subj-che-11', 'subj-mat-11',
+    'subj-phy-12', 'subj-che-12', 'subj-mat-12',
+    'subj-phy', 'subj-che', 'subj-mat', 'subj-misc',
+    'others', 'subj-others', 'subj-cpc', 'subj-calc',
+    'subj-eme', 'subj-ess', 'subj-ethics'
+  ];
   if (validIds.includes(explicit)) return explicit;
 
-  const text = `${explicit} ${meta.subject || ''} ${meta.course || ''} ${raw.title || ''}`.toLowerCase();
+  const text = `${explicit} ${meta.subject || ''} ${meta.course || ''} ${raw.title || ''} ${raw.generalised_notes || ''}`.toLowerCase();
   const isGrade12 = text.includes('12') || text.includes('xii');
 
-  if (text.includes('chem') || text.includes('che')) return isGrade12 ? 'subj-che-12' : 'subj-che-11';
-  if (text.includes('math') || text.includes('mat') || text.includes('calc')) return isGrade12 ? 'subj-mat-12' : 'subj-mat-11';
-  if (text.includes('phy')) return isGrade12 ? 'subj-phy-12' : 'subj-phy-11';
+  if (
+    text.includes('nda') ||
+    text.includes('defense') ||
+    text.includes('defence') ||
+    text.includes('military') ||
+    text.includes('ssb') ||
+    text.includes('general') ||
+    text.includes('aptitude') ||
+    text.includes('misc')
+  ) {
+    return 'subj-misc';
+  }
 
-  return 'subj-phy-11';
+  if (text.includes('chem') || text.includes('che')) return isGrade12 ? 'subj-che-12' : 'subj-che';
+  if (text.includes('math') || text.includes('mat') || text.includes('calc')) return isGrade12 ? 'subj-mat-12' : 'subj-mat';
+  if (text.includes('phy')) return isGrade12 ? 'subj-phy-12' : 'subj-phy';
+  if (text.includes('c programming') || text.includes('pointer')) return 'subj-cpc';
+  if (text.includes('mechanic') || text.includes('eme')) return 'subj-eme';
+
+  return 'subj-misc';
 }
 
 export const subscribeToVisionNotes = (
@@ -342,6 +363,15 @@ export const subscribeToVisionNotes = (
       ? raw.doubts_detected
       : [];
 
+    const rawTags: string[] = Array.isArray(meta.tags) ? [...meta.tags] : ['VisionNote', 'ClassSarthi'];
+    const textLower = `${raw.title || ''} ${noteContent}`.toLowerCase();
+    if (
+      (textLower.includes('nda') || textLower.includes('defense') || textLower.includes('defence') || textLower.includes('ssb')) &&
+      !rawTags.some(t => t.toLowerCase().includes('nda'))
+    ) {
+      rawTags.unshift('NDA', 'DefenceStudies');
+    }
+
     const note: StudentNote = {
       id: raw.id || `note-vn-${Date.now()}`,
       studentId,
@@ -350,7 +380,7 @@ export const subscribeToVisionNotes = (
       content: noteContent,
       cameraSnapshotUrl: meta.camera_snapshot_url || meta.image_url || raw.camera_snapshot_url,
       doubtsDetected: doubts,
-      tags: Array.isArray(meta.tags) ? meta.tags : ['VisionNote', 'ClassSarthi'],
+      tags: Array.from(new Set(rawTags)),
       lastModified: raw.updated_at || raw.created_at || new Date().toISOString(),
       isPinned: true,
       source: 'visionnote',
@@ -457,6 +487,15 @@ export const fetchVisionNotesFromSupabase = async (options?: {
         ? raw.doubts_detected
         : [];
 
+      const rawTags: string[] = Array.isArray(meta.tags) ? [...meta.tags] : ['VisionNote', 'ClassSarthi'];
+      const textLower = `${raw.title || ''} ${noteContent}`.toLowerCase();
+      if (
+        (textLower.includes('nda') || textLower.includes('defense') || textLower.includes('defence') || textLower.includes('ssb')) &&
+        !rawTags.some(t => t.toLowerCase().includes('nda'))
+      ) {
+        rawTags.unshift('NDA', 'DefenceStudies');
+      }
+
       return {
         id: raw.id,
         studentId,
@@ -465,18 +504,18 @@ export const fetchVisionNotesFromSupabase = async (options?: {
         content: noteContent,
         cameraSnapshotUrl: meta.camera_snapshot_url || meta.image_url || raw.camera_snapshot_url,
         doubtsDetected: doubts,
-        tags: Array.isArray(meta.tags) ? meta.tags : ['VisionNote', 'ClassSarthi'],
+        tags: Array.from(new Set(rawTags)),
         lastModified: raw.updated_at || raw.created_at || new Date().toISOString(),
         isPinned: true,
         source: 'visionnote',
-        summary: raw.summary || meta.summary,
+        summary: raw.summary || meta.summary || (raw.generalised_notes ? 'Transcribed lecture notes with AI cognitive scaffolding.' : undefined),
         keyTakeaways: meta.key_takeaways || []
       };
     });
 
     if (options?.studentId && !isUuid(options.studentId)) {
       const target = options.studentId;
-      notes = notes.filter(n => n.studentId === target || n.studentId === 'student-1' || !n.studentId);
+      notes = notes.filter(n => n.studentId === target || n.studentId === 'student-1' || !n.studentId || n.source === 'visionnote');
     }
 
     if (options?.subjectId) {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   User,
   Subject,
@@ -72,7 +72,9 @@ import {
   Building,
   LogOut,
   Camera,
-  BrainCircuit
+  BrainCircuit,
+  RotateCcw,
+  Trash2
 } from 'lucide-react';
 
 export default function App() {
@@ -139,13 +141,32 @@ export default function App() {
   const [assignments, setAssignments] = useState<Assignment[]>(FAKE_ASSIGNMENTS);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [notes, setNotes] = useState<StudentNote[]>(() => {
+    const deletedIds: string[] = (() => {
+      try {
+        return JSON.parse(localStorage.getItem('edusync_deleted_note_ids') || '[]');
+      } catch {
+        return [];
+      }
+    })();
     const saved = localStorage.getItem('edusync_notes');
+    let baseNotes: StudentNote[] = [];
     try {
-      return saved ? JSON.parse(saved) : FAKE_NOTES;
+      baseNotes = saved ? JSON.parse(saved) : FAKE_NOTES;
     } catch {
-      return FAKE_NOTES;
+      baseNotes = FAKE_NOTES;
     }
+    // Ensure standard notes (including NDA Selection Process) are present if not explicitly deleted
+    for (const fn of FAKE_NOTES) {
+      if (!baseNotes.some(b => b.id === fn.id)) {
+        baseNotes.push(fn);
+      }
+    }
+    return baseNotes.filter(n => !deletedIds.includes(n.id));
   });
+
+  // Undo tracking for note deletion
+  const [lastDeletedNote, setLastDeletedNote] = useState<StudentNote | null>(null);
+  const undoTimeoutRef = useRef<any>(null);
   const [analytics, setAnalytics] = useState<ClassAnalytics | null>(FAKE_ANALYTICS['subj-phy']);
 
   // Master Multi-Course Semester Datasets
@@ -372,9 +393,21 @@ export default function App() {
       fetchVisionNotesFromSupabase().then(({ notes: cloudNotes, error }) => {
         if (!error && cloudNotes && cloudNotes.length > 0) {
           setNotes((prevNotes) => {
-            const merged = [...cloudNotes];
+            const deletedIds: string[] = (() => {
+              try {
+                return JSON.parse(localStorage.getItem('edusync_deleted_note_ids') || '[]');
+              } catch {
+                return [];
+              }
+            })();
+
+            // Filter out user-deleted notes
+            const eligibleCloud = cloudNotes.filter(n => !deletedIds.includes(n.id));
+
+            // Merge cloud notes and existing notes without overwriting
+            const merged = [...eligibleCloud];
             for (const prev of prevNotes) {
-              if (!merged.some(m => m.id === prev.id)) {
+              if (!merged.some(m => m.id === prev.id) && !deletedIds.includes(prev.id)) {
                 merged.push(prev);
               }
             }
@@ -389,6 +422,15 @@ export default function App() {
 
     // 2. Real-time listener for incoming notes pushed while user is on page
     const unsubscribe = subscribeToVisionNotes((incomingNote) => {
+      const deletedIds: string[] = (() => {
+        try {
+          return JSON.parse(localStorage.getItem('edusync_deleted_note_ids') || '[]');
+        } catch {
+          return [];
+        }
+      })();
+      if (deletedIds.includes(incomingNote.id)) return;
+
       const isTarget = !incomingNote.studentId ||
         incomingNote.studentId === currentUser.id ||
         incomingNote.studentId === currentUser.institutionalId ||
@@ -744,22 +786,67 @@ export default function App() {
     return note as StudentNote;
   };
 
-  // 10. Delete Note
+  // 10. Delete Note with Persistent Blacklist & Undo
   const handleDeleteNote = async (noteId: string) => {
+    const noteToDelete = notes.find(n => n.id === noteId);
+    if (!noteToDelete) return;
+
+    // 1. Mark in user-deleted blacklist
+    try {
+      const deletedIds: string[] = JSON.parse(localStorage.getItem('edusync_deleted_note_ids') || '[]');
+      if (!deletedIds.includes(noteId)) {
+        deletedIds.push(noteId);
+        localStorage.setItem('edusync_deleted_note_ids', JSON.stringify(deletedIds));
+      }
+    } catch (e) {}
+
+    // 2. Remove from active notes state and persist in localStorage
+    const updated = notes.filter(n => n.id !== noteId);
+    setNotes(updated);
+    try {
+      localStorage.setItem('edusync_notes', JSON.stringify(updated));
+    } catch (e) {}
+
+    // 3. Set up Undo notification state
+    setLastDeletedNote(noteToDelete);
+    if (undoTimeoutRef.current) clearTimeout(undoTimeoutRef.current);
+    undoTimeoutRef.current = setTimeout(() => {
+      setLastDeletedNote(null);
+    }, 12000);
+
+    // 4. Background server deletion
     try {
       const token = authToken || localStorage.getItem('edusync_token');
       const headers: Record<string, string> = {};
       if (token) headers['Authorization'] = `Bearer ${token}`;
       if (currentUser?.id) headers['x-user-id'] = currentUser.id;
+      fetch(`/api/notes/${noteId}`, { method: 'DELETE', headers }).catch(() => {});
+    } catch (err) {}
+  };
 
-      const res = await fetch(`/api/notes/${noteId}`, { method: 'DELETE', headers });
-      if (res.ok) {
-        setNotes(prev => prev.filter(n => n.id !== noteId));
-        showToast('Note deleted');
-      }
-    } catch (err) {
-      console.error('Error deleting note:', err);
-    }
+  const handleUndoDeleteNote = () => {
+    if (!lastDeletedNote) return;
+    const restored = lastDeletedNote;
+
+    // 1. Remove from user-deleted blacklist
+    try {
+      const deletedIds: string[] = JSON.parse(localStorage.getItem('edusync_deleted_note_ids') || '[]');
+      const filtered = deletedIds.filter(id => id !== restored.id);
+      localStorage.setItem('edusync_deleted_note_ids', JSON.stringify(filtered));
+    } catch (e) {}
+
+    // 2. Restore to active notes state and localStorage
+    setNotes(prev => {
+      const exists = prev.some(n => n.id === restored.id);
+      const nextNotes = exists ? prev : [restored, ...prev];
+      try {
+        localStorage.setItem('edusync_notes', JSON.stringify(nextNotes));
+      } catch (e) {}
+      return nextNotes;
+    });
+
+    setLastDeletedNote(null);
+    showToast(`Restored "${restored.title}"!`, 'success');
   };
 
   // 11. AI Summarize Note
@@ -1838,6 +1925,35 @@ export default function App() {
         onImportNote={handleImportVNNote}
         onShowToast={(msg, type) => showToast(msg, type || 'success')}
       />
+
+      {/* Floating Undo Notification for Deleted Note */}
+      {lastDeletedNote && (
+        <div className="fixed bottom-20 right-5 z-50 animate-in fade-in slide-in-from-bottom-4 duration-200">
+          <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-900/95 text-white text-xs font-semibold shadow-2xl border border-amber-500/70 backdrop-blur-md">
+            <div className="flex items-center gap-2">
+              <Trash2 className="w-4 h-4 text-amber-400 shrink-0" />
+              <span className="text-slate-200">
+                Deleted <span className="text-white font-bold max-w-[200px] truncate inline-block align-bottom">"{lastDeletedNote.title}"</span>
+              </span>
+            </div>
+            <button
+              id="undo-deleted-note-btn"
+              onClick={handleUndoDeleteNote}
+              className="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs rounded-lg transition-all shadow-md cursor-pointer flex items-center gap-1.5"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Undo</span>
+            </button>
+            <button
+              onClick={() => setLastDeletedNote(null)}
+              className="p-1 text-slate-400 hover:text-white rounded-lg transition-colors cursor-pointer"
+              title="Dismiss"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Floating Notification Toast */}
       {toastMessage && (

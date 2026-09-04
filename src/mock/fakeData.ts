@@ -373,6 +373,48 @@ export const FAKE_NOTES: StudentNote[] = [
       'Uncertainties in independent parameters add in quadrature through partial derivatives.',
       'Power terms amplify relative error by their exponent coefficient.'
     ]
+  },
+  {
+    id: '8def9d36-cf49-4821-a8ab-14711d1f006f',
+    studentId: 'student-1',
+    subjectId: 'subj-misc',
+    title: 'NDA Selection Process: Written Exam, SSB Interview & Medicals',
+    content: `# NDA Selection Process: Comprehensive Lecture Notes\n\n## 1. Executive Summary\nNational Defence Academy (NDA) provides direct admission into the officer cadet cadre for 4 years of comprehensive studying and training (first 3 years joint tri-service training at NDA Khadakwasla, Pune, and final year at respective branch academies: IMA Dehradun for Army, INA Ezhimala for Navy, AFA Dundigal for Air Force).\n\n## 2. Defence Forces Rank Structure\nRanks are divided into two primary cadres:\n1. **Commissioned Officers Cadre** (Starts from Lieutenant in Army, Sub-Lieutenant in Navy, Flying Officer in Air Force)\n2. **JCO / NCO / OR Cadre** (Junior Commissioned Officers, Non-Commissioned Officers, and Other Ranks starting from Sepoy)\n- *Advantage of NDA*: Direct entry into the Commissioned Officer cadet after Class 12 without spending decades climbing from Sepoy.\n\n## 3. The 3-Step Selection Process\n### Step 1: UPSC Written Examination (900 Marks)\n- **Paper 1: Mathematics** (120 questions, 300 marks, duration 2.5 hrs). Marking: +2.5 for correct, -0.83 for incorrect.\n- **Paper 2: General Ability Test (GAT)** (150 questions, 600 marks, duration 2.5 hrs). Marking: +4.0 for correct, -1.33 for incorrect. Includes English, Physics, Chemistry, General Science, History, Geography, and Current Affairs.\n- *Key Strategy*: Focus on accuracy rather than attempting all 120 math questions. Solving 50-60 high-accuracy questions reliably clears the cut-off.\n\n### Step 2: 5-Day SSB (Services Selection Board) Interview (900 Marks)\n- **Stage 1 (Screening)**:\n  - OIR (Officer Intelligence Rating Test)\n  - PPDT (Picture Perception & Description Test with Group Discussion)\n- **Stage 2 (4 Days for Screened-in Candidates)**:\n  - Psychology Tests: TAT (Thematic Apperception), WAT (Word Association), SRT (Situation Reaction), SD (Self Description)\n  - GTO Tasks: Group Discussion, Progressive Group Task (PGT), Half Group Task (HGT), Individual Obstacles, Command Task\n  - Personal Interview by Interviewing Officer (IO)\n  - Final Board Conference with panel of assessors\n\n### Step 3: Medical Board Examination\n- 6-7 day comprehensive medical evaluation at designated Military Hospitals (specialized standards for Army, Navy, and Air Force including eyesight, audiometry, surgical, and dental points).\n\n## 4. Merit List Formulation\n- Total score out of 1800 marks (900 Written + 900 SSB).\n- Final All India Rank (AIR) list published by UPSC for final academy joining letters.`,
+    tags: ['NDA', 'DefenceStudies', 'SSB', 'UPSC', 'ExamPrep', 'VisionNote'],
+    lastModified: '2026-09-04T12:59:41.998Z',
+    isPinned: true,
+    source: 'visionnote',
+    doubtsDetected: [
+      'What are the minimum qualifying sectional cut-off marks for the Mathematics paper in NDA written examination?',
+      'How does the 5-day SSB interview evaluate the 15 Officer-Like Qualities (OLQs)?'
+    ],
+    summary: 'Comprehensive breakdown of the 3-stage National Defence Academy selection: Written Examination (Maths & GAT), 5-day SSB interview (PPDT, OIR, GTO), and medical board.',
+    keyTakeaways: [
+      'NDA gives direct officer cadet commission, bypassing decades needed to rise from lower ranks.',
+      'Written examination consists of 2 papers (Maths 300 marks + GAT 600 marks) totaling 900 marks.',
+      'SSB is a 5-day assessment measuring Officer-Like Qualities through Psychological, GTO, and Interview tasks.',
+      'Final Merit List is compiled out of 1800 aggregate marks.'
+    ]
+  },
+  {
+    id: 'd27fec75-e928-4a56-ad11-2300a0faf566',
+    studentId: 'student-1',
+    subjectId: 'subj-phy',
+    title: 'Physics 101: Projectile Motion & 2D Kinematics Decomposition',
+    content: `# Projectile Motion & 2D Kinematics Decomposition\n\n## 1. Classical Galileo Trajectory Axiom\nA projectile moving under uniform gravity experiences independent orthogonal motions:\n$$\\vec{r}(t) = \\left( v_0 \\cos\\theta \\cdot t \\right) \\hat{i} + \\left( v_0 \\sin\\theta \\cdot t - \\frac{1}{2}g t^2 \\right) \\hat{j}$$\n\n## 2. Invariant Trajectory Parabola Equation\nEliminating time $t = \\frac{x}{v_0 \\cos\\theta}$:\n$$y = x \\tan\\theta - \\frac{g x^2}{2 v_0^2 \\cos^2\\theta} = x \\tan\\theta \\left(1 - \\frac{x}{R}\\right)$$\nWhere Range $R = \\frac{v_0^2 \\sin(2\\theta)}{g}$.\n\n## 3. Time of Flight & Maximum Height\n$$T = \\frac{2 v_0 \\sin\\theta}{g}, \\quad H_{max} = \\frac{v_0^2 \\sin^2\\theta}{2g}$$\nFor maximum range on flat terrain, $\\theta = 45^\\circ$.`,
+    tags: ['Physics', 'Kinematics', 'ProjectileMotion', 'Galileo', '2DMotion', 'VisionNote'],
+    lastModified: '2026-09-04T12:25:43.105Z',
+    isPinned: true,
+    source: 'visionnote',
+    doubtsDetected: [
+      'How does air resistance distort the ideal parabolic trajectory into an asymmetrical curve?',
+      'Why is acceleration in the horizontal x-direction strictly zero in ideal projectile motion?'
+    ],
+    summary: 'Kinematic decomposition of 2D projectile trajectory, Cartesian parabola formulation, range maximization, and flight time derivations.',
+    keyTakeaways: [
+      'Horizontal velocity component remains invariant throughout flight in the absence of air drag.',
+      'Trajectory equation in terms of Range is y = x tan(theta) * (1 - x/R).'
+    ]
   }
 ];
 
