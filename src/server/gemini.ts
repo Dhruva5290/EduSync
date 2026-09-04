@@ -1405,153 +1405,76 @@ export async function generateMasteryQuizAI(
   const sanitizedTitle = title || 'Lecture Mastery Checkpoint';
   const targetCount = Math.max(5, Math.min(10, count));
 
-  const fallbackQuestions: QuizQuestion[] = [
-    {
-      id: 'q-easy-1',
-      question: `What is the primary governing principle or foundational definition established in "${sanitizedTitle}"?`,
-      options: [
-        'The conservation of invariant state across all boundary transformations',
-        'Arbitrary stochastic fluctuation without deterministic conservation',
-        'Complete absence of mathematical proportionality or geometric symmetry',
-        'Instantaneous decay of energy without external force interaction'
-      ],
-      correctIndex: 0,
-      explanation: 'The fundamental thesis of the lecture relies on deterministic invariant conservation across state boundaries.',
-      topic: 'Core Definition',
-      difficulty: 'easy'
-    },
-    {
-      id: 'q-easy-2',
-      question: 'Which relationship accurately captures the direct proportionality highlighted in the lecture notes?',
-      options: [
-        'Response magnitude scales linearly with the governing potential gradient',
-        'State velocity is inversely exponential to time regardless of mass',
-        'System output is constant and entirely independent of driving inputs',
-        'Entropy reduces to absolute zero instantaneously under ambient pressure'
-      ],
-      correctIndex: 0,
-      explanation: 'Direct linear/differential proportionality relates the driving potential gradient to response flux.',
-      topic: 'Foundational Formulas',
-      difficulty: 'easy'
-    },
-    {
-      id: 'q-mod-1',
-      question: 'When evaluating the intermediate derivation steps, what critical constraint must be enforced?',
-      options: [
-        'Boundary conditions must satisfy continuous first-order differentiability',
-        'Coordinate axes must be rotated randomly after each integration step',
-        'Higher-order terms must be ignored without justifying asymptotic limits',
-        'Temperature and pressure invariants must be assumed to diverge to infinity'
-      ],
-      correctIndex: 0,
-      explanation: 'Rigorous derivation requires continuous differentiability at boundary interfaces to preserve field conservation.',
-      topic: 'Derivation Mechanics',
-      difficulty: 'moderate'
-    },
-    {
-      id: 'q-mod-2',
-      question: 'If the initial parameter magnitude is doubled under constant system resistance, how does the dissipated work scale?',
-      options: [
-        'It scales quadratically by a factor of 4',
-        'It scales linearly by a factor of 2',
-        'It remains strictly invariant and unchanged',
-        'It decreases inversely by a factor of 0.5'
-      ],
-      correctIndex: 0,
-      explanation: 'Work and power dissipation scale quadratically ($$P \\propto V^2$$ or $$W \\propto v^2$$) in conservative second-order systems.',
-      topic: 'Scaling & Proportionality',
-      difficulty: 'moderate'
-    },
-    {
-      id: 'q-hard-1',
-      question: 'Consider an edge case where dissipative frictional resistance approaches zero. What singularity or asymptotic behavior occurs?',
-      options: [
-        'The system exhibits undamped resonance with perpetual harmonic oscillation',
-        'All kinetic states collapse to a trivial null vector instantaneously',
-        'The conservation equations become invalid due to negative entropy',
-        'The phase trajectory diverges unconditionally to infinite imaginary frequencies'
-      ],
-      correctIndex: 0,
-      explanation: 'Zero damping reduces the characteristic differential equation to pure imaginary eigenvalues, yielding perpetual harmonic oscillation.',
-      topic: 'Asymptotic Limiting Cases',
-      difficulty: 'hard'
-    },
-    {
-      id: 'q-hard-2',
-      question: 'Why does applying the standard approximation fail when the boundary radius approaches the microscopic mean free path?',
-      options: [
-        'Continuum field assumptions break down, requiring discrete statistical particle treatments',
-        'Differential operators cannot be applied to three-dimensional Euclidean vectors',
-        'The conservation of momentum is violated in non-relativistic regimes',
-        'Planck constant quantum effects supersede classical calculus entirely at all temperatures'
-      ],
-      correctIndex: 0,
-      explanation: 'When characteristic dimensions approach the mean free path (Knudsen regime), continuum mechanics assumptions break down.',
-      topic: 'Boundary Violations & Constraints',
-      difficulty: 'hard'
-    }
-  ];
-
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    return {
-      title: `Mastery Quiz: ${sanitizedTitle}`,
-      questions: fallbackQuestions.slice(0, targetCount)
-    };
+    throw new Error('GEMINI_API_KEY is not configured in the server environment.');
   }
-
   const ai = getAI();
-  try {
-    const personaGuidance = buildPersonaPromptInstructions(learnerProfile);
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: `Generate exactly ${targetCount} high-yield multiple-choice questions for an academic lecture mastery quiz based strictly on the following lecture notes:\n\nTITLE: ${sanitizedTitle}\n\nCONTENT:\n${noteContent}\n\nREQUIREMENTS:
-- Include a balanced distribution of difficulties: 2 Easy (definitions/core formulas), 2-3 Moderate (derivations/applications), 2 Hard (edge cases, tricky constraints, cross-topic implications).
-- Each question must have exactly 4 options, a 0-based correctIndex, a conceptual explanation, a concise topic label, and a difficulty ('easy' | 'moderate' | 'hard').`,
-      config: {
-        systemInstruction: `You are an elite university STEM exam author. Create rigorous, pedagogical, diagnostic multiple-choice questions that test conceptual understanding rather than rote memorization.\n\n${personaGuidance}`,
-        responseMimeType: 'application/json',
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            title: { type: Type.STRING },
-            questions: {
-              type: Type.ARRAY,
-              items: {
-                type: Type.OBJECT,
-                properties: {
-                  id: { type: Type.STRING },
-                  question: { type: Type.STRING },
-                  options: {
-                    type: Type.ARRAY,
-                    items: { type: Type.STRING }
-                  },
-                  correctIndex: { type: Type.INTEGER },
-                  explanation: { type: Type.STRING },
-                  topic: { type: Type.STRING },
-                  difficulty: { type: Type.STRING, enum: ['easy', 'moderate', 'hard'] }
-                },
-                required: ['id', 'question', 'options', 'correctIndex', 'explanation', 'topic', 'difficulty']
-              }
-            }
-          },
-          required: ['title', 'questions']
-        }
-      }
-    });
+  const personaGuidance = buildPersonaPromptInstructions(learnerProfile);
 
-    const parsed = JSON.parse(response.text || '{}');
-    if (Array.isArray(parsed.questions) && parsed.questions.length >= 3) {
-      return {
-        title: parsed.title || `Mastery Quiz: ${sanitizedTitle}`,
-        questions: parsed.questions
-      };
+  // Try candidate models in order: gemini-3.6-flash is primary, followed by fallbacks
+  const candidateModels = ['gemini-3.6-flash', 'gemini-2.5-flash', 'gemini-1.5-flash'];
+
+  for (const modelName of candidateModels) {
+    try {
+      const response = await ai.models.generateContent({
+        model: modelName,
+        contents: `Generate exactly ${targetCount} high-yield multiple-choice questions for an academic lecture mastery quiz based strictly on the following lecture notes:\n\nTITLE: ${sanitizedTitle}\n\nCONTENT:\n${noteContent}\n\nREQUIREMENTS:
+- Include a balanced distribution of difficulties: 2 Easy (core definitions, factual benchmarks), 2-3 Moderate (application, operational rules, standard processes), 2 Hard (edge cases, tricky constraints, exceptions).
+- Each question must have exactly 4 options, a 0-based correctIndex, a conceptual explanation, a concise topic label, and a difficulty ('easy' | 'moderate' | 'hard').`,
+        config: {
+          systemInstruction: `You are an elite university exam author and tutor. Generate rigorous, diagnostic multiple-choice questions strictly from the provided lecture text to test conceptual and practical mastery rather than trivial trivia.\n\n${personaGuidance}`,
+          responseMimeType: 'application/json',
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              title: { type: Type.STRING },
+              questions: {
+                type: Type.ARRAY,
+                items: {
+                  type: Type.OBJECT,
+                  properties: {
+                    id: { type: Type.STRING },
+                    question: { type: Type.STRING },
+                    options: {
+                      type: Type.ARRAY,
+                      items: { type: Type.STRING }
+                    },
+                    correctIndex: { type: Type.INTEGER },
+                    explanation: { type: Type.STRING },
+                    topic: { type: Type.STRING },
+                    difficulty: { type: Type.STRING, enum: ['easy', 'moderate', 'hard'] }
+                  },
+                  required: ['id', 'question', 'options', 'correctIndex', 'explanation', 'topic', 'difficulty']
+                }
+              }
+            },
+            required: ['title', 'questions']
+          }
+        }
+      });
+
+      const parsed = JSON.parse(response.text || '{}');
+      if (Array.isArray(parsed.questions) && parsed.questions.length >= 3) {
+        return {
+          title: parsed.title || `Mastery Quiz: ${sanitizedTitle}`,
+          questions: parsed.questions.map((q: any, idx: number) => ({
+            id: q.id || `ai-q-${idx + 1}`,
+            question: q.question,
+            options: q.options,
+            correctIndex: typeof q.correctIndex === 'number' ? q.correctIndex : 0,
+            explanation: q.explanation || 'Based on lecture notes.',
+            topic: q.topic || sanitizedTitle,
+            difficulty: (['easy', 'moderate', 'hard'].includes(q.difficulty?.toLowerCase()) ? q.difficulty.toLowerCase() : 'moderate') as 'easy' | 'moderate' | 'hard'
+          }))
+        };
+      }
+    } catch (err) {
+      console.warn(`Gemini model ${modelName} failed for mastery quiz, trying next candidate:`, err);
     }
-    return { title: `Mastery Quiz: ${sanitizedTitle}`, questions: fallbackQuestions.slice(0, targetCount) };
-  } catch (err) {
-    console.warn('Error calling Gemini for mastery quiz, using pedagogical fallback:', err);
-    return { title: `Mastery Quiz: ${sanitizedTitle}`, questions: fallbackQuestions.slice(0, targetCount) };
   }
+
+  throw new Error('Gemini AI was unable to generate quiz questions from the provided note at this time.');
 }
 
 /**
