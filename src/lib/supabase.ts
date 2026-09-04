@@ -26,12 +26,12 @@ export interface SupabaseNoteRow {
 export const getSupabaseUrl = (): string =>
   (import.meta as any).env?.VITE_SUPABASE_URL ||
   (typeof process !== 'undefined' ? process.env?.VITE_SUPABASE_URL || process.env?.SUPABASE_URL : '') ||
-  '';
+  'https://zuqtefefgnsqxmzetlqe.supabase.co';
 
 export const getSupabaseAnonKey = (): string =>
   (import.meta as any).env?.VITE_SUPABASE_ANON_KEY ||
   (typeof process !== 'undefined' ? process.env?.VITE_SUPABASE_ANON_KEY || process.env?.SUPABASE_ANON_KEY : '') ||
-  '';
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1cXRlZmVmZ25zcXhtemV0bHFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg0MTYzODUsImV4cCI6MjEwMzk5MjM4NX0.GI_PspNcrW6fFDWPi7cibrAFAK2vN_yfadDxhr5Tuz0';
 
 export const isSupabaseConfigured = (): boolean => {
   const url = getSupabaseUrl();

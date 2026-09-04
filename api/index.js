@@ -21790,8 +21790,8 @@ if (shouldShowDeprecationWarning()) console.warn("\u26A0\uFE0F  Node.js 20 and b
 var _sbClient = null;
 function getClient() {
   if (_sbClient) return _sbClient;
-  const url = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || "";
-  const key = process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || "";
+  const url = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || "https://zuqtefefgnsqxmzetlqe.supabase.co";
+  const key = process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1cXRlZmVmZ25zcXhtemV0bHFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg0MTYzODUsImV4cCI6MjEwMzk5MjM4NX0.GI_PspNcrW6fFDWPi7cibrAFAK2vN_yfadDxhr5Tuz0";
   if (!url || !key) return null;
   _sbClient = createClient(url, key);
   return _sbClient;
