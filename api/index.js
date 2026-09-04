@@ -74951,7 +74951,8 @@ async function handler(req, res) {
     return;
   }
   let path3 = req.url || "";
-  const matched = req.headers["x-matched-path"] || req.headers["x-now-route-matches"];
+  const headers = req.headers || {};
+  const matched = headers["x-matched-path"] || headers["x-now-route-matches"];
   if (typeof matched === "string") path3 = matched;
   path3 = path3.split("?")[0];
   try {
@@ -75129,7 +75130,13 @@ async function handler(req, res) {
           parts: [{ text: String(h2.text) }]
         }));
         const systemInstruction = "You are EduSync AI, a helpful, intelligent, natural, and thoughtful AI academic tutor. Answer the student's question clearly, accurately, and dynamically. Use Markdown formatting and LaTeX for formulas ($...$ or $$...$$).";
-        const candidateModels = ["gemini-3.6-flash", "gemini-2.5-flash", "gemini-2.0-flash"];
+        const candidateModels = [
+          "gemini-3.5-flash",
+          "gemini-3.5-flash-lite",
+          "gemini-3.6-flash",
+          "gemini-3.7-flash",
+          "gemini-3.8-flash"
+        ];
         let reply = "";
         for (const model of candidateModels) {
           try {
