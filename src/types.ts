@@ -226,13 +226,14 @@ export interface LectureQuizAnalysis {
 
 export interface StudentNote {
   id: string;
-  studentId: string;
+  studentId?: string;
   subjectId: string;
   title: string;
   content: string;
   tags: string[];
   lastModified: string;
-  isPinned: boolean;
+  isPinned?: boolean;
+  isPersonalized?: boolean;
   summary?: string;
   keyTakeaways?: string[];
   flashcards?: Flashcard[];

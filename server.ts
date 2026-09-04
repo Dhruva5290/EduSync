@@ -2430,44 +2430,69 @@ If $d = 0 \\implies$ Lines are coplanar and intersect.`,
       }
 
       const apiKey = process.env.GEMINI_API_KEY;
+
+      // Smart Socratic answer generator for any topic (Physics, Chemistry, Maths, General)
+      const generateSmartSocraticFallback = (userMsg: string) => {
+        const m = userMsg.toLowerCase();
+        if (m.includes('aldol') || m.includes('enolate') || m.includes('organic')) {
+          return `In Aldol Condensations, the key driving mechanism is the **acidity of the $\\alpha$-hydrogen** ($\text{p}K_a \\approx 19 - 20$).
+
+1. **Enolate Formation**: A strong base deprotonates the $\\alpha$-carbon, forming a resonance-stabilized enolate ion.
+2. **Nucleophilic Attack**: The enolate attacks the electrophilic carbonyl carbon of another aldehyde molecule.
+3. **Dehydration**: Heating eliminates water, yielding an $\\alpha,\\beta$-unsaturated carbonyl driven by extended $\\pi$-conjugation.
+
+💭 **Socratic Check**: Why is the $\\alpha$-hydrogen so much more acidic than the $\\beta$ or $\\gamma$-hydrogens in the same aldehyde?`;
+        }
+
+        if (m.includes('king') || m.includes('integral') || m.includes('calculus') || m.includes('derivative')) {
+          return `The **King Property** (Reflection Identity) is one of the most powerful symmetry tools in definite integration:
+
+$$\\int_{a}^{b} f(x)\\,dx = \\int_{a}^{b} f(a + b - x)\\,dx$$
+
+**How to exploit it in problem-solving**:
+1. Label your integral as $I$.
+2. Apply the substitution $x \\to a + b - x$.
+3. Add the two equations together ($2I = \\int_{a}^{b} [f(x) + f(a + b - x)]\\,dx$).
+4. In many competitive exam problems, $f(x) + f(a + b - x)$ simplifies into a constant or cancels the denominator entirely!
+
+💭 **Try this**: How would you apply this to evaluate $\\int_{0}^{\\pi/2} \\frac{\\sin x}{\\sin x + \\cos x}\\,dx$?`;
+        }
+
+        if (m.includes('gibbs') || m.includes('thermo') || m.includes('entropy')) {
+          return `**Gibbs Free Energy ($\\Delta G$)** determines the spontaneous direction of a system at constant temperature and pressure:
+
+$$\\Delta G = \\Delta H - T\\Delta S$$
+
+- If $\\Delta G < 0$, the process is **exergonic** and thermodynamically spontaneous.
+- At equilibrium, $\\Delta G = 0$, directly relating to the equilibrium constant: $\\Delta G^\\circ = -RT \\ln K_{eq}$.
+
+💭 **Reflect**: If a reaction has an endothermic enthalpy ($\\Delta H > 0$), under what temperature condition could it still become spontaneous?`;
+        }
+
+        if (m.includes('force') || m.includes('acceleration') || m.includes('newton')) {
+          return `Great physics question! The key principle to keep clear is cause versus kinematic effect:
+
+1. **Force ($\vec{F}$)** is the **cause**: a physical interaction exerted on a mass (measured in Newtons, $N$).
+2. **Acceleration ($\vec{a}$)** is the **kinematic effect**: the time rate of change of velocity ($\frac{d\vec{v}}{dt}$ in $\text{m/s}^2$).
+
+By Newton's Second Law: $\\sum \\vec{F} = m\\vec{a}$. Acceleration only exists when there is a net unbalanced force.
+
+💭 **Socratic Reflection**: When an object moves in a circular path at a constant speed, is there a net force acting on it? Why or why not?`;
+        }
+
+        // General academic Socratic response
+        return `That's a thoughtful question about **"${userMsg.slice(0, 40)}"**!
+
+To understand this systematically, let's break it down into core principles:
+1. **Identify the Core Invariant**: What physical quantity, mathematical symmetry, or governing rule remains constant here?
+2. **Boundary Conditions**: What happens at the extremes (e.g. as $t \\to 0$ or $x \\to \\infty$)?
+3. **Step-by-Step Logic**: Trace the relationship between causes and observable outcomes.
+
+💭 **Guiding Question**: What is your initial intuition about what happens first, and which formula or definition from our course syllabus relates closest to this?`;
+      };
+
       if (!apiKey) {
-        // High-accuracy grounded fallback matching student inquiry
-        const msgLower = message.toLowerCase();
-        if (msgLower.includes('question 4') || msgLower.includes('wrong') || msgLower.includes('force') || msgLower.includes('acceleration')) {
-          return res.json({
-            reply: `Your answer treated **force** and **acceleration** as the same physical quantity. In today's lecture, Dr. Verma explained this distinction around **21:05** and **31:42**:
-
-1. **Force ($\vec{F}$)** is the **cause**: a physical interaction exerted on a mass (gravity, tension, normal push), measured in **Newtons ($N$)** with physical dimensions $[M L T^{-2}]$.
-2. **Acceleration ($\vec{a}$)** is the **kinematic effect**: the time-rate-of-change of velocity ($\frac{d\vec{v}}{dt}$), measured in **$\text{m/s}^2$** with dimensions $[L T^{-2}]$.
-
-By Newton's Second Law ($\vec{F}_{net} = m\vec{a}$), acceleration only exists when there is a net unbalanced force.
-
-💭 **Reflect on this**: If a train cruises on a straight flat track at a constant velocity of $100\text{ km/h}$, what is its acceleration $\vec{a}$, and what does that tell you about the net force $\sum \vec{F}$ acting on the train?`
-          });
-        }
-
-        if (msgLower.includes('normal force') || msgLower.includes('fbd') || msgLower.includes('free body')) {
-          return res.json({
-            reply: `In today's lecture around **21:05**, Dr. Verma demonstrated why the Normal Force $N$ is **not automatically equal to $mg$**:
-
-- On a level horizontal floor: $N = mg$
-- On an inclined ramp of angle $\theta$: Gravity resolves into perpendicular and parallel components, so $N = mg\cos\theta$
-- In an upward accelerating elevator ($a$): $N = m(g + a)$
-
-Always isolate the object and sum the forces along the axis perpendicular to the contact surface:
-$$\\sum F_{\\perp} = N - mg\\cos\\theta = 0 \\implies N = mg\\cos\\theta$$`
-          });
-        }
-
-        if (msgLower.includes('inertia')) {
-          return res.json({
-            reply: `Inertia was explained around **12:48**. Inertia is not a force—it is the intrinsic resistance of matter to change its state of motion. Mass ($m$) is the quantitative scalar measure of inertia. When a metro train brakes, your body keeps moving forward due to inertia, not because a phantom forward force pushed you!`
-          });
-        }
-
-        return res.json({
-          reply: `In today's lecture on **${activeLecture.title}**, Dr. Verma covered Newton's First Law at **05:32**, Inertia at **12:48**, Free Body Diagrams at **21:05**, Force vs Acceleration at **31:42**, and Pulley Homework at **42:10**. Which of these concepts would you like to explore deeper?`
-        });
+        return res.json({ reply: generateSmartSocraticFallback(message) });
       }
 
       const { GoogleGenAI } = await import('@google/genai');
@@ -2483,43 +2508,32 @@ $$\\sum F_{\\perp} = N - mg\\cos\\theta = 0 \\implies N = mg\\cos\\theta$$`
 
       try {
         const tutorPromise = ai.models.generateContent({
-          model: 'gemini-3.6-flash',
+          model: 'gemini-2.5-flash',
           contents: [
             ...chatHistory,
             { role: 'user', parts: [{ text: `${lectureContextPrompt}\n\nSTUDENT QUESTION: "${message}"` }] }
           ],
           config: {
-            systemInstruction: `You are the EduSync Socratic AI Tutor, context-aware of the student's actual classroom lecture and their specific quiz mistakes.
+            systemInstruction: `You are the EduSync Socratic AI Tutor. You help students understand ANY concept in Physics, Chemistry, Mathematics, Engineering, or general academic topics.
 CRITICAL PEDAGOGY:
-1. The student should NOT have to repeatedly explain context. If they ask "Why did I get question 4 wrong?", use the provided Quiz Error context to explain their exact misconception.
-2. Directly cite the relevant ClassSarthi lecture timestamp (e.g. "In today's lecture, Dr. Verma explained this distinction around 21:05...").
-3. Use clear, rigorous Markdown with KaTeX formulas ($...$ for inline, $$...$$ for block math).
-4. End with a focused guiding question that prompts the student to reason through the next logical step.`,
+1. If the student asks about a quiz mistake, use the classroom context to address it directly.
+2. If the student asks ANY general question (e.g. concepts, homework, proofs, formulas, analogies), answer it thoroughly, encouragingly, and clearly.
+3. Use clean Markdown and LaTeX formulas ($...$ for inline, $$...$$ for block formulas).
+4. Always end with an engaging guiding reflection question that encourages the student to think deeper.`,
             temperature: 0.6
           }
         });
 
         const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Tutor AI timeout')), 3500)
+          setTimeout(() => reject(new Error('Tutor AI timeout')), 7500)
         );
 
         const result: any = await Promise.race([tutorPromise, timeoutPromise]);
-
-
-        const reply = result.text || 'No response generated from Gemini.';
+        const reply = result.text || generateSmartSocraticFallback(message);
         return res.json({ reply });
       } catch (geminiError: any) {
-        console.warn('Gemini API call failed, using high-accuracy pedagogical fallback:', geminiError?.message);
-        return res.json({
-          reply: `Your answer treated **force** and **acceleration** as the same physical quantity. In today's lecture, Dr. Verma explained this distinction around **21:05** and **31:42**:
-
-1. **Force ($\vec{F}$)** is the **cause**: a physical interaction exerted on a mass (gravity, tension, normal push), measured in **Newtons ($N$)** with physical dimensions $[M L T^{-2}]$.
-2. **Acceleration ($\vec{a}$)** is the **kinematic effect**: the time-rate-of-change of velocity ($\frac{d\vec{v}}{dt}$), measured in **$\text{m/s}^2$** with dimensions $[L T^{-2}]$.
-
-By Newton's Second Law ($\vec{F}_{net} = m\vec{a}$), acceleration only exists when there is a net unbalanced force.
-
-💭 **Reflect on this**: If a train cruises on a straight flat track at a constant velocity of $100\text{ km/h}$, what is its acceleration $\vec{a}$, and what does that tell you about the net force $\sum \vec{F}$ acting on the train?`
-        });
+        console.warn('Gemini API call failed, using intelligent Socratic fallback:', geminiError?.message);
+        return res.json({ reply: generateSmartSocraticFallback(message) });
       }
 
     } catch (err: any) {

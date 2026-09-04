@@ -15,7 +15,9 @@ import {
   Moon,
   Shield,
   Eye,
-  Camera
+  Camera,
+  UploadCloud,
+  Palette
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -34,6 +36,11 @@ interface HeaderProps {
   activeTab?: string;
   onOpenPersonalization?: () => void;
   onNavigateToVisionNote?: () => void;
+  isDemoMode?: boolean;
+  onToggleDemoMode?: (demo: boolean) => void;
+  onOpenVNImport?: () => void;
+  accentColor?: string;
+  onChangeAccentColor?: (color: string) => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -51,7 +58,12 @@ export const Header: React.FC<HeaderProps> = ({
   onExitAudit,
   activeTab,
   onOpenPersonalization,
-  onNavigateToVisionNote
+  onNavigateToVisionNote,
+  isDemoMode = true,
+  onToggleDemoMode,
+  onOpenVNImport,
+  accentColor = 'blue',
+  onChangeAccentColor
 }) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const activeSubject = subjects.find(s => s.id === activeSubjectId) || subjects[0];
@@ -164,6 +176,59 @@ export const Header: React.FC<HeaderProps> = ({
                 <RefreshCw className="w-3.5 h-3.5 text-purple-400 shrink-0" />
                 <span className="hidden lg:inline">Audit Student View</span>
               </button>
+            )}
+
+            {/* VisionNote Direct Import Button */}
+            {onOpenVNImport && (
+              <button
+                id="header-import-vn-btn"
+                onClick={onOpenVNImport}
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded text-xs font-bold bg-cyan-950/70 border border-cyan-700/80 text-cyan-300 hover:bg-cyan-900/80 transition-all shrink-0 shadow-xs"
+                title="Paste OCR text or load .txt file from VisionNote"
+              >
+                <UploadCloud className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                <span className="hidden sm:inline">Import VN Note</span>
+              </button>
+            )}
+
+            {/* Demo Showcase Mode vs Clean Slate Mode Switcher */}
+            {onToggleDemoMode && (
+              <button
+                id="header-demo-mode-btn"
+                onClick={() => onToggleDemoMode(!isDemoMode)}
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded text-xs font-bold transition-all shrink-0 border shadow-xs ${
+                  isDemoMode
+                    ? 'bg-amber-950/70 border-amber-600/80 text-amber-300 hover:bg-amber-900/70'
+                    : 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700'
+                }`}
+                title="Toggle between Mentor Presentation Demo Mode and Clean Slate Mode"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                <span className="hidden lg:inline">{isDemoMode ? 'Demo Mode (Mentors)' : 'Clean Slate (Prod)'}</span>
+              </button>
+            )}
+
+            {/* Accent Color Palette Selector */}
+            {onChangeAccentColor && (
+              <div className="hidden sm:flex items-center gap-1 p-1 bg-slate-950/80 border border-slate-800 rounded-lg shrink-0">
+                {[
+                  { id: 'blue', color: 'bg-blue-500' },
+                  { id: 'emerald', color: 'bg-emerald-500' },
+                  { id: 'purple', color: 'bg-purple-500' },
+                  { id: 'cyan', color: 'bg-cyan-500' },
+                  { id: 'rose', color: 'bg-rose-500' },
+                  { id: 'amber', color: 'bg-amber-500' }
+                ].map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => onChangeAccentColor(item.id)}
+                    className={`w-3.5 h-3.5 rounded-full ${item.color} transition-transform hover:scale-125 ${
+                      accentColor === item.id ? 'ring-2 ring-white scale-110' : 'opacity-70 hover:opacity-100'
+                    }`}
+                    title={`Accent Color: ${item.id}`}
+                  />
+                ))}
+              </div>
             )}
 
             {/* Theme Toggle (Light / Dark) */}

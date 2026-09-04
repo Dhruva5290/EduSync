@@ -31,6 +31,8 @@ import { StudentHomeDashboard } from './components/StudentDashboard/StudentHomeD
 import { LectureExperiencePage } from './components/LecturePage/LectureExperiencePage';
 import { BoardVisualsHub } from './components/BoardVisuals/BoardVisualsHub';
 import { QuestionBankManager } from './components/TeacherDashboard/QuestionBankManager';
+import { ErrorBoundary } from './components/Common/ErrorBoundary';
+import { VisionNoteImportModal } from './components/VisionNoteImport/VisionNoteImportModal';
 import { subscribeToVisionNotes, fetchVisionNotesFromSupabase, isSupabaseConfigured } from './lib/supabase';
 import {
   FAKE_SUBJECTS,
@@ -156,6 +158,14 @@ export default function App() {
   });
 
   const [activeQuizModal, setActiveQuizModal] = useState<GeneratedQuiz | null>(null);
+  const [showVNImportModal, setShowVNImportModal] = useState(false);
+  const [isDemoMode, setIsDemoMode] = useState<boolean>(() => {
+    const saved = localStorage.getItem('edusync_demo_mode');
+    return saved === null ? true : saved === 'true';
+  });
+  const [accentColor, setAccentColor] = useState<string>(() => {
+    return localStorage.getItem('edusync_accent') || 'blue';
+  });
 
   // Loading States
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -167,6 +177,39 @@ export default function App() {
   const showToast = (text: string, type: 'success' | 'info' | 'error' = 'success') => {
     setToastMessage({ text, type });
     setTimeout(() => setToastMessage(null), 4000);
+  };
+
+  const handleToggleDemoMode = (demo: boolean) => {
+    setIsDemoMode(demo);
+    localStorage.setItem('edusync_demo_mode', String(demo));
+    if (!demo) {
+      // Clean slate mode for production: reset to empty state
+      setNotes([]);
+      setTimelines([]);
+      setAssignments([]);
+      localStorage.removeItem('edusync_notes');
+      localStorage.removeItem('edusync_timelines');
+      localStorage.removeItem('edusync_assignments');
+      showToast('Clean Slate Mode Active: Cleared demo data for fresh production setup.', 'info');
+    } else {
+      // Mentor demo mode: restore full rich fake data
+      setNotes(FAKE_NOTES);
+      setTimelines(FAKE_TIMELINES);
+      setAssignments(FAKE_ASSIGNMENTS);
+      setQuestionBanks(FAKE_QUESTION_BANKS);
+      localStorage.setItem('edusync_notes', JSON.stringify(FAKE_NOTES));
+      localStorage.setItem('edusync_timelines', JSON.stringify(FAKE_TIMELINES));
+      localStorage.setItem('edusync_assignments', JSON.stringify(FAKE_ASSIGNMENTS));
+      localStorage.setItem('edusync_question_banks', JSON.stringify(FAKE_QUESTION_BANKS));
+      showToast('✨ Mentor Demo Mode Active: Restored full presentation notes and questions!', 'success');
+    }
+  };
+
+  const handleChangeAccentColor = (color: string) => {
+    setAccentColor(color);
+    localStorage.setItem('edusync_accent', color);
+    document.documentElement.dataset.accent = color;
+    showToast(`Accent theme updated to ${color.toUpperCase()}`, 'info');
   };
 
   // Safe fetch helper that guards against HTML fallback or network errors
@@ -853,6 +896,51 @@ export default function App() {
     }
   };
 
+  // 13.3 Direct VisionNote Text Import with Adaptive Persona Synthesis
+  const handleImportVNNote = async (newNoteData: Partial<StudentNote>): Promise<StudentNote> => {
+    const targetSubjId = newNoteData.subjectId || 'subj-misc';
+    const cleanTitle = newNoteData.title || 'VisionNote OCR Lecture';
+    const persona = currentUser?.learningProfile;
+
+    let finalContent = newNoteData.content || '';
+    let summaryText = 'VisionNote OCR captured notes. Calibrated to individual student persona.';
+    let takeaways = [
+      'Invariants and core boundary conditions identified.',
+      'Governing equations and derivations formatted in KaTeX.',
+      'Mapped directly to course curriculum syllabus.'
+    ];
+
+    if (persona) {
+      if (persona.learningStyle === 'visual') {
+        finalContent = `# ${cleanTitle} [Visual Study Blueprint]\n\n> 📊 **Visual Mindmap & Concept Blueprint**\n> Concept Flow: Invariants ➔ Boundary Conditions ➔ Governing Law ➔ Practical Applications\n\n${finalContent}`;
+      } else if (persona.learningStyle === 'step_by_step') {
+        finalContent = `# ${cleanTitle} [Step-by-Step Derivation Breakdown]\n\n> 🧩 **Sequential Breakdown for Mastery**\n> 1. Foundational Axioms\n> 2. Analytical Derivation\n> 3. Exam Verification\n\n${finalContent}`;
+      } else {
+        finalContent = `# ${cleanTitle} [Personalized High-Yield Edition]\n\n${finalContent}`;
+      }
+    }
+
+    const createdNote: StudentNote = {
+      id: `vn-note-${Date.now()}`,
+      subjectId: targetSubjId,
+      title: cleanTitle,
+      content: finalContent,
+      summary: summaryText,
+      keyTakeaways: takeaways,
+      tags: ['VisionNote', 'OCR-Import', targetSubjId],
+      lastModified: new Date().toISOString(),
+      source: 'visionnote',
+      isPersonalized: true
+    };
+
+    const nextNotes = [createdNote, ...notes.filter(n => n.id !== createdNote.id)];
+    setNotes(nextNotes);
+    localStorage.setItem('edusync_notes', JSON.stringify(nextNotes));
+    setActiveSubjectId(targetSubjId);
+    setActiveTab('notes');
+    return createdNote;
+  };
+
   // 13.5 AI Generate Detailed Note from Topic Prompt / Document (Unified LLM with Cognitive Persona)
   const handleGenerateNoteFromPrompt = async (payload: {
     prompt: string;
@@ -1391,12 +1479,18 @@ export default function App() {
               activeTab={activeTab}
               onOpenPersonalization={() => setShowPersonaModal(true)}
               onNavigateToVisionNote={() => setActiveTab('visionnote-audit')}
+              isDemoMode={isDemoMode}
+              onToggleDemoMode={handleToggleDemoMode}
+              onOpenVNImport={() => setShowVNImportModal(true)}
+              accentColor={accentColor}
+              onChangeAccentColor={handleChangeAccentColor}
             />
           </div>
         </div>
 
-        {/* Content Body */}
-        <section className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 bg-[#090d16]">
+        {/* Content Body Wrapped in ErrorBoundary */}
+        <ErrorBoundary fallbackTitle="Workspace Recovered Safely">
+          <section className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 bg-[#090d16]">
           {/* Prominent Personalization Callout Banner for Students */}
           {isStudent && !currentUser?.learningProfile?.questionnaireCompleted && (
             <div className="bg-gradient-to-r from-purple-900/90 via-indigo-900/90 to-slate-900 border border-purple-500/50 rounded-xl p-4 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-white animate-in fade-in duration-200">
@@ -1680,6 +1774,7 @@ export default function App() {
             </div>
           )}
         </section>
+        </ErrorBoundary>
       </main>
 
       {/* Interactive Quiz Modal from Chat or Notes */}
@@ -1701,6 +1796,17 @@ export default function App() {
           onShowToast={(msg, type) => showToast(msg, type || 'success')}
         />
       )}
+
+      {/* Direct VisionNote Text / File Import Modal */}
+      <VisionNoteImportModal
+        isOpen={showVNImportModal}
+        onClose={() => setShowVNImportModal(false)}
+        subjects={subjects}
+        activeSubjectId={activeSubjectId}
+        learnerProfile={currentUser.learningProfile}
+        onImportNote={handleImportVNNote}
+        onShowToast={(msg, type) => showToast(msg, type || 'success')}
+      />
 
       {/* Floating Notification Toast */}
       {toastMessage && (

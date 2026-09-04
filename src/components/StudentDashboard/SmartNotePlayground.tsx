@@ -3,6 +3,7 @@ import { StudentNote, Subject, Flashcard, GeneratedQuiz, LearnerPersona } from '
 import { InteractiveQuizModal } from './InteractiveQuizModal';
 import { FlashcardDeckModal } from './FlashcardDeckModal';
 import { cleanAndFormatMath } from '../SmartAITutor/ChatInterface';
+import { MathRenderer } from '../Common/MathRenderer';
 import {
   FileText,
   Sparkles,
@@ -971,9 +972,7 @@ export const SmartNotePlayground: React.FC<SmartNotePlaygroundProps> = ({
                   />
                 ) : (
                   <div className="flex-1 w-full p-4 font-sans text-xs sm:text-sm text-slate-200 bg-slate-950 border border-slate-800 rounded-xl leading-relaxed overflow-y-auto space-y-3 scrollbar-thin">
-                    <div className="whitespace-pre-wrap font-sans leading-relaxed">
-                      {cleanAndFormatMath(content)}
-                    </div>
+                    <MathRenderer content={content} />
                   </div>
                 )}
               </div>
@@ -1002,9 +1001,9 @@ export const SmartNotePlayground: React.FC<SmartNotePlaygroundProps> = ({
                     <Sparkles className="w-3.5 h-3.5 text-purple-400" />
                     <span className="font-mono uppercase tracking-wider text-[10px]">AI Executive Synthesis</span>
                   </div>
-                  <p className="text-xs text-slate-300 leading-relaxed">
-                    {cleanAndFormatMath(activeNote.summary)}
-                  </p>
+                  <div className="text-xs text-slate-300 leading-relaxed">
+                    <MathRenderer content={activeNote.summary} />
+                  </div>
 
                   {activeNote.keyTakeaways && activeNote.keyTakeaways.length > 0 && (
                     <div className="pt-2 border-t border-purple-800/40 space-y-1">
@@ -1015,7 +1014,7 @@ export const SmartNotePlayground: React.FC<SmartNotePlaygroundProps> = ({
                         {activeNote.keyTakeaways.map((takeaway, idx) => (
                           <li key={idx} className="flex items-start gap-1.5 text-xs text-slate-300">
                             <span className="text-purple-400 font-bold">•</span>
-                            <span>{cleanAndFormatMath(takeaway)}</span>
+                            <div className="flex-1"><MathRenderer content={takeaway} /></div>
                           </li>
                         ))}
                       </ul>
