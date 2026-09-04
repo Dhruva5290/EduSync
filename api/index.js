@@ -75169,30 +75169,48 @@ Student Query: "${message}"
 Respond specifically to this query. Do NOT give a generic response.` : `Student Query: "${message}"
 
 Respond specifically to this query. Do NOT give a generic response.`;
-        const result = await ai.models.generateContent({
-          model: "gemini-3.6-flash",
-          contents: [
-            ...formattedHistory,
-            { role: "user", parts: [{ text: fullPrompt }] }
-          ],
-          config: {
-            systemInstruction: SOCRATIC_SYSTEM_PROMPT,
-            responseMimeType: "application/json"
+        const candidateModels = ["gemini-3.6-flash", "gemini-2.5-flash", "gemini-2.0-flash"];
+        let resultText = "";
+        for (const modelName of candidateModels) {
+          try {
+            const result = await ai.models.generateContent({
+              model: modelName,
+              contents: [
+                ...formattedHistory,
+                { role: "user", parts: [{ text: fullPrompt }] }
+              ],
+              config: {
+                systemInstruction: SOCRATIC_SYSTEM_PROMPT
+              }
+            });
+            if (result && result.text) {
+              resultText = result.text;
+              break;
+            }
+          } catch (modelErr) {
+            console.warn(`[Tutor Serverless] Model ${modelName} error:`, modelErr?.message || modelErr);
           }
-        });
-        const rawText = result.text || "";
-        let parsedResult;
-        try {
-          parsedResult = JSON.parse(rawText);
-        } catch {
-          parsedResult = {
-            reply: rawText || "I wasn't able to generate a response. Please try rephrasing your question.",
-            followUpQuestions: [],
-            recommendedResources: []
-          };
+        }
+        let parsedResult = { reply: "", followUpQuestions: [], recommendedResources: [] };
+        if (resultText) {
+          try {
+            const cleaned = resultText.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
+            const parsed = JSON.parse(cleaned);
+            parsedResult = {
+              reply: parsed.reply || resultText,
+              followUpQuestions: parsed.followUpQuestions || [],
+              recommendedResources: parsed.recommendedResources || []
+            };
+          } catch {
+            parsedResult = {
+              reply: resultText,
+              followUpQuestions: [],
+              recommendedResources: []
+            };
+          }
         }
         if (!parsedResult.reply) {
-          parsedResult.reply = rawText || "I wasn't able to generate a response. Please try again.";
+          parsedResult.reply = "I am thinking through your question, but could not generate a response. Please try asking again.";
         }
         res.status(200).json(parsedResult);
         return;
