@@ -24,9 +24,27 @@ export function startSupabaseRealtimeWorker() {
     if (!record || !record.id || record.status !== 'uploaded') return;
 
     const noteId = record.id;
-    const title = record.title || 'Class Lecture Note';
+    let title = (record.title || '').trim();
     const generalisedNotes = record.generalised_notes || '';
     const rawOcrText = record.raw_ocr_text || '';
+
+    // If title is missing or generic (e.g. '(AI unavailable)'), deduce a clean academic topic
+    if (!title || title.includes('(AI unavailable)') || title === 'Untitled Capture' || title.length < 5) {
+      const combined = `${title} ${generalisedNotes} ${rawOcrText}`.toLowerCase();
+      if (combined.includes('projectile') || combined.includes('kinematic')) {
+        title = 'Physics 101: Projectile Motion & 2D Kinematics Decomposition';
+      } else if (combined.includes('carnot') || combined.includes('thermodynamic')) {
+        title = 'Thermodynamics: Carnot Cycle & Entropy Engine';
+      } else if (combined.includes('nernst') || combined.includes('electrochem')) {
+        title = 'Electrochemistry: Nernst Equation & Cell Potential';
+      } else if (combined.includes('vsepr') || combined.includes('hybridization')) {
+        title = 'Chemistry: VSEPR Theory & Molecular Geometry';
+      } else if (combined.includes('newton') || combined.includes('friction')) {
+        title = "Physics: Newton's Laws & Friction Mechanics";
+      } else {
+        title = 'Class Lecture Notes';
+      }
+    }
 
     console.log(`[Supabase Worker] Processing note ${noteId}: "${title}"`);
 
@@ -45,21 +63,30 @@ export function startSupabaseRealtimeWorker() {
       try {
         const aiResult = await generateDetailedTopicNoteAI({
           prompt: title,
-          attachedText: `${generalisedNotes}\n${rawOcrText}`,
+          attachedText: `${generalisedNotes}\n${rawOcrText.slice(0, 4000)}`,
           depth: 'exam_prep'
         });
         personalizedContent = aiResult.content || generalisedNotes;
       } catch (aiErr: any) {
         console.warn('[Supabase Worker] AI generation fallback:', aiErr?.message);
-        personalizedContent = `## 🎯 Conceptual Synthesis: ${title}\n\n${generalisedNotes}\n\n### Mathematical Formulation\n$$\\sum \\vec{F} = m\\vec{a}$$`;
+        personalizedContent = `## 🎯 Conceptual Synthesis: ${title}\n\n${generalisedNotes || rawOcrText.slice(0, 1000)}\n\n### Mathematical Formulation\n$$\\sum \\vec{F} = m\\vec{a}$$`;
       }
 
-      // 3. Mark ready in Supabase
+      // 3. Mark ready in Supabase with refined title and metadata
+      const currentMeta = record.metadata || {};
+      const subjectId = currentMeta.subject_id || (title.toLowerCase().includes('chem') ? 'subj-che-11' : 'subj-phy-11');
+
       const { error: updateErr } = await sb
         .from('notes')
         .update({
+          title,
           personalised_notes: personalizedContent,
           status: 'ready',
+          metadata: {
+            ...currentMeta,
+            subject_id: subjectId,
+            student_id: currentMeta.student_id || 'student-1'
+          },
           updated_at: new Date().toISOString()
         })
         .eq('id', noteId);
@@ -67,7 +94,7 @@ export function startSupabaseRealtimeWorker() {
       if (updateErr) {
         console.error(`[Supabase Worker] Error updating note ${noteId}:`, updateErr.message);
       } else {
-        console.log(`[Supabase Worker] ✨ Note ${noteId} successfully personalized & marked 'ready'!`);
+        console.log(`[Supabase Worker] ✨ Note ${noteId} ("${title}") successfully personalized & marked 'ready'!`);
       }
     } catch (err: any) {
       console.error(`[Supabase Worker] Failed to process note ${noteId}:`, err?.message);
@@ -82,25 +109,31 @@ export function startSupabaseRealtimeWorker() {
     }
   };
 
-  // 1. Process any pending notes that were uploaded while server was offline
-  (async () => {
+  // 1. Sweep pending notes
+  const sweepPendingNotes = async () => {
     try {
       const { data: pending } = await sb
         .from('notes')
         .select('*')
         .eq('status', 'uploaded')
-        .limit(10);
+        .limit(5);
 
       if (pending && pending.length > 0) {
-        console.log(`[Supabase Worker] Found ${pending.length} pending notes. Processing now...`);
+        console.log(`[Supabase Worker] Found ${pending.length} uploaded note(s). Processing now...`);
         for (const note of pending) {
           await processNote(note);
         }
       }
     } catch (e: any) {
-      console.warn('[Supabase Worker] Initial check warning:', e?.message);
+      console.warn('[Supabase Worker] Sweep warning:', e?.message);
     }
-  })();
+  };
+
+  // Initial check on worker start
+  sweepPendingNotes();
+
+  // Periodic recurring check every 30 seconds
+  const sweepInterval = setInterval(sweepPendingNotes, 30000);
 
   // 2. Subscribe to Realtime INSERT and UPDATE events
   const channel = sb
@@ -128,6 +161,7 @@ export function startSupabaseRealtimeWorker() {
     });
 
   return () => {
+    clearInterval(sweepInterval);
     sb.removeChannel(channel);
   };
 }
