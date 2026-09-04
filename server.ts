@@ -560,6 +560,46 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
     res.json({ success: true, user: student });
   });
 
+  // 1-Click Fast Department Provisioning
+  app.post('/api/admin/provision-department', async (req, res) => {
+    try {
+      const { users, subjects } = req.body;
+      if (Array.isArray(users) && users.length > 0) {
+        for (const u of users) {
+          const idx = db.users.findIndex(existing => existing.id === u.id);
+          if (idx !== -1) {
+            db.users[idx] = u;
+          } else {
+            db.users.push(u);
+          }
+          persistUserToCloud(u).catch(e => console.warn('[Cloud Sync] Error provisioning user:', e));
+        }
+        saveUsersToDisk(db.users);
+      }
+
+      if (Array.isArray(subjects) && subjects.length > 0) {
+        for (const s of subjects) {
+          const idx = db.subjects.findIndex(existing => existing.id === s.id);
+          if (idx !== -1) {
+            db.subjects[idx] = s;
+          } else {
+            db.subjects.push(s);
+          }
+        }
+      }
+
+      res.json({
+        success: true,
+        message: 'Department provisioned successfully',
+        userCount: db.users.length,
+        subjectCount: db.subjects.length
+      });
+    } catch (err: any) {
+      console.error('[Provision Department Error]', err);
+      res.status(500).json({ error: 'Failed to provision department' });
+    }
+  });
+
   // Save / Update Student Personalized Learning Profile (Questionnaire Results)
   app.post('/api/students/:id/learning-profile', (req, res) => {
     try {

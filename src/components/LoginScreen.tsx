@@ -19,14 +19,13 @@ import {
 } from 'lucide-react';
 
 import { FAKE_USERS } from '../mock/fakeData';
+import { fetchUsersFromSupabaseCloud } from '../lib/supabase';
 
 interface LoginScreenProps {
   onLoginSuccess: (user: User, token: string) => void;
   onLaunchVisionNoteDirectly?: (user: User, token: string) => void;
   allUsers?: User[];
 }
-
-const DEFAULT_PRESET_USERS: User[] = FAKE_USERS;
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onLaunchVisionNoteDirectly, allUsers: initialUsers }) => {
   const [selectedRole, setSelectedRole] = useState<UserRole>('student');
@@ -35,12 +34,22 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onLaun
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [registeredUsers, setRegisteredUsers] = useState<User[]>(
-    (initialUsers && initialUsers.length > 0) ? initialUsers : FAKE_USERS
-  );
+  const [registeredUsers, setRegisteredUsers] = useState<User[]>(() => {
+    let base = (initialUsers && initialUsers.length > 0) ? [...initialUsers] : [...FAKE_USERS];
+    try {
+      const saved = JSON.parse(localStorage.getItem('edusync_users') || '[]');
+      if (Array.isArray(saved)) {
+        for (const s of saved) {
+          if (!base.some(b => b.id === s.id)) base.push(s);
+        }
+      }
+    } catch {}
+    return base;
+  });
 
-  // Fetch updated registered users list from server
+  // Fetch updated registered users list from server and Supabase Cloud
   React.useEffect(() => {
+    // 1. Fetch from server endpoint
     fetch('/api/auth/public-users')
       .then(async res => {
         const ct = res.headers.get('content-type');
@@ -49,10 +58,31 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onLaun
       })
       .then(data => {
         if (data?.users && Array.isArray(data.users) && data.users.length > 0) {
-          setRegisteredUsers(data.users);
+          setRegisteredUsers(prev => {
+            const merged = [...data.users];
+            for (const p of prev) {
+              if (!merged.some(m => m.id === p.id)) merged.push(p);
+            }
+            return merged;
+          });
         }
       })
-      .catch(err => console.error('Failed to load registered users for login:', err));
+      .catch(err => console.error('Failed to load registered users from API:', err));
+
+    // 2. Fetch directly from Supabase Cloud as resilient cloud source
+    fetchUsersFromSupabaseCloud()
+      .then(cloudUsers => {
+        if (cloudUsers && cloudUsers.length > 0) {
+          setRegisteredUsers(prev => {
+            const merged = [...cloudUsers];
+            for (const p of prev) {
+              if (!merged.some(m => m.id === p.id)) merged.push(p);
+            }
+            return merged;
+          });
+        }
+      })
+      .catch(e => console.warn('Supabase cloud user pull note:', e));
   }, []);
 
   // Select any registered user from roster
@@ -79,6 +109,61 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onLaun
     }
   };
 
+  // Strictly verify credentials locally or in cloud without ever falling back to a default preset
+  const verifyCredentialsLocallyAndLogin = async (loginId: string, loginPass: string): Promise<boolean> => {
+    const normId = loginId.toLowerCase().trim();
+
+    let candidates = [...registeredUsers];
+    try {
+      const savedUsers = JSON.parse(localStorage.getItem('edusync_users') || '[]');
+      if (Array.isArray(savedUsers)) {
+        for (const s of savedUsers) {
+          if (!candidates.some(c => c.id === s.id)) candidates.push(s);
+        }
+      }
+    } catch {}
+
+    let matched = candidates.find(u =>
+      (u.username && u.username.toLowerCase() === normId) ||
+      (u.email && u.email.toLowerCase() === normId) ||
+      (u.institutionalId && u.institutionalId.toLowerCase() === normId) ||
+      (u.name && u.name.toLowerCase() === normId)
+    );
+
+    // If still not matched, check Supabase Cloud directly
+    if (!matched) {
+      try {
+        const cloudUsers = await fetchUsersFromSupabaseCloud();
+        matched = cloudUsers.find(u =>
+          (u.username && u.username.toLowerCase() === normId) ||
+          (u.email && u.email.toLowerCase() === normId) ||
+          (u.institutionalId && u.institutionalId.toLowerCase() === normId) ||
+          (u.name && u.name.toLowerCase() === normId)
+        );
+      } catch {}
+    }
+
+    if (!matched) {
+      setErrorMessage(`No registered account found matching "${loginId}". Please check your credentials or register as a new user.`);
+      return false;
+    }
+
+    // Verify Password strictly!
+    const expectedPassword = matched.password || 'EduSync@260101';
+    if (expectedPassword !== loginPass) {
+      setErrorMessage('Incorrect password. Please verify your credentials and try again.');
+      return false;
+    }
+
+    // Valid credentials confirmed!
+    const fallbackToken = `edusync_session_${Date.now()}`;
+    localStorage.setItem('edusync_token', fallbackToken);
+    localStorage.setItem('edusync_user_id', matched.id);
+    try { localStorage.setItem('edusync_user', JSON.stringify(matched)); } catch (e) {}
+    onLoginSuccess(matched, fallbackToken);
+    return true;
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!identifier.trim()) {
@@ -86,84 +171,56 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onLaun
       return;
     }
 
+    if (!password.trim()) {
+      setErrorMessage('Please enter your password.');
+      return;
+    }
+
     setIsLoading(true);
     setErrorMessage(null);
 
-    const effectivePass = password.trim() || (selectedRole === 'admin' ? 'Dean@EduSync2026!' : selectedRole === 'teacher' ? 'Physics@2026!' : 'EduSync@260101');
+    const enteredId = identifier.trim();
+    const enteredPass = password.trim();
 
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          identifier: identifier.trim(),
-          password: effectivePass,
+          identifier: enteredId,
+          password: enteredPass,
           role: selectedRole
         })
       });
 
       const contentType = response.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/json')) {
-        // Fallback to locally known preset if backend function is unavailable or warming up
-        const normId = identifier.trim().toLowerCase();
-        const matched = registeredUsers.find(u =>
-          (u.username && u.username.toLowerCase() === normId) ||
-          (u.email && u.email.toLowerCase() === normId) ||
-          (u.institutionalId && u.institutionalId.toLowerCase() === normId) ||
-          (u.name && u.name.toLowerCase() === normId)
-        ) || DEFAULT_PRESET_USERS.find(u => u.role === selectedRole);
+      if (contentType && contentType.includes('application/json')) {
+        const data = await response.json();
 
-        if (matched) {
-          const fallbackToken = `edusync_session_${Date.now()}`;
-          localStorage.setItem('edusync_token', fallbackToken);
-          localStorage.setItem('edusync_user_id', matched.id);
-          try { localStorage.setItem('edusync_user', JSON.stringify(matched)); } catch (e) {}
-          onLoginSuccess(matched, fallbackToken);
+        if (!response.ok) {
+          // Explicit error from server (e.g. 401 Incorrect password)
+          setErrorMessage(data.error || 'Invalid credentials. Please verify your username and password.');
           setIsLoading(false);
           return;
         }
 
-        setErrorMessage('Connection error. Please ensure the EduSync backend is active.');
-        setIsLoading(false);
-        return;
+        // Save token and trigger callback
+        if (data.token && data.user) {
+          localStorage.setItem('edusync_token', data.token);
+          localStorage.setItem('edusync_user_id', data.user.id);
+          try { localStorage.setItem('edusync_user', JSON.stringify(data.user)); } catch (e) {}
+          onLoginSuccess(data.user, data.token);
+          setIsLoading(false);
+          return;
+        }
       }
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        setErrorMessage(data.error || 'Authentication failed. Please check your credentials.');
-        setIsLoading(false);
-        return;
-      }
-
-      // Save token and trigger callback
-      if (data.token && data.user) {
-        localStorage.setItem('edusync_token', data.token);
-        localStorage.setItem('edusync_user_id', data.user.id);
-        try { localStorage.setItem('edusync_user', JSON.stringify(data.user)); } catch (e) {}
-        onLoginSuccess(data.user, data.token);
-      }
+      // If backend was unreachable or returned non-JSON, strictly verify credentials
+      await verifyCredentialsLocallyAndLogin(enteredId, enteredPass);
     } catch (err) {
-      console.error('Login error:', err);
-      // Seamless offline fallback for instant presets
-      const normId = identifier.trim().toLowerCase();
-      const matched = registeredUsers.find(u =>
-        (u.username && u.username.toLowerCase() === normId) ||
-        (u.email && u.email.toLowerCase() === normId) ||
-        (u.institutionalId && u.institutionalId.toLowerCase() === normId)
-      ) || DEFAULT_PRESET_USERS.find(u => u.role === selectedRole);
-
-      if (matched) {
-        const fallbackToken = `edusync_session_${Date.now()}`;
-        localStorage.setItem('edusync_token', fallbackToken);
-        localStorage.setItem('edusync_user_id', matched.id);
-        try { localStorage.setItem('edusync_user', JSON.stringify(matched)); } catch (e) {}
-        onLoginSuccess(matched, fallbackToken);
-        setIsLoading(false);
-        return;
-      }
-
-      setErrorMessage('Connection error. Please ensure the EduSync backend is active.');
+      console.error('Login network error, checking local/cloud identity:', err);
+      await verifyCredentialsLocallyAndLogin(enteredId, enteredPass);
+    } finally {
       setIsLoading(false);
     }
   };

@@ -351,5 +351,30 @@
       "questionnaireCompleted": true,
       "completedAt": "2026-09-04T10:54:05.044Z"
     }
+  },
+  {
+    "id": "student-1788537563710",
+    "name": "Wronguser",
+    "email": "wronguser@bmu.edu.in",
+    "username": "wronguser",
+    "password": "wrongpassword",
+    "role": "student",
+    "gender": "Male",
+    "institutionalId": "BMU-2026-9359",
+    "department": "School of Engineering & Technology",
+    "designation": "B.Tech First Year Student",
+    "enrolledSubjectIds": [
+      "subj-ess",
+      "subj-calc",
+      "subj-eme",
+      "subj-engeth",
+      "subj-cpc"
+    ],
+    "teachingSubjectIds": [],
+    "officeLocation": "Student Hall B",
+    "officeHours": "Mon-Fri 09:00 AM - 05:00 PM",
+    "status": "active",
+    "joinedDate": "2026-09-04",
+    "phone": "+91 98765 43210"
   }
 ]

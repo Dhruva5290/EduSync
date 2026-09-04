@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { StudentNote } from '../types';
+import { StudentNote, User } from '../types';
 
 // =========================================================================
 // 1. DATABASE SCHEMA TYPES (public.notes)
@@ -614,3 +614,114 @@ export const fetchVisionNotesFromSupabase = async (options?: {
     return { notes: [], error: err.message || 'Failed to pull notes from Supabase' };
   }
 };
+
+// =========================================================================
+// 8. CLOUD USER PERSISTENCE (Saved FOREVER directly in Supabase Cloud)
+// =========================================================================
+
+export const saveUserToSupabaseCloud = async (user: User): Promise<boolean> => {
+  try {
+    const sb = getSupabaseClient();
+    if (!sb) return false;
+
+    const userTitle = `__EDUSYNC_USER__:${user.id}`;
+    const payload = {
+      user_id: '00000000-0000-0000-0000-000000000000',
+      title: userTitle,
+      generalised_notes: JSON.stringify(user),
+      personalised_notes: JSON.stringify(user),
+      status: 'ready' as const,
+      metadata: {
+        entity_type: 'edusync_user',
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        department: user.department,
+        institutionalId: user.institutionalId,
+        user
+      }
+    };
+
+    const { data: existing } = await sb
+      .from('notes')
+      .select('id')
+      .eq('title', userTitle)
+      .limit(1);
+
+    if (existing && existing.length > 0) {
+      const { error } = await sb
+        .from('notes')
+        .update({
+          generalised_notes: payload.generalised_notes,
+          personalised_notes: payload.personalised_notes,
+          metadata: payload.metadata
+        })
+        .eq('id', existing[0].id);
+
+      if (error) {
+        console.warn('[EduSync Supabase] Error updating user in cloud:', error);
+        return false;
+      }
+    } else {
+      const { error } = await sb.from('notes').insert([payload]);
+      if (error) {
+        console.warn('[EduSync Supabase] Error inserting user into cloud:', error);
+        return false;
+      }
+    }
+
+    console.log(`[EduSync Supabase] ☁️ User ${user.name} (${user.id}) saved to cloud!`);
+    return true;
+  } catch (err) {
+    console.warn('[EduSync Supabase] Exception saving user to cloud:', err);
+    return false;
+  }
+};
+
+export const fetchUsersFromSupabaseCloud = async (): Promise<User[]> => {
+  try {
+    const sb = getSupabaseClient();
+    if (!sb) return [];
+
+    const { data, error } = await sb
+      .from('notes')
+      .select('*')
+      .like('title', '__EDUSYNC_USER__:%');
+
+    if (error || !data) return [];
+
+    const users: User[] = [];
+    for (const row of data) {
+      try {
+        if (row.metadata?.user) {
+          users.push(row.metadata.user);
+        } else if (row.generalised_notes) {
+          const parsed = JSON.parse(row.generalised_notes);
+          if (parsed && parsed.id) users.push(parsed);
+        }
+      } catch {}
+    }
+
+    return users;
+  } catch (err) {
+    console.warn('[EduSync Supabase] Exception loading users from cloud:', err);
+    return [];
+  }
+};
+
+export const deleteUserFromSupabaseCloud = async (userId: string): Promise<boolean> => {
+  try {
+    const sb = getSupabaseClient();
+    if (!sb) return false;
+
+    const userTitle = `__EDUSYNC_USER__:${userId}`;
+    const { error } = await sb.from('notes').delete().eq('title', userTitle);
+    return !error;
+  } catch (err) {
+    console.warn('[EduSync Supabase] Exception deleting user from cloud:', err);
+    return false;
+  }
+};
+

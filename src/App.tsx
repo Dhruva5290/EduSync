@@ -33,7 +33,7 @@ import { BoardVisualsHub } from './components/BoardVisuals/BoardVisualsHub';
 import { QuestionBankManager } from './components/TeacherDashboard/QuestionBankManager';
 import { ErrorBoundary } from './components/Common/ErrorBoundary';
 import { VisionNoteImportModal } from './components/VisionNoteImport/VisionNoteImportModal';
-import { subscribeToVisionNotes, fetchVisionNotesFromSupabase, isSupabaseConfigured, smartCategorizeNote } from './lib/supabase';
+import { subscribeToVisionNotes, fetchVisionNotesFromSupabase, isSupabaseConfigured, smartCategorizeNote, fetchUsersFromSupabaseCloud } from './lib/supabase';
 import { recraftNoteForPersona } from './lib/personaRecraft';
 import {
   FAKE_SUBJECTS,
@@ -113,8 +113,25 @@ export default function App() {
     }
     return null;
   });
-  const [allUsers, setAllUsers] = useState<User[]>(FAKE_USERS);
-  const [subjects, setSubjects] = useState<Subject[]>(FAKE_SUBJECTS);
+  const [allUsers, setAllUsers] = useState<User[]>(() => {
+    let base = [...FAKE_USERS];
+    try {
+      const saved = JSON.parse(localStorage.getItem('edusync_users') || '[]');
+      if (Array.isArray(saved) && saved.length > 0) {
+        for (const s of saved) {
+          if (!base.some(b => b.id === s.id)) base.push(s);
+        }
+      }
+    } catch {}
+    return base;
+  });
+  const [subjects, setSubjects] = useState<Subject[]>(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('edusync_subjects') || '[]');
+      if (Array.isArray(saved) && saved.length > 0) return saved;
+    } catch {}
+    return FAKE_SUBJECTS;
+  });
   const [activeSubjectId, setActiveSubjectId] = useState<string>('subj-phy');
   const [activeTab, setActiveTab] = useState<string>('overview');
   const [selectedLectureId, setSelectedLectureId] = useState<string>('lec-phy-101');
@@ -345,6 +362,20 @@ export default function App() {
             }
           }
         }
+
+        // Directly fetch users from Supabase Cloud as resilient cloud source
+        try {
+          const cloudUsers = await fetchUsersFromSupabaseCloud();
+          if (cloudUsers && cloudUsers.length > 0) {
+            setAllUsers(prev => {
+              const merged = [...cloudUsers];
+              for (const p of prev) {
+                if (!merged.some(m => m.id === p.id)) merged.push(p);
+              }
+              return merged;
+            });
+          }
+        } catch (e) {}
 
         // Prompt student user immediately if AI learning persona is not yet tuned
         const activeProfile = currentUser || restoredUser;
@@ -1252,11 +1283,48 @@ export default function App() {
   // Helper to re-fetch all users and current session
   const refreshUsersList = async () => {
     try {
-      const res = await safeFetchJson<{ user: User; allUsers?: User[] }>('/api/auth/me');
-      if (res?.allUsers) {
-        setAllUsers(res.allUsers);
+      let combined: User[] = [...allUsers];
+
+      // 1. Try server endpoint
+      const res = await safeFetchJson<{ user?: User; allUsers?: User[]; users?: User[] }>('/api/auth/public-users');
+      if (res?.users && Array.isArray(res.users)) {
+        for (const u of res.users) {
+          const existingIdx = combined.findIndex(c => c.id === u.id);
+          if (existingIdx !== -1) {
+            combined[existingIdx] = u;
+          } else {
+            combined.push(u);
+          }
+        }
+      }
+
+      // 2. Try Supabase Cloud
+      try {
+        const cloudUsers = await fetchUsersFromSupabaseCloud();
+        for (const cu of cloudUsers) {
+          const existingIdx = combined.findIndex(c => c.id === cu.id);
+          if (existingIdx !== -1) {
+            combined[existingIdx] = cu;
+          } else {
+            combined.push(cu);
+          }
+        }
+      } catch {}
+
+      // 3. Try localStorage
+      try {
+        const saved = JSON.parse(localStorage.getItem('edusync_users') || '[]');
+        if (Array.isArray(saved)) {
+          for (const s of saved) {
+            if (!combined.some(c => c.id === s.id)) combined.push(s);
+          }
+        }
+      } catch {}
+
+      if (combined.length > 0) {
+        setAllUsers(combined);
         if (currentUser) {
-          const updatedSelf = res.allUsers.find(u => u.id === currentUser.id);
+          const updatedSelf = combined.find(u => u.id === currentUser.id);
           if (updatedSelf) setCurrentUser(updatedSelf);
         }
       }
@@ -1821,6 +1889,14 @@ export default function App() {
               onShowToast={(msg, type) => showToast(msg, type || 'success')}
               onNavigateToVisionNote={() => setActiveTab('visionnote-audit')}
               onSwitchUser={handleSwitchUser}
+              onAddUser={(newUser) => {
+                setAllUsers(prev => [newUser, ...prev.filter(u => u.id !== newUser.id)]);
+              }}
+              onProvisionDepartment={(newUsers, newSubjects) => {
+                setAllUsers(newUsers);
+                setSubjects(newSubjects);
+                setAllSubjects(newSubjects);
+              }}
             />
           ) : isTeacher ? (
             <div>

@@ -7,41 +7,49 @@ import { User } from '../types';
 // ==========================================
 
 export function securityHeadersMiddleware(req: Request, res: Response, next: NextFunction) {
-  // Remove information disclosure header
-  res.removeHeader('X-Powered-By');
+  try {
+    // Remove information disclosure header
+    if (typeof res.removeHeader === 'function') {
+      res.removeHeader('X-Powered-By');
+    }
 
-  // Prevent MIME-type sniffing
-  res.setHeader('X-Content-Type-Options', 'nosniff');
+    // Prevent MIME-type sniffing
+    if (typeof res.setHeader === 'function') {
+      res.setHeader('X-Content-Type-Options', 'nosniff');
 
-  // Prevent Clickjacking attacks
-  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+      // Prevent Clickjacking attacks
+      res.setHeader('X-Frame-Options', 'SAMEORIGIN');
 
-  // Modern Cross-Site Scripting (XSS) filter
-  res.setHeader('X-XSS-Protection', '1; mode=block');
+      // Modern Cross-Site Scripting (XSS) filter
+      res.setHeader('X-XSS-Protection', '1; mode=block');
 
-  // Control referrer information leakage
-  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+      // Control referrer information leakage
+      res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
 
-  // Restrict sensitive browser APIs
-  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
+      // Restrict sensitive browser APIs
+      res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
 
-  // Content Security Policy (allows necessary CDNs for fonts, scripts, and YouTube embeds)
-  res.setHeader(
-    'Content-Security-Policy',
-    [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com",
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      "font-src 'self' https://fonts.gstatic.com data:",
-      "img-src 'self' data: https: blob:",
-      "media-src 'self' https: data: blob:",
-      "connect-src 'self' https: http: ws: wss:",
-      "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://openstax.org https://assets.openstax.org",
-      "object-src 'none'",
-      "base-uri 'self'",
-      "form-action 'self'"
-    ].join('; ')
-  );
+      // Content Security Policy (allows necessary CDNs for fonts, scripts, and YouTube embeds)
+      res.setHeader(
+        'Content-Security-Policy',
+        [
+          "default-src 'self'",
+          "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com",
+          "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+          "font-src 'self' https://fonts.gstatic.com data:",
+          "img-src 'self' data: https: blob:",
+          "media-src 'self' https: data: blob:",
+          "connect-src 'self' https: http: ws: wss:",
+          "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://openstax.org https://assets.openstax.org",
+          "object-src 'none'",
+          "base-uri 'self'",
+          "form-action 'self'"
+        ].join('; ')
+      );
+    }
+  } catch (err) {
+    // Suppress header injection errors in non-standard environments
+  }
 
   next();
 }

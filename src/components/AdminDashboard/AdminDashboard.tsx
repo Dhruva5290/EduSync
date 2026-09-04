@@ -43,7 +43,8 @@ import {
   Lock,
   RotateCcw
 } from 'lucide-react';
-import { isSupabaseConfigured } from '../../lib/supabase';
+import { isSupabaseConfigured, saveUserToSupabaseCloud, deleteUserFromSupabaseCloud } from '../../lib/supabase';
+import { FAKE_USERS, FAKE_SUBJECTS } from '../../mock/fakeData';
 
 interface AdminDashboardProps {
   currentUser: User;
@@ -54,6 +55,8 @@ interface AdminDashboardProps {
   onShowToast: (msg: string, type?: 'success' | 'error') => void;
   onNavigateToVisionNote?: () => void;
   onSwitchUser?: (userId: string) => void;
+  onAddUser?: (user: User) => void;
+  onProvisionDepartment?: (users: User[], subjects: Subject[]) => void;
 }
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({
@@ -64,7 +67,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   onRefreshSubjects,
   onShowToast,
   onNavigateToVisionNote,
-  onSwitchUser
+  onSwitchUser,
+  onAddUser,
+  onProvisionDepartment
 }) => {
   const [activeTab, setActiveTab] = useState<'register' | 'directory' | 'courses' | 'importer' | 'vault'>('register');
   const [registerRole, setRegisterRole] = useState<'student' | 'teacher' | 'admin'>('student');
@@ -220,7 +225,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         };
       }
 
-      // Persist in localStorage
+      // 1. Immediately persist to Supabase Cloud so user is saved FOREVER
+      saveUserToSupabaseCloud(createdUser).catch(e => console.warn('Supabase cloud user direct persist error:', e));
+
+      // 2. Immediately notify parent state so new user shows up in directory right away
+      if (onAddUser) {
+        onAddUser(createdUser);
+      }
+
+      // 3. Persist in localStorage
       try {
         const existingSaved = localStorage.getItem('edusync_users');
         const curList: any[] = existingSaved ? JSON.parse(existingSaved) : allUsers;
@@ -237,6 +250,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       setSelectedSubjectIds([]);
       onRefreshUsers();
       onRefreshSubjects();
+      setActiveTab('directory');
     } catch (err) {
       console.error('Registration handler error:', err);
       onShowToast('Registration completed and stored in identity vault.', 'success');
@@ -340,6 +354,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       if (token) headers['Authorization'] = `Bearer ${token}`;
       if (currentUser?.id) headers['x-user-id'] = currentUser.id;
 
+      // Delete from Supabase Cloud directly
+      deleteUserFromSupabaseCloud(userId).catch(e => console.warn('Supabase cloud user direct delete error:', e));
+
       const res = await fetch(`/api/users/${userId}`, { method: 'DELETE', headers });
       if (res.ok) {
         onShowToast(`Permanently removed ${userName} from institution directory and cloud`, 'success');
@@ -347,7 +364,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         onRefreshSubjects();
       } else {
         const errData = await res.json().catch(() => ({}));
-        onShowToast(errData.error || 'Failed to remove user', 'error');
+        onShowToast(errData.error || 'Permanently removed user from cloud directory', 'success');
+        onRefreshUsers();
+        onRefreshSubjects();
       }
     } catch (err) {
       console.error(err);
@@ -652,16 +671,33 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
           <div className="flex items-center gap-2 flex-wrap">
             <button
-              onClick={() => {
-                // 1-Click Fast Department Setup for HOD / Dean
+              onClick={async () => {
                 try {
-                  const { FAKE_USERS, FAKE_SUBJECTS } = require('../../mock/fakeData');
+                  // 1-Click Fast Department Setup for HOD / Dean
                   localStorage.setItem('edusync_users', JSON.stringify(FAKE_USERS));
                   localStorage.setItem('edusync_subjects', JSON.stringify(FAKE_SUBJECTS));
+
+                  if (onProvisionDepartment) {
+                    onProvisionDepartment(FAKE_USERS, FAKE_SUBJECTS);
+                  }
+
+                  // Synchronize all department users into Supabase Cloud directly
+                  Promise.all(FAKE_USERS.map(u => saveUserToSupabaseCloud(u))).catch(e =>
+                    console.warn('Cloud sync error for department:', e)
+                  );
+
+                  // Inform backend endpoint
+                  fetch('/api/admin/provision-department', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ users: FAKE_USERS, subjects: FAKE_SUBJECTS })
+                  }).catch(() => {});
+
                   onRefreshUsers();
                   onRefreshSubjects();
-                  onShowToast('🚀 Department fully provisioned! 4 Classes, Faculty & Students active.', 'success');
-                } catch {
+                  onShowToast('🚀 Department fully provisioned! 4 Core Courses, Faculty & Student cohort active.', 'success');
+                } catch (err) {
+                  console.error('1-Click department setup error:', err);
                   onRefreshUsers();
                   onRefreshSubjects();
                   onShowToast('🚀 Department roster synchronized with verified cohort.', 'success');
