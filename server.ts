@@ -1,7 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
 import fs from 'fs';
-import { createServer as createViteServer } from 'vite';
 import dotenv from 'dotenv';
 import { db, saveUsersToDisk, saveNotesToDisk, saveLecturesToDisk, saveProgressToDisk } from './src/server/db';
 import {
@@ -52,9 +51,8 @@ import { archiveAndResetWorkspace, listVaultSnapshots, restoreFromVaultSnapshot 
 
 dotenv.config();
 
-async function startServer() {
-  const app = express();
-  const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+export const app = express();
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
   // 1. Security Headers (OWASP Top 10)
   app.use(securityHeadersMiddleware);
@@ -2699,29 +2697,39 @@ By Newton's Second Law ($\vec{F}_{net} = m\vec{a}$), acceleration only exists wh
   // VITE & PRODUCTION STATIC ASSETS
   // ==========================================
 
-  const distPath = path.join(process.cwd(), 'dist');
-  const distIndexHtml = path.join(distPath, 'index.html');
-  const hasDist = fs.existsSync(distIndexHtml);
-  const isProduction = process.env.NODE_ENV === 'production';
+  async function startServer() {
+    if (process.env.VERCEL === '1' || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+      return;
+    }
 
-  if (isProduction && hasDist) {
-    console.log(`EduSync serving production static build from: ${distPath}`);
-    app.use(express.static(distPath));
-    app.get('*', (req, res) => {
-      res.sendFile(distIndexHtml);
-    });
-  } else {
-    console.log('EduSync running in Development mode with Vite HMR.');
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: 'spa',
-    });
-    app.use(vite.middlewares);
+    const distPath = path.join(process.cwd(), 'dist');
+    const distIndexHtml = path.join(distPath, 'index.html');
+    const hasDist = fs.existsSync(distIndexHtml);
+    const isProduction = process.env.NODE_ENV === 'production';
+
+    if (isProduction && hasDist) {
+      console.log(`EduSync serving production static build from: ${distPath}`);
+      app.use(express.static(distPath));
+      app.get('*', (req, res) => {
+        res.sendFile(distIndexHtml);
+      });
+      app.listen(PORT, '0.0.0.0', () => {
+        console.log(`EduSync Server running on http://0.0.0.0:${PORT}`);
+      });
+    } else {
+      console.log('EduSync running in Development mode with Vite HMR.');
+      const { createServer: createViteServer } = await import('vite');
+      const vite = await createViteServer({
+        server: { middlewareMode: true },
+        appType: 'spa',
+      });
+      app.use(vite.middlewares);
+      app.listen(PORT, '0.0.0.0', () => {
+        console.log(`EduSync Server running on http://0.0.0.0:${PORT}`);
+      });
+    }
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`EduSync Server running on http://0.0.0.0:${PORT}`);
-  });
-}
+  startServer();
 
-startServer();
+  export default app;
