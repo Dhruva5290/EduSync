@@ -523,10 +523,31 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
   // Save / Update Student Personalized Learning Profile (Questionnaire Results)
   app.post('/api/students/:id/learning-profile', (req, res) => {
     try {
-      const student = db.users.find(u => u.id === req.params.id);
+      const studentId = req.params.id;
+      let student = db.users.find(u =>
+        u.id === studentId ||
+        u.username?.toLowerCase() === studentId.toLowerCase() ||
+        u.email?.toLowerCase() === studentId.toLowerCase()
+      );
+
       if (!student) {
-        res.status(404).json({ error: 'Student not found' });
-        return;
+        const authUser = getCurrentUser(req);
+        if (authUser) {
+          student = db.users.find(u => u.id === authUser.id);
+        }
+      }
+
+      if (!student) {
+        // Upsert student record if not found in current memory
+        student = {
+          id: studentId,
+          name: (req.body.studentName || 'Student').trim(),
+          email: (req.body.studentEmail || `${studentId}@edusync.edu.in`).trim(),
+          role: 'student',
+          department: 'Computer Science & Engineering',
+          academicYear: '2026-27'
+        } as User;
+        db.users.push(student);
       }
 
       const { learningProfile } = req.body;
@@ -552,20 +573,26 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
       const studentNotes = db.notes.filter(n =>
         !n.studentId ||
         n.source === 'visionnote' ||
-        n.studentId === student.id ||
-        n.studentId === student.institutionalId ||
+        n.studentId === student!.id ||
+        n.studentId === student!.institutionalId ||
         n.studentId.startsWith('student-') ||
-        student.role === 'admin' ||
-        student.role === 'student'
+        student!.role === 'admin' ||
+        student!.role === 'student'
       );
 
       for (const note of studentNotes) {
-        const recrafted = recraftNoteForPersona(note, student.learningProfile);
-        note.content = recrafted.content;
-        note.personalisedNotes = recrafted.personalisedNotes;
-        note.summary = recrafted.summary;
-        note.keyTakeaways = recrafted.keyTakeaways;
-        note.lastModified = new Date().toISOString();
+        try {
+          const recrafted = recraftNoteForPersona(note, student.learningProfile);
+          if (recrafted) {
+            note.content = recrafted.content;
+            note.personalisedNotes = recrafted.personalisedNotes;
+            note.summary = recrafted.summary;
+            note.keyTakeaways = recrafted.keyTakeaways;
+            note.lastModified = new Date().toISOString();
+          }
+        } catch (noteErr) {
+          console.warn(`Safe bypass: error recrafting note ${note.id}:`, noteErr);
+        }
       }
 
       saveNotesToDisk(db.notes);
