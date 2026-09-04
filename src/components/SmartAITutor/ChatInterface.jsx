@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, Sparkles, Loader2, RotateCcw, Key } from 'lucide-react';
 
-export const ChatInterface = () => {
+export const ChatInterface = ({ initialPrompt }) => {
   const [messages, setMessages] = useState([
     {
       id: 'welcome',
@@ -16,10 +16,18 @@ export const ChatInterface = () => {
   const [showKeyDialog, setShowKeyDialog] = useState(false);
   const [tempKey, setTempKey] = useState('');
   const bottomRef = useRef(null);
+  const initialSentRef = useRef(false);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading]);
+
+  useEffect(() => {
+    if (initialPrompt && initialPrompt.trim() && !initialSentRef.current) {
+      initialSentRef.current = true;
+      handleSend(initialPrompt.trim());
+    }
+  }, [initialPrompt]);
 
   const handleSend = async (customText) => {
     const textToSend = (customText || input).trim();
