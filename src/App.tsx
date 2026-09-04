@@ -378,6 +378,9 @@ export default function App() {
                 merged.push(prev);
               }
             }
+            try {
+              localStorage.setItem('edusync_notes', JSON.stringify(merged));
+            } catch (e) {}
             return merged;
           });
         }
@@ -396,9 +399,16 @@ export default function App() {
       if (!isTarget) return;
 
       setNotes((prevNotes) => {
-        // Prevent duplicate insertions if already present
-        if (prevNotes.some(n => n.id === incomingNote.id)) return prevNotes;
-        return [incomingNote, ...prevNotes];
+        let updated: StudentNote[];
+        if (prevNotes.some(n => n.id === incomingNote.id)) {
+          updated = prevNotes.map(n => n.id === incomingNote.id ? incomingNote : n);
+        } else {
+          updated = [incomingNote, ...prevNotes];
+        }
+        try {
+          localStorage.setItem('edusync_notes', JSON.stringify(updated));
+        } catch (e) {}
+        return updated;
       });
       showToast(`📸 VisionNote Cloud Sync: "${incomingNote.title}" synced!`, 'info');
     });
@@ -1328,6 +1338,24 @@ export default function App() {
               </button>
 
               <button
+                id="sidebar-tab-lecture-notes"
+                onClick={() => { setActiveTab('lecture-notes'); setMobileMenuOpen(false); }}
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-sm text-xs font-semibold transition-colors text-left ${
+                  activeTab === 'lecture-notes'
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                }`}
+              >
+                <BookOpen className="w-4 h-4 shrink-0 text-cyan-400" />
+                <div className="flex items-center justify-between flex-1">
+                  <span>VN Studio</span>
+                  <span className="text-[9px] px-1.5 py-0.2 rounded font-mono bg-cyan-950 text-cyan-300 border border-cyan-800">
+                    Live
+                  </span>
+                </div>
+              </button>
+
+              <button
                 id="sidebar-tab-notes"
                 onClick={() => { setActiveTab('notes'); setMobileMenuOpen(false); }}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-sm text-xs font-semibold transition-colors text-left ${
@@ -1663,6 +1691,7 @@ export default function App() {
                   }}
                   onViewAssignments={() => setActiveTab('feed-resources')}
                   onViewBoardVisuals={() => setActiveTab('board-visuals')}
+                  onNavigateToVisionNote={() => setActiveTab('lecture-notes')}
                 />
               )}
 

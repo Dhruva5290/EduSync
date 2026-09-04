@@ -24,6 +24,7 @@ interface StudentHomeDashboardProps {
   onOpenTutorWithPrompt?: (prompt: string, lectureContext?: any) => void;
   onViewAssignments?: () => void;
   onViewBoardVisuals?: () => void;
+  onNavigateToVisionNote?: () => void;
 }
 
 export const StudentHomeDashboard: React.FC<StudentHomeDashboardProps> = ({
@@ -31,7 +32,8 @@ export const StudentHomeDashboard: React.FC<StudentHomeDashboardProps> = ({
   onOpenLecture,
   onOpenTutorWithPrompt,
   onViewAssignments,
-  onViewBoardVisuals
+  onViewBoardVisuals,
+  onNavigateToVisionNote
 }) => {
   const [summary, setSummary] = useState<StudentDashboardSummary | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -104,6 +106,16 @@ export const StudentHomeDashboard: React.FC<StudentHomeDashboardProps> = ({
               <Play className="w-3.5 h-3.5 fill-current" />
               <span>Resume Today's Class</span>
             </button>
+            {onNavigateToVisionNote && (
+              <button
+                id="dashboard-open-vn-studio-btn"
+                onClick={onNavigateToVisionNote}
+                className="px-4 py-2 bg-gradient-to-r from-cyan-950 to-indigo-950 hover:from-cyan-900 hover:to-indigo-900 text-cyan-300 border border-cyan-700/80 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 shadow-sm"
+              >
+                <BookOpen className="w-3.5 h-3.5 text-cyan-400" />
+                <span>Open VN Studio</span>
+              </button>
+            )}
             <button
               onClick={fetchSummary}
               className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl text-xs border border-slate-700 transition-colors cursor-pointer"
