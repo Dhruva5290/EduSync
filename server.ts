@@ -2573,39 +2573,36 @@ ${personaSummary}
       const { GoogleGenAI } = await import('@google/genai');
       const ai = new GoogleGenAI({ apiKey });
 
-      try {
-        // Primary: Gemini 3.7 Flash via Interactions API
-        const interaction = await ai.interactions.create({
-          model: 'gemini-3.7-flash',
-          input: fullInput,
-          system_instruction: systemInstruction
-        });
+      const candidateModels = ['gemini-3.6-flash', 'gemini-2.5-flash', 'gemini-2.0-flash'];
+      let tutorReply = '';
 
-        if (interaction && interaction.output_text) {
-          return res.json({ reply: interaction.output_text });
-        }
-        throw new Error('Empty response from Gemini 3.7 Flash');
-      } catch (interactionErr: any) {
-        console.warn('Gemini 3.7 Flash interaction failed, trying gemini-3.5-flash-lite:', interactionErr?.message);
-
+      for (const modelName of candidateModels) {
         try {
-          // Secondary fallback model
-          const fallbackInteraction = await ai.interactions.create({
-            model: 'gemini-3.5-flash-lite',
-            input: fullInput,
-            system_instruction: systemInstruction
+          const response = await ai.models.generateContent({
+            model: modelName,
+            contents: fullInput,
+            config: {
+              systemInstruction: systemInstruction
+            }
           });
 
-          if (fallbackInteraction && fallbackInteraction.output_text) {
-            return res.json({ reply: fallbackInteraction.output_text });
+          if (response && response.text) {
+            tutorReply = response.text;
+            break;
           }
-        } catch (liteErr: any) {
-          console.warn('Gemini 3.5 Flash-Lite interaction failed:', liteErr?.message);
+        } catch (modelErr: any) {
+          console.warn(`[Tutor] Model ${modelName} failed:`, modelErr?.message || modelErr);
         }
-
-        // Final safety net: intelligent multi-domain knowledge synthesis
-        return res.json({ reply: generateDiverseSocraticReply(message, { studentContext, lectureContext: lectureInfo, history }) });
       }
+
+      if (tutorReply) {
+        return res.json({ reply: tutorReply });
+      }
+
+      // If all live models fail, return an informative response
+      return res.json({
+        reply: "I'm currently having trouble connecting to the AI models. Please check your API quota or retry in a few moments."
+      });
 
     } catch (err: any) {
       console.error('Error in /api/tutor:', err);
