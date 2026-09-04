@@ -342,14 +342,14 @@
     "joinedDate": "2026-09-03",
     "phone": "+91 98765 43210",
     "learningProfile": {
-      "learningStyle": "step_by_step",
+      "learningStyle": "visual",
       "targetGrade": "A+",
-      "explanationTone": "practical_engineer",
-      "preferredPace": "thorough",
+      "explanationTone": "encouraging_mentor",
+      "preferredPace": "steady",
       "strengthsAndInterests": "Interactive coding, mathematical graphs, physical models",
       "painPoints": "Complex integration, multi-variable calculus",
       "questionnaireCompleted": true,
-      "completedAt": "2026-09-04T09:46:29.624Z"
+      "completedAt": "2026-09-04T10:54:05.044Z"
     }
   }
 ]

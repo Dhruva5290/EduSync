@@ -57,24 +57,23 @@
       "completed": false,
       "lastTimestamp": "05:32",
       "progressPercent": 75,
-      "lastViewedAt": "2026-09-04T10:19:00.986Z",
+      "lastViewedAt": "2026-09-04T10:50:51.205Z",
       "quizCompleted": true,
       "quizScore": 3,
       "quizTotal": 6,
       "understoodConcepts": [
         "Inertia",
-        "Force vs acceleration",
         "Newton's Second Law"
       ],
       "weakConcepts": [
         "Newton's First Law",
         "Free Body Diagram",
-        "Newton's Second Law"
+        "Force vs acceleration"
       ],
       "recommendations": [
         "Revise concept: \"Newton's First Law\". Launch AI Tutor to understand boundary conditions and physical reasoning.",
         "Revise concept: \"Free Body Diagram\". Launch AI Tutor to understand boundary conditions and physical reasoning.",
-        "Revise concept: \"Newton's Second Law\". Launch AI Tutor to understand boundary conditions and physical reasoning."
+        "Revise concept: \"Force vs acceleration\". Launch AI Tutor to understand boundary conditions and physical reasoning."
       ]
     }
   }
