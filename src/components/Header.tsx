@@ -183,52 +183,12 @@ export const Header: React.FC<HeaderProps> = ({
               <button
                 id="header-import-vn-btn"
                 onClick={onOpenVNImport}
-                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded text-xs font-bold bg-cyan-950/70 border border-cyan-700/80 text-cyan-300 hover:bg-cyan-900/80 transition-all shrink-0 shadow-xs"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-cyan-950/80 border border-cyan-700/80 text-cyan-300 hover:bg-cyan-900/80 transition-all shrink-0 shadow-sm hover:shadow-cyan-900/20"
                 title="Paste OCR text or load .txt file from VisionNote"
               >
                 <UploadCloud className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-                <span className="hidden sm:inline">Import VN Note</span>
+                <span>Import VN Note</span>
               </button>
-            )}
-
-            {/* Demo Showcase Mode vs Clean Slate Mode Switcher */}
-            {onToggleDemoMode && (
-              <button
-                id="header-demo-mode-btn"
-                onClick={() => onToggleDemoMode(!isDemoMode)}
-                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded text-xs font-bold transition-all shrink-0 border shadow-xs ${
-                  isDemoMode
-                    ? 'bg-amber-950/70 border-amber-600/80 text-amber-300 hover:bg-amber-900/70'
-                    : 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700'
-                }`}
-                title="Toggle between Mentor Presentation Demo Mode and Clean Slate Mode"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                <span className="hidden lg:inline">{isDemoMode ? 'Demo Mode (Mentors)' : 'Clean Slate (Prod)'}</span>
-              </button>
-            )}
-
-            {/* Accent Color Palette Selector */}
-            {onChangeAccentColor && (
-              <div className="hidden sm:flex items-center gap-1 p-1 bg-slate-950/80 border border-slate-800 rounded-lg shrink-0">
-                {[
-                  { id: 'blue', color: 'bg-blue-500' },
-                  { id: 'emerald', color: 'bg-emerald-500' },
-                  { id: 'purple', color: 'bg-purple-500' },
-                  { id: 'cyan', color: 'bg-cyan-500' },
-                  { id: 'rose', color: 'bg-rose-500' },
-                  { id: 'amber', color: 'bg-amber-500' }
-                ].map((item) => (
-                  <button
-                    key={item.id}
-                    onClick={() => onChangeAccentColor(item.id)}
-                    className={`w-3.5 h-3.5 rounded-full ${item.color} transition-transform hover:scale-125 ${
-                      accentColor === item.id ? 'ring-2 ring-white scale-110' : 'opacity-70 hover:opacity-100'
-                    }`}
-                    title={`Accent Color: ${item.id}`}
-                  />
-                ))}
-              </div>
             )}
 
             {/* Theme Toggle (Light / Dark) */}
@@ -236,7 +196,7 @@ export const Header: React.FC<HeaderProps> = ({
               <button
                 id="header-theme-toggle-btn"
                 onClick={onToggleTheme}
-                className="p-1.5 sm:p-2 rounded bg-slate-950/80 hover:bg-slate-800 text-slate-300 hover:text-amber-300 border border-slate-800 hover:border-slate-700 transition-all cursor-pointer shrink-0"
+                className="p-2 rounded-lg bg-slate-950 hover:bg-slate-800 text-slate-300 hover:text-amber-300 border border-slate-800 hover:border-slate-700 transition-all cursor-pointer shrink-0"
                 title={theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
                 aria-label="Toggle Theme"
               >
@@ -248,40 +208,14 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
             )}
 
-            {/* Security & System Meter - Visible on wide desktop */}
-            <div className="hidden 2xl:flex items-center gap-2 px-2.5 py-1 rounded bg-slate-950 text-slate-300 text-xs font-medium border border-slate-800 shrink-0" title="Security Hardened: OWASP Defenses & RBAC Active">
-              <div className="flex items-center gap-1">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="text-[10px] font-mono text-emerald-400 font-bold uppercase tracking-wider">A+ Protected</span>
-              </div>
-              <span className="text-slate-700">|</span>
-              <div className="flex items-center gap-1">
-                <Zap className="w-3 h-3 text-blue-400" />
-                <span className="text-[10px] font-mono text-slate-400">{rateLimitRemaining} RPM</span>
-              </div>
-            </div>
-
-            {/* Prominent Log Out Button */}
-            {onLogout && (
-              <button
-                id="header-logout-btn"
-                onClick={onLogout}
-                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded bg-rose-950/80 hover:bg-rose-900 text-rose-200 hover:text-white border border-rose-800 hover:border-rose-600 text-xs font-bold transition-all shrink-0 cursor-pointer shadow-xs"
-                title="Sign out of current account"
-              >
-                <LogOut className="w-3.5 h-3.5 text-rose-300 shrink-0" />
-                <span className="inline">Sign Out</span>
-              </button>
-            )}
-
-            {/* User Dropdown */}
+            {/* User Profile Trigger with Settings Dropdown */}
             <div className="relative shrink-0">
               <button
                 id="header-user-menu-btn"
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="flex items-center gap-2 p-1 sm:p-1.5 rounded-md hover:bg-slate-800 border border-transparent hover:border-slate-700 transition-colors text-left"
+                className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-slate-800 border border-slate-800/80 hover:border-slate-700 transition-all text-left bg-slate-950/60 cursor-pointer"
               >
-                <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs font-bold border shrink-0 ${
+                <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold border shrink-0 ${
                   currentUser.role === 'admin'
                     ? 'bg-purple-900/40 text-purple-300 border-purple-500/50'
                     : currentUser.role === 'teacher'
@@ -290,11 +224,11 @@ export const Header: React.FC<HeaderProps> = ({
                 }`}>
                   {currentUser.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
                 </div>
-                <div className="hidden md:block text-left">
-                  <div className="text-xs font-bold text-white flex items-center gap-1.5">
-                    <span className="truncate max-w-[90px] lg:max-w-[120px]">{currentUser.name}</span>
+                <div className="hidden sm:block text-left">
+                  <div className="text-xs font-bold text-white flex items-center gap-1.5 leading-none">
+                    <span className="truncate max-w-[100px]">{currentUser.name.split(' ')[0]}</span>
                     <span
-                      className={`text-[9px] px-1 py-0.2 rounded font-semibold uppercase ${
+                      className={`text-[9px] px-1.5 py-0.5 rounded font-mono font-bold uppercase ${
                         currentUser.role === 'admin'
                           ? 'bg-purple-900/60 text-purple-300 border border-purple-700/50'
                           : currentUser.role === 'teacher'
@@ -305,32 +239,98 @@ export const Header: React.FC<HeaderProps> = ({
                       {currentUser.role === 'admin' ? 'Dean' : currentUser.role === 'teacher' ? 'Faculty' : 'Student'}
                     </span>
                   </div>
-                  <div className="text-[10px] text-slate-400 font-mono hidden lg:block">
-                    {currentUser.institutionalId}
-                  </div>
                 </div>
                 <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />
               </button>
 
               {/* User Dropdown Modal */}
               {showUserMenu && (
-                <div className="absolute right-0 mt-2 w-80 bg-slate-900 rounded-md shadow-2xl border border-slate-800 py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                  <div className="px-3 py-2.5 border-b border-slate-800 bg-slate-950/50">
+                <div className="absolute right-0 mt-2 w-80 bg-slate-900 rounded-xl shadow-2xl border border-slate-800 py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                  <div className="px-3.5 py-2.5 border-b border-slate-800 bg-slate-950/70">
                     <div className="flex items-center justify-between mb-1">
                       <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
                         BML Munjal University
                       </p>
-                      <span className="text-[9px] px-1.5 py-0.5 rounded-xs bg-slate-800 text-slate-300 font-mono">
+                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 font-mono">
                         {currentUser.role.toUpperCase()}
                       </span>
                     </div>
                     <p className="text-xs font-bold text-white truncate">{currentUser.name}</p>
                     <p className="text-[11px] text-slate-400 font-mono truncate">{currentUser.email}</p>
                     <p className="text-[10px] text-blue-400 font-medium mt-0.5 truncate">{currentUser.department}</p>
-                    {currentUser.username && (
-                      <p className="text-[10px] text-purple-400 font-mono mt-0.5 truncate">Username: @{currentUser.username}</p>
-                    )}
                   </div>
+
+                  {/* Real-time Theme Accent Color Picker Section */}
+                  {onChangeAccentColor && (
+                    <div className="px-3.5 py-2.5 border-b border-slate-800 space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
+                          <Palette className="w-3.5 h-3.5 text-blue-400" />
+                          Color Palette (Live)
+                        </span>
+                        <span className="text-[10px] font-mono text-cyan-400 uppercase font-bold">
+                          {accentColor}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between pt-1">
+                        {[
+                          { id: 'blue', name: 'Blue', color: 'bg-blue-500', ring: 'ring-blue-400' },
+                          { id: 'emerald', name: 'Emerald', color: 'bg-emerald-500', ring: 'ring-emerald-400' },
+                          { id: 'purple', name: 'Purple', color: 'bg-purple-500', ring: 'ring-purple-400' },
+                          { id: 'cyan', name: 'Cyan', color: 'bg-cyan-500', ring: 'ring-cyan-400' },
+                          { id: 'rose', name: 'Rose', color: 'bg-rose-500', ring: 'ring-rose-400' },
+                          { id: 'amber', name: 'Amber', color: 'bg-amber-500', ring: 'ring-amber-400' }
+                        ].map((item) => {
+                          const isSelected = accentColor === item.id;
+                          return (
+                            <button
+                              key={item.id}
+                              type="button"
+                              onClick={() => {
+                                onChangeAccentColor(item.id);
+                              }}
+                              className={`w-6 h-6 rounded-full ${item.color} transition-all flex items-center justify-center cursor-pointer ${
+                                isSelected ? `ring-2 ring-white scale-110 shadow-lg` : 'opacity-70 hover:opacity-100 hover:scale-105'
+                              }`}
+                              title={`Switch to ${item.name} Accent`}
+                            >
+                              {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-white block" />}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Mode Switcher Section (Demo Mode vs Clean Slate) */}
+                  {onToggleDemoMode && (
+                    <div className="px-3.5 py-2.5 border-b border-slate-800">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-xs font-bold text-white flex items-center gap-1.5">
+                            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                            {isDemoMode ? 'Mentor Demo Mode' : 'Clean Slate (Prod)'}
+                          </p>
+                          <p className="text-[10px] text-slate-400">
+                            {isDemoMode ? 'Presentation data active' : 'Fresh production slate'}
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onToggleDemoMode(!isDemoMode);
+                          }}
+                          className={`px-2.5 py-1 rounded text-[11px] font-bold transition-all border ${
+                            isDemoMode
+                              ? 'bg-amber-950/70 text-amber-300 border-amber-600/80 hover:bg-amber-900/80'
+                              : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
+                          }`}
+                        >
+                          {isDemoMode ? 'Switch to Reset' : 'Load Demo'}
+                        </button>
+                      </div>
+                    </div>
+                  )}
 
                   {/* If Admin/Dean, allow inspecting perspectives */}
                   {currentUser.role === 'admin' && allUsers.length > 0 ? (

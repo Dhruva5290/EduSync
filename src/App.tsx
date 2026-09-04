@@ -81,6 +81,9 @@ export default function App() {
     const saved = localStorage.getItem('edusync_theme');
     return (saved === 'light' || saved === 'dark') ? saved : 'dark';
   });
+  const [accentColor, setAccentColor] = useState<string>(() => {
+    return localStorage.getItem('edusync_accent') || 'blue';
+  });
   const [authToken, setAuthToken] = useState<string | null>(() => localStorage.getItem('edusync_token'));
   const [auditAdmin, setAuditAdmin] = useState<User | null>(() => {
     const saved = localStorage.getItem('edusync_audit_admin');
@@ -120,6 +123,11 @@ export default function App() {
       document.documentElement.classList.remove('light-theme');
     }
   }, [theme]);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-accent', accentColor);
+    localStorage.setItem('edusync_accent', accentColor);
+  }, [accentColor]);
 
   const toggleTheme = () => {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');
@@ -163,9 +171,7 @@ export default function App() {
     const saved = localStorage.getItem('edusync_demo_mode');
     return saved === null ? true : saved === 'true';
   });
-  const [accentColor, setAccentColor] = useState<string>(() => {
-    return localStorage.getItem('edusync_accent') || 'blue';
-  });
+
 
   // Loading States
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -1520,22 +1526,13 @@ export default function App() {
               </button>
             </div>
           )}
-          {/* Top Enrolled Subjects Quick Switcher (for Student & Faculty - hidden on universal AI Tutor tab) */}
+          {/* Sleek Compact Curriculum Strip */}
           {!isAdmin && subjects.length > 0 && activeTab !== 'tutor' && (
-            <div className="bg-slate-900/90 border border-slate-800 rounded-sm p-3 shadow-xs">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2.5">
-                <div className="flex items-center gap-2">
-                  <BookOpen className="w-4 h-4 text-blue-400" />
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-300">
-                    {currentUser.role === 'student' ? '1st Year Enrolled Curriculum (All 5 Subjects)' : 'Academic Courses Roster'}
-                  </span>
-                </div>
-                <span className="text-[10px] font-mono text-slate-400">
-                  Active: <strong className="text-blue-400">{activeSubject.code}</strong> — {activeSubject.name} ({activeSubject.teacherName})
+            <div className="flex items-center justify-between gap-3 bg-slate-950/70 border border-slate-800/80 rounded-xl px-3 py-2 shadow-xs backdrop-blur-xs">
+              <div className="flex items-center gap-2 overflow-x-auto scrollbar-none py-0.5">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 font-mono shrink-0 mr-1 hidden sm:inline">
+                  Curriculum:
                 </span>
-              </div>
-
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
                 {subjects.map((subj) => {
                   const isSelected = subj.id === activeSubjectId;
                   return (
@@ -1543,32 +1540,26 @@ export default function App() {
                       key={subj.id}
                       id={`course-tab-${subj.code.toLowerCase()}`}
                       onClick={() => setActiveSubjectId(subj.id)}
-                      className={`flex flex-col text-left p-2.5 rounded-sm border transition-all ${
+                      className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shrink-0 border cursor-pointer ${
                         isSelected
-                          ? 'bg-blue-600/20 border-blue-500 text-white shadow-xs ring-1 ring-blue-500/40'
-                          : 'bg-slate-950/60 border-slate-800/80 text-slate-300 hover:bg-slate-800/80 hover:border-slate-700'
+                          ? 'bg-blue-600 text-white border-blue-500 shadow-sm shadow-blue-900/30'
+                          : 'bg-slate-900/80 border-slate-800 text-slate-300 hover:bg-slate-800 hover:text-white'
                       }`}
                     >
-                      <div className="flex items-center justify-between gap-1 w-full mb-1">
-                        <span className={`text-xs font-mono font-bold px-1.5 py-0.5 rounded-xs ${
-                          isSelected ? 'bg-blue-500 text-white' : 'bg-slate-800 text-slate-300'
-                        }`}>
-                          {subj.code}
-                        </span>
-                        <span className="text-[9px] font-mono text-slate-400">
-                          {subj.credits || 4} Cr
-                        </span>
-                      </div>
-                      <span className="text-xs font-semibold truncate w-full text-slate-200" title={subj.name}>
-                        {subj.name}
+                      <span className={`font-mono text-[10px] font-bold px-1.5 py-0.2 rounded ${
+                        isSelected ? 'bg-black/20 text-white' : 'bg-slate-800 text-slate-400'
+                      }`}>
+                        {subj.code}
                       </span>
-                      <span className="text-[10px] text-slate-400 truncate w-full mt-0.5">
-                        {subj.teacherName}
-                      </span>
+                      <span className="truncate max-w-[130px]">{subj.name}</span>
                     </button>
                   );
                 })}
               </div>
+
+              <span className="text-[11px] font-mono text-slate-400 shrink-0 hidden lg:inline">
+                Faculty: <strong className="text-slate-200">{activeSubject.teacherName}</strong>
+              </span>
             </div>
           )}
 

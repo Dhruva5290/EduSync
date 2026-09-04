@@ -266,3 +266,113 @@ html.light-theme .bg-rose-950,
 html.light-theme .bg-rose-950\/60 {
   background-color: #fff1f2 !important;
 }
+
+/* ==========================================================================
+   REAL-TIME DYNAMIC ACCENT PALETTES
+   ========================================================================== */
+
+/* 1. Emerald Accent */
+html[data-accent="emerald"] button.bg-blue-600,
+html[data-accent="emerald"] .bg-blue-600 {
+  background-color: #059669 !important;
+}
+html[data-accent="emerald"] button.bg-blue-600:hover,
+html[data-accent="emerald"] .hover\:bg-blue-500:hover {
+  background-color: #10b981 !important;
+  box-shadow: 0 0 16px rgba(16, 185, 129, 0.6) !important;
+}
+html[data-accent="emerald"] .text-blue-400,
+html[data-accent="emerald"] .text-blue-300 {
+  color: #34d399 !important;
+}
+html[data-accent="emerald"] .border-blue-500 {
+  border-color: #10b981 !important;
+}
+html[data-accent="emerald"] .bg-blue-600\/20 {
+  background-color: rgba(16, 185, 129, 0.2) !important;
+}
+
+/* 2. Purple Accent */
+html[data-accent="purple"] button.bg-blue-600,
+html[data-accent="purple"] .bg-blue-600 {
+  background-color: #7c3aed !important;
+}
+html[data-accent="purple"] button.bg-blue-600:hover,
+html[data-accent="purple"] .hover\:bg-blue-500:hover {
+  background-color: #8b5cf6 !important;
+  box-shadow: 0 0 16px rgba(139, 92, 246, 0.6) !important;
+}
+html[data-accent="purple"] .text-blue-400,
+html[data-accent="purple"] .text-blue-300 {
+  color: #c084fc !important;
+}
+html[data-accent="purple"] .border-blue-500 {
+  border-color: #8b5cf6 !important;
+}
+html[data-accent="purple"] .bg-blue-600\/20 {
+  background-color: rgba(139, 92, 246, 0.2) !important;
+}
+
+/* 3. Cyan Accent */
+html[data-accent="cyan"] button.bg-blue-600,
+html[data-accent="cyan"] .bg-blue-600 {
+  background-color: #0891b2 !important;
+}
+html[data-accent="cyan"] button.bg-blue-600:hover,
+html[data-accent="cyan"] .hover\:bg-blue-500:hover {
+  background-color: #06b6d4 !important;
+  box-shadow: 0 0 16px rgba(6, 182, 212, 0.6) !important;
+}
+html[data-accent="cyan"] .text-blue-400,
+html[data-accent="cyan"] .text-blue-300 {
+  color: #22d3ee !important;
+}
+html[data-accent="cyan"] .border-blue-500 {
+  border-color: #06b6d4 !important;
+}
+html[data-accent="cyan"] .bg-blue-600\/20 {
+  background-color: rgba(6, 182, 212, 0.2) !important;
+}
+
+/* 4. Rose Accent */
+html[data-accent="rose"] button.bg-blue-600,
+html[data-accent="rose"] .bg-blue-600 {
+  background-color: #e11d48 !important;
+}
+html[data-accent="rose"] button.bg-blue-600:hover,
+html[data-accent="rose"] .hover\:bg-blue-500:hover {
+  background-color: #f43f5e !important;
+  box-shadow: 0 0 16px rgba(244, 63, 94, 0.6) !important;
+}
+html[data-accent="rose"] .text-blue-400,
+html[data-accent="rose"] .text-blue-300 {
+  color: #fb7185 !important;
+}
+html[data-accent="rose"] .border-blue-500 {
+  border-color: #f43f5e !important;
+}
+html[data-accent="rose"] .bg-blue-600\/20 {
+  background-color: rgba(244, 63, 94, 0.2) !important;
+}
+
+/* 5. Amber Accent */
+html[data-accent="amber"] button.bg-blue-600,
+html[data-accent="amber"] .bg-blue-600 {
+  background-color: #d97706 !important;
+}
+html[data-accent="amber"] button.bg-blue-600:hover,
+html[data-accent="amber"] .hover\:bg-blue-500:hover {
+  background-color: #f59e0b !important;
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.6) !important;
+}
+html[data-accent="amber"] .text-blue-400,
+html[data-accent="amber"] .text-blue-300 {
+  color: #fbbf24 !important;
+}
+html[data-accent="amber"] .border-blue-500 {
+  border-color: #f59e0b !important;
+}
+html[data-accent="amber"] .bg-blue-600\/20 {
+  background-color: rgba(245, 158, 11, 0.2) !important;
+}
+
