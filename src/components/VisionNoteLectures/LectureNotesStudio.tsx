@@ -36,6 +36,7 @@ interface LectureNotesStudioProps {
   onOpenQuestionnaire: () => void;
   onOpenSocraticTutor: (subjectId: string, initialPrompt?: string) => void;
   onNavigateToBack?: () => void;
+  initialSelectedNoteId?: string;
 }
 
 const MISC_SUBJECT: Subject = {
@@ -65,7 +66,8 @@ export const LectureNotesStudio: React.FC<LectureNotesStudioProps> = ({
   notes,
   onOpenQuestionnaire,
   onOpenSocraticTutor,
-  onNavigateToBack
+  onNavigateToBack,
+  initialSelectedNoteId
 }) => {
   // Available subjects for fast switching (Physics, Chemistry, Math, Misc)
   const displayedSubjects = useMemo(() => {
@@ -122,13 +124,33 @@ export const LectureNotesStudio: React.FC<LectureNotesStudioProps> = ({
   }, [showAllNotes, notes, subjectNotes]);
 
   // Selected active note
-  const [selectedNoteId, setSelectedNoteId] = useState<string>('');
+  const [selectedNoteId, setSelectedNoteId] = useState<string>(initialSelectedNoteId || '');
+
+  // Synchronize initialSelectedNoteId when provided or changed
+  useEffect(() => {
+    if (initialSelectedNoteId) {
+      const targetNote = notes.find(n => n.id === initialSelectedNoteId);
+      if (targetNote) {
+        if (targetNote.subjectId && targetNote.subjectId !== activeSubject.id) {
+          onSelectSubject(targetNote.subjectId);
+        }
+        setSelectedNoteId(initialSelectedNoteId);
+        if (!subjectNotes.some(n => n.id === initialSelectedNoteId)) {
+          setShowAllNotes(true);
+        }
+      }
+    }
+  }, [initialSelectedNoteId, notes]);
 
   useEffect(() => {
+    if (initialSelectedNoteId && displayedNotes.some(n => n.id === initialSelectedNoteId)) {
+      setSelectedNoteId(initialSelectedNoteId);
+      return;
+    }
     if (displayedNotes.length > 0 && !displayedNotes.some(n => n.id === selectedNoteId)) {
       setSelectedNoteId(displayedNotes[0].id);
     }
-  }, [displayedNotes, activeSubject.id]);
+  }, [displayedNotes, activeSubject.id, initialSelectedNoteId]);
 
   const activeNote = useMemo(() => {
     return displayedNotes.find(n => n.id === selectedNoteId) || displayedNotes[0] || null;

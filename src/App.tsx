@@ -28,7 +28,6 @@ import { LoginScreen } from './components/LoginScreen';
 import { VisionNoteAuditHub } from './components/VisionNoteAudit/VisionNoteAuditHub';
 import { LectureNotesStudio } from './components/VisionNoteLectures/LectureNotesStudio';
 import { StudentHomeDashboard } from './components/StudentDashboard/StudentHomeDashboard';
-import { LectureExperiencePage } from './components/LecturePage/LectureExperiencePage';
 import { BoardVisualsHub } from './components/BoardVisuals/BoardVisualsHub';
 import { QuestionBankManager } from './components/TeacherDashboard/QuestionBankManager';
 import { ErrorBoundary } from './components/Common/ErrorBoundary';
@@ -145,9 +144,17 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<string>('overview');
   const [selectedLectureId, setSelectedLectureId] = useState<string>('lec-phy-101');
   const [selectedLectureTimestamp, setSelectedLectureTimestamp] = useState<string | undefined>(undefined);
+  const [selectedNoteIdForStudio, setSelectedNoteIdForStudio] = useState<string | undefined>(undefined);
   const [tutorInitialPrompt, setTutorInitialPrompt] = useState<string>('');
   const [tutorLectureContext, setTutorLectureContext] = useState<any>(null);
   const [showPersonaModal, setShowPersonaModal] = useState(false);
+
+  // Automatically route any legacy lecture or notes tabs directly to VN Studio
+  useEffect(() => {
+    if (activeTab === 'lecture' || activeTab === 'notes') {
+      setActiveTab('lecture-notes');
+    }
+  }, [activeTab]);
 
 
   // Theme synchronization with HTML root
@@ -1150,7 +1157,8 @@ export default function App() {
     setNotes(nextNotes);
     localStorage.setItem('edusync_notes', JSON.stringify(nextNotes));
     setActiveSubjectId(targetSubjId);
-    setActiveTab('notes');
+    setSelectedNoteIdForStudio(createdNote.id);
+    setActiveTab('lecture-notes');
     return createdNote;
   };
 
@@ -1581,19 +1589,6 @@ export default function App() {
               </button>
 
               <button
-                id="sidebar-tab-lecture"
-                onClick={() => { setActiveTab('lecture'); setMobileMenuOpen(false); }}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-sm text-xs font-semibold transition-colors text-left ${
-                  activeTab === 'lecture'
-                    ? 'bg-blue-600 text-white shadow-xs'
-                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                }`}
-              >
-                <Clock className="w-4 h-4 shrink-0 text-cyan-400" />
-                <span>Interactive Lecture</span>
-              </button>
-
-              <button
                 id="sidebar-tab-board-visuals"
                 onClick={() => { setActiveTab('board-visuals'); setMobileMenuOpen(false); }}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-sm text-xs font-semibold transition-colors text-left ${
@@ -1630,24 +1625,11 @@ export default function App() {
               >
                 <BookOpen className="w-4 h-4 shrink-0 text-cyan-400" />
                 <div className="flex items-center justify-between flex-1">
-                  <span>VN Studio</span>
+                  <span>VN Studio (Notes & Lectures)</span>
                   <span className="text-[9px] px-1.5 py-0.2 rounded font-mono bg-cyan-950 text-cyan-300 border border-cyan-800">
                     Live
                   </span>
                 </div>
-              </button>
-
-              <button
-                id="sidebar-tab-notes"
-                onClick={() => { setActiveTab('notes'); setMobileMenuOpen(false); }}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-sm text-xs font-semibold transition-colors text-left ${
-                  activeTab === 'notes'
-                    ? 'bg-blue-600 text-white shadow-xs'
-                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                }`}
-              >
-                <FileText className="w-4 h-4 shrink-0 text-slate-400" />
-                <span>Smart Note Playground</span>
               </button>
 
 
@@ -1883,7 +1865,8 @@ export default function App() {
               }}
               onViewNoteInEditor={(note) => {
                 setActiveSubjectId(note.subjectId);
-                setActiveTab('notes');
+                setSelectedNoteIdForStudio(note.id);
+                setActiveTab('lecture-notes');
               }}
             />
           ) : isAdmin ? (
@@ -1970,9 +1953,27 @@ export default function App() {
                 <StudentHomeDashboard
                   currentUser={currentUser}
                   onOpenLecture={(lectureId, initialTs) => {
-                    setSelectedLectureId(lectureId);
-                    setSelectedLectureTimestamp(initialTs);
-                    setActiveTab('lecture');
+                    const matchingNote = notes.find(n =>
+                      n.id === lectureId ||
+                      n.tags?.includes(lectureId) ||
+                      (lectureId.includes('phy') && n.subjectId?.includes('phy')) ||
+                      (lectureId.includes('che') && n.subjectId?.includes('che')) ||
+                      (lectureId.includes('mat') && n.subjectId?.includes('mat'))
+                    );
+                    if (matchingNote) {
+                      setActiveSubjectId(matchingNote.subjectId);
+                      setSelectedNoteIdForStudio(matchingNote.id);
+                    } else if (lectureId.includes('phy')) {
+                      const s = subjects.find(sub => sub.id.includes('phy') || sub.code === 'PHY');
+                      if (s) setActiveSubjectId(s.id);
+                    } else if (lectureId.includes('che')) {
+                      const s = subjects.find(sub => sub.id.includes('che') || sub.code === 'CHEM');
+                      if (s) setActiveSubjectId(s.id);
+                    } else if (lectureId.includes('mat')) {
+                      const s = subjects.find(sub => sub.id.includes('mat') || sub.code === 'MATH');
+                      if (s) setActiveSubjectId(s.id);
+                    }
+                    setActiveTab('lecture-notes');
                   }}
                   onOpenTutorWithPrompt={(prompt, context) => {
                     setTutorInitialPrompt(prompt);
@@ -1985,27 +1986,22 @@ export default function App() {
                 />
               )}
 
-              {activeTab === 'lecture' && (
-                <LectureExperiencePage
-                  lectureId={selectedLectureId || 'lec-phy-101'}
-                  currentUser={currentUser}
-                  onNavigateBack={() => setActiveTab('overview')}
-                  onOpenTutorWithContext={(prompt, context) => {
-                    setTutorInitialPrompt(prompt);
-                    setTutorLectureContext(context);
-                    setActiveTab('tutor');
-                  }}
-                  initialTimestamp={selectedLectureTimestamp}
-                />
-              )}
-
               {activeTab === 'board-visuals' && (
                 <BoardVisualsHub
                   subjects={subjects}
                   onOpenLecture={(lectureId, timestamp) => {
-                    setSelectedLectureId(lectureId);
-                    setSelectedLectureTimestamp(timestamp);
-                    setActiveTab('lecture');
+                    const matchingNote = notes.find(n =>
+                      n.id === lectureId ||
+                      n.tags?.includes(lectureId) ||
+                      (lectureId.includes('phy') && n.subjectId?.includes('phy')) ||
+                      (lectureId.includes('che') && n.subjectId?.includes('che')) ||
+                      (lectureId.includes('mat') && n.subjectId?.includes('mat'))
+                    );
+                    if (matchingNote) {
+                      setActiveSubjectId(matchingNote.subjectId);
+                      setSelectedNoteIdForStudio(matchingNote.id);
+                    }
+                    setActiveTab('lecture-notes');
                   }}
                 />
               )}
@@ -2034,7 +2030,7 @@ export default function App() {
                 />
               )}
 
-              {activeTab === 'lecture-notes' && (
+              {(activeTab === 'lecture-notes' || activeTab === 'notes') && (
                 <LectureNotesStudio
                   activeSubject={activeSubject}
                   subjects={subjects}
@@ -2042,6 +2038,7 @@ export default function App() {
                   onSelectSubject={(id) => setActiveSubjectId(id)}
                   currentUser={currentUser}
                   notes={notes}
+                  initialSelectedNoteId={selectedNoteIdForStudio}
                   onOpenQuestionnaire={() => setShowPersonaModal(true)}
                   onOpenSocraticTutor={(subjId, prompt) => {
                     if (subjId) setActiveSubjectId(subjId);
@@ -2049,29 +2046,6 @@ export default function App() {
                     setActiveTab('tutor');
                   }}
                   onNavigateToBack={() => setActiveTab('overview')}
-                />
-              )}
-
-              {activeTab === 'notes' && (
-                <SmartNotePlayground
-                  activeSubject={activeSubject}
-                  subjects={subjects}
-                  allSubjects={allSubjects}
-                  notes={notes}
-                  currentUser={currentUser}
-                  onOpenPersonalization={() => setShowPersonaModal(true)}
-                  onNavigateToVisionNote={() => setActiveTab('lecture-notes')}
-                  onSaveNote={handleSaveNote}
-                  onDeleteNote={handleDeleteNote}
-                  onSummarizeNote={handleSummarizeNote}
-                  onGenerateFlashcards={handleGenerateFlashcards}
-                  onGenerateQuizFromNote={handleGenerateQuizFromNote}
-                  onGenerateNoteFromPrompt={handleGenerateNoteFromPrompt}
-                  onOpenTutor={(prompt, context) => {
-                    setTutorInitialPrompt(prompt);
-                    if (context) setTutorLectureContext(context);
-                    setActiveTab('tutor');
-                  }}
                 />
               )}
 
