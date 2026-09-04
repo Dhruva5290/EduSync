@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, Sparkles, Loader2, RotateCcw, Copy, Check, Terminal, Lightbulb, AlertCircle, BookOpen, CheckCircle2 } from 'lucide-react';
+import { Send, Bot, User, Sparkles, Loader2, RotateCcw, Copy, Check, Terminal, Lightbulb, AlertCircle, BookOpen, CheckCircle2, Key } from 'lucide-react';
 
 /**
  * Cleans and transforms raw LaTeX math strings into clean, readable Unicode math text
@@ -320,8 +320,10 @@ export const ChatInterface = ({ onOpenPersonalization, learningProfile, initialP
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [copiedId, setCopiedId] = useState(null);
-  const messagesEndRef = useRef(null);
+  const [apiKey, setApiKey] = useState(() => localStorage.getItem('edusync_user_gemini_key') || '');
+  const [showKeyModal, setShowKeyModal] = useState(false);
+  const [tempKeyInput, setTempKeyInput] = useState('');
+  const [messagesEndRef] = [useRef(null)];
   const initialPromptSentRef = useRef(false);
 
   const scrollToBottom = () => {
@@ -374,36 +376,50 @@ export const ChatInterface = ({ onOpenPersonalization, learningProfile, initialP
 
       let replyText = data?.reply;
 
-      // If backend returned warning or failed, use client-side direct call
-      if (!replyText || replyText.includes('requires a `GEMINI_API_KEY`') || replyText.includes('⚠️')) {
-        try {
-          const directApiKey = atob("QVEuQWI4Uk42SUx3Um5VRnM3a052S3dFZE9BejZOZU8zTTRsSjZuLVVVTDQxRHlCclZUdlE=");
-          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${directApiKey}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [
-                ...newHistory.slice(-6).map(h => ({
-                  role: h.sender === 'user' ? 'user' : 'model',
-                  parts: [{ text: h.text }]
-                }))
-              ],
-              systemInstruction: {
-                parts: [{ text: 'You are EduSync AI, a helpful, natural, intelligent academic AI tutor. Explain clearly with Markdown and LaTeX ($...$ or $$...$$).' }]
-              }
-            })
-          });
-          const directJson = await res.json();
-          if (directJson.candidates?.[0]?.content?.parts?.[0]?.text) {
-            replyText = directJson.candidates[0].content.parts[0].text;
+      // Priority: User's pasted key > hardcoded fallback
+      const effectiveKey = apiKey || atob("QVEuQWI4Uk42SUx3Um5VRnM3a052S3dFZE9BejZOZU8zTTRsSjZuLVVVTDQxRHlCclZUdlE=");
+
+      // Direct client call to Gemini
+      try {
+        const candidateModels = ['gemini-2.5-flash', 'gemini-3.5-flash', 'gemini-3.6-flash'];
+        let successText = '';
+
+        for (const model of candidateModels) {
+          try {
+            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${effectiveKey}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [
+                  ...newHistory.slice(-8).map(h => ({
+                    role: (h.sender === 'user' || h.role === 'user') ? 'user' : 'model',
+                    parts: [{ text: h.text }]
+                  }))
+                ],
+                systemInstruction: {
+                  parts: [{ text: 'You are EduSync AI, an intelligent, helpful, natural, and friendly academic AI tutor. Explain clearly with Markdown formatting and LaTeX ($...$ or $$...$$).' }]
+                }
+              })
+            });
+            const directJson = await res.json();
+            if (directJson.candidates?.[0]?.content?.parts?.[0]?.text) {
+              successText = directJson.candidates[0].content.parts[0].text;
+              break;
+            }
+          } catch (modelErr) {
+            console.warn(`Direct model ${model} error:`, modelErr);
           }
-        } catch (directErr) {
-          console.error('Direct client Gemini call failed:', directErr);
         }
+
+        if (successText) {
+          replyText = successText;
+        }
+      } catch (directErr) {
+        console.error('Direct client Gemini call failed:', directErr);
       }
 
       if (!replyText) {
-        replyText = data?.reply || 'I am thinking about your question. Please try asking again.';
+        replyText = data?.reply || 'I am thinking about your question. Please try asking again or check your API key.';
       }
 
       const aiMessage = {
@@ -420,13 +436,25 @@ export const ChatInterface = ({ onOpenPersonalization, learningProfile, initialP
         id: `msg-err-${Date.now()}`,
         sender: 'assistant',
         isError: true,
-        text: `⚠️ **Error connecting to Gemini API:**\n\n${err.message || 'Unknown network error'}`,
+        text: `⚠️ **Error connecting to Gemini:**\n\n${err.message || 'Unknown network error'}\n\n*Click the **API Key** button in the top right to paste your own key.*`,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSaveApiKey = () => {
+    const trimmed = tempKeyInput.trim();
+    if (trimmed) {
+      localStorage.setItem('edusync_user_gemini_key', trimmed);
+      setApiKey(trimmed);
+    } else {
+      localStorage.removeItem('edusync_user_gemini_key');
+      setApiKey('');
+    }
+    setShowKeyModal(false);
   };
 
   const handleClearChat = () => {
@@ -473,6 +501,22 @@ export const ChatInterface = ({ onOpenPersonalization, learningProfile, initialP
         </div>
 
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => {
+              setTempKeyInput(apiKey);
+              setShowKeyModal(true);
+            }}
+            className={`text-xs flex items-center gap-1.5 px-2.5 py-1 rounded transition-colors font-medium cursor-pointer shadow-xs border ${
+              apiKey
+                ? 'bg-emerald-950/80 hover:bg-emerald-900 border-emerald-700/80 text-emerald-300'
+                : 'bg-amber-950/80 hover:bg-amber-900 border-amber-700/80 text-amber-300'
+            }`}
+            title="Configure Gemini API Key"
+          >
+            <Key className="w-3 h-3" />
+            <span>{apiKey ? 'API Key Set ✓' : 'Paste API Key'}</span>
+          </button>
+
           {onOpenPersonalization && (
             <button
               onClick={onOpenPersonalization}
@@ -494,6 +538,43 @@ export const ChatInterface = ({ onOpenPersonalization, learningProfile, initialP
           </button>
         </div>
       </div>
+
+      {/* API Key Modal */}
+      {showKeyModal && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-700 rounded-xl p-6 max-w-md w-full shadow-2xl space-y-4">
+            <div className="flex items-center gap-2 text-indigo-400 font-semibold text-base">
+              <Key className="w-5 h-5" />
+              <span>Configure Gemini API Key</span>
+            </div>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              Paste your Google Gemini API key below. It will be stored locally in your browser so the AI Tutor can respond directly without any backend delays.
+            </p>
+            <input
+              type="password"
+              placeholder="Paste AIzaSy... or AQ... key"
+              value={tempKeyInput}
+              onChange={(e) => setTempKeyInput(e.target.value)}
+              className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-hidden focus:border-indigo-500 font-mono"
+              autoFocus
+            />
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <button
+                onClick={() => setShowKeyModal(false)}
+                className="px-3 py-1.5 text-xs text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveApiKey}
+                className="px-4 py-1.5 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors shadow-sm cursor-pointer"
+              >
+                Save & Use Key
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Messages Scroll Area */}
       <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
