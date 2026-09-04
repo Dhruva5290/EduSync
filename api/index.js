@@ -75170,7 +75170,7 @@ Respond specifically to this query. Do NOT give a generic response.` : `Student 
 
 Respond specifically to this query. Do NOT give a generic response.`;
         const result = await ai.models.generateContent({
-          model: "gemini-2.5-flash",
+          model: "gemini-3.6-flash",
           contents: [
             ...formattedHistory,
             { role: "user", parts: [{ text: fullPrompt }] }
