@@ -1,5 +1,26 @@
+import { useState, useEffect, useCallback } from 'react';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { StudentNote } from '../types';
+
+// =========================================================================
+// 1. DATABASE SCHEMA TYPES (public.notes)
+// =========================================================================
+
+export type NoteStatus = 'uploaded' | 'processing' | 'ready' | 'failed';
+
+export interface SupabaseNoteRow {
+  id: string;
+  user_id: string;
+  title: string;
+  raw_ocr_text?: string | null;
+  generalised_notes: string;
+  personalised_notes?: string | null;
+  status: NoteStatus;
+  error_message?: string | null;
+  metadata?: Record<string, any>;
+  created_at: string;
+  updated_at: string;
+}
 
 // Read env variables safely in Vite
 const supabaseUrl = (import.meta as any).env?.VITE_SUPABASE_URL || '';
@@ -15,7 +36,10 @@ export const isSupabaseConfigured = (): boolean => {
   );
 };
 
-// Create client instance or null if not configured
+// =========================================================================
+// 2. CLIENT INITIALIZATION
+// =========================================================================
+
 export const supabase: SupabaseClient | null = isSupabaseConfigured()
   ? createClient(supabaseUrl, supabaseAnonKey, {
       realtime: {
@@ -25,6 +49,220 @@ export const supabase: SupabaseClient | null = isSupabaseConfigured()
       }
     })
   : null;
+
+// =========================================================================
+// 3. REACT REALTIME HOOK: usePersonalizedNotesRealtime
+// =========================================================================
+
+export interface UsePersonalizedNotesOptions {
+  userId?: string;
+  onNoteReady?: (note: SupabaseNoteRow) => void;
+  onStatusChange?: (status: 'SUBSCRIBED' | 'TIMED_OUT' | 'CLOSED' | 'CHANNEL_ERROR') => void;
+}
+
+export interface UsePersonalizedNotesReturn {
+  notes: SupabaseNoteRow[];
+  isLoading: boolean;
+  error: string | null;
+  connectionStatus: 'CONNECTED' | 'DISCONNECTED' | 'CONNECTING' | 'MOCK_MODE';
+  uploadNote: (params: {
+    userId: string;
+    title: string;
+    generalised_notes: string;
+    raw_ocr_text?: string;
+    metadata?: Record<string, any>;
+  }) => Promise<{ success: boolean; data?: SupabaseNoteRow; error?: string }>;
+  refetch: () => Promise<void>;
+}
+
+/**
+ * Custom React hook subscribing to real-time updates on `public.notes`.
+ * Listens for INSERT and UPDATE events (specifically when status === 'ready').
+ */
+export function usePersonalizedNotesRealtime(
+  options?: UsePersonalizedNotesOptions
+): UsePersonalizedNotesReturn {
+  const [notes, setNotes] = useState<SupabaseNoteRow[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [connectionStatus, setConnectionStatus] = useState<
+    'CONNECTED' | 'DISCONNECTED' | 'CONNECTING' | 'MOCK_MODE'
+  >(supabase ? 'CONNECTING' : 'MOCK_MODE');
+
+  const userId = options?.userId;
+  const onNoteReady = options?.onNoteReady;
+  const onStatusChange = options?.onStatusChange;
+
+  // Initial fetch of notes
+  const fetchNotes = useCallback(async () => {
+    if (!supabase) {
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      setError(null);
+      let query = supabase
+        .from('notes')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (userId) {
+        query = query.eq('user_id', userId);
+      }
+
+      const { data, error: fetchErr } = await query;
+      if (fetchErr) throw fetchErr;
+
+      setNotes((data as SupabaseNoteRow[]) || []);
+    } catch (err: any) {
+      console.error('[usePersonalizedNotesRealtime] Fetch error:', err);
+      setError(err.message || 'Failed to load notes');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [userId]);
+
+  // Set up real-time subscription
+  useEffect(() => {
+    fetchNotes();
+
+    if (!supabase) {
+      setConnectionStatus('MOCK_MODE');
+      return;
+    }
+
+    setConnectionStatus('CONNECTING');
+
+    // Subscribe to postgres_changes on public:notes
+    const channelName = `realtime_notes_${userId || 'all'}_${Date.now()}`;
+    const channel = supabase
+      .channel(channelName)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'notes',
+          ...(userId ? { filter: `user_id=eq.${userId}` } : {})
+        },
+        (payload: { new: SupabaseNoteRow }) => {
+          const newRow = payload.new;
+          if (!newRow) return;
+
+          console.log('[Realtime Note INSERT]:', newRow.id, newRow.status);
+          setNotes(prev => {
+            // Avoid duplicate insert
+            if (prev.some(n => n.id === newRow.id)) return prev;
+            return [newRow, ...prev];
+          });
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'notes',
+          ...(userId ? { filter: `user_id=eq.${userId}` } : {})
+        },
+        (payload: { new: SupabaseNoteRow; old: Partial<SupabaseNoteRow> }) => {
+          const updatedRow = payload.new;
+          if (!updatedRow) return;
+
+          console.log('[Realtime Note UPDATE]:', updatedRow.id, updatedRow.status);
+
+          setNotes(prev =>
+            prev.map(note => (note.id === updatedRow.id ? updatedRow : note))
+          );
+
+          // If status transitioned to 'ready', fire completion callback
+          if (updatedRow.status === 'ready' && onNoteReady) {
+            onNoteReady(updatedRow);
+          }
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'notes',
+          ...(userId ? { filter: `user_id=eq.${userId}` } : {})
+        },
+        (payload: { old: { id: string } }) => {
+          if (!payload.old?.id) return;
+          setNotes(prev => prev.filter(note => note.id !== payload.old.id));
+        }
+      )
+      .subscribe(status => {
+        if (status === 'SUBSCRIBED') {
+          setConnectionStatus('CONNECTED');
+        } else if (status === 'TIMED_OUT' || status === 'CHANNEL_ERROR') {
+          setConnectionStatus('DISCONNECTED');
+        }
+        if (onStatusChange) onStatusChange(status as any);
+      });
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [fetchNotes, userId, onNoteReady, onStatusChange]);
+
+  // Upload helper method
+  const uploadNote = async (params: {
+    userId: string;
+    title: string;
+    generalised_notes: string;
+    raw_ocr_text?: string;
+    metadata?: Record<string, any>;
+  }): Promise<{ success: boolean; data?: SupabaseNoteRow; error?: string }> => {
+    if (!supabase) {
+      return {
+        success: false,
+        error: 'Supabase client is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.'
+      };
+    }
+
+    try {
+      const newRecord = {
+        user_id: params.userId,
+        title: params.title || 'Untitled Capture',
+        generalised_notes: params.generalised_notes,
+        raw_ocr_text: params.raw_ocr_text || '',
+        status: 'uploaded',
+        metadata: params.metadata || {}
+      };
+
+      const { data, error: insertError } = await supabase
+        .from('notes')
+        .insert([newRecord])
+        .select()
+        .single();
+
+      if (insertError) throw insertError;
+
+      return { success: true, data: data as SupabaseNoteRow };
+    } catch (err: any) {
+      console.error('[uploadNote] Error:', err);
+      return { success: false, error: err.message || 'Upload failed' };
+    }
+  };
+
+  return {
+    notes,
+    isLoading,
+    error,
+    connectionStatus,
+    uploadNote,
+    refetch: fetchNotes
+  };
+}
+
+// =========================================================================
+// 4. LEGACY / UTILITY HELPERS (Kept for full backward compatibility)
+// =========================================================================
 
 function resolveSubjectIdFromRaw(raw: any): string {
   const meta = raw.metadata || {};
@@ -39,14 +277,9 @@ function resolveSubjectIdFromRaw(raw: any): string {
   if (text.includes('math') || text.includes('mat') || text.includes('calc')) return isGrade12 ? 'subj-mat-12' : 'subj-mat-11';
   if (text.includes('phy')) return isGrade12 ? 'subj-phy-12' : 'subj-phy-11';
 
-  // Default to Class 11 Physics (first active course) so test lectures never disappear
   return 'subj-phy-11';
 }
 
-/**
- * Real-time listener for incoming notes pushed from VisionNote / ClassSarthi or the cloud.
- * Automatically triggers callback when a new note is inserted or updated.
- */
 export const subscribeToVisionNotes = (
   onNewNote: (note: StudentNote) => void,
   onStatusChange?: (status: 'SUBSCRIBED' | 'TIMED_OUT' | 'CLOSED' | 'CHANNEL_ERROR') => void
@@ -59,29 +292,19 @@ export const subscribeToVisionNotes = (
   const handlePayload = (payload: any) => {
     const raw = payload.new;
     if (!raw) return;
-
-    // Ensure zero-leak: ignore archived notes
     if (raw.is_archived) return;
 
     const meta = raw.metadata || {};
     const noteContent = raw.personalised_notes || raw.generalised_notes || raw.content || raw.raw_ocr_text || '';
     const subjectId = resolveSubjectIdFromRaw(raw);
     const rawSid = meta.student_id || meta.studentId || raw.student_id || raw.studentId || raw.user_id || 'student-1';
-    const studentId = (rawSid === 'student-g11-1') ? 'student-1' : rawSid;
+    const studentId = rawSid === 'student-g11-1' ? 'student-1' : rawSid;
 
     const doubts: string[] = Array.isArray(meta.doubts)
       ? meta.doubts
       : Array.isArray(raw.doubts_detected)
       ? raw.doubts_detected
-      : Array.isArray(meta.doubts_detected)
-      ? meta.doubts_detected
       : [];
-
-    const tags: string[] = Array.isArray(meta.tags)
-      ? meta.tags
-      : Array.isArray(raw.tags)
-      ? raw.tags
-      : ['VisionNote', 'ClassSarthi'];
 
     const note: StudentNote = {
       id: raw.id || `note-vn-${Date.now()}`,
@@ -89,14 +312,14 @@ export const subscribeToVisionNotes = (
       subjectId,
       title: raw.title || 'ClassSarthi Lecture Capture',
       content: noteContent,
-      cameraSnapshotUrl: meta.camera_snapshot_url || meta.image_url || meta.snapshot_url || raw.camera_snapshot_url,
+      cameraSnapshotUrl: meta.camera_snapshot_url || meta.image_url || raw.camera_snapshot_url,
       doubtsDetected: doubts,
-      tags,
+      tags: Array.isArray(meta.tags) ? meta.tags : ['VisionNote', 'ClassSarthi'],
       lastModified: raw.updated_at || raw.created_at || new Date().toISOString(),
       isPinned: true,
       source: 'visionnote',
-      summary: raw.summary || meta.summary || (raw.generalised_notes ? 'Auto-transcribed lecture notes synchronized from ClassSarthi cloud.' : undefined),
-      keyTakeaways: meta.key_takeaways || raw.key_takeaways || []
+      summary: raw.summary || meta.summary || (raw.generalised_notes ? 'Auto-transcribed lecture notes.' : undefined),
+      keyTakeaways: meta.key_takeaways || []
     };
 
     onNewNote(note);
@@ -104,28 +327,10 @@ export const subscribeToVisionNotes = (
 
   const channel = supabase
     .channel('realtime_visionnote_sync')
-    .on(
-      'postgres_changes',
-      {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'notes'
-      },
-      handlePayload
-    )
-    .on(
-      'postgres_changes',
-      {
-        event: 'UPDATE',
-        schema: 'public',
-        table: 'notes'
-      },
-      handlePayload
-    )
-    .subscribe((status) => {
-      if (onStatusChange) {
-        onStatusChange(status as any);
-      }
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notes' }, handlePayload)
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'notes' }, handlePayload)
+    .subscribe(status => {
+      if (onStatusChange) onStatusChange(status as any);
     });
 
   return () => {
@@ -133,9 +338,6 @@ export const subscribeToVisionNotes = (
   };
 };
 
-/**
- * Pushes a note to Supabase if configured, with error handling.
- */
 export const pushNoteToSupabase = async (note: StudentNote): Promise<{ success: boolean; error?: string }> => {
   if (!supabase) {
     return { success: false, error: 'Supabase is not configured yet. Please supply VITE_SUPABASE_URL in .env' };
@@ -145,16 +347,18 @@ export const pushNoteToSupabase = async (note: StudentNote): Promise<{ success: 
     const { error } = await supabase.from('notes').insert([
       {
         id: note.id,
-        student_id: note.studentId,
-        subject_id: note.subjectId,
+        user_id: note.studentId,
         title: note.title,
-        content: note.content,
-        camera_snapshot_url: note.cameraSnapshotUrl,
-        doubts_detected: note.doubtsDetected || [],
-        source: note.source || 'visionnote',
-        is_archived: false,
-        summary: note.summary,
-        created_at: note.lastModified || new Date().toISOString()
+        generalised_notes: note.content,
+        raw_ocr_text: note.content,
+        status: 'uploaded',
+        metadata: {
+          subject_id: note.subjectId,
+          camera_snapshot_url: note.cameraSnapshotUrl,
+          doubts_detected: note.doubtsDetected || [],
+          source: note.source || 'visionnote',
+          summary: note.summary
+        }
       }
     ]);
 
@@ -166,10 +370,6 @@ export const pushNoteToSupabase = async (note: StudentNote): Promise<{ success: 
   }
 };
 
-/**
- * Pulls all active VisionNote / ClassSarthi notes directly from the Supabase `notes` table.
- * Supports filtering by studentId or subjectId.
- */
 export const fetchVisionNotesFromSupabase = async (options?: {
   studentId?: string;
   subjectId?: string;
@@ -186,14 +386,10 @@ export const fetchVisionNotesFromSupabase = async (options?: {
     let query = supabase
       .from('notes')
       .select('*')
-      .eq('is_archived', false)
       .order('created_at', { ascending: false });
 
-    if (options?.subjectId) {
-      query = query.eq('subject_id', options.subjectId);
-    }
     if (options?.studentId) {
-      query = query.eq('student_id', options.studentId);
+      query = query.eq('user_id', options.studentId);
     }
     if (options?.limit) {
       query = query.limit(options.limit);
@@ -204,39 +400,24 @@ export const fetchVisionNotesFromSupabase = async (options?: {
 
     const notes: StudentNote[] = (data || []).map((raw: any) => {
       const meta = raw.metadata || {};
-      const noteContent = raw.personalised_notes || raw.generalised_notes || raw.content || raw.raw_ocr_text || '';
+      const noteContent = raw.personalised_notes || raw.generalised_notes || raw.raw_ocr_text || '';
       const subjectId = resolveSubjectIdFromRaw(raw);
-      const rawSid = meta.student_id || meta.studentId || raw.student_id || raw.studentId || raw.user_id || 'student-1';
-      const studentId = (rawSid === 'student-g11-1') ? 'student-1' : rawSid;
-
-      const doubts: string[] = Array.isArray(meta.doubts)
-        ? meta.doubts
-        : Array.isArray(raw.doubts_detected)
-        ? raw.doubts_detected
-        : Array.isArray(meta.doubts_detected)
-        ? meta.doubts_detected
-        : [];
-
-      const tags: string[] = Array.isArray(meta.tags)
-        ? meta.tags
-        : Array.isArray(raw.tags)
-        ? raw.tags
-        : ['VisionNote', 'ClassSarthi'];
+      const studentId = raw.user_id || 'student-1';
 
       return {
-        id: raw.id || `note-vn-${Date.now()}`,
+        id: raw.id,
         studentId,
         subjectId,
         title: raw.title || 'ClassSarthi Lecture Capture',
         content: noteContent,
-        cameraSnapshotUrl: meta.camera_snapshot_url || meta.image_url || meta.snapshot_url || raw.camera_snapshot_url,
-        doubtsDetected: doubts,
-        tags,
+        cameraSnapshotUrl: meta.camera_snapshot_url || meta.image_url,
+        doubtsDetected: Array.isArray(meta.doubts_detected) ? meta.doubts_detected : [],
+        tags: Array.isArray(meta.tags) ? meta.tags : ['VisionNote', 'ClassSarthi'],
         lastModified: raw.updated_at || raw.created_at || new Date().toISOString(),
         isPinned: true,
         source: 'visionnote',
-        summary: raw.summary || meta.summary || (raw.generalised_notes ? 'Auto-transcribed lecture notes synchronized from ClassSarthi cloud.' : undefined),
-        keyTakeaways: meta.key_takeaways || raw.key_takeaways || []
+        summary: raw.summary || meta.summary,
+        keyTakeaways: meta.key_takeaways || []
       };
     });
 
@@ -246,4 +427,3 @@ export const fetchVisionNotesFromSupabase = async (options?: {
     return { notes: [], error: err.message || 'Failed to pull notes from Supabase' };
   }
 };
-
