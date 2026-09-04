@@ -14,15 +14,17 @@ import {
   CheckCircle2,
   AlertCircle,
   Zap,
-  Info
+  Info,
+  Camera
 } from 'lucide-react';
 
 interface LoginScreenProps {
   onLoginSuccess: (user: User, token: string) => void;
+  onLaunchVisionNoteDirectly?: (user: User, token: string) => void;
   allUsers?: User[];
 }
 
-export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, allUsers: initialUsers }) => {
+export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onLaunchVisionNoteDirectly, allUsers: initialUsers }) => {
   const [selectedRole, setSelectedRole] = useState<UserRole>('student');
   const [identifier, setIdentifier] = useState('student.dhruva');
   const [password, setPassword] = useState('EduSync@260101');
@@ -107,6 +109,37 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, allUse
     } catch (err) {
       console.error('Login error:', err);
       setErrorMessage('Connection error. Please ensure the EduSync backend is active.');
+      setIsLoading(false);
+    }
+  };
+
+  const handleQuickLaunchVisionNote = async () => {
+    setIsLoading(true);
+    setErrorMessage(null);
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          identifier: 'student-g11-1',
+          password: 'Password@123',
+          role: 'student'
+        })
+      });
+      const data = await response.json();
+      if (data.token && data.user) {
+        localStorage.setItem('edusync_token', data.token);
+        localStorage.setItem('edusync_user_id', data.user.id);
+        if (onLaunchVisionNoteDirectly) {
+          onLaunchVisionNoteDirectly(data.user, data.token);
+        } else {
+          onLoginSuccess(data.user, data.token);
+        }
+      }
+    } catch (err) {
+      console.error('Quick launch error:', err);
+      setErrorMessage('Failed to quick launch. Please select a user manually.');
+    } finally {
       setIsLoading(false);
     }
   };

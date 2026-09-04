@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ClassAnalytics, Subject } from '../../types';
+import React, { useState, useEffect } from 'react';
+import { ClassAnalytics, Subject, ClassLevelInsight } from '../../types';
 import {
   BarChart,
   Bar,
@@ -23,7 +23,8 @@ import {
   RefreshCw,
   FileSpreadsheet,
   Layers,
-  Lightbulb
+  Lightbulb,
+  AlertCircle
 } from 'lucide-react';
 
 interface AIClassAnalyticsProps {
@@ -40,6 +41,23 @@ export const AIClassAnalytics: React.FC<AIClassAnalyticsProps> = ({
   isGeneratingDiagnostics
 }) => {
   const [activeTab, setActiveTab] = useState<'overview' | 'weakTopics' | 'trends'>('overview');
+  const [classInsights, setClassInsights] = useState<ClassLevelInsight | null>(null);
+
+  React.useEffect(() => {
+    const fetchInsights = async () => {
+      try {
+        const res = await fetch(`/api/teacher/class-insights/${activeSubject.id}`);
+        if (res.ok) {
+          const data = await res.json();
+          setClassInsights(data);
+        }
+      } catch (err) {
+        console.error('Failed to load class insights:', err);
+      }
+    };
+    fetchInsights();
+  }, [activeSubject.id]);
+
 
   return (
     <div className="space-y-6">
@@ -91,6 +109,43 @@ export const AIClassAnalytics: React.FC<AIClassAnalyticsProps> = ({
               </div>
             </div>
           </div>
+
+          {/* Class-Level Insights: "62% of students struggled with Newton's Second Law" */}
+          {classInsights && (
+            <div className="mt-4 bg-amber-950/20 border border-amber-900/50 rounded-sm p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 text-amber-400" />
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-amber-300 font-mono">
+                    Class-Level Lecture Insights (Action Required)
+                  </h3>
+                </div>
+                <span className="text-[10px] font-mono bg-amber-900/40 text-amber-300 px-2 py-0.5 rounded border border-amber-800">
+                  {classInsights.weakConcepts.length} Topics Flagged
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {classInsights.weakConcepts.map((item, idx) => (
+                  <div key={idx} className="p-3 bg-slate-950/80 rounded border border-amber-900/40 space-y-1">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-bold text-white">{item.concept}</span>
+                      <span className="text-xs font-mono font-bold text-rose-400 bg-rose-950/60 px-1.5 py-0.5 rounded border border-rose-900">
+                        {item.struggleRatePercent}% Struggled
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-amber-200/90 leading-relaxed font-sans">
+                      {item.recommendation}
+                    </p>
+                    <div className="flex items-center justify-between text-[10px] text-slate-400 pt-1 font-mono">
+                      <span>{item.affectedStudentCount} of {item.totalStudents} students affected</span>
+                      <span className="text-cyan-400">ClassSarthi Ref: {item.timestampRef}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

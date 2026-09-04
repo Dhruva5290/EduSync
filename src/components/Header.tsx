@@ -14,7 +14,8 @@ import {
   Sun,
   Moon,
   Shield,
-  Eye
+  Eye,
+  Camera
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -32,6 +33,7 @@ interface HeaderProps {
   onExitAudit?: () => void;
   activeTab?: string;
   onOpenPersonalization?: () => void;
+  onNavigateToVisionNote?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -48,7 +50,8 @@ export const Header: React.FC<HeaderProps> = ({
   isAuditing = false,
   onExitAudit,
   activeTab,
-  onOpenPersonalization
+  onOpenPersonalization,
+  onNavigateToVisionNote
 }) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const activeSubject = subjects.find(s => s.id === activeSubjectId) || subjects[0];
@@ -67,35 +70,46 @@ export const Header: React.FC<HeaderProps> = ({
     <header className="sticky top-0 z-40 bg-slate-900 border-b border-slate-800 shadow-sm transition-colors w-full min-w-0">
       <div className="w-full px-3 sm:px-4 lg:px-6">
         <div className="flex items-center justify-between h-16 gap-2 sm:gap-4 min-w-0">
-          {/* Active Course & ID info */}
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-shrink">
-            <div className="flex items-center gap-2 min-w-0">
-              <h2 className="text-sm sm:text-base font-semibold text-white tracking-tight truncate max-w-[130px] sm:max-w-[200px] md:max-w-xs">
-                {currentUser.role === 'admin'
-                  ? 'Academic Administration'
-                  : isTutorTab
-                  ? 'AI Tutor'
-                  : (activeSubject?.name || 'Academic Course')}
-              </h2>
-              <span className="hidden sm:inline-block px-2 py-0.5 bg-slate-800 text-blue-400 text-[10px] font-mono rounded-sm border border-slate-700 shrink-0 font-medium">
-                {currentUser.role === 'admin' ? 'REGISTRAR' : isTutorTab ? 'GEMINI' : `ID: ${activeSubject?.code || 'CRS-101'}`}
-              </span>
-            </div>
-
-            {/* Course Switcher (hidden on AI Tutor tab and for admin) */}
-            {currentUser.role !== 'admin' && !isTutorTab && (
-              <div className="flex items-center gap-1.5 ml-1 sm:ml-2 pl-1.5 sm:pl-3 border-l border-slate-800 min-w-0">
-                <span className="hidden md:inline text-[10px] uppercase font-bold tracking-wider text-slate-400 shrink-0">Course:</span>
+          {/* Course Selector & Context */}
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+            {currentUser.role === 'admin' ? (
+              <div className="flex items-center gap-2 min-w-0">
+                <Shield className="w-4 h-4 text-purple-400 shrink-0" />
+                <h2 className="text-sm sm:text-base font-bold text-white tracking-tight truncate">
+                  Academic Administration
+                </h2>
+                <span className="px-2 py-0.5 bg-purple-950/80 text-purple-300 text-[10px] font-mono rounded border border-purple-800 shrink-0 font-bold">
+                  REGISTRAR
+                </span>
+              </div>
+            ) : isTutorTab ? (
+              <div className="flex items-center gap-2 min-w-0">
+                <Sparkles className="w-4 h-4 text-indigo-400 shrink-0" />
+                <h2 className="text-sm sm:text-base font-bold text-white tracking-tight">
+                  EduSync AI Tutor
+                </h2>
+                <span className="px-2 py-0.5 bg-indigo-950/80 text-indigo-300 text-[10px] font-mono rounded border border-indigo-800 shrink-0 font-bold">
+                  SOCRATIC
+                </span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 min-w-0">
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <BookOpen className="w-4 h-4 text-blue-400" />
+                  <span className="text-[11px] uppercase font-bold tracking-wider text-slate-400 hidden md:inline">
+                    Select Subject:
+                  </span>
+                </div>
                 <select
                   id="header-subject-select"
-                  aria-label="Current Course Selector"
+                  aria-label="Select Subject"
                   value={activeSubjectId}
                   onChange={(e) => onSelectSubject(e.target.value)}
-                  className="bg-slate-950 text-xs font-semibold text-slate-200 border border-slate-700 rounded px-1.5 sm:px-2 py-1 focus:outline-none focus:border-blue-500 cursor-pointer max-w-[110px] sm:max-w-[150px] md:max-w-[200px] truncate"
+                  className="bg-slate-950 text-xs sm:text-sm font-bold text-white border border-slate-700 hover:border-blue-500 rounded-lg px-2.5 sm:px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer min-w-[160px] sm:min-w-[230px] md:min-w-[280px] shadow-sm transition-all"
                 >
                   {subjects.map((subj) => (
-                    <option key={subj.id} value={subj.id} className="bg-slate-900 text-slate-200">
-                      {subj.code} · {subj.name}
+                    <option key={subj.id} value={subj.id} className="bg-slate-900 text-white font-medium py-1">
+                      {subj.code} — {subj.name}
                     </option>
                   ))}
                 </select>
@@ -103,28 +117,25 @@ export const Header: React.FC<HeaderProps> = ({
             )}
           </div>
 
-          {/* Right Controls: Audit Return, Personalization Button, Theme Toggle, AI Quota, User Profile */}
-          <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
-            {/* Highly Prevalent AI Notes & Learning Questionnaire Button */}
+          {/* Right Controls: Personalization Button, Audit Return, Theme Toggle */}
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            {/* Sleek Compact AI Persona Badge */}
             {currentUser.role === 'student' && onOpenPersonalization && (
               <button
                 id="header-personalize-ai-btn"
                 onClick={onOpenPersonalization}
-                className={`flex items-center gap-1.5 px-2 sm:px-3 py-1.5 rounded-md text-xs font-bold transition-all shadow-md cursor-pointer shrink-0 ${
+                className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm cursor-pointer shrink-0 border ${
                   currentUser.learningProfile?.questionnaireCompleted
-                    ? 'bg-purple-950 text-purple-200 border border-purple-700 hover:bg-purple-900 hover:border-purple-500'
-                    : 'bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 text-white hover:from-purple-500 hover:to-indigo-500 ring-2 ring-purple-500/50 animate-pulse'
+                    ? 'bg-slate-950 text-purple-300 border-purple-800/80 hover:bg-purple-950/60 hover:border-purple-600'
+                    : 'bg-purple-600 hover:bg-purple-500 text-white border-purple-500'
                 }`}
-                title="Launch the AI Cognitive Tuning Questionnaire"
+                title="Cognitive Tuning & Learning Persona"
               >
                 <Sparkles className="w-3.5 h-3.5 text-amber-300 shrink-0" />
-                <span className="hidden xl:inline">
+                <span className="font-sans">
                   {currentUser.learningProfile?.questionnaireCompleted
-                    ? `✨ AI Persona: ${currentUser.learningProfile.learningStyle.replace('_', ' ').toUpperCase()} (${currentUser.learningProfile.targetGrade})`
-                    : '⚡ Personalize Notes Questionnaire'}
-                </span>
-                <span className="hidden sm:inline xl:hidden">
-                  {currentUser.learningProfile?.questionnaireCompleted ? '✨ AI Tuned' : '⚡ AI Tune'}
+                    ? `AI Persona: ${currentUser.learningProfile.learningStyle.replace('_', ' ').split(' ')[0].toUpperCase()}`
+                    : 'AI Persona Setup'}
                 </span>
               </button>
             )}

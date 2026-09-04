@@ -36,8 +36,14 @@ import {
   Download,
   FileText,
   ArrowRight,
-  Table
+  Table,
+  Camera,
+  Archive,
+  Database,
+  Lock,
+  RotateCcw
 } from 'lucide-react';
+import { isSupabaseConfigured } from '../../lib/supabase';
 
 interface AdminDashboardProps {
   currentUser: User;
@@ -46,6 +52,8 @@ interface AdminDashboardProps {
   onRefreshUsers: () => void;
   onRefreshSubjects: () => void;
   onShowToast: (msg: string, type?: 'success' | 'error') => void;
+  onNavigateToVisionNote?: () => void;
+  onSwitchUser?: (userId: string) => void;
 }
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({
@@ -54,10 +62,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   subjects,
   onRefreshUsers,
   onRefreshSubjects,
-  onShowToast
+  onShowToast,
+  onNavigateToVisionNote,
+  onSwitchUser
 }) => {
-  const [activeTab, setActiveTab] = useState<'register' | 'directory' | 'courses' | 'importer'>('register');
+  const [activeTab, setActiveTab] = useState<'register' | 'directory' | 'courses' | 'importer' | 'vault'>('register');
   const [registerRole, setRegisterRole] = useState<'student' | 'teacher' | 'admin'>('student');
+
+  // Secure Vault & Archiving State
+  const [vaultSnapshots, setVaultSnapshots] = useState<any[]>([]);
+  const [archiveLabel, setArchiveLabel] = useState('');
+  const [isArchiving, setIsArchiving] = useState(false);
+  const [isLoadingVault, setIsLoadingVault] = useState(false);
 
   // Search & Filters for directory
   const [searchQuery, setSearchQuery] = useState('');
@@ -295,6 +311,96 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     } catch (err) {
       console.error(err);
       onShowToast('Error unregistering user', 'error');
+    }
+  };
+
+  // Secure Vault Operations (Zero-Leak Archiving)
+  const loadVaultSnapshots = async () => {
+    setIsLoadingVault(true);
+    try {
+      const res = await fetch('/api/admin/vault/list');
+      const data = await res.json();
+      if (data?.snapshots) {
+        setVaultSnapshots(data.snapshots);
+      }
+    } catch (err) {
+      console.error('Failed to load vault snapshots:', err);
+    } finally {
+      setIsLoadingVault(false);
+    }
+  };
+
+  const handleArchiveAndReset = async () => {
+    if (!window.confirm('⚠️ CONFIRM ARCHIVE & RESET:\n\nAre you sure you want to securely archive all notes, lectures, submissions, and session data to the backend vault?\n\nAll historical records will be isolated in server cold storage with 0% risk of public website leakage, and your login session will cleanly restart as Dean Dr. Maneek Singh.')) {
+      return;
+    }
+    setIsArchiving(true);
+    try {
+      const token = localStorage.getItem('edusync_token');
+      const res = await fetch('/api/admin/vault/archive-and-reset', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({ label: archiveLabel || 'Dean Session Reset' })
+      });
+      const data = await res.json();
+      if (data.success) {
+        onShowToast(data.message || 'Session archived to backend vault. Logged in as Dean.', 'success');
+        setArchiveLabel('');
+
+        // Store Dean token and clear any student audit states
+        if (data.token) {
+          localStorage.setItem('edusync_token', data.token);
+        }
+        localStorage.removeItem('edusync_audit_admin');
+
+        // Immediately switch user session to Dean
+        if (data.user) {
+          onSwitchUser(data.user.id);
+        } else {
+          onSwitchUser('admin-1');
+        }
+
+        await loadVaultSnapshots();
+        onRefreshUsers();
+        onRefreshSubjects();
+
+        // Refresh to cleanly reset all in-memory client states to Dean perspective
+        setTimeout(() => {
+          window.location.reload();
+        }, 1200);
+      } else {
+        onShowToast(data.error || 'Failed to archive workspace', 'error');
+      }
+    } catch (err) {
+      console.error(err);
+      onShowToast('Error archiving workspace', 'error');
+    } finally {
+      setIsArchiving(false);
+    }
+  };
+
+  const handleRestoreSnapshot = async (id: string) => {
+    if (!window.confirm('Restore this archived snapshot back into the live website database?')) return;
+    try {
+      const res = await fetch('/api/admin/vault/restore', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ snapshotId: id })
+      });
+      const data = await res.json();
+      if (data.success) {
+        onShowToast(data.message, 'success');
+        onRefreshUsers();
+        onRefreshSubjects();
+      } else {
+        onShowToast(data.error || 'Failed to restore snapshot', 'error');
+      }
+    } catch (err) {
+      console.error(err);
+      onShowToast('Error restoring snapshot', 'error');
     }
   };
 
@@ -612,6 +718,30 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-300" />
           <span>Google Classroom & CSV Importer</span>
         </button>
+
+        <button
+          onClick={() => { setActiveTab('vault'); loadVaultSnapshots(); }}
+          className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-sm transition-all ${
+            activeTab === 'vault'
+              ? 'bg-amber-600 text-white shadow-xs'
+              : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+          }`}
+        >
+          <Archive className="w-3.5 h-3.5 text-amber-300" />
+          <span>Zero-Leak Vault & Reset</span>
+        </button>
+
+        {onNavigateToVisionNote && (
+          <button
+            type="button"
+            onClick={onNavigateToVisionNote}
+            className="flex items-center gap-2 px-3.5 py-1.5 text-xs font-bold rounded-md transition-all bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white shadow-sm ml-auto animate-pulse cursor-pointer"
+            title="Switch to 11th & 12th Grade Science Audit & VisionNote Sync Sandbox"
+          >
+            <Camera className="w-3.5 h-3.5 text-cyan-200" />
+            <span>📸 11-12th Science & VN Sync Hub</span>
+          </button>
+        )}
       </div>
 
       {/* TAB 1: REGISTRATION & PROVISIONING */}
@@ -1856,6 +1986,176 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               >
                 Save Changes
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 5: ZERO-LEAK VAULT & RESET */}
+      {activeTab === 'vault' && (
+        <div className="space-y-6 animate-in fade-in duration-200">
+          {/* Top Info Banner */}
+          <div className="bg-slate-900 rounded-xl border border-slate-800 p-5 shadow-sm text-slate-100 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-[10px] uppercase font-mono font-bold px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800 flex items-center gap-1.5">
+                  <Lock className="w-3.5 h-3.5" />
+                  Zero-Leak Backend Archiving
+                </span>
+                <span className="text-xs text-slate-400">·</span>
+                <span className="text-xs text-slate-300 font-medium">ClassSarthi Vault Engine</span>
+              </div>
+              <h3 className="text-base sm:text-lg font-bold text-white">
+                Platform Reset & Secure Cold-Storage Vault
+              </h3>
+              <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
+                Reset the entire platform to a clean slate without losing any historical student notes or records. All current notes, submissions, and OCR logs are quarantined in the backend server filesystem with zero risk of public browser leakage.
+              </p>
+            </div>
+
+            {/* Supabase Status Indicator */}
+            <div className="p-3 bg-slate-950 rounded-lg border border-slate-800 text-right shrink-0">
+              <span className="text-[10px] uppercase font-mono text-slate-400 block mb-1">
+                Supabase Realtime Sync
+              </span>
+              <div className="flex items-center gap-2 justify-end">
+                <span className={`w-2 h-2 rounded-full ${isSupabaseConfigured() ? 'bg-emerald-400 animate-ping' : 'bg-amber-400'}`} />
+                <span className={`text-xs font-bold font-mono ${isSupabaseConfigured() ? 'text-emerald-300' : 'text-amber-300'}`}>
+                  {isSupabaseConfigured() ? 'Connected (Cloud)' : 'Local Sync Fallback'}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {/* Left: 1-Click Zero-Leak Archive & Reset */}
+            <div className="lg:col-span-5 bg-slate-900 rounded-xl border border-slate-800 p-5 shadow-sm space-y-4">
+              <div className="flex items-center gap-2 pb-3 border-b border-slate-800">
+                <Archive className="w-4 h-4 text-rose-400" />
+                <h4 className="text-sm font-bold text-white uppercase tracking-wide">
+                  Quarantine & Clean Slate Reset
+                </h4>
+              </div>
+
+              <div className="p-3.5 bg-rose-950/40 border border-rose-800/60 rounded-lg space-y-2 text-xs text-rose-200">
+                <p className="font-bold flex items-center gap-1.5 text-rose-300">
+                  <Lock className="w-3.5 h-3.5" />
+                  Zero-Leakage Security Guarantee:
+                </p>
+                <p className="text-[11px] text-rose-200/90 leading-relaxed">
+                  When you reset, all notes and submissions are bundled into a timestamped cold snapshot inside <code className="font-mono bg-black/40 px-1 rounded">data/secure_vault/</code>. This directory is strictly outside web-accessible endpoints, making it mathematically impossible for external visitors to access or inspect.
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <label className="block text-xs font-semibold text-slate-300">
+                  Session / Cohort Label (Optional)
+                </label>
+                <input
+                  type="text"
+                  value={archiveLabel}
+                  onChange={(e) => setArchiveLabel(e.target.value)}
+                  placeholder="e.g. TechStorm 3.0 Demo Run 1"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500"
+                />
+              </div>
+
+              <button
+                type="button"
+                id="vault-archive-reset-btn"
+                onClick={handleArchiveAndReset}
+                disabled={isArchiving}
+                className="w-full py-3 px-4 bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 disabled:opacity-50 text-white rounded-lg text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Archive className="w-4 h-4" />
+                <span>{isArchiving ? 'Quarantining to Vault...' : 'Archive Session & Reset Website'}</span>
+              </button>
+
+              <p className="text-[10px] text-slate-500 text-center">
+                Preserves all 29 students, 8 faculty, and course curricula while giving you a fresh blank notes canvas.
+              </p>
+            </div>
+
+            {/* Right: Secure Vault Snapshots History */}
+            <div className="lg:col-span-7 bg-slate-900 rounded-xl border border-slate-800 p-5 shadow-sm space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+                <div className="flex items-center gap-2">
+                  <Database className="w-4 h-4 text-purple-400" />
+                  <h4 className="text-sm font-bold text-white uppercase tracking-wide">
+                    Historical Backend Snapshots ({vaultSnapshots.length})
+                  </h4>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={loadVaultSnapshots}
+                  disabled={isLoadingVault}
+                  className="text-xs text-purple-400 hover:text-purple-300 flex items-center gap-1 font-mono"
+                >
+                  <RotateCcw className={`w-3 h-3 ${isLoadingVault ? 'animate-spin' : ''}`} />
+                  <span>Refresh</span>
+                </button>
+              </div>
+
+              {vaultSnapshots.length === 0 ? (
+                <div className="p-8 text-center border border-dashed border-slate-800 rounded-xl">
+                  <Archive className="w-8 h-8 text-slate-600 mx-auto mb-2" />
+                  <p className="text-xs font-semibold text-slate-400">No archived sessions yet.</p>
+                  <p className="text-[11px] text-slate-500 mt-1">
+                    When you archive your first session, it will be securely recorded here with full 1-click restore capability.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-2.5 max-h-[380px] overflow-y-auto pr-1">
+                  {vaultSnapshots.map((snap) => (
+                    <div
+                      key={snap.id || snap.filename}
+                      className="p-3 bg-slate-950 rounded-lg border border-slate-800 flex items-center justify-between gap-3 hover:border-slate-700 transition-colors"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-bold text-white truncate">
+                            {snap.label}
+                          </span>
+                          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-purple-950 text-purple-300 border border-purple-800">
+                            {snap.notesCount} notes
+                          </span>
+                        </div>
+                        <p className="text-[10px] font-mono text-slate-400 mt-1 truncate">
+                          📁 {snap.filename} · {snap.fileSizeBytes ? `${(snap.fileSizeBytes / 1024).toFixed(1)} KB` : 'Snapshot'} · {new Date(snap.timestamp).toLocaleString()}
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => handleRestoreSnapshot(snap.filename)}
+                        className="px-2.5 py-1.5 text-[11px] font-semibold bg-slate-900 hover:bg-slate-800 text-purple-300 border border-purple-800/80 rounded-md transition-colors shrink-0 flex items-center gap-1.5 cursor-pointer"
+                        title="Restore this archived snapshot back to the active website"
+                      >
+                        <RotateCcw className="w-3 h-3" />
+                        <span>Restore</span>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Supabase Setup Cheat-Sheet */}
+              <div className="p-3.5 bg-slate-950/80 rounded-lg border border-slate-800 text-xs space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-white flex items-center gap-1.5">
+                    <Database className="w-3.5 h-3.5 text-cyan-400" />
+                    How to activate Supabase Realtime in EduSync:
+                  </span>
+                  <span className="text-[10px] font-mono text-cyan-400">Step-by-step</span>
+                </div>
+                <ol className="list-decimal list-inside text-[11px] text-slate-300 space-y-1 leading-relaxed">
+                  <li>Create a free project on <strong className="text-white">supabase.com</strong>.</li>
+                  <li>In your project's SQL Editor, run: <code className="bg-slate-900 px-1 py-0.5 rounded text-cyan-300 font-mono">alter publication supabase_realtime add table notes;</code></li>
+                  <li>Add your project keys to EduSync's <code className="bg-slate-900 px-1 py-0.5 rounded text-cyan-300 font-mono">.env</code> file (<code className="text-white font-mono">VITE_SUPABASE_URL</code> and <code className="text-white font-mono">VITE_SUPABASE_ANON_KEY</code>).</li>
+                  <li>VisionNote pushes notes into Supabase; EduSync automatically receives them in real time!</li>
+                </ol>
+              </div>
             </div>
           </div>
         </div>

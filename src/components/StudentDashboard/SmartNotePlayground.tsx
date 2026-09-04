@@ -39,7 +39,9 @@ import {
   Calculator,
   BrainCircuit,
   Clock,
-  Layers2
+  Layers2,
+  Camera,
+  UploadCloud
 } from 'lucide-react';
 
 interface SmartNotePlaygroundProps {
@@ -49,6 +51,7 @@ interface SmartNotePlaygroundProps {
   notes: StudentNote[];
   currentUser?: { id: string; name: string; learningProfile?: LearnerPersona };
   onOpenPersonalization?: () => void;
+  onNavigateToVisionNote?: () => void;
   onSaveNote: (note: Partial<StudentNote>) => Promise<StudentNote>;
   onDeleteNote: (noteId: string) => Promise<void>;
   onSummarizeNote: (noteId: string, content: string, learnerProfile?: LearnerPersona) => Promise<{ summary: string; keyTakeaways: string[] }>;
@@ -137,6 +140,7 @@ export const SmartNotePlayground: React.FC<SmartNotePlaygroundProps> = ({
   notes,
   currentUser,
   onOpenPersonalization,
+  onNavigateToVisionNote,
   onSaveNote,
   onDeleteNote,
   onSummarizeNote,
@@ -480,6 +484,19 @@ export const SmartNotePlayground: React.FC<SmartNotePlaygroundProps> = ({
             >
               <Sparkles className="w-3.5 h-3.5 text-amber-300" />
               <span>⚡ Calibrate Persona</span>
+            </button>
+          )}
+
+          {onNavigateToVisionNote && (
+            <button
+              id="notes-import-vn-btn"
+              type="button"
+              onClick={onNavigateToVisionNote}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-xs font-bold transition-all shadow-md cursor-pointer animate-pulse"
+              title="Open VisionNote Hub to push/pull camera notes"
+            >
+              <Camera className="w-3.5 h-3.5 text-cyan-200" />
+              <span>Import from VN</span>
             </button>
           )}
 

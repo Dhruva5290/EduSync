@@ -7,3 +7,6 @@ coverage/
 *.zip
 .env*
 !.env.example
+data/secure_vault/
+data/archives/
+scratch/

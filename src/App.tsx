@@ -24,6 +24,13 @@ import { TutorLayout } from './components/SmartAITutor/TutorLayout';
 import { InteractiveQuizModal } from './components/StudentDashboard/InteractiveQuizModal';
 import { LearnerPersonaModal } from './components/Personalization/LearnerPersonaModal';
 import { LoginScreen } from './components/LoginScreen';
+import { VisionNoteAuditHub } from './components/VisionNoteAudit/VisionNoteAuditHub';
+import { LectureNotesStudio } from './components/VisionNoteLectures/LectureNotesStudio';
+import { StudentHomeDashboard } from './components/StudentDashboard/StudentHomeDashboard';
+import { LectureExperiencePage } from './components/LecturePage/LectureExperiencePage';
+import { BoardVisualsHub } from './components/BoardVisuals/BoardVisualsHub';
+import { subscribeToVisionNotes, fetchVisionNotesFromSupabase, isSupabaseConfigured } from './lib/supabase';
+
 
 import {
   BarChart3,
@@ -49,7 +56,8 @@ import {
   UserPlus,
   Shield,
   Building,
-  LogOut
+  LogOut,
+  Camera
 } from 'lucide-react';
 
 export default function App() {
@@ -72,7 +80,12 @@ export default function App() {
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [activeSubjectId, setActiveSubjectId] = useState<string>('subj-1');
   const [activeTab, setActiveTab] = useState<string>('overview');
+  const [selectedLectureId, setSelectedLectureId] = useState<string>('lec-phy-101');
+  const [selectedLectureTimestamp, setSelectedLectureTimestamp] = useState<string | undefined>(undefined);
+  const [tutorInitialPrompt, setTutorInitialPrompt] = useState<string>('');
+  const [tutorLectureContext, setTutorLectureContext] = useState<any>(null);
   const [showPersonaModal, setShowPersonaModal] = useState(false);
+
 
   // Theme synchronization with HTML root
   useEffect(() => {
@@ -217,8 +230,16 @@ export default function App() {
 
         // 4. Notes (Fetch all student notes for unified playground)
         const noteData = await safeFetchJson<StudentNote[]>('/api/notes');
-        if (noteData) {
-          setNotes(noteData);
+        if (noteData && noteData.length > 0) {
+          setNotes((prevNotes) => {
+            const merged = [...noteData];
+            for (const prev of prevNotes) {
+              if (!merged.some(m => m.id === prev.id)) {
+                merged.push(prev);
+              }
+            }
+            return merged;
+          });
         }
 
         // 5. Analytics (if teacher or overview)
@@ -233,6 +254,51 @@ export default function App() {
 
     loadSubjectData();
   }, [activeSubjectId, subjects, allSubjects]);
+
+  // Supabase Cloud Ingestion: Pull existing notes on mount + listen in real-time
+  useEffect(() => {
+    if (!currentUser) return;
+
+    // 1. Pull existing notes uploaded by VisionNote from Supabase Cloud
+    if (isSupabaseConfigured()) {
+      fetchVisionNotesFromSupabase().then(({ notes: cloudNotes, error }) => {
+        if (!error && cloudNotes && cloudNotes.length > 0) {
+          setNotes((prevNotes) => {
+            const merged = [...cloudNotes];
+            for (const prev of prevNotes) {
+              if (!merged.some(m => m.id === prev.id)) {
+                merged.push(prev);
+              }
+            }
+            return merged;
+          });
+        }
+      });
+    }
+
+    // 2. Real-time listener for incoming notes pushed while user is on page
+    const unsubscribe = subscribeToVisionNotes((incomingNote) => {
+      const isTarget = !incomingNote.studentId ||
+        incomingNote.studentId === currentUser.id ||
+        incomingNote.studentId === currentUser.institutionalId ||
+        incomingNote.source === 'visionnote' ||
+        currentUser.role === 'admin' ||
+        currentUser.role === 'teacher';
+
+      if (!isTarget) return;
+
+      setNotes((prevNotes) => {
+        // Prevent duplicate insertions if already present
+        if (prevNotes.some(n => n.id === incomingNote.id)) return prevNotes;
+        return [incomingNote, ...prevNotes];
+      });
+      showToast(`📸 VisionNote Cloud Sync: "${incomingNote.title}" synced!`, 'info');
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [currentUser?.id]);
 
   // Adjust default tab when switching roles
   const handleSwitchUser = async (userId: string) => {
@@ -761,7 +827,16 @@ export default function App() {
 
   // Not logged in: Show Login Screen
   if (!currentUser) {
-    return <LoginScreen onLoginSuccess={handleLoginSuccess} allUsers={allUsers} />;
+    return (
+      <LoginScreen
+        onLoginSuccess={handleLoginSuccess}
+        onLaunchVisionNoteDirectly={async (user, token) => {
+          await handleLoginSuccess(user, token);
+          setActiveTab('visionnote-audit');
+        }}
+        allUsers={allUsers}
+      />
+    );
   }
 
   const isAdmin = currentUser.role === 'admin';
@@ -938,15 +1013,54 @@ export default function App() {
             <>
               <button
                 id="sidebar-tab-feed"
-                onClick={() => { setActiveTab('feed'); setMobileMenuOpen(false); }}
+                onClick={() => { setActiveTab('overview'); setMobileMenuOpen(false); }}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-sm text-xs font-semibold transition-colors text-left ${
-                  activeTab === 'feed' || activeTab === 'overview'
+                  activeTab === 'overview' || activeTab === 'feed'
                     ? 'bg-blue-600 text-white shadow-xs'
                     : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                 }`}
               >
                 <BookOpen className="w-4 h-4 shrink-0 text-blue-400" />
-                <span>Academic Overview</span>
+                <span>Student Dashboard</span>
+              </button>
+
+              <button
+                id="sidebar-tab-lecture"
+                onClick={() => { setActiveTab('lecture'); setMobileMenuOpen(false); }}
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-sm text-xs font-semibold transition-colors text-left ${
+                  activeTab === 'lecture'
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                }`}
+              >
+                <Clock className="w-4 h-4 shrink-0 text-cyan-400" />
+                <span>Interactive Lecture</span>
+              </button>
+
+              <button
+                id="sidebar-tab-board-visuals"
+                onClick={() => { setActiveTab('board-visuals'); setMobileMenuOpen(false); }}
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-sm text-xs font-semibold transition-colors text-left ${
+                  activeTab === 'board-visuals'
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                }`}
+              >
+                <Camera className="w-4 h-4 shrink-0 text-amber-400" />
+                <span>Board Visuals Gallery</span>
+              </button>
+
+              <button
+                id="sidebar-tab-tutor"
+                onClick={() => { setActiveTab('tutor'); setMobileMenuOpen(false); }}
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-sm text-xs font-semibold transition-colors text-left ${
+                  activeTab === 'tutor'
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                }`}
+              >
+                <Sparkles className="w-4 h-4 shrink-0 text-indigo-400" />
+                <span>Context-Aware AI Tutor</span>
               </button>
 
               <button
@@ -962,18 +1076,6 @@ export default function App() {
                 <span>Smart Note Playground</span>
               </button>
 
-              <button
-                id="sidebar-tab-tutor"
-                onClick={() => { setActiveTab('tutor'); setMobileMenuOpen(false); }}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-sm text-xs font-semibold transition-colors text-left ${
-                  activeTab === 'tutor'
-                    ? 'bg-blue-600 text-white shadow-xs'
-                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                }`}
-              >
-                <Sparkles className="w-4 h-4 shrink-0 text-indigo-400" />
-                <span>Smart AI Tutor</span>
-              </button>
 
               {/* Dedicated Questionnaire Sidebar Item */}
               <div className="pt-2">
@@ -1003,6 +1105,25 @@ export default function App() {
               </div>
             </>
           )}
+
+          {/* Dedicated VisionNote & Grade 11-12 Science Sandbox Button for All Roles */}
+          <div className="pt-1 pb-1">
+            <button
+              id="sidebar-tab-visionnote-audit"
+              onClick={() => { setActiveTab('visionnote-audit'); setMobileMenuOpen(false); }}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-bold transition-all text-left border ${
+                activeTab === 'visionnote-audit'
+                  ? 'bg-gradient-to-r from-cyan-600 to-indigo-600 text-white border-cyan-400/50 shadow-md shadow-cyan-500/20'
+                  : 'bg-slate-950/40 text-cyan-300 border-cyan-800/40 hover:bg-slate-800 hover:border-cyan-500/50'
+              }`}
+            >
+              <Camera className="w-4 h-4 shrink-0 text-cyan-400 animate-pulse" />
+              <div className="flex-1 truncate">
+                <span className="block text-xs font-bold leading-tight">11-12th Science & VN Sync</span>
+                <span className="block text-[9px] text-slate-400 font-normal">Physics, Chemistry, Maths & OCR</span>
+              </div>
+            </button>
+          </div>
 
           <div className="pt-4 pb-1.5 px-3 text-[10px] uppercase tracking-widest text-slate-500 font-mono font-bold">
             {isAdmin ? 'All Institutional Classes' : 'Active Classes'}
@@ -1099,6 +1220,7 @@ export default function App() {
               onExitAudit={handleReturnToAdmin}
               activeTab={activeTab}
               onOpenPersonalization={() => setShowPersonaModal(true)}
+              onNavigateToVisionNote={() => setActiveTab('visionnote-audit')}
             />
           </div>
         </div>
@@ -1187,7 +1309,19 @@ export default function App() {
           )}
 
           {/* Main Views Container */}
-          {isAdmin ? (
+          {activeTab === 'visionnote-audit' ? (
+            <VisionNoteAuditHub
+              currentUser={currentUser}
+              onOpenSocraticTutor={(subjId, initialPrompt) => {
+                setActiveSubjectId(subjId);
+                setActiveTab('tutor');
+              }}
+              onViewNoteInEditor={(note) => {
+                setActiveSubjectId(note.subjectId);
+                setActiveTab('notes');
+              }}
+            />
+          ) : isAdmin ? (
             <AdminDashboard
               currentUser={currentUser}
               allUsers={allUsers}
@@ -1195,6 +1329,8 @@ export default function App() {
               onRefreshUsers={refreshUsersList}
               onRefreshSubjects={refreshSubjectsList}
               onShowToast={(msg, type) => showToast(msg, type || 'success')}
+              onNavigateToVisionNote={() => setActiveTab('visionnote-audit')}
+              onSwitchUser={handleSwitchUser}
             />
           ) : isTeacher ? (
             <div>
@@ -1244,7 +1380,50 @@ export default function App() {
             </div>
           ) : (
             <div>
-              {(activeTab === 'feed' || activeTab === 'overview') && (
+              {(activeTab === 'feed' || activeTab === 'overview' || activeTab === 'student-dashboard') && (
+                <StudentHomeDashboard
+                  currentUser={currentUser}
+                  onOpenLecture={(lectureId, initialTs) => {
+                    setSelectedLectureId(lectureId);
+                    setSelectedLectureTimestamp(initialTs);
+                    setActiveTab('lecture');
+                  }}
+                  onOpenTutorWithPrompt={(prompt, context) => {
+                    setTutorInitialPrompt(prompt);
+                    setTutorLectureContext(context);
+                    setActiveTab('tutor');
+                  }}
+                  onViewAssignments={() => setActiveTab('feed-resources')}
+                  onViewBoardVisuals={() => setActiveTab('board-visuals')}
+                />
+              )}
+
+              {activeTab === 'lecture' && (
+                <LectureExperiencePage
+                  lectureId={selectedLectureId || 'lec-phy-101'}
+                  currentUser={currentUser}
+                  onNavigateBack={() => setActiveTab('overview')}
+                  onOpenTutorWithContext={(prompt, context) => {
+                    setTutorInitialPrompt(prompt);
+                    setTutorLectureContext(context);
+                    setActiveTab('tutor');
+                  }}
+                  initialTimestamp={selectedLectureTimestamp}
+                />
+              )}
+
+              {activeTab === 'board-visuals' && (
+                <BoardVisualsHub
+                  subjects={subjects}
+                  onOpenLecture={(lectureId, timestamp) => {
+                    setSelectedLectureId(lectureId);
+                    setSelectedLectureTimestamp(timestamp);
+                    setActiveTab('lecture');
+                  }}
+                />
+              )}
+
+              {activeTab === 'feed-resources' && (
                 <ResourceFeed
                   currentUser={currentUser}
                   subjects={subjects}
@@ -1260,7 +1439,29 @@ export default function App() {
                   submissions={submissions}
                   allSubmissions={allSubmissions}
                   onSubmitAssignment={handleSubmitAssignment}
-                  onNavigateToNotes={() => setActiveTab('notes')}
+                  onNavigateToNotes={(subjectId) => {
+                    if (subjectId) setActiveSubjectId(subjectId);
+                    setActiveTab('lecture-notes');
+                  }}
+                  onNavigateToVisionNote={() => setActiveTab('lecture-notes')}
+                />
+              )}
+
+              {activeTab === 'lecture-notes' && (
+                <LectureNotesStudio
+                  activeSubject={activeSubject}
+                  subjects={subjects}
+                  allSubjects={allSubjects}
+                  onSelectSubject={(id) => setActiveSubjectId(id)}
+                  currentUser={currentUser}
+                  notes={notes}
+                  onOpenQuestionnaire={() => setShowPersonaModal(true)}
+                  onOpenSocraticTutor={(subjId, prompt) => {
+                    if (subjId) setActiveSubjectId(subjId);
+                    if (prompt) setTutorInitialPrompt(prompt);
+                    setActiveTab('tutor');
+                  }}
+                  onNavigateToBack={() => setActiveTab('overview')}
                 />
               )}
 
@@ -1272,6 +1473,7 @@ export default function App() {
                   notes={notes}
                   currentUser={currentUser}
                   onOpenPersonalization={() => setShowPersonaModal(true)}
+                  onNavigateToVisionNote={() => setActiveTab('lecture-notes')}
                   onSaveNote={handleSaveNote}
                   onDeleteNote={handleDeleteNote}
                   onSummarizeNote={handleSummarizeNote}
@@ -1287,6 +1489,8 @@ export default function App() {
                   activeSubject={activeSubject}
                   timelines={timelines}
                   assignments={assignments}
+                  initialPrompt={tutorInitialPrompt}
+                  lectureContext={tutorLectureContext}
                   onOpenPersonalization={() => setShowPersonaModal(true)}
                 />
               )}

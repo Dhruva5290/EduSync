@@ -23,7 +23,8 @@ import {
   Filter,
   ArrowRight,
   BookMarked,
-  Globe
+  Globe,
+  Camera
 } from 'lucide-react';
 
 interface ResourceFeedProps {
@@ -41,7 +42,8 @@ interface ResourceFeedProps {
   submissions: Submission[];
   allSubmissions?: Submission[];
   onSubmitAssignment: (assignmentId: string, text: string, file: string) => Promise<void>;
-  onNavigateToNotes?: () => void;
+  onNavigateToNotes?: (subjectId?: string) => void;
+  onNavigateToVisionNote?: () => void;
 }
 
 export const ResourceFeed: React.FC<ResourceFeedProps> = ({
@@ -59,7 +61,8 @@ export const ResourceFeed: React.FC<ResourceFeedProps> = ({
   submissions,
   allSubmissions = [],
   onSubmitAssignment,
-  onNavigateToNotes
+  onNavigateToNotes,
+  onNavigateToVisionNote
 }) => {
   const [viewMode, setViewMode] = useState<'overview' | 'active-subject' | 'all-assignments' | 'master-schedule' | 'library'>('overview');
   const [selectedSubjectFilter, setSelectedSubjectFilter] = useState<string>('all');
@@ -238,6 +241,41 @@ export const ResourceFeed: React.FC<ResourceFeedProps> = ({
       {/* 2. OVERVIEW MODE: ALL 5 ENROLLED SUBJECTS GRID */}
       {viewMode === 'overview' && (
         <div className="space-y-6">
+          {/* Dedicated Grade 11-12 Science & VisionNote Sandbox Feature Card */}
+          {onNavigateToVisionNote && (
+            <div className="p-4 rounded-xl bg-gradient-to-r from-cyan-950/90 via-indigo-950/80 to-purple-950/90 border border-cyan-500/50 shadow-lg shadow-cyan-500/10 flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-cyan-600/20 border border-cyan-400/40 rounded-xl shrink-0">
+                  <Camera className="w-6 h-6 text-cyan-400 animate-pulse" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h4 className="text-sm font-bold text-white">
+                      Senior Secondary (11th & 12th Grade) Science & VisionNote Hub
+                    </h4>
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-400/30">
+                      LIVE SANDBOX
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-300 mt-1">
+                    Inspect Physics, Chemistry & Mathematics cohorts with live camera snapshots, LaTeX equations & AI Doubt extraction.
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                id="feed-launch-vn-btn"
+                onClick={onNavigateToVisionNote}
+                className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white rounded-lg text-xs font-bold shadow-md transition-all shrink-0 cursor-pointer flex items-center justify-center gap-2 transform hover:scale-105"
+              >
+                <Camera className="w-3.5 h-3.5" />
+                <span>Open 11-12th Science & VN Sync</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
+
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Layers className="w-5 h-5 text-blue-400" />
@@ -347,12 +385,12 @@ export const ResourceFeed: React.FC<ResourceFeedProps> = ({
                     <button
                       onClick={() => {
                         onSelectSubject(subj.id);
-                        if (onNavigateToNotes) onNavigateToNotes();
+                        if (onNavigateToNotes) onNavigateToNotes(subj.id);
                       }}
-                      className="py-1.5 px-2 bg-slate-950 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700 rounded-xs text-xs font-semibold transition-colors flex items-center justify-center gap-1"
+                      className="py-1.5 px-2 bg-slate-950 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700 rounded-xs text-xs font-semibold transition-colors flex items-center justify-center gap-1 cursor-pointer"
                     >
-                      <BookOpen className="w-3.5 h-3.5" />
-                      <span>Notes</span>
+                      <BookOpen className="w-3.5 h-3.5 text-indigo-400" />
+                      <span>Lecture Notes</span>
                     </button>
                   </div>
                 </div>

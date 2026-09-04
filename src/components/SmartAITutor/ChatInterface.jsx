@@ -13,9 +13,17 @@ export function cleanAndFormatMath(text) {
   str = str.replace(/\$\$([\s\S]*?)\$\$/g, '$1');
   str = str.replace(/\$([^\$\n]+?)\$/g, '$1');
 
-  // 2. Fractions: \frac{a}{b} -> (a / b)
-  while (str.includes('\\frac{')) {
-    str = str.replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g, '($1 / $2)');
+  // 2. Fractions: safe single/nested fraction conversion with infinite loop guard
+  let fracIter = 0;
+  while (str.includes('\\frac') && fracIter < 5) {
+    const prev = str;
+    str = str.replace(/\\frac\{([^{}]*)\}\{([^{}]*)\}/g, '($1 / $2)');
+    if (str === prev) {
+      // If braces are nested or mismatched, remove the token and break
+      str = str.replace(/\\frac/g, '');
+      break;
+    }
+    fracIter++;
   }
 
   // 3. Text styling wrappers: \text{...}, \mathbf{...}, \mathrm{...}
@@ -105,6 +113,9 @@ export function cleanAndFormatMath(text) {
     '\\omega': 'ω',
     '\\Omega': 'Ω',
     '\\eta': 'η',
+    '\\cos': 'cos',
+    '\\sin': 'sin',
+    '\\tan': 'tan',
     '\\circ': '°',
     '\\quad': '  ',
     '\\qquad': '    ',
@@ -114,12 +125,18 @@ export function cleanAndFormatMath(text) {
     '\\}': '}'
   };
 
+  // Vectors: \vec{F} -> F⃗
+  str = str.replace(/\\vec\{([a-zA-Z])\}/g, '$1⃗');
+
   for (const [tex, sym] of Object.entries(symbolMap)) {
     str = str.replaceAll(tex, sym);
   }
 
   // Remove dangling single backslashes before plain letters
   str = str.replace(/\\([a-zA-Z]+)/g, '$1');
+
+  // Strip dangling unescaped '$' or '$_' artifacts
+  str = str.replace(/\$_/g, '_').replace(/\$/g, '');
 
   return str;
 }
@@ -281,12 +298,14 @@ const FormattedMessage = ({ content }) => {
   return <div className="space-y-0.5">{blocks}</div>;
 };
 
-export const ChatInterface = ({ onOpenPersonalization, learningProfile }) => {
+export const ChatInterface = ({ onOpenPersonalization, learningProfile, initialPrompt, lectureContext }) => {
   const [messages, setMessages] = useState([
     {
       id: 'welcome-1',
       sender: 'assistant',
-      text: `Hello! 👋 I'm your **EduSync AI Tutor**.\n\nAsk me any question — from code debugging and mathematical derivations to exam concepts and personalized study strategies. What would you like to explore today?`,
+      text: lectureContext
+        ? `Hello! 👋 I'm your **EduSync Socratic AI Tutor**.\n\nI'm pre-primed with your current lecture: **${lectureContext.lectureTitle || "Newton's Laws of Motion"}** and your recent quiz performance. Ask me about your quiz errors or any classroom timestamp!`
+        : `Hello! 👋 I'm your **EduSync AI Tutor**.\n\nAsk me any question — from code debugging and mathematical derivations to exam concepts and personalized study strategies. What would you like to explore today?`,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
   ]);
@@ -294,6 +313,7 @@ export const ChatInterface = ({ onOpenPersonalization, learningProfile }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [copiedId, setCopiedId] = useState(null);
   const messagesEndRef = useRef(null);
+  const initialPromptSentRef = useRef(false);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -302,6 +322,13 @@ export const ChatInterface = ({ onOpenPersonalization, learningProfile }) => {
   useEffect(() => {
     scrollToBottom();
   }, [messages, isLoading]);
+
+  useEffect(() => {
+    if (initialPrompt && initialPrompt.trim() && !initialPromptSentRef.current) {
+      initialPromptSentRef.current = true;
+      handleSendMessage(initialPrompt.trim());
+    }
+  }, [initialPrompt]);
 
   const handleSendMessage = async (textToSend) => {
     const messageText = (textToSend || inputValue).trim();
@@ -325,7 +352,8 @@ export const ChatInterface = ({ onOpenPersonalization, learningProfile }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: messageText,
-          history: newHistory.slice(-10)
+          history: newHistory.slice(-10),
+          lectureContext: lectureContext || window.__edusync_lecture_context
         })
       });
 

@@ -6,8 +6,19 @@ import {
   Assignment,
   Submission,
   StudentNote,
-  ClassAnalytics
+  ClassAnalytics,
+  ClassSarthiLecture,
+  BoardCapture,
+  LectureMasteryQuiz,
+  StudentConceptMastery
 } from '../types';
+import {
+  seedLectures,
+  seedBoardCaptures,
+  seedMasteryQuizzes,
+  seedConceptMastery,
+  seedStudentLectureProgress
+} from './classsarthiSeed';
 
 import fs from 'fs';
 import path from 'path';
@@ -21,10 +32,88 @@ export interface InMemoryDatabase {
   submissions: Submission[];
   notes: StudentNote[];
   analytics: Record<string, ClassAnalytics>;
+  lectures: ClassSarthiLecture[];
+  boardCaptures: BoardCapture[];
+  conceptMastery: Record<string, StudentConceptMastery[]>;
+  lectureProgress: Record<string, Record<string, any>>;
+  masteryQuizzes: Record<string, LectureMasteryQuiz>;
 }
 
 const USERS_FILE_PATH = path.resolve(process.cwd(), 'data', 'users.json');
 const NOTES_FILE_PATH = path.resolve(process.cwd(), 'data', 'notes.json');
+const LECTURES_FILE_PATH = path.resolve(process.cwd(), 'data', 'lectures.json');
+const PROGRESS_FILE_PATH = path.resolve(process.cwd(), 'data', 'student_progress.json');
+
+export function saveLecturesToDisk(lectures: ClassSarthiLecture[]) {
+  try {
+    const dir = path.dirname(LECTURES_FILE_PATH);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(LECTURES_FILE_PATH, JSON.stringify(lectures, null, 2), 'utf-8');
+  } catch (err) {
+    console.error('Error saving lectures to disk:', err);
+  }
+}
+
+export function loadLecturesFromDisk(seed: ClassSarthiLecture[]): ClassSarthiLecture[] {
+  try {
+    const dir = path.dirname(LECTURES_FILE_PATH);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    if (fs.existsSync(LECTURES_FILE_PATH)) {
+      const content = fs.readFileSync(LECTURES_FILE_PATH, 'utf-8');
+      const parsed = JSON.parse(content);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        const existingIds = new Set(parsed.map((l: any) => l.id));
+        const missing = seed.filter(s => !existingIds.has(s.id));
+        const merged = [...parsed, ...missing];
+        if (missing.length > 0) {
+          saveLecturesToDisk(merged);
+        }
+        return merged;
+      }
+    }
+  } catch (err) {
+    console.error('Error loading lectures from disk:', err);
+  }
+  saveLecturesToDisk(seed);
+  return seed;
+}
+
+export function saveProgressToDisk(progress: Record<string, Record<string, any>>) {
+  try {
+    const dir = path.dirname(PROGRESS_FILE_PATH);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(PROGRESS_FILE_PATH, JSON.stringify(progress, null, 2), 'utf-8');
+  } catch (err) {
+    console.error('Error saving progress to disk:', err);
+  }
+}
+
+export function loadProgressFromDisk(seed: Record<string, Record<string, any>>): Record<string, Record<string, any>> {
+  try {
+    const dir = path.dirname(PROGRESS_FILE_PATH);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    if (fs.existsSync(PROGRESS_FILE_PATH)) {
+      const content = fs.readFileSync(PROGRESS_FILE_PATH, 'utf-8');
+      const parsed = JSON.parse(content);
+      if (parsed && typeof parsed === 'object') {
+        return { ...seed, ...parsed };
+      }
+    }
+  } catch (err) {
+    console.error('Error loading progress from disk:', err);
+  }
+  saveProgressToDisk(seed);
+  return seed;
+}
+
 
 export function saveUsersToDisk(users: User[]) {
   try {
@@ -48,14 +137,7 @@ export function loadUsersFromDisk(seed: User[]): User[] {
       const content = fs.readFileSync(USERS_FILE_PATH, 'utf-8');
       const parsed = JSON.parse(content);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        // Merge any new seed users if missing by id
-        const existingIds = new Set(parsed.map((u: any) => u.id));
-        const missingSeeds = seed.filter(s => !existingIds.has(s.id));
-        const merged = [...parsed, ...missingSeeds];
-        if (missingSeeds.length > 0) {
-          saveUsersToDisk(merged);
-        }
-        return merged;
+        return parsed;
       }
     }
   } catch (err) {
@@ -104,552 +186,442 @@ export function loadNotesFromDisk(seed: StudentNote[]): StudentNote[] {
 }
 
 const seedUsers: User[] = [
-    // --- LEADERSHIP & REGISTRAR ---
-    {
-      id: 'admin-1',
-      name: 'Dr. Maneek Singh',
-      email: 'maneek.singh@bmu.edu.in',
-      username: 'dean.maneek',
-      password: 'Dean@BMU2026!',
-      role: 'admin',
-      gender: 'Male',
-      institutionalId: 'BMU-ADM-1001',
-      department: 'Department of Academic Welfare',
-      designation: 'Dean of Academic Welfare & Institutional Registrar',
-      enrolledSubjectIds: [],
-      teachingSubjectIds: [],
-      officeLocation: 'Academic Block A - Room 102',
-      officeHours: 'Mon-Fri 10:00 AM - 04:30 PM',
-      status: 'active',
-      joinedDate: '2018-07-01',
-      phone: '+91 98110 54321'
-    },
-    {
-      id: 'admin-2',
-      name: 'Dr. Kiran Khatter',
-      email: 'kiran.khatter@bmu.edu.in',
-      username: 'dean.kiran',
-      password: 'Kiran@BMU2026!',
-      role: 'admin',
-      gender: 'Female',
-      institutionalId: 'BMU-ADM-1002',
-      department: 'Department of Computer Science',
-      designation: 'Associate Dean & Head of Computing Programmes',
-      enrolledSubjectIds: [],
-      teachingSubjectIds: [],
-      officeLocation: 'Academic Block B - Room 204',
-      officeHours: 'Tue-Thu 02:00 PM - 05:00 PM',
-      status: 'active',
-      joinedDate: '2019-06-15',
-      phone: '+91 98110 54322'
-    },
+  // --- ONLY DEAN ---
+  {
+    id: 'admin-1',
+    name: 'Dr. Maneek Singh',
+    email: 'dean.maneek@edusync.edu.in',
+    username: 'dean.maneek',
+    password: 'Dean@EduSync2026!',
+    role: 'admin',
+    gender: 'Male',
+    institutionalId: 'EDU-ADM-1001',
+    department: 'Office of the Dean & Academic Registrar',
+    designation: 'Dean of Academic Welfare & Institutional Registrar',
+    enrolledSubjectIds: [],
+    teachingSubjectIds: [],
+    officeLocation: 'Academic Block A - Room 102',
+    officeHours: 'Mon-Fri 10:00 AM - 04:30 PM',
+    status: 'active',
+    joinedDate: '2018-07-01',
+    phone: '+91 98110 54321'
+  },
 
-    // --- FACULTY MEMBERS ---
-    {
-      id: 'teacher-1',
-      name: 'Dr. Sanmitra Burman',
-      email: 'sanmitra.burman@bmu.edu.in',
-      username: 'prof.sanmitra',
-      password: 'Teacher@ESS26',
-      role: 'teacher',
-      gender: 'Male',
-      institutionalId: 'BMU-FAC-2001',
-      department: 'Department of Environmental Sciences',
-      designation: 'Associate Professor of Environmental Engineering',
-      enrolledSubjectIds: [],
-      teachingSubjectIds: ['subj-ess'],
-      officeLocation: 'Science Block C - Room 301',
-      officeHours: 'Mon & Wed 11:00 AM - 01:00 PM',
-      status: 'active',
-      joinedDate: '2021-08-01',
-      phone: '+91 98231 44501'
-    },
-    {
-      id: 'teacher-2',
-      name: 'Dr. Raghav Singhal',
-      email: 'raghav.singhal@bmu.edu.in',
-      username: 'prof.raghav',
-      password: 'Teacher@Calc26',
-      role: 'teacher',
-      gender: 'Male',
-      institutionalId: 'BMU-FAC-2002',
-      department: 'Dept. of Computational Sciences',
-      designation: 'Professor of Pure & Applied Mathematics',
-      enrolledSubjectIds: [],
-      teachingSubjectIds: ['subj-calc'],
-      officeLocation: 'Academic Block A - Room 315',
-      officeHours: 'Tue & Thu 03:00 PM - 05:00 PM',
-      status: 'active',
-      joinedDate: '2020-01-10',
-      phone: '+91 98231 44502'
-    },
-    {
-      id: 'teacher-3',
-      name: 'Dr. K Srikanth',
-      email: 'k.srikanth@bmu.edu.in',
-      username: 'prof.srikanth',
-      password: 'Teacher@EME26',
-      role: 'teacher',
-      gender: 'Male',
-      institutionalId: 'BMU-FAC-2003',
-      department: 'Dept. of Mechanical Engineering',
-      designation: 'Professor & Workshop Coordinator',
-      enrolledSubjectIds: [],
-      teachingSubjectIds: ['subj-eme'],
-      officeLocation: 'Mechanical Engineering Workshop Complex - Room W-12',
-      officeHours: 'Wed & Fri 02:00 PM - 04:30 PM',
-      status: 'active',
-      joinedDate: '2019-09-01',
-      phone: '+91 98231 44503'
-    },
-    {
-      id: 'teacher-4',
-      name: 'Dr. Beenu Taneja',
-      email: 'beenu.taneja@bmu.edu.in',
-      username: 'prof.beenu',
-      password: 'Teacher@Ethics26',
-      role: 'teacher',
-      gender: 'Male',
-      institutionalId: 'BMU-FAC-2004',
-      department: 'Department of Computer Engineering',
-      designation: 'Associate Professor & Professional Ethics Chair',
-      enrolledSubjectIds: [],
-      teachingSubjectIds: ['subj-engeth'],
-      officeLocation: 'Academic Block B - Room 118',
-      officeHours: 'Mon & Thu 01:30 PM - 03:30 PM',
-      status: 'active',
-      joinedDate: '2021-01-15',
-      phone: '+91 98231 44504'
-    },
-    {
-      id: 'teacher-5',
-      name: 'Dr. Nikhil Kumar',
-      email: 'nikhil.kumar@bmu.edu.in',
-      username: 'prof.nikhil',
-      password: 'Teacher@CPC26',
-      role: 'teacher',
-      gender: 'Male',
-      institutionalId: 'BMU-FAC-2005',
-      department: 'Department of Computer Sciences',
-      designation: 'Assistant Professor & C Programming Lead',
-      enrolledSubjectIds: [],
-      teachingSubjectIds: ['subj-cpc'],
-      officeLocation: 'Computing Lab 4 - Room C-408',
-      officeHours: 'Tue & Fri 10:00 AM - 12:30 PM',
-      status: 'active',
-      joinedDate: '2022-07-20',
-      phone: '+91 98231 44505'
-    },
+  // --- TEACHERS FOR PHYSICS, CHEMISTRY, MATHS ---
+  {
+    id: 'teacher-phy',
+    name: 'Dr. Rajesh Kulkarni',
+    email: 'rajesh.kulkarni@edusync.edu.in',
+    username: 'prof.rajesh',
+    password: 'Physics@2026!',
+    role: 'teacher',
+    gender: 'Male',
+    institutionalId: 'EDU-FAC-201',
+    department: 'Department of Physics',
+    designation: 'Senior Faculty of Physics (Grades 11 & 12)',
+    enrolledSubjectIds: [],
+    teachingSubjectIds: ['subj-phy-11', 'subj-phy-12'],
+    officeLocation: 'Physics Block P - Lab 201',
+    officeHours: 'Mon & Thu 02:00 PM - 04:00 PM',
+    status: 'active',
+    joinedDate: '2019-07-01',
+    phone: '+91 98110 54331'
+  },
+  {
+    id: 'teacher-che',
+    name: 'Dr. Ananya Sen',
+    email: 'ananya.sen@edusync.edu.in',
+    username: 'prof.ananya',
+    password: 'Chemistry@2026!',
+    role: 'teacher',
+    gender: 'Female',
+    institutionalId: 'EDU-FAC-202',
+    department: 'Department of Chemistry',
+    designation: 'Lead Faculty of Chemistry (Grades 11 & 12)',
+    enrolledSubjectIds: [],
+    teachingSubjectIds: ['subj-che-11', 'subj-che-12'],
+    officeLocation: 'Chemistry Block C - Hall 2',
+    officeHours: 'Tue & Fri 11:00 AM - 01:00 PM',
+    status: 'active',
+    joinedDate: '2020-08-15',
+    phone: '+91 98110 54332'
+  },
+  {
+    id: 'teacher-mat',
+    name: 'Prof. Vikramaditya Roy',
+    email: 'vikram.roy@edusync.edu.in',
+    username: 'prof.vikram',
+    password: 'Maths@2026!',
+    role: 'teacher',
+    gender: 'Male',
+    institutionalId: 'EDU-FAC-203',
+    department: 'Department of Mathematics',
+    designation: 'Senior Professor of Mathematics (Grades 11 & 12)',
+    enrolledSubjectIds: [],
+    teachingSubjectIds: ['subj-mat-11', 'subj-mat-12'],
+    officeLocation: 'Ramanujan Block M - Room 101',
+    officeHours: 'Wed & Fri 03:00 PM - 05:00 PM',
+    status: 'active',
+    joinedDate: '2018-06-01',
+    phone: '+91 98110 54333'
+  },
 
-    // --- 1ST YEAR B.TECH STUDENTS (ALL SUBJECTS ALLOTTED) ---
-    {
-      id: 'student-1',
-      name: 'Dhruva',
-      email: 'dhruva.260101@bmu.edu.in',
-      username: 'student.dhruva',
-      password: 'EduSync@260101',
-      role: 'student',
-      gender: 'Male',
-      program: 'CSE',
-      institutionalId: '260101',
-      department: 'B.Tech Computer Science (CSE)',
-      academicYear: '1st Year (Semester 1)',
-      gpa: 9.85,
-      enrolledSubjectIds: ['subj-ess', 'subj-calc', 'subj-eme', 'subj-engeth', 'subj-cpc'],
-      teachingSubjectIds: [],
-      status: 'active',
-      joinedDate: '2026-08-01',
-      phone: '+91 98188 260101'
-    },
-    {
-      id: 'student-2',
-      name: 'Aryan Sagar',
-      email: 'aryan.260102@bmu.edu.in',
-      username: 'student.aryan',
-      password: 'EduSync@260102',
-      role: 'student',
-      gender: 'Male',
-      program: 'CSE',
-      institutionalId: '260102',
-      department: 'B.Tech Computer Science (CSE)',
-      academicYear: '1st Year (Semester 1)',
-      gpa: 8.42,
-      enrolledSubjectIds: ['subj-ess', 'subj-calc', 'subj-eme', 'subj-engeth', 'subj-cpc'],
-      teachingSubjectIds: [],
-      status: 'active',
-      joinedDate: '2026-08-01',
-      phone: '+91 98711 260102'
-    },
-    {
-      id: 'student-3',
-      name: 'Deepansh Garg',
-      email: 'deepansh.260103@bmu.edu.in',
-      username: 'student.deepansh',
-      password: 'EduSync@260103',
-      role: 'student',
-      gender: 'Male',
-      program: 'CSE',
-      institutionalId: '260103',
-      department: 'B.Tech Computer Science (CSE)',
-      academicYear: '1st Year (Semester 1)',
-      gpa: 7.95,
-      enrolledSubjectIds: ['subj-ess', 'subj-calc', 'subj-eme', 'subj-engeth', 'subj-cpc'],
-      teachingSubjectIds: [],
-      status: 'active',
-      joinedDate: '2026-08-01',
-      phone: '+91 98102 260103'
-    },
-    {
-      id: 'student-4',
-      name: 'Dishika Saxena',
-      email: 'dishika.260104@bmu.edu.in',
-      username: 'student.dishika',
-      password: 'EduSync@260104',
-      role: 'student',
-      gender: 'Female',
-      program: 'CSE',
-      institutionalId: '260104',
-      department: 'B.Tech Computer Science (CSE)',
-      academicYear: '1st Year (Semester 1)',
-      gpa: 9.10,
-      enrolledSubjectIds: ['subj-ess', 'subj-calc', 'subj-eme', 'subj-engeth', 'subj-cpc'],
-      teachingSubjectIds: [],
-      status: 'active',
-      joinedDate: '2026-08-01',
-      phone: '+91 98991 260104'
-    },
-    {
-      id: 'student-5',
-      name: 'Drishti',
-      email: 'drishti.260105@bmu.edu.in',
-      username: 'student.drishti',
-      password: 'EduSync@260105',
-      role: 'student',
-      gender: 'Female',
-      program: 'CSE',
-      institutionalId: '260105',
-      department: 'B.Tech Computer Science (CSE)',
-      academicYear: '1st Year (Semester 1)',
-      gpa: 8.78,
-      enrolledSubjectIds: ['subj-ess', 'subj-calc', 'subj-eme', 'subj-engeth', 'subj-cpc'],
-      teachingSubjectIds: [],
-      status: 'active',
-      joinedDate: '2026-08-01',
-      phone: '+91 98733 260105'
-    },
-    {
-      id: 'student-6',
-      name: 'Chirag',
-      email: 'chirag.260106@bmu.edu.in',
-      username: 'student.chirag',
-      password: 'EduSync@260106',
-      role: 'student',
-      gender: 'Male',
-      program: 'CSE',
-      institutionalId: '260106',
-      department: 'B.Tech Computer Science (CSE)',
-      academicYear: '1st Year (Semester 1)',
-      gpa: 7.60,
-      enrolledSubjectIds: ['subj-ess', 'subj-calc', 'subj-eme', 'subj-engeth', 'subj-cpc'],
-      teachingSubjectIds: [],
-      status: 'active',
-      joinedDate: '2026-08-01',
-      phone: '+91 98114 260106'
-    },
-    {
-      id: 'student-7',
-      name: 'Yuvraj Singh',
-      email: 'yuvraj.260107@bmu.edu.in',
-      username: 'student.yuvraj',
-      password: 'EduSync@260107',
-      role: 'student',
-      gender: 'Male',
-      program: 'ECE',
-      institutionalId: '260107',
-      department: 'B.Tech Electronics and Computer Engineering (ECE)',
-      academicYear: '1st Year (Semester 1)',
-      gpa: 8.15,
-      enrolledSubjectIds: ['subj-ess', 'subj-calc', 'subj-eme', 'subj-engeth', 'subj-cpc'],
-      teachingSubjectIds: [],
-      status: 'active',
-      joinedDate: '2026-08-01',
-      phone: '+91 98215 260107'
-    },
-    {
-      id: 'student-8',
-      name: 'Aditya Tomar',
-      email: 'aditya.260108@bmu.edu.in',
-      username: 'student.aditya',
-      password: 'EduSync@260108',
-      role: 'student',
-      gender: 'Male',
-      program: 'ECE',
-      institutionalId: '260108',
-      department: 'B.Tech Electronics and Computer Engineering (ECE)',
-      academicYear: '1st Year (Semester 1)',
-      gpa: 8.65,
-      enrolledSubjectIds: ['subj-ess', 'subj-calc', 'subj-eme', 'subj-engeth', 'subj-cpc'],
-      teachingSubjectIds: [],
-      status: 'active',
-      joinedDate: '2026-08-01',
-      phone: '+91 98762 260108'
-    },
-    {
-      id: 'student-9',
-      name: 'Mohit Yadav',
-      email: 'mohit.260109@bmu.edu.in',
-      username: 'student.mohit',
-      password: 'EduSync@260109',
-      role: 'student',
-      gender: 'Male',
-      program: 'CSE',
-      institutionalId: '260109',
-      department: 'B.Tech Computer Science (CSE)',
-      academicYear: '1st Year (Semester 1)',
-      gpa: 7.40,
-      enrolledSubjectIds: ['subj-ess', 'subj-calc', 'subj-eme', 'subj-engeth', 'subj-cpc'],
-      teachingSubjectIds: [],
-      status: 'active',
-      joinedDate: '2026-08-01',
-      phone: '+91 98189 260109'
-    },
-    {
-      id: 'student-10',
-      name: 'Yukti Singh',
-      email: 'yukti.260110@bmu.edu.in',
-      username: 'student.yukti',
-      password: 'EduSync@260110',
-      role: 'student',
-      gender: 'Female',
-      program: 'ME',
-      institutionalId: '260110',
-      department: 'B.Tech Mechanical Engineering (ME)',
-      academicYear: '1st Year (Semester 1)',
-      gpa: 8.90,
-      enrolledSubjectIds: ['subj-ess', 'subj-calc', 'subj-eme', 'subj-engeth', 'subj-cpc'],
-      teachingSubjectIds: [],
-      status: 'active',
-      joinedDate: '2026-08-01',
-      phone: '+91 98912 260110'
-    },
-    {
-      id: 'student-11',
-      name: 'Ashita Tiwari',
-      email: 'ashita.260111@bmu.edu.in',
-      username: 'student.ashita',
-      password: 'EduSync@260111',
-      role: 'student',
-      gender: 'Female',
-      program: 'ME',
-      institutionalId: '260111',
-      department: 'B.Tech Mechanical Engineering (ME)',
-      academicYear: '1st Year (Semester 1)',
-      gpa: 9.25,
-      enrolledSubjectIds: ['subj-ess', 'subj-calc', 'subj-eme', 'subj-engeth', 'subj-cpc'],
-      teachingSubjectIds: [],
-      status: 'active',
-      joinedDate: '2026-08-01',
-      phone: '+91 98718 260111'
-    },
-    {
-      id: 'student-12',
-      name: 'Srijan Reddy',
-      email: 'srijan.260112@bmu.edu.in',
-      username: 'student.srijan',
-      password: 'EduSync@260112',
-      role: 'student',
-      gender: 'Male',
-      program: 'ME',
-      institutionalId: '260112',
-      department: 'B.Tech Mechanical Engineering (ME)',
-      academicYear: '1st Year (Semester 1)',
-      gpa: 8.30,
-      enrolledSubjectIds: ['subj-ess', 'subj-calc', 'subj-eme', 'subj-engeth', 'subj-cpc'],
-      teachingSubjectIds: [],
-      status: 'active',
-      joinedDate: '2026-08-01',
-      phone: '+91 98105 260112'
-    },
-    {
-      id: 'student-13',
-      name: 'Jatin Rao',
-      email: 'jatin.260113@bmu.edu.in',
-      username: 'student.jatin',
-      password: 'EduSync@260113',
-      role: 'student',
-      gender: 'Male',
-      program: 'ME',
-      institutionalId: '260113',
-      department: 'B.Tech Mechanical Engineering (ME)',
-      academicYear: '1st Year (Semester 1)',
-      gpa: 7.85,
-      enrolledSubjectIds: ['subj-ess', 'subj-calc', 'subj-eme', 'subj-engeth', 'subj-cpc'],
-      teachingSubjectIds: [],
-      status: 'active',
-      joinedDate: '2026-08-01',
-      phone: '+91 98734 260113'
-    },
-    {
-      id: 'student-14',
-      name: 'Preet Singh',
-      email: 'preet.260114@bmu.edu.in',
-      username: 'student.preet',
-      password: 'EduSync@260114',
-      role: 'student',
-      gender: 'Male',
-      program: 'ECE',
-      institutionalId: '260114',
-      department: 'B.Tech Electronics and Computer Engineering (ECE)',
-      academicYear: '1st Year (Semester 1)',
-      gpa: 8.05,
-      enrolledSubjectIds: ['subj-ess', 'subj-calc', 'subj-eme', 'subj-engeth', 'subj-cpc'],
-      teachingSubjectIds: [],
-      status: 'active',
-      joinedDate: '2026-08-01',
-      phone: '+91 98116 260114'
-    },
-    {
-      id: 'student-15',
-      name: 'Gurasees Kaur',
-      email: 'gurasees.260115@bmu.edu.in',
-      username: 'student.gurasees',
-      password: 'EduSync@260115',
-      role: 'student',
-      gender: 'Female',
-      program: 'ECE',
-      institutionalId: '260115',
-      department: 'B.Tech Electronics and Computer Engineering (ECE)',
-      academicYear: '1st Year (Semester 1)',
-      gpa: 8.95,
-      enrolledSubjectIds: ['subj-ess', 'subj-calc', 'subj-eme', 'subj-engeth', 'subj-cpc'],
-      teachingSubjectIds: [],
-      status: 'active',
-      joinedDate: '2026-08-01',
-      phone: '+91 98219 260115'
+  // --- STUDENTS: COMBINED 11th & 12th WITH RANDOM AI LEARNER PERSONAS ---
+  {
+    id: 'student-1',
+    name: 'Aarav Sharma',
+    email: 'aarav.sharma@edusync.edu.in',
+    username: 'aarav.sharma',
+    password: 'Student@2026!',
+    role: 'student',
+    gender: 'Male',
+    institutionalId: 'EDU-STU-1101',
+    department: 'Senior Secondary Science (Grade 11 PCM)',
+    program: 'CBSE / JEE Prep Track',
+    academicYear: 'Grade 11',
+    gpa: 9.4,
+    enrolledSubjectIds: ['subj-phy-11', 'subj-che-11', 'subj-mat-11'],
+    teachingSubjectIds: [],
+    status: 'active',
+    joinedDate: '2026-04-01',
+    phone: '+91 98100 11001',
+    learningProfile: {
+      learningStyle: 'visual',
+      targetGrade: 'A+',
+      explanationTone: 'encouraging_mentor',
+      preferredPace: 'steady',
+      strengthsAndInterests: 'Visual mindmaps, free-body force diagrams, geometric graphs',
+      painPoints: 'Abstract algebra without spatial diagrams, sign conventions',
+      questionnaireCompleted: true,
+      completedAt: '2026-09-01T10:00:00.000Z'
     }
-  ];
+  },
+  {
+    id: 'student-2',
+    name: 'Diya Patel',
+    email: 'diya.patel@edusync.edu.in',
+    username: 'diya.patel',
+    password: 'Student@2026!',
+    role: 'student',
+    gender: 'Female',
+    institutionalId: 'EDU-STU-1102',
+    department: 'Senior Secondary Science (Grade 11 PCM)',
+    program: 'CBSE / JEE Prep Track',
+    academicYear: 'Grade 11',
+    gpa: 9.1,
+    enrolledSubjectIds: ['subj-phy-11', 'subj-che-11', 'subj-mat-11'],
+    teachingSubjectIds: [],
+    status: 'active',
+    joinedDate: '2026-04-01',
+    phone: '+91 98100 11002',
+    learningProfile: {
+      learningStyle: 'step_by_step',
+      targetGrade: 'competitive',
+      explanationTone: 'practical_engineer',
+      preferredPace: 'thorough',
+      strengthsAndInterests: 'First-principles calculus derivations, organic mechanisms, thermodynamics proofs',
+      painPoints: 'Skipped intermediate steps in mathematical proofs, ambiguous notation',
+      questionnaireCompleted: true,
+      completedAt: '2026-09-01T10:15:00.000Z'
+    }
+  },
+  {
+    id: 'student-3',
+    name: 'Kabir Mehta',
+    email: 'kabir.mehta@edusync.edu.in',
+    username: 'kabir.mehta',
+    password: 'Student@2026!',
+    role: 'student',
+    gender: 'Male',
+    institutionalId: 'EDU-STU-1103',
+    department: 'Senior Secondary Science (Grade 11 PCM)',
+    program: 'CBSE / JEE Prep Track',
+    academicYear: 'Grade 11',
+    gpa: 8.8,
+    enrolledSubjectIds: ['subj-phy-11', 'subj-che-11', 'subj-mat-11'],
+    teachingSubjectIds: [],
+    status: 'active',
+    joinedDate: '2026-04-01',
+    phone: '+91 98100 11003',
+    learningProfile: {
+      learningStyle: 'socratic_dialogue',
+      targetGrade: 'A',
+      explanationTone: 'encouraging_mentor',
+      preferredPace: 'steady',
+      strengthsAndInterests: 'Real-world physical analogies, thought experiments, inquiry',
+      painPoints: 'Rote formula memorization under timed conditions',
+      questionnaireCompleted: true,
+      completedAt: '2026-09-01T10:30:00.000Z'
+    }
+  },
+  {
+    id: 'student-4',
+    name: 'Ananya Iyer',
+    email: 'ananya.iyer@edusync.edu.in',
+    username: 'ananya.iyer',
+    password: 'Student@2026!',
+    role: 'student',
+    gender: 'Female',
+    institutionalId: 'EDU-STU-1201',
+    department: 'Senior Secondary Science (Grade 12 PCM)',
+    program: 'CBSE / JEE Advanced Track',
+    academicYear: 'Grade 12',
+    gpa: 9.6,
+    enrolledSubjectIds: ['subj-phy-12', 'subj-che-12', 'subj-mat-12'],
+    teachingSubjectIds: [],
+    status: 'active',
+    joinedDate: '2025-04-01',
+    phone: '+91 98100 12001',
+    learningProfile: {
+      learningStyle: 'exam_focused',
+      targetGrade: 'competitive',
+      explanationTone: 'strict_coach',
+      preferredPace: 'accelerated',
+      strengthsAndInterests: 'High-yield numerical problem solving, integration shortcuts, circuit analysis',
+      painPoints: 'Lengthy descriptive theory questions, coordination compound nomenclature',
+      questionnaireCompleted: true,
+      completedAt: '2026-09-01T11:00:00.000Z'
+    }
+  },
+  {
+    id: 'student-5',
+    name: 'Rohan Gupta',
+    email: 'rohan.gupta@edusync.edu.in',
+    username: 'rohan.gupta',
+    password: 'Student@2026!',
+    role: 'student',
+    gender: 'Male',
+    institutionalId: 'EDU-STU-1202',
+    department: 'Senior Secondary Science (Grade 12 PCM)',
+    program: 'CBSE / JEE Advanced Track',
+    academicYear: 'Grade 12',
+    gpa: 8.9,
+    enrolledSubjectIds: ['subj-phy-12', 'subj-che-12', 'subj-mat-12'],
+    teachingSubjectIds: [],
+    status: 'active',
+    joinedDate: '2025-04-01',
+    phone: '+91 98100 12002',
+    learningProfile: {
+      learningStyle: 'socratic_dialogue',
+      targetGrade: 'A+',
+      explanationTone: 'practical_engineer',
+      preferredPace: 'steady',
+      strengthsAndInterests: 'Electromagnetism, electromagnetic induction, wave optics experiments',
+      painPoints: '3D spatial coordinate rotations and plane vectors',
+      questionnaireCompleted: true,
+      completedAt: '2026-09-01T11:30:00.000Z'
+    }
+  },
+  {
+    id: 'student-6',
+    name: 'Ishaan Verma',
+    email: 'ishaan.verma@edusync.edu.in',
+    username: 'ishaan.verma',
+    password: 'Student@2026!',
+    role: 'student',
+    gender: 'Male',
+    institutionalId: 'EDU-STU-1203',
+    department: 'Senior Secondary Science (Grade 12 PCM)',
+    program: 'CBSE / JEE Advanced Track',
+    academicYear: 'Grade 12',
+    gpa: 9.0,
+    enrolledSubjectIds: ['subj-phy-12', 'subj-che-12', 'subj-mat-12'],
+    teachingSubjectIds: [],
+    status: 'active',
+    joinedDate: '2025-04-01',
+    phone: '+91 98100 12003',
+    learningProfile: {
+      learningStyle: 'visual',
+      targetGrade: 'A',
+      explanationTone: 'encouraging_mentor',
+      preferredPace: 'thorough',
+      strengthsAndInterests: 'Organic reaction flowcharts, optical ray diagrams, crystal lattices',
+      painPoints: 'Equilibrium constants and multistep redox titrations',
+      questionnaireCompleted: true,
+      completedAt: '2026-09-01T11:45:00.000Z'
+    }
+  }
+];
 
 export const db: InMemoryDatabase = {
   users: loadUsersFromDisk(seedUsers),
   subjects: [
+    // ==========================================
+    // GRADE 11 SCIENCE SUBJECTS (PCM)
+    // ==========================================
     {
-      id: 'subj-ess',
-      code: 'ESS',
-      name: 'Environmental Studies and Sustainability',
-      description: 'Ecosystem dynamics, renewable energy technologies, climate change mitigation, EIA compliance, waste management, and sustainable development.',
-      teacherId: 'teacher-1',
-      teacherName: 'Dr. Sanmitra Burman',
-      teacherEmail: 'sanmitra.burman@bmu.edu.in',
-      color: 'emerald',
-      accentBg: 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400',
-      enrolledCount: 15,
-      semester: 'Fall 2026 (Semester 1)',
-      room: 'Science Block C - Lecture Hall 101',
-      credits: 3,
-      department: 'Department of Environmental Sciences',
-      syllabusTopics: [
-        'Ecosystem Structures, Biogeochemical Cycles & Food Webs',
-        'Biodiversity Conservation, Hotspots & Threatened Species',
-        'Renewable Energy: Solar Photovoltaics, Wind, Bio-energy',
-        'Environmental Impact Assessment (EIA) Methodologies',
-        'Solid & Electronic Waste Management Protocols',
-        'Climate Policy, Carbon Offsetting & Sustainable Urban Planning'
-      ]
-    },
-    {
-      id: 'subj-calc',
-      code: 'CALC',
-      name: 'Calculus and Mathematics',
-      description: 'Differential calculus, Taylor expansions, multivariable functions, partial derivatives, multiple integrals, vector calculus, and engineering ODEs.',
-      teacherId: 'teacher-2',
-      teacherName: 'Dr. Raghav Singhal',
-      teacherEmail: 'raghav.singhal@bmu.edu.in',
+      id: 'subj-phy-11',
+      code: 'PHY11',
+      name: 'Class 11 Physics (Mechanics & Thermodynamics)',
+      description: 'Foundational Newtonian mechanics, kinematics, rotational dynamics, work-energy theorem, gravitation, fluid mechanics, and thermodynamics.',
+      teacherId: 'teacher-phy',
+      teacherName: 'Dr. Rajesh Kulkarni',
+      teacherEmail: 'rajesh.kulkarni@edusync.edu.in',
       color: 'blue',
       accentBg: 'bg-blue-500/10 border-blue-500/30 text-blue-400',
-      enrolledCount: 15,
-      semester: 'Fall 2026 (Semester 1)',
-      room: 'Academic Block A - Hall 302',
+      enrolledCount: 6,
+      semester: 'Academic Year 2026-27 (Grade 11)',
+      room: 'Physics Block P - Lecture Theatre 1',
       credits: 4,
-      department: 'Dept. of Computational Sciences',
+      department: 'Senior Secondary Science - Grade 11',
       syllabusTopics: [
-        'Limits, Continuity, Mean Value Theorems & Taylor Polynomials',
-        'Partial Differentiation, Gradients, Divergence & Curl',
-        'Maxima, Minima & Lagrange Multipliers for Optimization',
-        'Double & Triple Integrals in Polar, Cylindrical & Spherical Coordinates',
-        'Vector Calculus: Green’s, Stokes’ & Divergence Theorems',
-        'First and Second Order Linear Differential Equations'
+        'Kinematics in 1D & 2D (Vectors, Projectile Motion)',
+        'Laws of Motion & Friction Mechanics',
+        'Work, Energy and Power & Conservation Principles',
+        'Rotational Motion & Moment of Inertia of Rigid Bodies',
+        'Universal Gravitation & Orbital Mechanics',
+        'Thermodynamics, Carnot Engines & Kinetic Theory of Gases'
       ]
     },
     {
-      id: 'subj-eme',
-      code: 'EME',
-      name: 'Elements of Mechanical Engineering',
-      description: 'Laws of thermodynamics, IC engine cycles, power transmission, gear trains, engineering materials, stress-strain analysis, and manufacturing processes.',
-      teacherId: 'teacher-3',
-      teacherName: 'Dr. K Srikanth',
-      teacherEmail: 'k.srikanth@bmu.edu.in',
+      id: 'subj-che-11',
+      code: 'CHE11',
+      name: 'Class 11 Chemistry (Physical, Inorganic & Organic)',
+      description: 'Quantum atomic structure, periodic classification, chemical bonding, thermodynamics, equilibrium, redox reactions, and fundamental organic chemistry.',
+      teacherId: 'teacher-che',
+      teacherName: 'Dr. Ananya Sen',
+      teacherEmail: 'ananya.sen@edusync.edu.in',
+      color: 'emerald',
+      accentBg: 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400',
+      enrolledCount: 6,
+      semester: 'Academic Year 2026-27 (Grade 11)',
+      room: 'Chemistry Block C - Hall 2',
+      credits: 4,
+      department: 'Senior Secondary Science - Grade 11',
+      syllabusTopics: [
+        'Atomic Structure (Bohr Model, Quantum Numbers & Orbitals)',
+        'Chemical Bonding & Molecular Structure (VSEPR, Hybridization & MOT)',
+        'Chemical Thermodynamics & Hess Law',
+        'Ionic & Chemical Equilibrium (Le Chatelier Principle, pH & Buffers)',
+        'Redox Reactions & Oxidation States',
+        'Organic Chemistry Basics & Hydrocarbon Reaction Mechanisms'
+      ]
+    },
+    {
+      id: 'subj-mat-11',
+      code: 'MAT11',
+      name: 'Class 11 Mathematics (Algebra, Trig & Calculus Basics)',
+      description: 'Sets, relations and functions, trigonometric functions, permutations and combinations, binomial theorem, straight lines, conic sections, and introductory limits.',
+      teacherId: 'teacher-mat',
+      teacherName: 'Prof. Vikramaditya Roy',
+      teacherEmail: 'vikram.roy@edusync.edu.in',
+      color: 'violet',
+      accentBg: 'bg-violet-500/10 border-violet-500/30 text-violet-400',
+      enrolledCount: 6,
+      semester: 'Academic Year 2026-27 (Grade 11)',
+      room: 'Ramanujan Block M - Room 101',
+      credits: 4,
+      department: 'Senior Secondary Science - Grade 11',
+      syllabusTopics: [
+        'Sets, Relations & Cartesian Products',
+        'Trigonometric Functions & Compound Angle Identities',
+        'Permutations, Combinations & Binomial Theorem',
+        'Coordinate Geometry: Straight Lines, Circles & Conic Sections',
+        'Limits, Continuity & First Principles Derivative Foundations',
+        'Probability & Statistical Dispersion'
+      ]
+    },
+
+    // ==========================================
+    // GRADE 12 SCIENCE SUBJECTS (PCM)
+    // ==========================================
+    {
+      id: 'subj-phy-12',
+      code: 'PHY12',
+      name: 'Class 12 Physics (Electromagnetism, Optics & Modern Physics)',
+      description: 'Electrostatics, Gauss Law, current electricity, magnetic effects of current, electromagnetic induction, wave optics, photoelectric effect, and nuclear physics.',
+      teacherId: 'teacher-phy',
+      teacherName: 'Dr. Rajesh Kulkarni',
+      teacherEmail: 'rajesh.kulkarni@edusync.edu.in',
+      color: 'sky',
+      accentBg: 'bg-sky-500/10 border-sky-500/30 text-sky-400',
+      enrolledCount: 6,
+      semester: 'Academic Year 2026-27 (Grade 12)',
+      room: 'Physics Block P - Advanced Lab 3',
+      credits: 4,
+      department: 'Senior Secondary Science - Grade 12',
+      syllabusTopics: [
+        'Electric Charges, Fields & Gauss Theorem Proofs',
+        'Electrostatic Potential & Capacitors with Dielectrics',
+        'Current Electricity, Kirchhoff Rules & Wheatstone Bridge',
+        'Magnetism & Moving Charges (Biot-Savart & Ampere Laws)',
+        'Electromagnetic Induction & Alternating Current Circuits',
+        'Wave & Ray Optics, Interference & Photoelectric Effect'
+      ]
+    },
+    {
+      id: 'subj-che-12',
+      code: 'CHE12',
+      name: 'Class 12 Chemistry (Electrochemistry, Kinetics & Organics)',
+      description: 'Solid state, solutions, electrochemistry, chemical kinetics, d & f block elements, coordination compounds, haloalkanes, aldehydes, ketones, and biomolecules.',
+      teacherId: 'teacher-che',
+      teacherName: 'Dr. Ananya Sen',
+      teacherEmail: 'ananya.sen@edusync.edu.in',
       color: 'amber',
       accentBg: 'bg-amber-500/10 border-amber-500/30 text-amber-400',
-      enrolledCount: 15,
-      semester: 'Fall 2026 (Semester 1)',
-      room: 'Mechanical Workshop W-101',
+      enrolledCount: 6,
+      semester: 'Academic Year 2026-27 (Grade 12)',
+      room: 'Chemistry Block C - Lab 204',
       credits: 4,
-      department: 'Dept. of Mechanical Engineering',
+      department: 'Senior Secondary Science - Grade 12',
       syllabusTopics: [
-        'First and Second Laws of Thermodynamics & Heat Engines',
-        'Otto, Diesel & Dual Combustion Engine Cycles',
-        'Power Transmission: Belts, Ropes, Chains & Epicyclic Gear Trains',
-        'Engineering Mechanics: Stress, Strain & Hooke’s Law',
-        'Basic Manufacturing: Lathe, CNC Machining, Welding & 3D Printing',
-        'Hydraulic Turbines & Fluid Power Systems'
+        'Solutions & Colligative Properties (Raoult Law, Van t Hoff Factor)',
+        'Electrochemistry (Nernst Equation, Galvanic Cells & Fuel Cells)',
+        'Chemical Kinetics (Integrated Rate Laws & Arrhenius Equation)',
+        'Coordination Compounds & Crystal Field Splitting Theory',
+        'Aldehydes, Ketones & Carboxylic Acids Mechanisms',
+        'Biomolecules: Carbohydrates, Proteins & Nucleic Acids'
       ]
     },
     {
-      id: 'subj-engeth',
-      code: 'ENG-ETH',
-      name: 'Engineering Ethics',
-      description: 'Philosophical foundations, professional codes of conduct, whistleblowing, engineering safety, intellectual property rights, and AI ethics.',
-      teacherId: 'teacher-4',
-      teacherName: 'Dr. Beenu Taneja',
-      teacherEmail: 'beenu.taneja@bmu.edu.in',
+      id: 'subj-mat-12',
+      code: 'MAT12',
+      name: 'Class 12 Mathematics (Calculus, Vectors & 3D Geometry)',
+      description: 'Inverse trigonometric functions, matrices & determinants, continuity & differentiability, applications of derivatives, integrals, differential equations, and 3D geometry.',
+      teacherId: 'teacher-mat',
+      teacherName: 'Prof. Vikramaditya Roy',
+      teacherEmail: 'vikram.roy@edusync.edu.in',
+      color: 'indigo',
+      accentBg: 'bg-indigo-500/10 border-indigo-500/30 text-indigo-400',
+      enrolledCount: 6,
+      semester: 'Academic Year 2026-27 (Grade 12)',
+      room: 'Ramanujan Block M - Room 202',
+      credits: 4,
+      department: 'Senior Secondary Science - Grade 12',
+      syllabusTopics: [
+        'Relations, Functions & Inverse Trigonometric Functions',
+        'Matrices, Inverses & System of Linear Equations (Determinants)',
+        'Continuity, Differentiability & Mean Value Theorems',
+        'Applications of Derivatives: Maxima/Minima & Tangents',
+        'Definite & Indefinite Integrals & Area Under Curves',
+        'Vector Algebra, 3D Geometry & Linear Programming'
+      ]
+    },
+
+    // ==========================================
+    // VISIONNOTE LIVE CAPTURE SUBJECT
+    // ==========================================
+    {
+      id: 'subj-pyconfig',
+      code: 'PYTEST',
+      name: 'PyTest Config Class',
+      description: 'Automated PyTest configuration, test fixtures, suites, and runners captured live from VisionNote.',
+      teacherId: 'teacher-phy',
+      teacherName: 'Dr. Rajesh Kulkarni',
+      teacherEmail: 'rajesh.kulkarni@edusync.edu.in',
       color: 'purple',
       accentBg: 'bg-purple-500/10 border-purple-500/30 text-purple-400',
-      enrolledCount: 15,
-      semester: 'Fall 2026 (Semester 1)',
-      room: 'Academic Block B - Seminar Room 110',
-      credits: 2,
-      department: 'Department of Computer Engineering',
-      syllabusTopics: [
-        'Moral Frameworks: Utilitarianism, Deontology & Virtue Ethics',
-        'IEEE, ACM & ASME Professional Codes of Ethics',
-        'Engineering Disasters: Chernobyl, Challenger, Boeing 737 MAX Analysis',
-        'Whistleblowing Protections, Moral Courage & Corporate Liability',
-        'Intellectual Property Rights: Patents, Copyrights & Open Source',
-        'Emerging Technologies: AI Bias, Autonomous Systems & Data Privacy'
-      ]
-    },
-    {
-      id: 'subj-cpc',
-      code: 'CPC',
-      name: 'Computer Programming in C',
-      description: 'Algorithmic problem solving, control structures, pointers, dynamic memory allocation (malloc/free), structs, recursion, and file input/output.',
-      teacherId: 'teacher-5',
-      teacherName: 'Dr. Nikhil Kumar',
-      teacherEmail: 'nikhil.kumar@bmu.edu.in',
-      color: 'rose',
-      accentBg: 'bg-rose-500/10 border-rose-500/30 text-rose-400',
-      enrolledCount: 15,
-      semester: 'Fall 2026 (Semester 1)',
-      room: 'Computing Lab 4 - Room 408',
+      enrolledCount: 6,
+      semester: 'Academic Year 2026-27',
+      room: 'Computing Lab 1 - Room 204',
       credits: 4,
-      department: 'Department of Computer Sciences',
+      department: 'Software Engineering & Testing',
       syllabusTopics: [
-        'C Language Basics: Types, Operators, Expressions & I/O Functions',
-        'Control Flow: Conditional Branching, Nested Loops & Switch Statements',
-        'Modular Functions, Variable Scope & Recursive Problem Solving',
-        'Arrays, String Manipulation & Multi-dimensional Matrix Operations',
-        'Pointers, Pointer Arithmetic & Dynamic Memory Management',
-        'Structures, Unions, Typedef & Low-level File Processing (stdio.h)'
+        'PyTest Configuration & Ini Files',
+        'Test Fixtures & Setup/Teardown',
+        'Parametrized Tests & Markers',
+        'Test Runners & CLI Flags',
+        'Mocking & Assertion Introspection'
       ]
     }
   ],
@@ -1277,10 +1249,449 @@ $$H = \\begin{pmatrix} f_{xx} & f_{xy} \\\\ f_{yx} & f_{yy} \\end{pmatrix}$$
           topic: 'Lagrange Multipliers'
         }
       ]
+    },
+
+    // ==========================================
+    // GRADE 11 & 12 VISIONNOTE (VN) SEEDED NOTES
+    // ==========================================
+    {
+      id: 'note-vn-phy11-1',
+      studentId: 'student-g11-1',
+      subjectId: 'subj-phy-11',
+      title: 'Rotational Dynamics: Moment of Inertia & Parallel Axis Theorem',
+      content: `# Rotational Dynamics & Moment of Inertia of Rigid Bodies
+*(Captured via VisionNote Camera Studio • Blackboard OCR Stream)*
+
+## 1. Definition of Moment of Inertia ($I$):
+For a continuous rigid body rotating about an axis:
+$$I = \\int r^2 dm$$
+
+Where $r$ is the perpendicular distance of mass element $dm$ from the chosen axis.
+
+## 2. Parallel Axis Theorem (Steiner's Theorem):
+If $I_{cm}$ is the moment of inertia about an axis through the center of mass, the moment of inertia $I$ about any parallel axis separated by distance $d$ is:
+$$I = I_{cm} + M d^2$$
+
+## 3. Rolling Motion without Slipping:
+Total Kinetic Energy of a rolling object (Sphere/Cylinder):
+$$K_{total} = K_{trans} + K_{rot} = \\frac{1}{2} M v_{cm}^2 + \\frac{1}{2} I_{cm} \\omega^2$$
+Since $v_{cm} = R\\omega$:
+$$K_{total} = \\frac{1}{2} M v_{cm}^2 \\left(1 + \\frac{k^2}{R^2}\\right)$$
+Where $k$ is the radius of gyration.`,
+      tags: ['Physics 11', 'Rotational Dynamics', 'Moment of Inertia', 'VisionNote'],
+      lastModified: '2026-08-28T10:15:00',
+      isPinned: true,
+      source: 'visionnote',
+      cameraSnapshotUrl: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60',
+      doubtsDetected: [
+        'Why can the Perpendicular Axis Theorem only be applied to planar lamina (2D objects)?',
+        'How does friction provide torque without dissipating energy during pure rolling?'
+      ],
+      summary: 'Derived formulas for moment of inertia, Steiner parallel axis theorem, and total kinetic energy partition in pure rolling without slipping.',
+      keyTakeaways: [
+        'Moment of inertia depends fundamentally on both total mass and its spatial distribution relative to the axis of rotation.',
+        'In pure rolling down an incline, objects with smaller (k/R)^2 reach the bottom first (Solid Sphere > Disc > Hollow Sphere > Ring).'
+      ],
+      flashcards: [
+        {
+          id: 'fc-phy11-1',
+          question: 'What is the condition for using the Perpendicular Axis Theorem in rotational dynamics?',
+          answer: 'It is strictly valid only for 2D planar laminas (Ix + Iy = Iz where z-axis is perpendicular to the lamina plane).',
+          hint: 'Think about dimensions (2D vs 3D).',
+          topic: 'Rotational Motion'
+        },
+        {
+          id: 'fc-phy11-2',
+          question: 'State Steiner\'s Parallel Axis Theorem.',
+          answer: 'I = I_cm + M*d^2 (where d is perpendicular distance between the parallel axes and one axis must pass through the Center of Mass).',
+          hint: 'One axis must pass through Center of Mass.',
+          topic: 'Moment of Inertia'
+        }
+      ]
+    },
+    {
+      id: 'note-vn-che11-1',
+      studentId: 'student-g11-2',
+      subjectId: 'subj-che-11',
+      title: 'VSEPR Theory & Hybridization Schemes ($sp, sp^2, sp^3, dsp^2$)',
+      content: `# Chemical Bonding & Hybridization Geometry
+*(Captured via VisionNote Camera Studio • Scanned Notebook)*
+
+## 1. Valence Shell Electron Pair Repulsion (VSEPR) Hierarchy:
+$$\\text{Lone Pair - Lone Pair} > \\text{Lone Pair - Bond Pair} > \\text{Bond Pair - Bond Pair}$$
+
+## 2. Steric Number Formula:
+$$\\text{Steric Number} = (\\text{Number of } \\sigma \\text{ bonds}) + (\\text{Number of Lone Pairs})$$
+
+| Steric No. | Hybridization | Ideal Geometry | Example | Bond Angle |
+| :--- | :--- | :--- | :--- | :--- |
+| **2** | $sp$ | Linear | $\\text{BeCl}_2, \\text{CO}_2$ | $180^\\circ$ |
+| **3** | $sp^2$ | Trigonal Planar | $\\text{BF}_3, \\text{SO}_3$ | $120^\\circ$ |
+| **4** | $sp^3$ | Tetrahedral | $\\text{CH}_4, \\text{NH}_3, \\text{H}_2\\text{O}$ | $109.5^\\circ$ ($107^\\circ, 104.5^\\circ$) |
+| **5** | $sp^3d$ | Trigonal Bipyramidal | $\\text{PCl}_5, \\text{SF}_4$ | $90^\\circ, 120^\\circ$ |
+| **6** | $sp^3d^2$ | Octahedral | $\\text{SF}_6, \\text{XeF}_4$ | $90^\\circ$ |`,
+      tags: ['Chemistry 11', 'VSEPR', 'Hybridization', 'Chemical Bonding', 'VisionNote'],
+      lastModified: '2026-08-28T11:45:00',
+      isPinned: true,
+      source: 'visionnote',
+      cameraSnapshotUrl: 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=600&auto=format&fit=crop&q=60',
+      doubtsDetected: [
+        'Why are axial P-Cl bonds in PCl5 longer and weaker than equatorial bonds?',
+        'How does electronegativity of surrounding atoms affect bond angles in NH3 vs NF3?'
+      ],
+      summary: 'Comprehensive table of steric numbers, hybridization types, VSEPR lone-pair distortions, and molecular geometries.',
+      keyTakeaways: [
+        'Lone pairs occupy equatorial positions in trigonal bipyramidal geometry to minimize 90° repulsions.',
+        'Hybrid orbitals form only sigma bonds and hold lone pairs; pi bonds are formed by unhybridized pure p/d orbitals.'
+      ],
+      flashcards: [
+        {
+          id: 'fc-che11-1',
+          question: 'Why are axial bonds longer than equatorial bonds in PCl5?',
+          answer: 'Axial bond pairs experience three 90° repulsions from equatorial bond pairs, whereas equatorial bond pairs experience only two 90° repulsions.',
+          hint: 'Count the 90° vs 120° repulsion angles.',
+          topic: 'VSEPR Theory'
+        }
+      ]
+    },
+    {
+      id: 'note-vn-mat11-1',
+      studentId: 'student-g11-3',
+      subjectId: 'subj-mat-11',
+      title: 'Trigonometric Limits & Squeeze Theorem Proofs',
+      content: `# Fundamental Limits & Sandwich Theorem
+*(Captured via VisionNote Camera Studio • Lecture Blackboard)*
+
+## 1. Standard Trigonometric Limits:
+$$\\lim_{x \\to 0} \\frac{\\sin x}{x} = 1 \\quad (x \\text{ in radians})$$
+$$\\lim_{x \\to 0} \\frac{\\tan x}{x} = 1$$
+$$\\lim_{x \\to 0} \\frac{1 - \\cos x}{x^2} = \\frac{1}{2}$$
+
+## 2. Geometric Proof of $\\lim_{x \\to 0} \\frac{\\sin x}{x} = 1$:
+Consider unit circle with angle $0 < x < \\frac{\\pi}{2}$:
+$$\\text{Area}(\\triangle OAB) < \\text{Area}(\\text{Sector } OAB) < \\text{Area}(\\triangle OAT)$$
+$$\\frac{1}{2} \\sin x < \\frac{1}{2} x < \\frac{1}{2} \\tan x$$
+Dividing by $\\frac{1}{2} \\sin x$:
+$$1 < \\frac{x}{\\sin x} < \\frac{1}{\\cos x} \\implies \\cos x < \\frac{\\sin x}{x} < 1$$
+Taking limit as $x \\to 0$, since $\\lim_{x \\to 0} \\cos x = 1$, by **Sandwich (Squeeze) Theorem**:
+$$\\lim_{x \\to 0} \\frac{\\sin x}{x} = 1$$`,
+      tags: ['Maths 11', 'Calculus', 'Limits', 'Squeeze Theorem', 'VisionNote'],
+      lastModified: '2026-08-29T09:30:00',
+      isPinned: true,
+      source: 'visionnote',
+      doubtsDetected: [
+        'Why must x be in radians when applying standard trigonometric limits?',
+        'How do you evaluate 0/0 limits when direct substitution produces indeterminate forms?'
+      ],
+      summary: 'Geometric derivation of sin(x)/x limit using unit circle area inequalities and the Sandwich Theorem.',
+      keyTakeaways: [
+        'Trigonometric limit proofs strictly require radian measure because arc length equals angle times radius.',
+        'Squeeze Theorem rigorously traps limit between two bounding functions that converge to the same value.'
+      ]
+    },
+    {
+      id: 'note-vn-phy12-1',
+      studentId: 'student-g12-1',
+      subjectId: 'subj-phy-12',
+      title: 'Gauss Law Applications: Electric Field of Infinite Sheet & Cylinders',
+      content: `# Gauss's Law & Electrostatic Field Derivations
+*(Captured via VisionNote Camera Studio • Scanned Lab Notes)*
+
+## 1. Gauss's Law Statement:
+$$\\Phi_E = \\oint_{S} \\mathbf{E} \\cdot d\\mathbf{A} = \\frac{Q_{\\text{enclosed}}}{\\varepsilon_0}$$
+
+## 2. Electric Field of Uniform Infinite Sheet of Charge:
+Using cylindrical Gaussian pillbox of cross-section $A$:
+$$\\oint \\mathbf{E} \\cdot d\\mathbf{A} = E(A) + E(A) = 2EA$$
+$$Q_{\\text{enclosed}} = \\sigma A$$
+$$2EA = \\frac{\\sigma A}{\\varepsilon_0} \\implies E = \\frac{\\sigma}{2\\varepsilon_0}$$
+*(Notice field is independent of distance $r$ from the sheet)*.
+
+## 3. Parallel Plate Capacitor with Dielectric:
+$$C = \\frac{\\kappa \\varepsilon_0 A}{d}$$
+Energy Density stored in electric field:
+$$u_E = \\frac{1}{2} \\varepsilon_0 E^2$$`,
+      tags: ['Physics 12', 'Electrostatics', 'Gauss Law', 'Capacitors', 'VisionNote'],
+      lastModified: '2026-08-29T14:00:00',
+      isPinned: true,
+      source: 'visionnote',
+      cameraSnapshotUrl: 'https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=600&auto=format&fit=crop&q=60',
+      doubtsDetected: [
+        'Why does the electric field of an infinite sheet not decrease with distance?',
+        'What is the difference between bound surface charge density and free surface charge density in a dielectric?'
+      ],
+      summary: 'Derived Gauss Law electric field formulas for planar sheets, cylindrical wire charges, and parallel plate capacitors with dielectric insertion.',
+      keyTakeaways: [
+        'Gauss Law is most powerful when high symmetry (spherical, cylindrical, planar) exists to pull E out of the flux integral.',
+        'Dielectric insertion increases capacitance by factor kappa while reducing electric field in isolated capacitors.'
+      ]
+    },
+    {
+      id: 'note-vn-che12-1',
+      studentId: 'student-g12-2',
+      subjectId: 'subj-che-12',
+      title: 'Aldol Condensation & Cannizzaro Reaction Mechanisms',
+      content: `# Carbonyl Reactions: Aldol & Cannizzaro
+*(Captured via VisionNote Camera Studio • Reaction Mechanism Board)*
+
+## 1. Aldol Condensation ($\alpha$-Hydrogen required):
+Reagents: Dilute $\\text{NaOH}$ or $\\text{Ba(OH)}_2$:
+$$2 \\text{CH}_3\\text{CHO} \\xrightarrow{\\text{dil. NaOH}} \\text{CH}_3\\text{CH(OH)CH}_2\\text{CHO} \\xrightarrow{\\Delta, -\\text{H}_2\\text{O}} \\text{CH}_3\\text{CH}=\\text{CHCHO}$$
+*(Formation of $\\alpha,\\beta$-unsaturated aldehyde / Crotonaldehyde)*.
+
+## 2. Cannizzaro Reaction (NO $\alpha$-Hydrogen):
+Reagents: Concentrated $50\\% \\text{KOH}$ (Disproportionation / Redox):
+$$2 \\text{HCHO} \\xrightarrow{50\\% \\text{KOH}} \\text{CH}_3\\text{OH} + \\text{HCOO}^-\\text{K}^+$$
+*(One molecule is reduced to alcohol, one is oxidized to carboxylate salt)*.`,
+      tags: ['Chemistry 12', 'Organic Chemistry', 'Aldol', 'Cannizzaro', 'Mechanisms', 'VisionNote'],
+      lastModified: '2026-08-30T16:20:00',
+      isPinned: true,
+      source: 'visionnote',
+      doubtsDetected: [
+        'Why does Cannizzaro reaction require high concentration of base (50% KOH) while Aldol requires dilute base?',
+        'How do you predict major cross-aldol products when mixing benzaldehyde and acetone?'
+      ],
+      summary: 'Stepwise mechanism breakdown of Aldol condensation vs Cannizzaro disproportionation reaction based on alpha-hydrogen presence.',
+      keyTakeaways: [
+        'Alpha hydrogens are acidic due to resonance stabilization of the enolate anion by the carbonyl oxygen.',
+        'Cross-aldol between an aromatic aldehyde (no alpha-H) and a ketone selectively yields a single major conjugated product.'
+      ]
+    },
+    {
+      id: 'note-vn-mat12-1',
+      studentId: 'student-g12-3',
+      subjectId: 'subj-mat-12',
+      title: 'Definite Integrals: King Property & Area Under Curve',
+      content: `# Definite Integrals & Properties of Integration
+*(Captured via VisionNote Camera Studio • Blackboard)*
+
+## 1. The "King's Property" of Definite Integrals:
+$$\\int_{a}^{b} f(x) dx = \\int_{a}^{b} f(a + b - x) dx$$
+Special Case for $[0, a]$:
+$$\\int_{0}^{a} f(x) dx = \\int_{0}^{a} f(a - x) dx$$
+
+## 2. Classic Problem Example:
+Evaluate $I = \\int_{0}^{\\pi/2} \\frac{\\sqrt{\\sin x}}{\\sqrt{\\sin x} + \\sqrt{\\cos x}} dx$:
+By King's Property:
+$$I = \\int_{0}^{\\pi/2} \\frac{\\sqrt{\\cos x}}{\\sqrt{\\cos x} + \\sqrt{\\sin x}} dx$$
+Adding both equations:
+$$2I = \\int_{0}^{\\pi/2} 1 \\, dx = \\frac{\\pi}{2} \\implies I = \\frac{\\pi}{4}$$`,
+      tags: ['Maths 12', 'Calculus', 'Definite Integrals', 'King Property', 'VisionNote'],
+      lastModified: '2026-08-30T17:10:00',
+      isPinned: true,
+      source: 'visionnote',
+      doubtsDetected: [
+        'When does the King property simplify integrals where standard substitution fails?',
+        'How do you handle symmetry when integrating odd and even functions across [-a, a]?'
+      ],
+      summary: 'Integral properties including the King property and Leibniz integral rule with standard competitive exam problem solutions.',
+      keyTakeaways: [
+        'The King property reflects the integrand across the midpoint (a+b)/2 without changing the total area.',
+        'Adding I and its reflected form often eliminates radical terms into a simple constant integrand.'
+      ]
     }
   ]),
 
   analytics: {
+    // Grade 11 Analytics
+    'subj-phy-11': {
+      subjectId: 'subj-phy-11',
+      subjectName: 'Class 11 Physics (Mechanics & Thermodynamics)',
+      totalStudents: 6,
+      classAverage: 88.5,
+      submissionRate: 95.0,
+      atRiskStudentsCount: 1,
+      gradeDistribution: [
+        { range: '90-100% (A)', count: 3, percentage: 50.0 },
+        { range: '80-89% (B)', count: 2, percentage: 33.3 },
+        { range: '70-79% (C)', count: 1, percentage: 16.7 },
+        { range: '<70%', count: 0, percentage: 0.0 }
+      ],
+      weakTopics: [
+        {
+          topic: 'Rotational Kinetic Energy in Pure Rolling on Inclines',
+          errorRate: 34,
+          averageScore: 70.5,
+          affectedStudents: 2,
+          recommendedRemediation: 'Provide scaffolded derivations linking torque, friction, and center of mass acceleration.',
+          urgency: 'high'
+        }
+      ],
+      trends: [
+        { week: 'Week 1', avgScore: 89.0, submissionRate: 100.0, activeCount: 6 },
+        { week: 'Week 2', avgScore: 88.0, submissionRate: 95.0, activeCount: 6 },
+        { week: 'Week 3', avgScore: 88.5, submissionRate: 95.0, activeCount: 6 }
+      ],
+      aiExecutiveSummary: `Dr. Alok Verma's Class 11 Physics cohort shows strong conceptual grasp of Newtonian mechanics. Aarav Sharma leads with 9.4 GPA. Attention required on rolling motion friction vectors.`,
+      keyActionItems: [
+        'Demonstrate physical rolling cylinder experiments in Physics Lab 201.',
+        'Assign practice set on Parallel Axis Theorem applications.'
+      ],
+      lastGenerated: '2026-08-30T10:00:00'
+    },
+    'subj-che-11': {
+      subjectId: 'subj-che-11',
+      subjectName: 'Class 11 Chemistry (Physical, Inorganic & Organic)',
+      totalStudents: 6,
+      classAverage: 87.2,
+      submissionRate: 96.0,
+      atRiskStudentsCount: 1,
+      gradeDistribution: [
+        { range: '90-100% (A)', count: 3, percentage: 50.0 },
+        { range: '80-89% (B)', count: 2, percentage: 33.3 },
+        { range: '70-79% (C)', count: 1, percentage: 16.7 },
+        { range: '<70%', count: 0, percentage: 0.0 }
+      ],
+      weakTopics: [
+        {
+          topic: 'Molecular Orbital Theory Bond Order & Magnetic Nature (O2, B2, C2)',
+          errorRate: 38,
+          averageScore: 68.0,
+          affectedStudents: 3,
+          recommendedRemediation: 'Review energy level diagram differences for molecules with <= 14 electrons vs > 14 electrons.',
+          urgency: 'high'
+        }
+      ],
+      trends: [
+        { week: 'Week 1', avgScore: 86.0, submissionRate: 100.0, activeCount: 6 },
+        { week: 'Week 2', avgScore: 87.2, submissionRate: 96.0, activeCount: 6 }
+      ],
+      aiExecutiveSummary: `Dr. Neha Sharma reports strong test scores on VSEPR theory. Ananya Verma and Tanvi Patel achieved top marks.`,
+      keyActionItems: [
+        'Host MOT energy diagram workshop on Wednesday.'
+      ],
+      lastGenerated: '2026-08-30T11:00:00'
+    },
+    'subj-mat-11': {
+      subjectId: 'subj-mat-11',
+      subjectName: 'Class 11 Mathematics (Algebra, Trig & Calculus Basics)',
+      totalStudents: 6,
+      classAverage: 89.0,
+      submissionRate: 98.0,
+      atRiskStudentsCount: 0,
+      gradeDistribution: [
+        { range: '90-100% (A)', count: 4, percentage: 66.7 },
+        { range: '80-89% (B)', count: 2, percentage: 33.3 },
+        { range: '<80%', count: 0, percentage: 0.0 }
+      ],
+      weakTopics: [
+        {
+          topic: 'Permutations with Identical Objects & Circular Arrangements',
+          errorRate: 25,
+          averageScore: 78.0,
+          affectedStudents: 2,
+          recommendedRemediation: 'Provide visual combinatorial grouping exercises.',
+          urgency: 'medium'
+        }
+      ],
+      trends: [
+        { week: 'Week 1', avgScore: 89.5, submissionRate: 100.0, activeCount: 6 },
+        { week: 'Week 2', avgScore: 89.0, submissionRate: 98.0, activeCount: 6 }
+      ],
+      aiExecutiveSummary: `Dr. R. D. Raman's Grade 11 Mathematics class has 0 at-risk students. High fluency with trigonometric transformations.`,
+      keyActionItems: [
+        'Start introductory limit derivations and epsilon-delta intuition.'
+      ],
+      lastGenerated: '2026-08-30T12:00:00'
+    },
+
+    // Grade 12 Analytics
+    'subj-phy-12': {
+      subjectId: 'subj-phy-12',
+      subjectName: 'Class 12 Physics (Electromagnetism, Optics & Modern Physics)',
+      totalStudents: 6,
+      classAverage: 91.0,
+      submissionRate: 98.5,
+      atRiskStudentsCount: 0,
+      gradeDistribution: [
+        { range: '90-100% (A)', count: 4, percentage: 66.7 },
+        { range: '80-89% (B)', count: 2, percentage: 33.3 },
+        { range: '<80%', count: 0, percentage: 0.0 }
+      ],
+      weakTopics: [
+        {
+          topic: 'Capacitor Dielectric Boundary Polarization & Energy Density',
+          errorRate: 22,
+          averageScore: 80.0,
+          affectedStudents: 1,
+          recommendedRemediation: 'Explain bound vs free charge with Gauss law in matter.',
+          urgency: 'low'
+        }
+      ],
+      trends: [
+        { week: 'Week 1', avgScore: 90.0, submissionRate: 100.0, activeCount: 6 },
+        { week: 'Week 2', avgScore: 91.0, submissionRate: 98.5, activeCount: 6 }
+      ],
+      aiExecutiveSummary: `Devansh Joshi (9.8 GPA) and Riya Kapoor demonstrate exemplary electromagnetic problem-solving rigor.`,
+      keyActionItems: [
+        'Prepare laboratory setup for Young Double Slit Experiment and diffraction gratings.'
+      ],
+      lastGenerated: '2026-08-30T13:00:00'
+    },
+    'subj-che-12': {
+      subjectId: 'subj-che-12',
+      subjectName: 'Class 12 Chemistry (Electrochemistry, Kinetics & Organics)',
+      totalStudents: 6,
+      classAverage: 88.0,
+      submissionRate: 94.0,
+      atRiskStudentsCount: 1,
+      gradeDistribution: [
+        { range: '90-100% (A)', count: 3, percentage: 50.0 },
+        { range: '80-89% (B)', count: 2, percentage: 33.3 },
+        { range: '70-79% (C)', count: 1, percentage: 16.7 }
+      ],
+      weakTopics: [
+        {
+          topic: 'Crystal Field Theory d-Orbital Splitting in Tetrahedral vs Octahedral Complexes',
+          errorRate: 31,
+          averageScore: 72.5,
+          affectedStudents: 2,
+          recommendedRemediation: 'Demonstrate eg and t2g orbital orientation relative to ligand axes.',
+          urgency: 'medium'
+        }
+      ],
+      trends: [
+        { week: 'Week 1', avgScore: 87.5, submissionRate: 95.0, activeCount: 6 },
+        { week: 'Week 2', avgScore: 88.0, submissionRate: 94.0, activeCount: 6 }
+      ],
+      aiExecutiveSummary: `Organic mechanisms show excellent retention. Riya Kapoor leads in Aldol and Cannizzaro reaction pathways.`,
+      keyActionItems: [
+        'Review Nernst equation concentration cell calculations before unit test.'
+      ],
+      lastGenerated: '2026-08-30T14:00:00'
+    },
+    'subj-mat-12': {
+      subjectId: 'subj-mat-12',
+      subjectName: 'Class 12 Mathematics (Calculus, Vectors & 3D Geometry)',
+      totalStudents: 6,
+      classAverage: 90.5,
+      submissionRate: 97.0,
+      atRiskStudentsCount: 0,
+      gradeDistribution: [
+        { range: '90-100% (A)', count: 4, percentage: 66.7 },
+        { range: '80-89% (B)', count: 2, percentage: 33.3 },
+        { range: '<80%', count: 0, percentage: 0.0 }
+      ],
+      weakTopics: [
+        {
+          topic: 'Shortest Distance Between Skew Lines in 3D Space',
+          errorRate: 26,
+          averageScore: 76.5,
+          affectedStudents: 2,
+          recommendedRemediation: 'Provide vector cross-product visualization for skew line projections.',
+          urgency: 'medium'
+        }
+      ],
+      trends: [
+        { week: 'Week 1', avgScore: 89.0, submissionRate: 100.0, activeCount: 6 },
+        { week: 'Week 2', avgScore: 90.5, submissionRate: 97.0, activeCount: 6 }
+      ],
+      aiExecutiveSummary: `Outstanding performance on Definite Integrals King Property. Siddharth Rao and Samaira Gupta achieve top ranks.`,
+      keyActionItems: [
+        'Assign 3D geometry plane equation problem sheet.'
+      ],
+      lastGenerated: '2026-08-30T15:00:00'
+    },
     'subj-ess': {
       subjectId: 'subj-ess',
       subjectName: 'Environmental Studies and Sustainability',
@@ -1465,5 +1876,11 @@ $$H = \\begin{pmatrix} f_{xx} & f_{xy} \\\\ f_{yx} & f_{yy} \\end{pmatrix}$$
       ],
       lastGenerated: '2026-08-21T11:00:00'
     }
-  }
+  },
+  lectures: loadLecturesFromDisk(seedLectures),
+  boardCaptures: seedBoardCaptures,
+  conceptMastery: seedConceptMastery,
+  lectureProgress: loadProgressFromDisk(seedStudentLectureProgress),
+  masteryQuizzes: seedMasteryQuizzes
 };
+

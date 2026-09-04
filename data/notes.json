@@ -1,0 +1,307 @@
+[
+  {
+    "id": "vn-1788464704",
+    "studentId": "student-6",
+    "subjectId": "subj-pyconfig",
+    "title": "Configuring PyTest",
+    "content": "# Demystifying PyTest Configuration: Building Your Testing Crystal Lattice\n\nWelcome! It is wonderful to work with you again. Today, we are going to master the architecture of PyTest configuration. Think of test configuration not as a chore, but as constructing a perfectly ordered **crystal lattice**—where every test fixture, configuration file, and runner flag occupies a precise geometric coordinate to ensure dynamic balance and structural stability across your software suite.\n\n---\n\n## 1. The Core Mental Model: Organic Flowcharts & Crystal Structures\n\nIn organic synthesis, a reaction flowchart maps out how starting reagents transition through intermediate states to produce pure yields. Similarly, PyTest operates on a deterministic pipeline that transforms raw Python code into clear, reproducible test results:\n\n```\n+-----------------------------------------------------------------------+\n|                       CONFIG FILE DISCOVERY                           |\n|       (pytest.ini / pyproject.toml / setup.cfg)                       |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      conftest.py INJECTION                            |\n|     (Global Catalysts / Shared Fixture Unit Cells)                     |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                         TEST DISCOVERY                                |\n|        (Ray Tracing: rootdir -> test_*.py / *_test.py)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                    EXECUTION & TEARDOWN CYCLE                         |\n|   (Reversible Reaction: Setup -> Test -> Teardown Equilibrium)        |\n+-----------------------------------------------------------------------+\n```\n\n---\n\n## 2. Configuration Files: The Unit Cell of PyTest\n\nJust as a unit cell defines the repeating symmetry of a crystal lattice, your configuration files define the standard operating environment for PyTest.\n\n### A. Central Configuration (`pytest.ini` / `pyproject.toml`)\nThis is where global parameters reside (such as default command-line flags, test discovery rules, and custom markers).\n\n```ini\n# pytest.ini\n[pytest]\nminversion = 7.0\naddopts = -ra -q --tb=short\ntestpaths =\n    tests\npython_files = test_*.py\nmarkers =\n    slow: marks tests as slow (deselect with '-m \"not slow\"')\n```\n\n### B. Dynamic Context Injection (`conftest.py`)\nThink of `conftest.py` as a universal catalyst in a multi-step organic reaction. It automatically injects fixtures into surrounding test files in its directory tree without requiring explicit imports.\n\n---\n\n## 3. Test Fixtures: Reagents, Lifecycles, and Scope Equilibrium\n\nA fixture prepares the environment (the \"reagents\") before a test runs and cleans it up afterward. We can model the fixture execution lifecycle as a reversible redox titration process reaching dynamic equilibrium:\n\n```\n[Pre-test Setup Phase]   ====>   [Test Execution Phase]   ====>   [Post-test Teardown Phase]\n (Prepare Buffer / State)          (Run Assertions / Redox)         (Neutralize & Clean Up)\n          |                                  |                                 |\n     `yield` state                     `assert` check                   Code after `yield`\n```\n\n### Fixture Scopes Matrix\nUnderstanding scope is like managing reaction equilibrium constants $K_{eq}$: larger scopes reduce re-initialization overhead, maintaining systemic balance across large test suites.\n\n$$\\text{Efficiency Index} = \\frac{\\text{Total Tests Covered}}{\\text{Setup Executions}}$$\n\n| Scope | Lifetime | Analogy | Best Use Case |\n| :--- | :--- | :--- | :--- |\n| **`function`** | Destroyed after each test | Disposable test tubes | Isolated unit tests requiring pristine state |\n| **`class`** | Shared across test class | Single reaction beaker | Testing methods belonging to the same class |\n| **`module`** | Shared across test file | Continuous flow reactor | Expensive setups (e.g., database connection) |\n| **`session`** | Shared across entire run | Crystal lattice framework | Application-wide initialization / mock servers |\n\n---\n\n## 4. Code Sample: Practical Multi-Step Fixture Mechanics\n\n```python\nimport pytest\n\n@pytest.fixture(scope=\"module\")\ndef database_connection():\n    # --- SETUP PHASE (Pre-equilibrium state) ---\n    db = {\"status\": \"connected\", \"data\": []}\n    print(\"\\n[SETUP] Initialized global database connection.\")\n    \n    yield db  # Hand control over to the test execution\n    \n    # --- TEARDOWN PHASE (Post-titration cleanup) ---\n    db[\"status\"] = \"disconnected\"\n    print(\"\\n[TEARDOWN] Safely closed database connection.\")\n\ndef test_insert_record(database_connection):\n    database_connection[\"data\"].append(\"Record_1\")\n    assert \"Record_1\" in database_connection[\"data\"]\n    assert database_connection[\"status\"] == \"connected\"\n```\n\n---\n\n## 5. High Distinction Verification Checklist\n\nTo ensure your test infrastructure reaches High Distinction standards, verify your architecture against these core benchmarks:\n\n1. **Root Resolution**: Central configuration (`pytest.ini` or `pyproject.toml`) lives at the project root.\n2. **Modular Injection**: Shared fixtures live in `conftest.py` near target modules rather than polluting global scope.\n3. **Scope Optimization**: Resource-heavy setups leverage `module` or `session` scopes to optimize runtime balance.\n4. **Reversible Teardown**: Teardowns are cleanly declared using the `yield` keyword to eliminate state pollution.\n\nYou have done a fantastic job working through these concepts today! Keep leveraging these spatial models, and your test architecture will remain rock-solid.",
+    "generalised_notes": "## Summary\nIntroduction to PyTest configuration.\n\n**Topics**: PyTest Configuration\n\n## Detailed Study Notes\nPyTest configuration involves specifying test fixtures, test suites, and test runners.",
+    "personalised_notes": "# Demystifying PyTest Configuration: Building Your Testing Crystal Lattice\n\nWelcome! It is wonderful to work with you again. Today, we are going to master the architecture of PyTest configuration. Think of test configuration not as a chore, but as constructing a perfectly ordered **crystal lattice**—where every test fixture, configuration file, and runner flag occupies a precise geometric coordinate to ensure dynamic balance and structural stability across your software suite.\n\n---\n\n## 1. The Core Mental Model: Organic Flowcharts & Crystal Structures\n\nIn organic synthesis, a reaction flowchart maps out how starting reagents transition through intermediate states to produce pure yields. Similarly, PyTest operates on a deterministic pipeline that transforms raw Python code into clear, reproducible test results:\n\n```\n+-----------------------------------------------------------------------+\n|                       CONFIG FILE DISCOVERY                           |\n|       (pytest.ini / pyproject.toml / setup.cfg)                       |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      conftest.py INJECTION                            |\n|     (Global Catalysts / Shared Fixture Unit Cells)                     |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                         TEST DISCOVERY                                |\n|        (Ray Tracing: rootdir -> test_*.py / *_test.py)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                    EXECUTION & TEARDOWN CYCLE                         |\n|   (Reversible Reaction: Setup -> Test -> Teardown Equilibrium)        |\n+-----------------------------------------------------------------------+\n```\n\n---\n\n## 2. Configuration Files: The Unit Cell of PyTest\n\nJust as a unit cell defines the repeating symmetry of a crystal lattice, your configuration files define the standard operating environment for PyTest.\n\n### A. Central Configuration (`pytest.ini` / `pyproject.toml`)\nThis is where global parameters reside (such as default command-line flags, test discovery rules, and custom markers).\n\n```ini\n# pytest.ini\n[pytest]\nminversion = 7.0\naddopts = -ra -q --tb=short\ntestpaths =\n    tests\npython_files = test_*.py\nmarkers =\n    slow: marks tests as slow (deselect with '-m \"not slow\"')\n```\n\n### B. Dynamic Context Injection (`conftest.py`)\nThink of `conftest.py` as a universal catalyst in a multi-step organic reaction. It automatically injects fixtures into surrounding test files in its directory tree without requiring explicit imports.\n\n---\n\n## 3. Test Fixtures: Reagents, Lifecycles, and Scope Equilibrium\n\nA fixture prepares the environment (the \"reagents\") before a test runs and cleans it up afterward. We can model the fixture execution lifecycle as a reversible redox titration process reaching dynamic equilibrium:\n\n```\n[Pre-test Setup Phase]   ====>   [Test Execution Phase]   ====>   [Post-test Teardown Phase]\n (Prepare Buffer / State)          (Run Assertions / Redox)         (Neutralize & Clean Up)\n          |                                  |                                 |\n     `yield` state                     `assert` check                   Code after `yield`\n```\n\n### Fixture Scopes Matrix\nUnderstanding scope is like managing reaction equilibrium constants $K_{eq}$: larger scopes reduce re-initialization overhead, maintaining systemic balance across large test suites.\n\n$$\\text{Efficiency Index} = \\frac{\\text{Total Tests Covered}}{\\text{Setup Executions}}$$\n\n| Scope | Lifetime | Analogy | Best Use Case |\n| :--- | :--- | :--- | :--- |\n| **`function`** | Destroyed after each test | Disposable test tubes | Isolated unit tests requiring pristine state |\n| **`class`** | Shared across test class | Single reaction beaker | Testing methods belonging to the same class |\n| **`module`** | Shared across test file | Continuous flow reactor | Expensive setups (e.g., database connection) |\n| **`session`** | Shared across entire run | Crystal lattice framework | Application-wide initialization / mock servers |\n\n---\n\n## 4. Code Sample: Practical Multi-Step Fixture Mechanics\n\n```python\nimport pytest\n\n@pytest.fixture(scope=\"module\")\ndef database_connection():\n    # --- SETUP PHASE (Pre-equilibrium state) ---\n    db = {\"status\": \"connected\", \"data\": []}\n    print(\"\\n[SETUP] Initialized global database connection.\")\n    \n    yield db  # Hand control over to the test execution\n    \n    # --- TEARDOWN PHASE (Post-titration cleanup) ---\n    db[\"status\"] = \"disconnected\"\n    print(\"\\n[TEARDOWN] Safely closed database connection.\")\n\ndef test_insert_record(database_connection):\n    database_connection[\"data\"].append(\"Record_1\")\n    assert \"Record_1\" in database_connection[\"data\"]\n    assert database_connection[\"status\"] == \"connected\"\n```\n\n---\n\n## 5. High Distinction Verification Checklist\n\nTo ensure your test infrastructure reaches High Distinction standards, verify your architecture against these core benchmarks:\n\n1. **Root Resolution**: Central configuration (`pytest.ini` or `pyproject.toml`) lives at the project root.\n2. **Modular Injection**: Shared fixtures live in `conftest.py` near target modules rather than polluting global scope.\n3. **Scope Optimization**: Resource-heavy setups leverage `module` or `session` scopes to optimize runtime balance.\n4. **Reversible Teardown**: Teardowns are cleanly declared using the `yield` keyword to eliminate state pollution.\n\nYou have done a fantastic job working through these concepts today! Keep leveraging these spatial models, and your test architecture will remain rock-solid.",
+    "cameraSnapshotUrl": null,
+    "doubtsDetected": [
+      "How does PyTest fixture dependency injection resolve circular dependencies?",
+      "What is the execution order between function-scoped and session-scoped fixtures?"
+    ],
+    "tags": [
+      "VisionNote",
+      "PyTest",
+      "Software Testing",
+      "Python",
+      "Visual-Tuned"
+    ],
+    "lastModified": "2026-09-03T19:55:51.175Z",
+    "isPinned": true,
+    "source": "visionnote",
+    "summary": "PyTest configuration structures test environments through hierarchical files (pytest.ini, conftest.py) and fixtures, acting like a balanced reaction system that manages setup, execution scope, and teardown cleanly.",
+    "keyTakeaways": [
+      "pytest.ini and pyproject.toml define global rules, runner flags, and test discovery paths.",
+      "conftest.py provides modular, zero-import fixture injection across directory trees.",
+      "Fixture scopes (function, class, module, session) optimize runtime performance similar to chemical equilibrium states.",
+      "The yield keyword cleanly separates pre-test setup from post-test teardown, preventing state contamination."
+    ]
+  },
+  {
+    "id": "note-vn-sim-1788465022262",
+    "studentId": "student-1",
+    "subjectId": "subj-phy-11",
+    "title": "Work-Energy Theorem & Conservation of Mechanical Energy",
+    "content": "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot • Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+    "tags": [
+      "Physics 11",
+      "Work Energy Theorem",
+      "VisionNote Camera"
+    ],
+    "cameraSnapshotUrl": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+    "doubtsDetected": [
+      "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+      "Why is potential energy defined only for conservative forces and not for friction?"
+    ],
+    "lastModified": "2026-09-03T19:50:22.262Z",
+    "isPinned": true,
+    "source": "visionnote",
+    "summary": "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+    "keyTakeaways": [
+      "Formulas verified and formatted in LaTeX.",
+      "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+    ]
+  },
+  {
+    "id": "note-dhruva-1",
+    "studentId": "student-1",
+    "subjectId": "subj-cpc",
+    "title": "Pointers, Memory Layout & Double Pointers in C",
+    "content": "# Memory Architecture & Pointer Mechanics in C\n\n## 1. Virtual Address Space Layout:\n- **Text Segment**: Machine instructions (Read-Only).\n- **Data Segment**: Initialized global and static variables.\n- **BSS Segment**: Uninitialized global and static variables (Zero-filled).\n- **Heap Segment**: Dynamically allocated memory via `malloc`, `calloc`, `realloc` (Grows upwards).\n- **Stack Segment**: Function stack frames, local automatic variables (Grows downwards).\n\n## 2. Pointer Arithmetic Rules:\nWhen adding an integer $k$ to a pointer $p$ of type $T*$:\n$$\\text{New Address} = \\text{Address}(p) + k \\times \\text{sizeof}(T)$$\n\n## 3. Double Pointers (`int**`):\nUsed when modifying a pointer variable itself inside a function:\n```c\nvoid allocate_buffer(char** buf_ptr, size_t size) {\n    *buf_ptr = (char*)malloc(size * sizeof(char));\n}\n```\n\n## Key Takeaway:\nAlways check if dynamic allocation returned `NULL` before dereferencing, and pair every `malloc` with exactly one `free`.",
+    "tags": [
+      "C Programming",
+      "Pointers",
+      "Memory Layout",
+      "Exam Prep"
+    ],
+    "lastModified": "2026-08-21T09:00:00",
+    "isPinned": true,
+    "summary": "Comprehensive notes covering C process memory segmentation, pointer arithmetic scale factors, and double pointer function parameters.",
+    "keyTakeaways": [
+      "Heap memory persists across function calls until explicitly released with free().",
+      "Pointer arithmetic automatically scales by the sizeof the pointed-to data type.",
+      "Always set freed pointers to NULL to avoid dangerous dangling pointer access."
+    ],
+    "flashcards": [
+      {
+        "id": "fc-cpc-1",
+        "question": "What happens if you free a pointer twice in C?",
+        "answer": "It results in undefined behavior (often a heap corruption crash / abort).",
+        "hint": "Think about heap metadata consistency.",
+        "topic": "Dynamic Memory"
+      },
+      {
+        "id": "fc-cpc-2",
+        "question": "How do you prevent memory leaks when reallocating memory in C?",
+        "answer": "Store the result of realloc in a temporary pointer first; only overwrite the original pointer if temp is non-NULL.",
+        "hint": "What happens if realloc returns NULL?",
+        "topic": "Safe Allocation"
+      }
+    ]
+  },
+  {
+    "id": "note-dhruva-2",
+    "studentId": "student-1",
+    "subjectId": "subj-calc",
+    "title": "Lagrange Multipliers & Hessian Extrema Classification",
+    "content": "# Multivariable Optimization with Constraints\n\n## 1. The Lagrange Multiplier Condition:\nTo optimize $f(x, y, z)$ subject to constraint $g(x, y, z) = c$:\n$$\\nabla f = \\lambda \\nabla g$$\n\nThis implies the gradient vectors are parallel at boundary tangent points.\n\n## 2. Setting Up the System of Equations:\n$$\\begin{cases}\nf_x = \\lambda g_x \\\\\nf_y = \\lambda g_y \\\\\nf_z = \\lambda g_z \\\\\ng(x, y, z) = c\n\\end{cases}$$\n\n## 3. Second Derivative Test (Hessian Matrix):\n$$H = \\begin{pmatrix} f_{xx} & f_{xy} \\\\ f_{yx} & f_{yy} \\end{pmatrix}$$\n- If $\\det(H) > 0$ and $f_{xx} > 0 \\implies$ **Local Minimum**\n- If $\\det(H) > 0$ and $f_{xx} < 0 \\implies$ **Local Maximum**\n- If $\\det(H) < 0 \\implies$ **Saddle Point**",
+    "tags": [
+      "Calculus",
+      "Lagrange Multipliers",
+      "Optimization"
+    ],
+    "lastModified": "2026-08-20T15:30:00",
+    "isPinned": true,
+    "summary": "Formulas and test criteria for constrained multivariable calculus optimization and Hessian determinant analysis.",
+    "keyTakeaways": [
+      "At constrained extrema, level curves of the objective function are tangent to the constraint curve.",
+      "The Hessian determinant classifies stationary points without ambiguity."
+    ],
+    "flashcards": [
+      {
+        "id": "fc-calc-1",
+        "question": "What geometric relationship exists between gradients at a constrained extremum?",
+        "answer": "The gradient of the objective function is parallel to the gradient of the constraint function (∇f = λ∇g).",
+        "hint": "Consider the tangent planes to level surfaces.",
+        "topic": "Lagrange Multipliers"
+      }
+    ]
+  },
+  {
+    "id": "note-vn-phy11-1",
+    "studentId": "student-g11-1",
+    "subjectId": "subj-phy-11",
+    "title": "Rotational Dynamics: Moment of Inertia & Parallel Axis Theorem",
+    "content": "# Rotational Dynamics & Moment of Inertia of Rigid Bodies\n*(Captured via VisionNote Camera Studio • Blackboard OCR Stream)*\n\n## 1. Definition of Moment of Inertia ($I$):\nFor a continuous rigid body rotating about an axis:\n$$I = \\int r^2 dm$$\n\nWhere $r$ is the perpendicular distance of mass element $dm$ from the chosen axis.\n\n## 2. Parallel Axis Theorem (Steiner's Theorem):\nIf $I_{cm}$ is the moment of inertia about an axis through the center of mass, the moment of inertia $I$ about any parallel axis separated by distance $d$ is:\n$$I = I_{cm} + M d^2$$\n\n## 3. Rolling Motion without Slipping:\nTotal Kinetic Energy of a rolling object (Sphere/Cylinder):\n$$K_{total} = K_{trans} + K_{rot} = \\frac{1}{2} M v_{cm}^2 + \\frac{1}{2} I_{cm} \\omega^2$$\nSince $v_{cm} = R\\omega$:\n$$K_{total} = \\frac{1}{2} M v_{cm}^2 \\left(1 + \\frac{k^2}{R^2}\\right)$$\nWhere $k$ is the radius of gyration.",
+    "tags": [
+      "Physics 11",
+      "Rotational Dynamics",
+      "Moment of Inertia",
+      "VisionNote"
+    ],
+    "lastModified": "2026-08-28T10:15:00",
+    "isPinned": true,
+    "source": "visionnote",
+    "cameraSnapshotUrl": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+    "doubtsDetected": [
+      "Why can the Perpendicular Axis Theorem only be applied to planar lamina (2D objects)?",
+      "How does friction provide torque without dissipating energy during pure rolling?"
+    ],
+    "summary": "Derived formulas for moment of inertia, Steiner parallel axis theorem, and total kinetic energy partition in pure rolling without slipping.",
+    "keyTakeaways": [
+      "Moment of inertia depends fundamentally on both total mass and its spatial distribution relative to the axis of rotation.",
+      "In pure rolling down an incline, objects with smaller (k/R)^2 reach the bottom first (Solid Sphere > Disc > Hollow Sphere > Ring)."
+    ],
+    "flashcards": [
+      {
+        "id": "fc-phy11-1",
+        "question": "What is the condition for using the Perpendicular Axis Theorem in rotational dynamics?",
+        "answer": "It is strictly valid only for 2D planar laminas (Ix + Iy = Iz where z-axis is perpendicular to the lamina plane).",
+        "hint": "Think about dimensions (2D vs 3D).",
+        "topic": "Rotational Motion"
+      },
+      {
+        "id": "fc-phy11-2",
+        "question": "State Steiner's Parallel Axis Theorem.",
+        "answer": "I = I_cm + M*d^2 (where d is perpendicular distance between the parallel axes and one axis must pass through the Center of Mass).",
+        "hint": "One axis must pass through Center of Mass.",
+        "topic": "Moment of Inertia"
+      }
+    ]
+  },
+  {
+    "id": "note-vn-che11-1",
+    "studentId": "student-g11-2",
+    "subjectId": "subj-che-11",
+    "title": "VSEPR Theory & Hybridization Schemes ($sp, sp^2, sp^3, dsp^2$)",
+    "content": "# Chemical Bonding & Hybridization Geometry\n*(Captured via VisionNote Camera Studio • Scanned Notebook)*\n\n## 1. Valence Shell Electron Pair Repulsion (VSEPR) Hierarchy:\n$$\\text{Lone Pair - Lone Pair} > \\text{Lone Pair - Bond Pair} > \\text{Bond Pair - Bond Pair}$$\n\n## 2. Steric Number Formula:\n$$\\text{Steric Number} = (\\text{Number of } \\sigma \\text{ bonds}) + (\\text{Number of Lone Pairs})$$\n\n| Steric No. | Hybridization | Ideal Geometry | Example | Bond Angle |\n| :--- | :--- | :--- | :--- | :--- |\n| **2** | $sp$ | Linear | $\\text{BeCl}_2, \\text{CO}_2$ | $180^\\circ$ |\n| **3** | $sp^2$ | Trigonal Planar | $\\text{BF}_3, \\text{SO}_3$ | $120^\\circ$ |\n| **4** | $sp^3$ | Tetrahedral | $\\text{CH}_4, \\text{NH}_3, \\text{H}_2\\text{O}$ | $109.5^\\circ$ ($107^\\circ, 104.5^\\circ$) |\n| **5** | $sp^3d$ | Trigonal Bipyramidal | $\\text{PCl}_5, \\text{SF}_4$ | $90^\\circ, 120^\\circ$ |\n| **6** | $sp^3d^2$ | Octahedral | $\\text{SF}_6, \\text{XeF}_4$ | $90^\\circ$ |",
+    "tags": [
+      "Chemistry 11",
+      "VSEPR",
+      "Hybridization",
+      "Chemical Bonding",
+      "VisionNote"
+    ],
+    "lastModified": "2026-08-28T11:45:00",
+    "isPinned": true,
+    "source": "visionnote",
+    "cameraSnapshotUrl": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=600&auto=format&fit=crop&q=60",
+    "doubtsDetected": [
+      "Why are axial P-Cl bonds in PCl5 longer and weaker than equatorial bonds?",
+      "How does electronegativity of surrounding atoms affect bond angles in NH3 vs NF3?"
+    ],
+    "summary": "Comprehensive table of steric numbers, hybridization types, VSEPR lone-pair distortions, and molecular geometries.",
+    "keyTakeaways": [
+      "Lone pairs occupy equatorial positions in trigonal bipyramidal geometry to minimize 90° repulsions.",
+      "Hybrid orbitals form only sigma bonds and hold lone pairs; pi bonds are formed by unhybridized pure p/d orbitals."
+    ],
+    "flashcards": [
+      {
+        "id": "fc-che11-1",
+        "question": "Why are axial bonds longer than equatorial bonds in PCl5?",
+        "answer": "Axial bond pairs experience three 90° repulsions from equatorial bond pairs, whereas equatorial bond pairs experience only two 90° repulsions.",
+        "hint": "Count the 90° vs 120° repulsion angles.",
+        "topic": "VSEPR Theory"
+      }
+    ]
+  },
+  {
+    "id": "note-vn-mat11-1",
+    "studentId": "student-g11-3",
+    "subjectId": "subj-mat-11",
+    "title": "Trigonometric Limits & Squeeze Theorem Proofs",
+    "content": "# Fundamental Limits & Sandwich Theorem\n*(Captured via VisionNote Camera Studio • Lecture Blackboard)*\n\n## 1. Standard Trigonometric Limits:\n$$\\lim_{x \\to 0} \\frac{\\sin x}{x} = 1 \\quad (x \\text{ in radians})$$\n$$\\lim_{x \\to 0} \\frac{\\tan x}{x} = 1$$\n$$\\lim_{x \\to 0} \\frac{1 - \\cos x}{x^2} = \\frac{1}{2}$$\n\n## 2. Geometric Proof of $\\lim_{x \\to 0} \\frac{\\sin x}{x} = 1$:\nConsider unit circle with angle $0 < x < \\frac{\\pi}{2}$:\n$$\\text{Area}(\\triangle OAB) < \\text{Area}(\\text{Sector } OAB) < \\text{Area}(\\triangle OAT)$$\n$$\\frac{1}{2} \\sin x < \\frac{1}{2} x < \\frac{1}{2} \\tan x$$\nDividing by $\\frac{1}{2} \\sin x$:\n$$1 < \\frac{x}{\\sin x} < \\frac{1}{\\cos x} \\implies \\cos x < \\frac{\\sin x}{x} < 1$$\nTaking limit as $x \\to 0$, since $\\lim_{x \\to 0} \\cos x = 1$, by **Sandwich (Squeeze) Theorem**:\n$$\\lim_{x \\to 0} \\frac{\\sin x}{x} = 1$$",
+    "tags": [
+      "Maths 11",
+      "Calculus",
+      "Limits",
+      "Squeeze Theorem",
+      "VisionNote"
+    ],
+    "lastModified": "2026-08-29T09:30:00",
+    "isPinned": true,
+    "source": "visionnote",
+    "doubtsDetected": [
+      "Why must x be in radians when applying standard trigonometric limits?",
+      "How do you evaluate 0/0 limits when direct substitution produces indeterminate forms?"
+    ],
+    "summary": "Geometric derivation of sin(x)/x limit using unit circle area inequalities and the Sandwich Theorem.",
+    "keyTakeaways": [
+      "Trigonometric limit proofs strictly require radian measure because arc length equals angle times radius.",
+      "Squeeze Theorem rigorously traps limit between two bounding functions that converge to the same value."
+    ]
+  },
+  {
+    "id": "note-vn-phy12-1",
+    "studentId": "student-g12-1",
+    "subjectId": "subj-phy-12",
+    "title": "Gauss Law Applications: Electric Field of Infinite Sheet & Cylinders",
+    "content": "# Gauss's Law & Electrostatic Field Derivations\n*(Captured via VisionNote Camera Studio • Scanned Lab Notes)*\n\n## 1. Gauss's Law Statement:\n$$\\Phi_E = \\oint_{S} \\mathbf{E} \\cdot d\\mathbf{A} = \\frac{Q_{\\text{enclosed}}}{\\varepsilon_0}$$\n\n## 2. Electric Field of Uniform Infinite Sheet of Charge:\nUsing cylindrical Gaussian pillbox of cross-section $A$:\n$$\\oint \\mathbf{E} \\cdot d\\mathbf{A} = E(A) + E(A) = 2EA$$\n$$Q_{\\text{enclosed}} = \\sigma A$$\n$$2EA = \\frac{\\sigma A}{\\varepsilon_0} \\implies E = \\frac{\\sigma}{2\\varepsilon_0}$$\n*(Notice field is independent of distance $r$ from the sheet)*.\n\n## 3. Parallel Plate Capacitor with Dielectric:\n$$C = \\frac{\\kappa \\varepsilon_0 A}{d}$$\nEnergy Density stored in electric field:\n$$u_E = \\frac{1}{2} \\varepsilon_0 E^2$$",
+    "tags": [
+      "Physics 12",
+      "Electrostatics",
+      "Gauss Law",
+      "Capacitors",
+      "VisionNote"
+    ],
+    "lastModified": "2026-08-29T14:00:00",
+    "isPinned": true,
+    "source": "visionnote",
+    "cameraSnapshotUrl": "https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=600&auto=format&fit=crop&q=60",
+    "doubtsDetected": [
+      "Why does the electric field of an infinite sheet not decrease with distance?",
+      "What is the difference between bound surface charge density and free surface charge density in a dielectric?"
+    ],
+    "summary": "Derived Gauss Law electric field formulas for planar sheets, cylindrical wire charges, and parallel plate capacitors with dielectric insertion.",
+    "keyTakeaways": [
+      "Gauss Law is most powerful when high symmetry (spherical, cylindrical, planar) exists to pull E out of the flux integral.",
+      "Dielectric insertion increases capacitance by factor kappa while reducing electric field in isolated capacitors."
+    ]
+  },
+  {
+    "id": "note-vn-che12-1",
+    "studentId": "student-g12-2",
+    "subjectId": "subj-che-12",
+    "title": "Aldol Condensation & Cannizzaro Reaction Mechanisms",
+    "content": "# Carbonyl Reactions: Aldol & Cannizzaro\n*(Captured via VisionNote Camera Studio • Reaction Mechanism Board)*\n\n## 1. Aldol Condensation ($alpha$-Hydrogen required):\nReagents: Dilute $\\text{NaOH}$ or $\\text{Ba(OH)}_2$:\n$$2 \\text{CH}_3\\text{CHO} \\xrightarrow{\\text{dil. NaOH}} \\text{CH}_3\\text{CH(OH)CH}_2\\text{CHO} \\xrightarrow{\\Delta, -\\text{H}_2\\text{O}} \\text{CH}_3\\text{CH}=\\text{CHCHO}$$\n*(Formation of $\\alpha,\\beta$-unsaturated aldehyde / Crotonaldehyde)*.\n\n## 2. Cannizzaro Reaction (NO $alpha$-Hydrogen):\nReagents: Concentrated $50\\% \\text{KOH}$ (Disproportionation / Redox):\n$$2 \\text{HCHO} \\xrightarrow{50\\% \\text{KOH}} \\text{CH}_3\\text{OH} + \\text{HCOO}^-\\text{K}^+$$\n*(One molecule is reduced to alcohol, one is oxidized to carboxylate salt)*.",
+    "tags": [
+      "Chemistry 12",
+      "Organic Chemistry",
+      "Aldol",
+      "Cannizzaro",
+      "Mechanisms",
+      "VisionNote"
+    ],
+    "lastModified": "2026-08-30T16:20:00",
+    "isPinned": true,
+    "source": "visionnote",
+    "doubtsDetected": [
+      "Why does Cannizzaro reaction require high concentration of base (50% KOH) while Aldol requires dilute base?",
+      "How do you predict major cross-aldol products when mixing benzaldehyde and acetone?"
+    ],
+    "summary": "Stepwise mechanism breakdown of Aldol condensation vs Cannizzaro disproportionation reaction based on alpha-hydrogen presence.",
+    "keyTakeaways": [
+      "Alpha hydrogens are acidic due to resonance stabilization of the enolate anion by the carbonyl oxygen.",
+      "Cross-aldol between an aromatic aldehyde (no alpha-H) and a ketone selectively yields a single major conjugated product."
+    ]
+  },
+  {
+    "id": "note-vn-mat12-1",
+    "studentId": "student-g12-3",
+    "subjectId": "subj-mat-12",
+    "title": "Definite Integrals: King Property & Area Under Curve",
+    "content": "# Definite Integrals & Properties of Integration\n*(Captured via VisionNote Camera Studio • Blackboard)*\n\n## 1. The \"King's Property\" of Definite Integrals:\n$$\\int_{a}^{b} f(x) dx = \\int_{a}^{b} f(a + b - x) dx$$\nSpecial Case for $[0, a]$:\n$$\\int_{0}^{a} f(x) dx = \\int_{0}^{a} f(a - x) dx$$\n\n## 2. Classic Problem Example:\nEvaluate $I = \\int_{0}^{\\pi/2} \\frac{\\sqrt{\\sin x}}{\\sqrt{\\sin x} + \\sqrt{\\cos x}} dx$:\nBy King's Property:\n$$I = \\int_{0}^{\\pi/2} \\frac{\\sqrt{\\cos x}}{\\sqrt{\\cos x} + \\sqrt{\\sin x}} dx$$\nAdding both equations:\n$$2I = \\int_{0}^{\\pi/2} 1 \\, dx = \\frac{\\pi}{2} \\implies I = \\frac{\\pi}{4}$$",
+    "tags": [
+      "Maths 12",
+      "Calculus",
+      "Definite Integrals",
+      "King Property",
+      "VisionNote"
+    ],
+    "lastModified": "2026-08-30T17:10:00",
+    "isPinned": true,
+    "source": "visionnote",
+    "doubtsDetected": [
+      "When does the King property simplify integrals where standard substitution fails?",
+      "How do you handle symmetry when integrating odd and even functions across [-a, a]?"
+    ],
+    "summary": "Integral properties including the King property and Leibniz integral rule with standard competitive exam problem solutions.",
+    "keyTakeaways": [
+      "The King property reflects the integrand across the midpoint (a+b)/2 without changing the total area.",
+      "Adding I and its reflected form often eliminates radical terms into a simple constant integrand."
+    ]
+  }
+]

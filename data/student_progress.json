@@ -1,0 +1,54 @@
+{
+  "student-g11-1": {
+    "lec-phy-101": {
+      "lectureId": "lec-phy-101",
+      "completed": false,
+      "lastTimestamp": "21:05",
+      "progressPercent": 65,
+      "lastViewedAt": "2026-09-02T16:30:00",
+      "quizCompleted": true,
+      "quizScore": 4,
+      "quizTotal": 6,
+      "understoodConcepts": [
+        "Newton's First Law",
+        "Inertia",
+        "Free Body Diagram"
+      ],
+      "weakConcepts": [
+        "Newton's Second Law",
+        "Force vs acceleration"
+      ],
+      "recommendations": [
+        "Review the difference between Net Force and Acceleration explained around 21:05 and 31:42.",
+        "Re-solve numerical problem for block sliding with friction on inclined plane."
+      ],
+      "lastMistakeReview": {
+        "questionNumber": 4,
+        "studentAnswer": "They have different units, but physically describe the exact same quantity.",
+        "correctAnswer": "Force is the interaction causing motion (measured in Newtons), while acceleration is the kinematic rate of change of velocity produced (in m/s²).",
+        "misconception": "Your answer treated force and acceleration as the same physical quantity. In lecture, Dr. Verma emphasized around 21:05 and 31:42 that Force is the cause, and acceleration is the effect.",
+        "timestampRef": "21:05"
+      }
+    }
+  },
+  "student-6": {
+    "lec-che-101": {
+      "lectureId": "lec-che-101",
+      "completed": true,
+      "lastTimestamp": "14:30",
+      "progressPercent": 100,
+      "lastViewedAt": "2026-09-03T19:45:07.594Z",
+      "quizCompleted": true,
+      "quizScore": 2,
+      "quizTotal": 2,
+      "understoodConcepts": [
+        "VSEPR Repulsion Order",
+        "Bond Angle Distortion"
+      ],
+      "weakConcepts": [],
+      "recommendations": [
+        "Outstanding! Full conceptual mastery demonstrated. Ready to proceed to advanced problem sets."
+      ]
+    }
+  }
+}
