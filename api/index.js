@@ -61029,6 +61029,44 @@ var init_users = __esm({
           "subj-mat"
         ],
         teachingSubjectIds: []
+      },
+      {
+        id: "teacher-1788566909683",
+        name: "Dr. Elena Rostova",
+        email: "elena.rostova.1788566909664@edusync.edu",
+        username: "elena.rostova.1788566909664",
+        password: "Teacher@2658",
+        role: "teacher",
+        gender: "Male",
+        institutionalId: "BMU-FAC-2658",
+        department: "Theoretical High Energy Physics",
+        designation: "Assistant Professor",
+        officeLocation: "Academic Block A",
+        officeHours: "Mon/Wed 11:00 AM - 01:00 PM",
+        phone: "+91 98715 90379",
+        status: "active",
+        joinedDate: "2026-09-05",
+        enrolledSubjectIds: [],
+        teachingSubjectIds: []
+      },
+      {
+        id: "teacher-1788568269094",
+        name: "Dr. Elena Rostova",
+        email: "elena.rostova.1788568269079@edusync.edu",
+        username: "elena.rostova.1788568269079",
+        password: "Teacher@2126",
+        role: "teacher",
+        gender: "Male",
+        institutionalId: "BMU-FAC-2126",
+        department: "Theoretical High Energy Physics",
+        designation: "Assistant Professor",
+        officeLocation: "Academic Block A",
+        officeHours: "Mon/Wed 11:00 AM - 01:00 PM",
+        phone: "+91 99939 48513",
+        status: "active",
+        joinedDate: "2026-09-05",
+        enrolledSubjectIds: [],
+        teachingSubjectIds: []
       }
     ];
   }
@@ -61039,6 +61077,62 @@ var lectures_default;
 var init_lectures = __esm({
   "data/lectures.json"() {
     lectures_default = [
+      {
+        id: "lec-1788569432795",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-05",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1788568252888",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-05",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
       {
         id: "lec-1788566901878",
         subjectId: "subj-phy-11",
@@ -61671,6 +61765,56 @@ var notes_default;
 var init_notes = __esm({
   "data/notes.json"() {
     notes_default = [
+      {
+        id: "note-vn-sim-1788569432779",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-05T00:50:32.779Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
+      {
+        id: "note-vn-sim-1788568252872",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-05T00:30:52.872Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
       {
         id: "note-vn-sim-1788566901866",
         studentId: "student-1",
@@ -62443,7 +62587,7 @@ var init_student_progress = __esm({
           completed: false,
           lastTimestamp: "05:32",
           progressPercent: 75,
-          lastViewedAt: "2026-09-05T00:08:23.619Z",
+          lastViewedAt: "2026-09-05T00:50:41.678Z",
           quizCompleted: true,
           quizScore: 1,
           quizTotal: 6,
@@ -65261,14 +65405,11 @@ Would you like me to customize this code for specific parameters or explain any 
     };
   }
   return {
-    reply: `That's an interesting question regarding **${subjectName}**!
+    reply: `Here is a helpful explanation regarding **${msg}**:
 
-Here is how to think about **"${msg}"**:
+When looking at this in the context of ${subjectName} (${subjectCode}), the key is to examine the core principles and definitions directly involved. If you're working through a problem or theoretical question, break it down by identifying the given parameters, determining which governing formulas or rules apply, and computing the result step-by-step.
 
-1. **Core Concept**: In ${subjectCode}, understanding this topic starts with the governing principles, mathematical definitions, or algorithmic invariants.
-2. **Practical Application**: Always verify boundary conditions (such as $0$, limits, or edge cases) to avoid unexpected errors during exam questions or code execution.
-
-How would you like to explore this further? I can provide a worked example, write some code, or break down the underlying theory step-by-step!`,
+Feel free to ask a specific follow-up question or share a problem to solve together!`,
     recommendedVideos: [],
     practiceQuestions: [],
     sources: [`${subjectCode} Course Materials`]

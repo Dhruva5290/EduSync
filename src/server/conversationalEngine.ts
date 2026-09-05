@@ -622,14 +622,11 @@ Would you like me to customize this code for specific parameters or explain any 
   // 10. General Natural Dialogue Fallback
   // -------------------------------------------------------------
   return {
-    reply: `That's an interesting question regarding **${subjectName}**!
+    reply: `Here is a helpful explanation regarding **${msg}**:
 
-Here is how to think about **"${msg}"**:
+When looking at this in the context of ${subjectName} (${subjectCode}), the key is to examine the core principles and definitions directly involved. If you're working through a problem or theoretical question, break it down by identifying the given parameters, determining which governing formulas or rules apply, and computing the result step-by-step.
 
-1. **Core Concept**: In ${subjectCode}, understanding this topic starts with the governing principles, mathematical definitions, or algorithmic invariants.
-2. **Practical Application**: Always verify boundary conditions (such as $0$, limits, or edge cases) to avoid unexpected errors during exam questions or code execution.
-
-How would you like to explore this further? I can provide a worked example, write some code, or break down the underlying theory step-by-step!`,
+Feel free to ask a specific follow-up question or share a problem to solve together!`,
     recommendedVideos: [],
     practiceQuestions: [],
     sources: [`${subjectCode} Course Materials`]

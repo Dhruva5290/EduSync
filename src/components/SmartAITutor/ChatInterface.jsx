@@ -1,12 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, Sparkles, Loader2, RotateCcw, Key, Compass, ArrowRight } from 'lucide-react';
+import { Send, Bot, User, Loader2, RotateCcw, Key } from 'lucide-react';
 
-export const ChatInterface = ({ initialPrompt, activeSubject }) => {
+export const cleanAndFormatMath = (text = '') => {
+  if (!text) return '';
+  return String(text).trim();
+};
+
+export const ChatInterface = ({ initialPrompt, activeSubject, lectureContext, learningProfile }) => {
   const [messages, setMessages] = useState([
     {
       id: 'welcome',
       role: 'assistant',
-      text: "Hello! I am your AI academic tutor. Ask me any question about your coursework, homework problems, theoretical concepts, or study strategies. How can I help you today?",
+      text: "Hello! I am your AI chatbot. Ask me any question—concepts, problems, homework, code, or study advice. How can I help you today?",
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
   ]);
@@ -16,24 +21,17 @@ export const ChatInterface = ({ initialPrompt, activeSubject }) => {
   const [showKeyDialog, setShowKeyDialog] = useState(false);
   const [tempKey, setTempKey] = useState('');
   const bottomRef = useRef(null);
-  const initialSentRef = useRef(false);
-
-  const suggestedPrompts = [
-    'Why did I struggle with "Newton\'s Second Law & Acceleration Distinction"? In lecture this was explained around 21:05. Walk me through the physical reasoning step-by-step.',
-    'Explain the difference between *ptr++ and (*ptr)++ in C with memory diagrams.',
-    'How do I solve constrained optimization problems using Lagrange Multipliers?',
-    'What are the key concepts and formulas I should review before the upcoming exam?'
-  ];
+  const handledPromptRef = useRef(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading]);
 
+  // When an initialPrompt is provided (e.g. from "Ask AI Tutor"), take it as a normal prompt done by the user
   useEffect(() => {
-    // If an initial prompt was provided, place it in the input for the user rather than auto-submitting
-    if (initialPrompt && initialPrompt.trim() && !initialSentRef.current) {
-      initialSentRef.current = true;
-      setInput(initialPrompt.trim());
+    if (initialPrompt && initialPrompt.trim() && initialPrompt !== handledPromptRef.current) {
+      handledPromptRef.current = initialPrompt;
+      handleSend(initialPrompt.trim());
     }
   }, [initialPrompt]);
 
@@ -56,131 +54,77 @@ export const ChatInterface = ({ initialPrompt, activeSubject }) => {
     let replyText = '';
 
     try {
-      // 1. Send prompt directly to our versatile backend AI endpoint (/api/ai/chat)
       const token = localStorage.getItem('edusync_token');
-      const subjectId = activeSubject?.id || 'subj-phy';
+      const res = await fetch('/api/tutor', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({
+          message: textToSend,
+          apiKey: apiKey.trim() || undefined,
+          lectureContext,
+          studentContext: learningProfile ? { learnerProfile: learningProfile } : undefined,
+          history: newHistory.slice(-10).map(m => ({
+            role: m.role === 'user' ? 'user' : 'assistant',
+            text: m.text
+          }))
+        })
+      });
 
-      try {
-        const res = await fetch('/api/ai/chat', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-          },
-          body: JSON.stringify({
-            message: textToSend,
-            subjectId,
-            history: newHistory.slice(-10).map(m => ({
-              role: m.role === 'user' ? 'user' : 'assistant',
-              content: m.text
-            })),
-            apiKey: apiKey.trim() || undefined
-          })
-        });
-
-        if (res.ok) {
-          const data = await res.json();
-          if (data.reply || data.response) {
-            replyText = data.reply || data.response;
-          }
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.reply) {
+          replyText = data.reply;
         }
-      } catch (backendErr) {
-        console.warn('Backend chat endpoint fetch error:', backendErr);
       }
+    } catch (err) {
+      console.warn('Tutor call error:', err);
+    }
 
-      // 2. Also try /api/tutor if /api/ai/chat didn't return text
-      if (!replyText) {
+    // Direct Gemini client fallback if user provided a custom key and server was unreachable
+    if (!replyText && apiKey.trim()) {
+      const candidateModels = ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-flash-lite-latest'];
+      for (const model of candidateModels) {
         try {
-          const res2 = await fetch('/api/tutor', {
+          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey.trim()}`, {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              message: textToSend,
-              subjectId,
-              history: newHistory.slice(-10).map(m => ({
-                role: m.role === 'user' ? 'user' : 'assistant',
-                text: m.text
+              systemInstruction: {
+                parts: [{ text: "You are a helpful, intelligent, natural AI chatbot. Provide clear, accurate, thoughtful answers without rigid canned templates." }]
+              },
+              contents: newHistory.slice(-8).map(m => ({
+                role: m.role === 'user' ? 'user' : 'model',
+                parts: [{ text: m.text }]
               }))
             })
           });
-          if (res2.ok) {
-            const data2 = await res2.json();
-            if (data2.reply) {
-              replyText = data2.reply;
-            }
+          const data = await res.json();
+          if (data?.candidates?.[0]?.content?.parts?.[0]?.text) {
+            replyText = data.candidates[0].content.parts[0].text;
+            break;
           }
-        } catch (tutorErr) {
-          console.warn('Tutor endpoint fallback error:', tutorErr);
+        } catch (modelErr) {
+          console.warn(`Direct model ${model} call failed:`, modelErr);
         }
       }
-
-      // 3. If direct custom API key is present in client, query Gemini directly
-      if (!replyText && apiKey.trim()) {
-        const candidateModels = ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-flash-lite-latest'];
-        for (const model of candidateModels) {
-          try {
-            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey.trim()}`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                systemInstruction: {
-                  parts: [{ text: "You are an intelligent, helpful, direct AI assistant chatbot. Provide clear, accurate, thoughtful answers to any prompt without canned scripts." }]
-                },
-                contents: newHistory.slice(-8).map(m => ({
-                  role: m.role === 'user' ? 'user' : 'model',
-                  parts: [{ text: m.text }]
-                }))
-              })
-            });
-            const data = await res.json();
-            if (data?.candidates?.[0]?.content?.parts?.[0]?.text) {
-              replyText = data.candidates[0].content.parts[0].text;
-              break;
-            }
-          } catch (modelErr) {
-            console.warn(`Direct model ${model} call failed:`, modelErr);
-          }
-        }
-      }
-
-      // 4. Dynamic prompt-driven analytical fallback (answers the exact query dynamically)
-      if (!replyText) {
-        const cleanPrompt = textToSend.replace(/[#*`]/g, '').trim();
-        replyText = `Here is a clear breakdown for **"${cleanPrompt}"**:\n\n` +
-          `1. **Core Understanding**: Looking directly at what was asked, the primary principle involves identifying the given components, definitions, and relationships.\n` +
-          `2. **Step-by-Step Analysis**:\n` +
-          `   - Break down each element of "${cleanPrompt.length > 40 ? cleanPrompt.slice(0, 40) + '...' : cleanPrompt}".\n` +
-          `   - Apply the governing logic, mathematical formulation, or algorithmic rules.\n` +
-          `   - Verify boundary conditions or practical applications.\n\n` +
-          `Would you like me to elaborate further on any specific part or give a concrete example?`;
-      }
-
-      const botMsg = {
-        id: `b-${Date.now()}`,
-        role: 'assistant',
-        text: replyText,
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      };
-
-      setMessages(prev => [...prev, botMsg]);
-    } catch (err) {
-      console.error('Chat error:', err);
-      const botMsg = {
-        id: `b-${Date.now()}`,
-        role: 'assistant',
-        text: `Here is a thoughtful analysis of your prompt **"${textToSend}"**:\n\n` +
-          `* **Analysis**: Evaluating your inquiry step-by-step from fundamental principles.\n` +
-          `* **Recommendation**: Double-check definitions, given values, and boundary conditions.\n\n` +
-          `Feel free to ask a follow-up or refine your question!`,
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      };
-      setMessages(prev => [...prev, botMsg]);
-    } finally {
-      setLoading(false);
     }
+
+    if (!replyText) {
+      replyText = "I'm having trouble connecting to the AI service right now. Please verify your internet connection or check your API key.";
+    }
+
+    const botMsg = {
+      id: `b-${Date.now()}`,
+      role: 'assistant',
+      text: replyText,
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+
+    setMessages(prev => [...prev, botMsg]);
+    setLoading(false);
   };
 
   const saveKey = () => {
@@ -197,17 +141,19 @@ export const ChatInterface = ({ initialPrompt, activeSubject }) => {
 
   return (
     <div className="flex flex-col h-full bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
-      {/* Top Header */}
+      {/* Header */}
       <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-800 bg-slate-950">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
           <span className="text-sm font-bold text-white flex items-center gap-1.5">
-            <Sparkles className="w-4 h-4 text-indigo-400" />
-            AI Academic Chatbot
+            <Bot className="w-4 h-4 text-indigo-400" />
+            AI Chatbot
           </span>
-          <span className="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded font-mono">
-            {activeSubject?.code || 'Course Assistant'}
-          </span>
+          {activeSubject?.code && (
+            <span className="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded font-mono">
+              {activeSubject.code}
+            </span>
+          )}
         </div>
 
         <div className="flex items-center gap-2">
@@ -224,15 +170,15 @@ export const ChatInterface = ({ initialPrompt, activeSubject }) => {
             }`}
           >
             <Key className="w-3.5 h-3.5" />
-            <span>{apiKey ? 'Custom Key Active ✓' : 'Add Gemini Key'}</span>
+            <span>{apiKey ? 'API Key Active' : 'Gemini Key'}</span>
           </button>
 
-          {/* Reset Chat */}
+          {/* Reset / Clear Chat */}
           <button
             onClick={() => setMessages([{
               id: 'welcome',
               role: 'assistant',
-              text: 'Chat cleared! What would you like to ask?',
+              text: 'Conversation cleared! What would you like to ask?',
               time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             }])}
             className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-all cursor-pointer"
@@ -250,10 +196,10 @@ export const ChatInterface = ({ initialPrompt, activeSubject }) => {
           <div className="bg-slate-900 border border-slate-700 rounded-xl p-6 max-w-md w-full shadow-2xl space-y-4 text-slate-100">
             <div className="flex items-center gap-2 text-indigo-400 font-bold text-base">
               <Key className="w-5 h-5" />
-              <span>Enter Gemini API Key (Optional)</span>
+              <span>Google Gemini API Key</span>
             </div>
             <p className="text-xs text-slate-300 leading-relaxed">
-              EduSync already includes a built-in pedagogical reasoning engine. If you would like to use your own personal Google Gemini API key, paste it below.
+              If you have a Google Gemini API key, you can enter it below to use your own direct quota.
             </p>
             <input
               type="password"
@@ -281,7 +227,7 @@ export const ChatInterface = ({ initialPrompt, activeSubject }) => {
         </div>
       )}
 
-      {/* Chat Messages */}
+      {/* Messages Feed */}
       <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
         {messages.map((m) => {
           const isUser = m.role === 'user';
@@ -323,7 +269,7 @@ export const ChatInterface = ({ initialPrompt, activeSubject }) => {
             </div>
             <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 text-xs text-slate-400 flex items-center gap-2">
               <Loader2 className="w-4 h-4 animate-spin text-indigo-400" />
-              <span>Analyzing query & thinking step-by-step...</span>
+              <span>Thinking...</span>
             </div>
           </div>
         )}
@@ -331,26 +277,7 @@ export const ChatInterface = ({ initialPrompt, activeSubject }) => {
         <div ref={bottomRef} />
       </div>
 
-      {/* Suggested Quick Prompts */}
-      {messages.length <= 2 && (
-        <div className="px-4 py-2 bg-slate-950/60 border-t border-slate-800/80 flex items-center gap-2 overflow-x-auto text-xs scrollbar-none">
-          <span className="text-[10px] uppercase font-bold text-slate-500 shrink-0 font-mono flex items-center gap-1">
-            <Compass className="w-3 h-3 text-indigo-400" />
-            Suggested Prompts:
-          </span>
-          {suggestedPrompts.map((prompt, idx) => (
-            <button
-              key={idx}
-              onClick={() => handleSend(prompt)}
-              className="px-2.5 py-1 rounded-full bg-slate-900 hover:bg-indigo-950/60 hover:text-indigo-300 text-slate-400 border border-slate-800 hover:border-indigo-800 whitespace-nowrap shrink-0 transition-all text-[11px] cursor-pointer"
-            >
-              {prompt.length > 50 ? `${prompt.slice(0, 50)}...` : prompt}
-            </button>
-          ))}
-        </div>
-      )}
-
-      {/* Input Box */}
+      {/* Input Form */}
       <div className="p-3 sm:p-4 bg-slate-950 border-t border-slate-800">
         <form
           onSubmit={(e) => {
@@ -363,7 +290,7 @@ export const ChatInterface = ({ initialPrompt, activeSubject }) => {
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Type any question or prompt for the AI tutor..."
+            placeholder="Type any message or prompt for the AI..."
             disabled={loading}
             className="flex-1 bg-transparent border-0 text-sm text-slate-100 placeholder-slate-400 focus:outline-hidden"
           />

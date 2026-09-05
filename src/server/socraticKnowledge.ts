@@ -803,17 +803,7 @@ export function generateDiverseSocraticReply(
   }
 
   // Adaptive General Socratic Engine
-  const cleanSnippet = userMsg.replace(/[?.,!]/g, '').slice(0, 45).trim();
+  return `To understand **${userMsg}**, let's look directly at the underlying core ideas. Break down the components of what's being asked, connect them to the relevant definitions or formulas, and test how they behave under standard conditions.
 
-  return `### 💡 Socratic Exploration: **"${cleanSnippet}"**
-
-That is an insightful question. In STEM and engineering, mastering this concept requires breaking it down into fundamental first principles:
-
-1. **Governing Invariant**: What physical conservation law, algebraic identity, or logical constraint applies here?
-2. **Cause & Effect**: Trace the underlying driving mechanism rather than merely memorizing the final result.
-3. **Boundary Extremes**: What happens when variables approach zero ($0$) or infinity ($\\infty$)? Testing edge cases reveals the structural behavior of any equation or algorithm.
-
-${persona?.explanationTone === 'strict_coach' ? '⚠️ **Exam Pitfall**: Avoid the common trap of confusing intermediate variables with final invariants!' : '✨ **Pro Tip**: Relate this back to what we established in your recent lecture notes!'}
-
-💭 **Guiding Question**: What is your initial intuition about what changes first in this scenario, and which formula or definition from your active course syllabus relates closest to it?`;
+How would you like to explore this further? Feel free to ask any specific follow-up!`;
 }
