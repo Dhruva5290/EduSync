@@ -60073,6 +60073,28 @@ var init_users = __esm({
         phone: "+91 98110 54333"
       },
       {
+        id: "teacher-elena-rostova",
+        name: "Dr. Elena Rostova",
+        email: "elena.rostova@edusync.edu.in",
+        username: "elena.rostova",
+        password: "Elena@EduSync2026!",
+        role: "teacher",
+        gender: "Female",
+        institutionalId: "EDU-FAC-204",
+        department: "Department of Computer Science & AI",
+        designation: "Associate Professor of AI & Robotics",
+        enrolledSubjectIds: [],
+        teachingSubjectIds: [
+          "subj-phy",
+          "subj-mat"
+        ],
+        officeLocation: "Turing Tower - Room 502",
+        officeHours: "Tue & Thu 02:00 PM - 04:00 PM",
+        status: "active",
+        joinedDate: "2021-08-15",
+        phone: "+91 98110 54334"
+      },
+      {
         id: "student-1",
         name: "Aarav Sharma",
         email: "aarav.sharma@edusync.edu.in",
@@ -60422,158 +60444,6 @@ var init_users = __esm({
         teachingSubjectIds: []
       },
       {
-        id: "teacher-1788554123430",
-        name: "Dr. Elena Rostova",
-        email: "elena.rostova@edusync.edu",
-        username: "elena.rostova",
-        password: "Teacher@2062",
-        role: "teacher",
-        gender: "Male",
-        institutionalId: "BMU-FAC-2062",
-        department: "Quantum Physics",
-        designation: "Assistant Professor",
-        officeLocation: "Academic Block A",
-        officeHours: "Mon/Wed 11:00 AM - 01:00 PM",
-        phone: "+91 98525 29743",
-        status: "active",
-        joinedDate: "2026-09-04",
-        enrolledSubjectIds: [],
-        teachingSubjectIds: []
-      },
-      {
-        id: "teacher-1788554365389",
-        name: "Dr. Elena Rostova",
-        email: "elena.rostova.1788554365374@edusync.edu",
-        username: "elena.rostova.1788554365374",
-        password: "Teacher@2681",
-        role: "teacher",
-        gender: "Male",
-        institutionalId: "BMU-FAC-2681",
-        department: "Quantum Physics",
-        designation: "Assistant Professor",
-        officeLocation: "Academic Block A",
-        officeHours: "Mon/Wed 11:00 AM - 01:00 PM",
-        phone: "+91 98762 51710",
-        status: "active",
-        joinedDate: "2026-09-04",
-        enrolledSubjectIds: [],
-        teachingSubjectIds: []
-      },
-      {
-        id: "teacher-1788554442958",
-        name: "Dr. Elena Rostova",
-        email: "elena.rostova.1788554442943@edusync.edu",
-        username: "elena.rostova.1788554442943",
-        password: "Teacher@2795",
-        role: "teacher",
-        gender: "Male",
-        institutionalId: "BMU-FAC-2795",
-        department: "Quantum Physics",
-        designation: "Assistant Professor",
-        officeLocation: "Academic Block A",
-        officeHours: "Mon/Wed 11:00 AM - 01:00 PM",
-        phone: "+91 98381 66376",
-        status: "active",
-        joinedDate: "2026-09-04",
-        enrolledSubjectIds: [],
-        teachingSubjectIds: []
-      },
-      {
-        id: "teacher-1788554466155",
-        name: "Dr. Elena Rostova",
-        email: "elena.rostova.1788554466140@edusync.edu",
-        username: "elena.rostova.1788554466140",
-        password: "Teacher@2270",
-        role: "teacher",
-        gender: "Male",
-        institutionalId: "BMU-FAC-2270",
-        department: "Quantum Physics",
-        designation: "Assistant Professor",
-        officeLocation: "Academic Block A",
-        officeHours: "Mon/Wed 11:00 AM - 01:00 PM",
-        phone: "+91 99256 73504",
-        status: "active",
-        joinedDate: "2026-09-04",
-        enrolledSubjectIds: [],
-        teachingSubjectIds: []
-      },
-      {
-        id: "teacher-1788554496226",
-        name: "Dr. Elena Rostova",
-        email: "elena.rostova.1788554496212@edusync.edu",
-        username: "elena.rostova.1788554496212",
-        password: "Teacher@2216",
-        role: "teacher",
-        gender: "Male",
-        institutionalId: "BMU-FAC-2216",
-        department: "Theoretical High Energy Physics",
-        designation: "Assistant Professor",
-        officeLocation: "Academic Block A",
-        officeHours: "Mon/Wed 11:00 AM - 01:00 PM",
-        phone: "+91 99370 84146",
-        status: "active",
-        joinedDate: "2026-09-04",
-        enrolledSubjectIds: [],
-        teachingSubjectIds: []
-      },
-      {
-        id: "teacher-1788554605330",
-        name: "Dr. Elena Rostova",
-        email: "elena.rostova.1788554605314@edusync.edu",
-        username: "elena.rostova.1788554605314",
-        password: "Teacher@2351",
-        role: "teacher",
-        gender: "Male",
-        institutionalId: "BMU-FAC-2351",
-        department: "Theoretical High Energy Physics",
-        designation: "Assistant Professor",
-        officeLocation: "Academic Block A",
-        officeHours: "Mon/Wed 11:00 AM - 01:00 PM",
-        phone: "+91 98181 55136",
-        status: "active",
-        joinedDate: "2026-09-04",
-        enrolledSubjectIds: [],
-        teachingSubjectIds: []
-      },
-      {
-        id: "teacher-1788554691270",
-        name: "Dr. Elena Rostova",
-        email: "elena.rostova.1788554691268@edusync.edu",
-        username: "elena.rostova.1788554691268",
-        password: "Teacher@2012",
-        role: "teacher",
-        gender: "Male",
-        institutionalId: "BMU-FAC-2012",
-        department: "Theoretical High Energy Physics",
-        designation: "Assistant Professor",
-        officeLocation: "Academic Block A",
-        officeHours: "Mon/Wed 11:00 AM - 01:00 PM",
-        phone: "+91 98100 99431",
-        status: "active",
-        joinedDate: "2026-09-04",
-        enrolledSubjectIds: [],
-        teachingSubjectIds: []
-      },
-      {
-        id: "teacher-1788554797994",
-        name: "Dr. Elena Rostova",
-        email: "elena.rostova.1788554797992@edusync.edu",
-        username: "elena.rostova.1788554797992",
-        password: "Teacher@2724",
-        role: "teacher",
-        gender: "Male",
-        institutionalId: "BMU-FAC-2724",
-        department: "Theoretical High Energy Physics",
-        designation: "Assistant Professor",
-        officeLocation: "Academic Block A",
-        officeHours: "Mon/Wed 11:00 AM - 01:00 PM",
-        phone: "+91 98728 62726",
-        status: "active",
-        joinedDate: "2026-09-04",
-        enrolledSubjectIds: [],
-        teachingSubjectIds: []
-      },
-      {
         id: "student-1788561372354",
         name: "Aryan Sagar",
         email: "aryan@bmu",
@@ -60620,6 +60490,27 @@ var init_users = __esm({
           "subj-mat"
         ],
         teachingSubjectIds: []
+      },
+      {
+        id: "teacher-elena-rostova",
+        name: "Dr. Elena Rostova",
+        email: "elena.rostova@edusync.edu",
+        username: "elena.rostova",
+        password: "Teacher@2026!",
+        role: "teacher",
+        gender: "Female",
+        institutionalId: "BMU-FAC-2062",
+        department: "Theoretical High Energy Physics",
+        designation: "Assistant Professor",
+        officeLocation: "Academic Block A",
+        officeHours: "Mon/Wed 11:00 AM - 01:00 PM",
+        phone: "+91 98525 29743",
+        status: "active",
+        joinedDate: "2026-09-04",
+        enrolledSubjectIds: [],
+        teachingSubjectIds: [
+          "subj-phy"
+        ]
       }
     ];
   }
@@ -75351,12 +75242,17 @@ async function loadUsersFromCloud() {
       return [];
     }
     const users = [];
+    const seen = /* @__PURE__ */ new Set();
     for (const row of data) {
       try {
         if (row.generalised_notes) {
           const u = JSON.parse(row.generalised_notes);
           if (u && u.id && u.role) {
-            users.push(u);
+            const key = `${(u.name || "").toLowerCase().trim()}:${u.role}`;
+            if (!seen.has(key)) {
+              seen.add(key);
+              users.push(u);
+            }
           }
         }
       } catch (parseErr) {
@@ -75424,7 +75320,14 @@ async function handler(req, res) {
         if (idx !== -1) all[idx] = cu;
         else all.push(cu);
       }
-      res.status(200).json({ users: all });
+      const seen = /* @__PURE__ */ new Map();
+      for (const u of all) {
+        const key = `${(u.name || "").toLowerCase().trim()}:${u.role}`;
+        if (!seen.has(key)) {
+          seen.set(key, u);
+        }
+      }
+      res.status(200).json({ users: Array.from(seen.values()) });
       return;
     }
     if (path3.includes("/api/auth/login") && req.method === "POST") {

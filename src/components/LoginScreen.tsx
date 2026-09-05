@@ -60,6 +60,18 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onLaun
     }
   }, [initialUsers]);
 
+  const dedupeUsers = (list: User[]): User[] => {
+    const map = new Map<string, User>();
+    for (const u of list) {
+      if (!u || !u.name) continue;
+      const key = `${u.name.toLowerCase().trim()}:${u.role}`;
+      if (!map.has(key)) {
+        map.set(key, u);
+      }
+    }
+    return Array.from(map.values());
+  };
+
   // Fetch updated registered users list from server and Supabase Cloud
   React.useEffect(() => {
     // 1. Fetch from server endpoint
@@ -76,7 +88,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onLaun
             for (const p of prev) {
               if (!merged.some(m => m.id === p.id)) merged.push(p);
             }
-            return merged;
+            return dedupeUsers(merged);
           });
         }
       })
@@ -91,7 +103,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onLaun
             for (const p of prev) {
               if (!merged.some(m => m.id === p.id)) merged.push(p);
             }
-            return merged;
+            return dedupeUsers(merged);
           });
         }
       })

@@ -1291,8 +1291,15 @@ export default function App() {
         }
 
         const all = Array.from(map.values());
-        const custom = all.filter(u => u.id.includes('-17') || !FAKE_USERS.some(f => f.id === u.id));
-        const standard = all.filter(u => !custom.some(c => c.id === u.id));
+        const dedupedMap = new Map<string, User>();
+        for (const u of all) {
+          if (!u || !u.name) continue;
+          const key = `${u.name.toLowerCase().trim()}:${u.role}`;
+          if (!dedupedMap.has(key)) dedupedMap.set(key, u);
+        }
+        const dedupedAll = Array.from(dedupedMap.values());
+        const custom = dedupedAll.filter(u => u.id.includes('-17') || !FAKE_USERS.some(f => f.id === u.id));
+        const standard = dedupedAll.filter(u => !custom.some(c => c.id === u.id));
         return [...custom, ...standard];
       });
     } catch (err) {

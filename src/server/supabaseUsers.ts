@@ -108,12 +108,17 @@ export async function loadUsersFromCloud(): Promise<User[]> {
     }
 
     const users: User[] = [];
+    const seen = new Set<string>();
     for (const row of data) {
       try {
         if (row.generalised_notes) {
           const u = JSON.parse(row.generalised_notes) as User;
           if (u && u.id && u.role) {
-            users.push(u);
+            const key = `${(u.name || '').toLowerCase().trim()}:${u.role}`;
+            if (!seen.has(key)) {
+              seen.add(key);
+              users.push(u);
+            }
           }
         }
       } catch (parseErr) {

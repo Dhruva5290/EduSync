@@ -43,7 +43,14 @@ export default async function handler(req: any, res: any) {
         if (idx !== -1) all[idx] = cu;
         else all.push(cu);
       }
-      res.status(200).json({ users: all });
+      const seen = new Map<string, any>();
+      for (const u of all) {
+        const key = `${(u.name || '').toLowerCase().trim()}:${u.role}`;
+        if (!seen.has(key)) {
+          seen.set(key, u);
+        }
+      }
+      res.status(200).json({ users: Array.from(seen.values()) });
       return;
     }
 

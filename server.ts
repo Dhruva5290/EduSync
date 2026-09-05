@@ -207,23 +207,42 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
   });
 
   // Public endpoint for LoginScreen to display registered accounts list
+  // Helper to deduplicate users by normalized name and role
+  const deduplicateUsers = (users: any[]) => {
+    const seen = new Map<string, any>();
+    for (const u of users) {
+      if (!u) continue;
+      const key = `${(u.name || '').toLowerCase().trim()}:${u.role}`;
+      if (!seen.has(key)) {
+        seen.set(key, u);
+      }
+    }
+    return Array.from(seen.values());
+  };
+
   app.get('/api/auth/public-users', async (req, res) => {
     try {
       const cloudUsers = await loadUsersFromCloud();
       for (const cu of cloudUsers) {
-        const idx = db.users.findIndex(u => u.id === cu.id);
+        const idx = db.users.findIndex(u => 
+          u.id === cu.id || 
+          ((u.name || '').toLowerCase().trim() === (cu.name || '').toLowerCase().trim() && u.role === cu.role)
+        );
         if (idx !== -1) {
           db.users[idx] = cu;
         } else {
           db.users.push(cu);
         }
       }
+      db.users = deduplicateUsers(db.users);
     } catch (err) {
       console.warn('[Cloud Auth] Error syncing public users:', err);
     }
 
+    const uniqueUsers = deduplicateUsers(db.users);
+
     res.json({
-      users: db.users.map(u => ({
+      users: uniqueUsers.map(u => ({
         id: u.id,
         name: u.name,
         username: u.username,
@@ -240,12 +259,13 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
   // 2. Current Session User (Includes all registered users for faculty roster & admin directory)
   app.get('/api/auth/me', (req, res) => {
     const user = getAuthenticatedUser(req);
+    const uniqueRoster = deduplicateUsers(db.users);
     if (!user) {
       res.status(200).json({
         authenticated: false,
         user: null,
-        allUsers: db.users,
-        allDemoUsers: db.users
+        allUsers: uniqueRoster,
+        allDemoUsers: uniqueRoster
       });
       return;
     }
@@ -254,8 +274,8 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
     res.json({
       authenticated: true,
       user,
-      allUsers: db.users,
-      allDemoUsers: db.users
+      allUsers: uniqueRoster,
+      allDemoUsers: uniqueRoster
     });
   });
 
@@ -308,12 +328,12 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
         u.institutionalId.toLowerCase().includes(q)
       );
     }
-    res.json(list);
+    res.json(deduplicateUsers(list));
   });
 
   // Get all students specifically with enrollment and academic metrics
   app.get('/api/students', (req, res) => {
-    const students = db.users.filter(u => u.role === 'student');
+    const students = deduplicateUsers(db.users.filter(u => u.role === 'student'));
     const enriched = students.map(s => {
       const enrolledSubs = db.subjects.filter(subj => s.enrolledSubjectIds.includes(subj.id));
       const studentSubs = db.submissions.filter(sub => sub.studentId === s.id);
@@ -331,7 +351,7 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
   // Get all teachers
   app.get('/api/teachers', (req, res) => {
-    const teachers = db.users.filter(u => u.role === 'teacher');
+    const teachers = deduplicateUsers(db.users.filter(u => u.role === 'teacher'));
     res.json(teachers);
   });
 
@@ -2422,6 +2442,7 @@ If $d = 0 \\implies$ Lines are coplanar and intersect.`,
   // 1. Study Assistant / AI Chatbot Endpoint
   const handleAIChat = async (req: express.Request, res: express.Response) => {
     try {
+      const { message, history, apiKey: clientKey } = req.body || {};
       const DEFAULT_B64 = 'QVEuQWI4Uk42SUx3Um5VRnM3a052S3dFZE9BejZOZU8zTTRsSjZuLVVVTDQxRHlCclZUdlE=';
       const fallbackKey = Buffer.from(DEFAULT_B64, 'base64').toString('utf-8');
       const apiKey = clientKey || process.env.GEMINI_API_KEY || fallbackKey;
