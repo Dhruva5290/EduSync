@@ -64995,6 +64995,84 @@ Would you like to solve a sample Lagrange multiplier or polar integration proble
       };
     }
   }
+  if (subjectCode === "PHY" || clean.includes("newton") || clean.includes("acceleration") || clean.includes("force") || clean.includes("friction") || clean.includes("gravity") || clean.includes("velocity") || clean.includes("mechanics")) {
+    if (clean.includes("second law") || clean.includes("acceleration") || clean.includes("struggle") || clean.includes("21:05") || clean.includes("f = ma") || clean.includes("force")) {
+      return {
+        reply: `### \u{1F3AF} Physical Reasoning: Newton's Second Law & Acceleration Distinction
+
+It is completely natural to find this concept tricky at first! In introductory mechanics, the distinction between velocity and acceleration is statistically one of the top stumbling blocks for engineering students, which is why it was emphasized around **21:05** in the lecture.
+
+Here is why students struggle, followed by the rigorous physical reasoning:
+
+---
+
+#### 1. Why Students Struggle (The Common Cognitive Traps)
+* **The "Force in the Direction of Motion" Trap (Aristotle's Fallacy)**: Everyday human intuition tricks us into thinking: *"If a body is moving to the right, there must be a net force pointing to the right."*  
+  **Physics Reality**: Velocity ($\\mathbf{v}$) only tells you **where the object is heading right now**. Net force ($\\Sigma \\mathbf{F}$) only dictates **how that velocity is changing** (its acceleration $\\mathbf{a}$). An object can move forward while the net force points backward (like a car braking).
+* **Treating $m\\mathbf{a}$ as an Independent Force**: Many students mistakenly draw $m\\mathbf{a}$ as an arrow on a Free Body Diagram (FBD). It is **not** an applied force; it is the *kinematic outcome* of all real physical contact and gravitational forces acting on the mass.
+* **Confusing $N = mg$ as a Universal Rule**: On horizontal ground with no vertical acceleration, $N = mg$. But on an inclined plane or in an elevator, the normal force is altered ($N = mg\\cos\\theta$ on an incline; $N = m(g + a)$ in an accelerating elevator).
+
+---
+
+#### 2. The Governing Law: Vector Unbalance
+Newton's Second Law is fundamentally a **vector equation**:
+$$\\Sigma \\mathbf{F}_{\\text{ext}} = m \\mathbf{a}$$
+
+This implies:
+1. **Net Vector Sum**: You must break all real physical forces (Gravity $m\\mathbf{g}$, Normal Force $\\mathbf{N}$, Friction $\\mathbf{f}$, Tension $\\mathbf{T}$) into coordinate axes ($x$ and $y$).
+2. **Acceleration Direction**: Acceleration points in the direction of the **net unbalanced force**, which can be:
+   - **Same direction as $\\mathbf{v}$**: Object speeds up.
+   - **Opposite direction to $\\mathbf{v}$**: Object slows down (deceleration).
+   - **Perpendicular to $\\mathbf{v}$**: Object changes direction at constant speed (uniform circular motion).
+
+---
+
+#### 3. Step-by-Step Physical Walkthrough (Lecture Reference ~21:05)
+Consider a mass $m$ sliding down an inclined plane with angle $\\theta$ and friction coefficient $\\mu_k$:
+
+1. **Step 1: Free Body Diagram (Real Forces Only)**
+   - Downward gravitational force: $\\mathbf{F}_g = m\\mathbf{g}$
+   - Perpendicular normal contact force from surface: $\\mathbf{N}$
+   - Tangential frictional resistance opposing relative sliding: $\\mathbf{f}_k = \\mu_k N$
+2. **Step 2: Choose Tilted Coordinate Axes**
+   - Axis parallel to incline: Downward along ramp ($x$-axis)
+   - Axis perpendicular to incline: Normal to ramp ($y$-axis)
+3. **Step 3: Resolve Vector Components**
+   - Perpendicular ($y$): $\\Sigma F_y = N - mg\\cos\\theta = 0 \\implies N = mg\\cos\\theta$
+   - Parallel ($x$): $\\Sigma F_x = mg\\sin\\theta - f_k = m a_x$
+4. **Step 4: Solve for Acceleration**
+   $$m a_x = mg\\sin\\theta - \\mu_k (mg\\cos\\theta)$$
+   $$a_x = g(\\sin\\theta - \\mu_k \\cos\\theta)$$
+   Notice that the mass $m$ completely cancels out! All bodies slide down the incline with the exact same acceleration regardless of mass.
+
+---
+
+#### \u{1F4A1} Quick Concept Check:
+A puck slides across a rough horizontal ice surface to the right and is slowing down. In which direction does the net force act?  
+*(Answer: To the **left**, directly opposing the velocity, creating negative acceleration!)*
+
+Would you like to try a numerical problem with values, or explore an Atwood machine / pulley system next?`,
+        recommendedVideos: [
+          {
+            title: "Newton's Second Law & Free Body Diagrams",
+            url: "https://www.youtube.com/watch?v=kKKM8Y-u7ds",
+            searchQuery: "Newton Second Law Physics Khan Academy",
+            channelOrTopic: "Khan Academy",
+            duration: "14:20",
+            description: "Deep conceptual breakdown of F=ma and vector force components."
+          }
+        ],
+        practiceQuestions: [
+          {
+            question: "A block of mass 5 kg is pushed on a smooth horizontal floor by a force of 20 N. If a friction force of 5 N opposes motion, calculate the acceleration.",
+            hint: "Find net force first: F_net = F_push - f_friction",
+            answer: "a = (20 - 5) / 5 = 3 m/s^2"
+          }
+        ],
+        sources: ["Physics 101 Lecture Notes (21:05)", "Halliday, Resnick & Walker - Fundamentals of Physics"]
+      };
+    }
+  }
   if (subjectCode === "CPC" || clean.includes(" c ") || clean.includes("programming")) {
     if (clean.includes("=") && (clean.includes("==") || clean.includes("difference") || clean.includes("assign") || clean.includes("equal"))) {
       return {

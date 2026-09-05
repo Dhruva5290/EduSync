@@ -10,6 +10,7 @@ export const TutorLayout = ({ onOpenPersonalization, currentUser, initialPrompt,
           learningProfile={currentUser?.learningProfile}
           initialPrompt={initialPrompt}
           lectureContext={lectureContext}
+          activeSubject={rest.activeSubject}
         />
       </main>
     </div>
