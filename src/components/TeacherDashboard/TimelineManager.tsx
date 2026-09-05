@@ -31,8 +31,8 @@ interface TimelineManagerProps {
 
 export const TimelineManager: React.FC<TimelineManagerProps> = ({
   activeSubject,
-  timelines,
-  resources,
+  timelines = [],
+  resources = [],
   onAddTimelineItem,
   onDeleteTimelineItem,
   onAddResource,

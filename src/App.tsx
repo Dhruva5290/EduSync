@@ -86,35 +86,9 @@ export default function App() {
   const [accentColor, setAccentColor] = useState<string>(() => {
     return localStorage.getItem('edusync_accent') || 'blue';
   });
-  const [authToken, setAuthToken] = useState<string | null>(() => localStorage.getItem('edusync_token'));
-  const [auditAdmin, setAuditAdmin] = useState<User | null>(() => {
-    const saved = localStorage.getItem('edusync_audit_admin');
-    try {
-      return saved ? JSON.parse(saved) : null;
-    } catch {
-      return null;
-    }
-  });
-  const [currentUser, setCurrentUser] = useState<User | null>(() => {
-    const token = localStorage.getItem('edusync_token');
-    if (!token) return null; // No active session token -> show login screen
-
-    try {
-      const savedUser = localStorage.getItem('edusync_user');
-      if (savedUser) {
-        const parsed = JSON.parse(savedUser);
-        if (parsed && parsed.id) return parsed;
-      }
-    } catch (e) {
-      console.warn('Failed to parse saved user from localStorage:', e);
-    }
-    const savedUserId = localStorage.getItem('edusync_user_id');
-    if (savedUserId) {
-      const matched = FAKE_USERS.find(u => u.id === savedUserId);
-      if (matched) return matched;
-    }
-    return null;
-  });
+  const [authToken, setAuthToken] = useState<string | null>(null);
+  const [auditAdmin, setAuditAdmin] = useState<User | null>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [allUsers, setAllUsers] = useState<User[]>(() => {
     let customList: User[] = [];
     try {
@@ -339,42 +313,20 @@ export default function App() {
     const initApp = async () => {
       setIsLoading(true);
 
-      // Check for saved session so page reload on Vercel doesn't kick the user out
-      const savedToken = authToken || localStorage.getItem('edusync_token');
-      const savedUserId = localStorage.getItem('edusync_user_id');
-      const savedUserJson = localStorage.getItem('edusync_user');
-
-      let restoredUser: User | null = currentUser;
-      if (!restoredUser && savedUserJson) {
-        try {
-          restoredUser = JSON.parse(savedUserJson);
-        } catch (e) {}
-      }
-      if (!restoredUser && savedUserId) {
-        restoredUser = FAKE_USERS.find(u => u.id === savedUserId) || null;
-      }
-
-      if (savedToken && restoredUser && !currentUser) {
-        setCurrentUser(restoredUser);
-        setAuthToken(savedToken);
-      }
-
       try {
         // Fetch all registered users list so LoginScreen and rosters have up-to-date data from Cloud
         const publicData = await safeFetchJson<{ users: User[] }>('/api/auth/public-users');
         if (publicData?.users && Array.isArray(publicData.users) && publicData.users.length > 0) {
           setAllUsers(publicData.users);
 
-          // If we have an active or restored user, sync their profile from the cloud roster
-          const activeId = restoredUser?.id || currentUser?.id || savedUserId;
-          if (activeId) {
-            const freshCloudUser = publicData.users.find(u => u.id === activeId);
+          // If a user is actively authenticated, sync their profile from the cloud roster
+          if (currentUser?.id) {
+            const freshCloudUser = publicData.users.find(u => u.id === currentUser.id);
             if (freshCloudUser) {
               setCurrentUser(freshCloudUser);
               try {
                 localStorage.setItem('edusync_user', JSON.stringify(freshCloudUser));
               } catch (e) {}
-              restoredUser = freshCloudUser;
             }
           }
         }
@@ -1902,9 +1854,9 @@ export default function App() {
                 />
               )}
 
-              {(activeTab === 'analytics' || activeTab === 'overview') && analytics && (
+              {(activeTab === 'analytics' || activeTab === 'overview') && (
                 <AIClassAnalytics
-                  analytics={analytics}
+                  analytics={analytics || undefined}
                   activeSubject={activeSubject}
                   onRefreshDiagnostics={handleRefreshDiagnostics}
                   isGeneratingDiagnostics={isGeneratingDiagnostics}

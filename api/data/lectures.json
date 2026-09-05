@@ -1,0 +1,513 @@
+[
+    {
+        "id": "lec-phy-101",
+        "subjectId": "subj-phy-11",
+        "subjectCode": "PHY-11",
+        "subjectName": "Physics 11 (Mechanics & Dynamics)",
+        "title": "Newton's Laws of Motion & Free Body Diagrams",
+        "teacherName": "Dr. Alok Verma",
+        "teacherId": "teacher-phy",
+        "date": "2026-09-02",
+        "duration": "45 mins",
+        "summary": "Foundational lecture on Newtonian kinetics: Definition of inertia, first law condition, rigorous formulation of free body diagrams on inclined planes, resolution of normal force, distinction between force and acceleration, and friction coupling.",
+        "topics": [
+            "Newton's First Law",
+            "Inertia & Reference Frames",
+            "Free Body Diagram (FBD)",
+            "Normal Force on Inclined Plane",
+            "Force vs Acceleration",
+            "Friction & Numerical Problems"
+        ],
+        "timeline": [
+            {
+                "id": "tl-1",
+                "timestamp": "00:00",
+                "timestampSeconds": 0,
+                "title": "Introduction & Kinematics Recap",
+                "teacherQuote": "Good morning class. Today we transition from kinematics to kinetics—asking not just how objects move, but what fundamental physical interactions cause motion.",
+                "notes": "Kinematics described trajectory $s(t)$, velocity $v(t)$, and acceleration $a(t)$. Kinetics investigates the causes of acceleration—namely forces acting between bodies.",
+                "boardImageUrl": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=800&auto=format&fit=crop&q=80",
+                "keyTakeaway": "Forces cause changes in momentum; absent forces preserve state of motion."
+            },
+            {
+                "id": "tl-2",
+                "timestamp": "05:32",
+                "timestampSeconds": 332,
+                "title": "Newton's First Law (Law of Inertia)",
+                "teacherQuote": "Newton's First Law states: Every body continues in its state of rest or uniform motion in a straight line unless compelled to change that state by an external net unbalanced force.",
+                "notes": "Equilibrium condition: $\\sum \\vec{F}_{ext} = 0 \\implies \\vec{a} = 0 \\implies \\vec{v} = \\text{constant}$. This defines the inertial frame of reference.",
+                "formulaLatex": "\\sum \\vec{F}_{ext} = 0 \\iff \\vec{v} = \\text{constant}",
+                "boardImageUrl": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&auto=format&fit=crop&q=80",
+                "keyTakeaway": "Zero net force does NOT mean zero velocity; it means zero acceleration."
+            },
+            {
+                "id": "tl-3",
+                "timestamp": "12:48",
+                "timestampSeconds": 768,
+                "title": "Inertia & Inertial vs Non-Inertial Frames",
+                "teacherQuote": "Inertia is the intrinsic property of matter to resist any change in its velocity. Mass $m$ is the quantitative scalar measure of inertia. When a metro train brakes suddenly, passengers jerk forward not because a forward force was applied, but because their upper bodies maintain forward velocity due to inertia.",
+                "notes": "Types of inertia: (1) Inertia of rest, (2) Inertia of motion, (3) Inertia of direction. In a non-inertial accelerating frame with acceleration $\\vec{a}_0$, a pseudo-force $\\vec{F}_{pseudo} = -m\\vec{a}_0$ must be introduced.",
+                "formulaLatex": "\\vec{F}_{pseudo} = -m\\vec{a}_0",
+                "boardImageUrl": "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=800&auto=format&fit=crop&q=80",
+                "keyTakeaway": "Mass is the scalar measure of inertia. Pseudo-forces arise only in accelerating reference frames."
+            },
+            {
+                "id": "tl-4",
+                "timestamp": "21:05",
+                "timestampSeconds": 1265,
+                "title": "Free Body Diagram (FBD) & Normal Reaction",
+                "teacherQuote": "Look closely at the blackboard at 21 minutes: To construct an FBD, isolate the mass $m$ completely from the system. Draw only the forces acting ON the body by the surroundings. Gravity acts vertically downward with magnitude $mg$. At an incline angle $\\theta$, resolve gravity into components: $mg\\cos\\theta$ perpendicular to the surface, and $mg\\sin\\theta$ parallel down the slope. The normal reaction $N$ balances $mg\\cos\\theta$, yielding $N = mg\\cos\\theta$.",
+                "notes": "Rigorous FBD Construction Steps:\n1. Isolate the target body as a point mass.\n2. Draw gravity $\\vec{W} = m\\vec{g}$ vertically downwards.\n3. Identify contact surfaces: Normal force $\\vec{N}$ acts strictly perpendicular away from the contact plane.\n4. Resolve non-orthogonal vectors into parallel and perpendicular axes:\n$$N = mg\\cos\\theta$$\n$$F_{\\parallel} = mg\\sin\\theta - f_s$$",
+                "formulaLatex": "N = mg\\cos\\theta, \\quad F_{\\text{parallel}} = mg\\sin\\theta - f_k",
+                "boardImageUrl": "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=800&auto=format&fit=crop&q=80",
+                "diagramUrl": "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=800&auto=format&fit=crop&q=80",
+                "keyTakeaway": "Normal force is perpendicular to contact surface, NOT always equal to mg."
+            },
+            {
+                "id": "tl-5",
+                "timestamp": "31:42",
+                "timestampSeconds": 1902,
+                "title": "Numerical Problem & Force vs Acceleration Distinction",
+                "teacherQuote": "Here is a critical misconception students make every year: Force and acceleration are NOT the same quantity. Force is an interaction (cause, measured in Newtons); acceleration is the kinematic rate of change of velocity (effect, in $m/s^2$). Let us solve: Block of mass $5\\text{ kg}$ on a $30^\\circ$ ramp with kinetic friction coefficient $\\mu_k = 0.2$. $a = g(\\sin 30^\\circ - \\mu_k \\cos 30^\\circ) = 9.8(0.5 - 0.2 \\times 0.866) = 3.20\\text{ m/s}^2$.",
+                "notes": "Equation of Motion:\n$$\\sum F_x = mg\\sin\\theta - \\mu_k N = ma$$\n$$\\sum F_y = N - mg\\cos\\theta = 0 \\implies N = mg\\cos\\theta$$\n$$a = g(\\sin\\theta - \\mu_k\\cos\\theta)$$\nFor $m = 5\\text{ kg}, \\theta = 30^\\circ, \\mu_k = 0.2$:\n$$a = 9.8(0.5 - 0.173) = 3.20\\text{ m/s}^2$$",
+                "formulaLatex": "a = g(\\sin\\theta - \\mu_k\\cos\\theta)",
+                "boardImageUrl": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=800&auto=format&fit=crop&q=80",
+                "keyTakeaway": "Force is the cause (Newtons), acceleration is the effect (m/s²). Always write net force first before equating to ma."
+            },
+            {
+                "id": "tl-6",
+                "timestamp": "42:10",
+                "timestampSeconds": 2530,
+                "title": "Homework & Assignment Mentioned by Teacher",
+                "teacherQuote": "For your homework assignment: Solve problems 4 through 9 from Chapter 5 of HC Verma on connected pulley systems and friction blocks. Submit your work through the platform before Friday 5:00 PM.",
+                "notes": "Homework assigned:\n- Problems 4-9 from Chapter 5 (Newton's Laws & Friction Blocks)\n- Draw clear Free Body Diagrams for each question\n- Due Date: Friday at 17:00 IST",
+                "boardImageUrl": "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800&auto=format&fit=crop&q=80",
+                "keyTakeaway": "Submit Homework Problem Set 5 on connected pulleys by Friday 5 PM."
+            }
+        ],
+        "boardCaptures": [
+            {
+                "id": "bc-phy-1",
+                "lectureId": "lec-phy-101",
+                "lectureTitle": "Newton's Laws of Motion & Free Body Diagrams",
+                "subjectId": "subj-phy-11",
+                "subjectName": "Physics 11",
+                "timestamp": "21:05",
+                "title": "Free Body Diagram on Inclined Plane",
+                "imageUrl": "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=900&auto=format&fit=crop&q=80",
+                "ocrLatex": "N = mg\\cos\\theta, \\quad W_x = mg\\sin\\theta, \\quad f_s \\le \\mu_s N",
+                "diagramType": "Vector Diagram / Free Body Decomposition",
+                "conceptTag": "Free Body Diagram",
+                "explanation": "Blackboard capture illustrating coordinate tilt along inclined plane with normal reaction perpendicular to surface and gravity decomposed into orthogonal vectors."
+            },
+            {
+                "id": "bc-phy-2",
+                "lectureId": "lec-phy-101",
+                "lectureTitle": "Newton's Laws of Motion & Free Body Diagrams",
+                "subjectId": "subj-phy-11",
+                "subjectName": "Physics 11",
+                "timestamp": "31:42",
+                "title": "Force vs Acceleration Derivation & Friction Graph",
+                "imageUrl": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=900&auto=format&fit=crop&q=80",
+                "ocrLatex": "\\Sigma F = ma \\implies a = g(\\sin\\theta - \\mu_k\\cos\\theta)",
+                "diagramType": "Equation & Graph Curve",
+                "conceptTag": "Newton's Second Law",
+                "explanation": "Step-by-step mathematical board work resolving two-block friction constraints and distinguishing net external force from kinematic acceleration."
+            },
+            {
+                "id": "bc-phy-3",
+                "lectureId": "lec-phy-101",
+                "lectureTitle": "Newton's Laws of Motion & Free Body Diagrams",
+                "subjectId": "subj-phy-11",
+                "subjectName": "Physics 11",
+                "timestamp": "12:48",
+                "title": "Inertia & Frame of Reference Vector Diagram",
+                "imageUrl": "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=900&auto=format&fit=crop&q=80",
+                "ocrLatex": "\\vec{F}_{eff} = \\vec{F}_{real} - m\\vec{a}_0",
+                "diagramType": "Coordinate Frame Schematic",
+                "conceptTag": "Inertia & Reference Frames",
+                "explanation": "Comparison of inertial reference frame versus accelerating non-inertial reference frame illustrating origin of fictitious D'Alembert pseudo-forces."
+            }
+        ],
+        "audioTranscript": [
+            {
+                "timestamp": "00:00",
+                "speaker": "Dr. Alok Verma",
+                "text": "Good morning everyone. Today we begin our core dynamics module on Newton's Laws of Motion."
+            },
+            {
+                "timestamp": "05:32",
+                "speaker": "Dr. Alok Verma",
+                "text": "Newton's First Law: A body remains at rest or in uniform motion unless acted upon by a net external force. That is, sigma F equals zero if and only if velocity is constant."
+            },
+            {
+                "timestamp": "12:48",
+                "speaker": "Dr. Alok Verma",
+                "text": "Inertia is the intrinsic property of matter resisting changes in velocity. Mass is the quantitative scalar measure of inertia. Remember, inertia is not a force; it is a property of mass."
+            },
+            {
+                "timestamp": "21:05",
+                "speaker": "Dr. Alok Verma",
+                "text": "Look at this Free Body Diagram at 21 minutes. For mass m on an inclined plane of angle theta, gravity mg acts downwards. We decompose mg into mg cos theta perpendicular to the plane and mg sin theta parallel down the plane. The normal force N is perpendicular to the plane and equals mg cos theta."
+            },
+            {
+                "timestamp": "31:42",
+                "speaker": "Dr. Alok Verma",
+                "text": "Notice: Force and acceleration are not the same physical quantity! Force is the cause, acceleration is the rate of change of velocity produced. The net force sigma F equals m times a."
+            },
+            {
+                "timestamp": "42:10",
+                "speaker": "Dr. Alok Verma",
+                "text": "For homework, please solve problems 4 through 9 from Chapter 5 of HC Verma on connected pulley systems. Due Friday at 5 PM."
+            }
+        ],
+        "generalizedNotes": {
+            "explanation": "Newtonian dynamics provides the predictive framework linking force interactions with particle motion. The first law defines the inertial reference frame where unaccelerated motion requires zero net interaction. The second law defines force as the time rate of change of linear momentum $\\vec{F} = \\frac{d\\vec{p}}{dt}$. Free Body Diagrams (FBDs) isolate a body and balance external forces along chosen Cartesian coordinates.",
+            "importantConcepts": [
+                {
+                    "name": "Newton's First Law",
+                    "description": "A body preserves constant velocity in the absence of net external force.",
+                    "formulaLatex": "\\sum \\vec{F}_{ext} = 0 \\iff \\vec{a} = 0"
+                },
+                {
+                    "name": "Inertia",
+                    "description": "The natural resistance of matter to velocity changes; measured quantitatively by scalar inertial mass $m$.",
+                    "formulaLatex": "m = \\text{scalar measure of inertia}"
+                },
+                {
+                    "name": "Newton's Second Law",
+                    "description": "Net external force equals the product of mass and acceleration vector.",
+                    "formulaLatex": "\\vec{F}_{net} = m\\vec{a}"
+                },
+                {
+                    "name": "Free Body Diagram (FBD)",
+                    "description": "A diagram isolating a single object showing all external forces acting upon it with orthogonal resolution.",
+                    "formulaLatex": "N = mg\\cos\\theta"
+                }
+            ],
+            "formulas": [
+                {
+                    "name": "Inertial Equilibrium",
+                    "latex": "\\sum \\vec{F} = 0",
+                    "explanation": "Vector sum of forces equals zero when velocity is constant."
+                },
+                {
+                    "name": "Newton's Second Law",
+                    "latex": "\\vec{F}_{net} = m\\frac{d\\vec{v}}{dt} = m\\vec{a}",
+                    "explanation": "Net force produces acceleration inversely proportional to mass."
+                },
+                {
+                    "name": "Normal Reaction on Incline",
+                    "latex": "N = mg\\cos\\theta",
+                    "explanation": "Perpendicular contact force balancing perpendicular gravity component."
+                },
+                {
+                    "name": "Kinetic Friction Force",
+                    "latex": "f_k = \\mu_k N = \\mu_k mg\\cos\\theta",
+                    "explanation": "Friction resisting relative sliding motion along the plane."
+                }
+            ],
+            "examples": [
+                {
+                    "problem": "Find the acceleration of a 5 kg block sliding down a 30° inclined plane with kinetic friction coefficient μ = 0.2.",
+                    "solution": "Resolve forces along slope: F_net = mg sin(30°) - μ mg cos(30°). Thus a = g(sin 30° - 0.2 cos 30°) = 9.8(0.5 - 0.173) = 3.20 m/s².",
+                    "latex": "a = g(\\sin 30^\\circ - \\mu_k\\cos 30^\\circ) = 3.20\\text{ m/s}^2"
+                }
+            ],
+            "keyPoints": [
+                "Normal force is perpendicular to the surface, NOT automatically equal to mg.",
+                "Inertia is a property of mass, not a force.",
+                "Force and acceleration have different dimensions: [F] = MLT⁻² (Newtons), [a] = LT⁻² (m/s²).",
+                "Always isolate the body and draw external forces before writing equations of motion."
+            ],
+            "diagrams": [
+                {
+                    "title": "Inclined Plane Free Body Diagram",
+                    "imageUrl": "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=800&auto=format&fit=crop&q=80",
+                    "description": "Resolution of gravity vector W = mg into orthogonal components mg cos(θ) and mg sin(θ)."
+                }
+            ],
+            "homeworkMentioned": [
+                {
+                    "task": "HC Verma Chapter 5: Problems 4-9 on connected pulley systems and friction blocks",
+                    "dueDate": "Friday at 17:00 IST",
+                    "context": "Assigned during lecture at timestamp 42:10."
+                }
+            ]
+        },
+        "smartNotesMarkdown": "# Newton's Laws of Motion & Free Body Diagrams\n*Captured by ClassSarthi Classroom Intelligence Layer • Physics 11 • Dr. Alok Verma*\n\n## 1. Newton's First Law: The Law of Inertia (05:32)\nEvery body continues in its state of rest or uniform motion in a straight line unless acted upon by a net external force.\n$$\\sum \\vec{F}_{ext} = 0 \\iff \\vec{v} = \\text{constant}$$\n\n### What is Inertia? (12:48)\n- **Definition**: The inherent property of matter that resists changes to its current state of motion.\n- **Quantitative Measure**: Mass ($m$) is the scalar measure of inertia. Greater mass means greater resistance to acceleration.\n- **Reference Frames**: In an accelerating (non-inertial) frame, an apparent pseudo-force $\\vec{F}_{pseudo} = -m\\vec{a}_0$ acts opposite to the frame acceleration.\n\n---\n\n## 2. Free Body Diagrams & Normal Force (21:05)\nA Free Body Diagram (FBD) isolates an object and identifies all external interactions acting directly on it:\n1. **Gravity ($\u000bec{W} = m\u000bec{g}$)**: Always directed toward the Earth's center.\n2. **Normal Reaction ($\u000bec{N}$)**: Contact force exerted by a surface, always **perpendicular** to the contact interface.\n3. **Friction ($\u000bec{f}$)**: Opposes relative motion tangent to the surface ($f_k = \\mu_k N$).\n\nFor an object resting or sliding on a plane inclined at angle $\\theta$:\n$$N = mg\\cos\\theta$$\n$$F_{\\text{down slope}} = mg\\sin\\theta - f_k$$\n\n---\n\n## 3. Newton's Second Law & Distinction (31:42)\n$$\\vec{F}_{net} = m\\vec{a}$$\n> **Important Distinction from Lecture**: Force is the **cause** (interaction, measured in Newtons); Acceleration is the kinematic **effect** (rate of change of velocity, in $\\text{m/s}^2$). They are fundamentally distinct quantities.\n\n---\n\n## 4. Homework Assigned in Lecture (42:10)\n- **Problems 4 through 9** from Chapter 5 of HC Verma on connected pulley systems.\n- **Due Date**: Friday 5:00 PM IST."
+    },
+    {
+        "id": "lec-che-101",
+        "subjectId": "subj-che-11",
+        "subjectCode": "CHE-11",
+        "subjectName": "Chemistry 11 (Inorganic & Physical)",
+        "title": "VSEPR Theory, Molecular Geometry & Hybridization",
+        "teacherName": "Dr. Neha Sharma",
+        "teacherId": "teacher-che",
+        "date": "2026-09-01",
+        "duration": "45 mins",
+        "summary": "Detailed study of molecular geometries predicted by Valence Shell Electron Pair Repulsion (VSEPR) theory. Steric numbers, lone-pair distortions in ammonia and water, and orbital hybridization schemas (sp, sp², sp³).",
+        "topics": [
+            "Lewis Structures & Octet Rule",
+            "VSEPR Postulates",
+            "Lone Pair Repulsion Hierarchy",
+            "Hybridization ($sp, sp^2, sp^3$)",
+            "Bond Angles in $CH_4, NH_3, H_2O$"
+        ],
+        "timeline": [
+            {
+                "id": "tl-che-1",
+                "timestamp": "00:00",
+                "timestampSeconds": 0,
+                "title": "Introduction & Why Molecules Form Specific Shapes",
+                "teacherQuote": "Molecules are not flat representations on paper. They occupy 3D space driven by electrostatic repulsion between electron pairs.",
+                "notes": "Electron pairs around a central atom repel one another and adopt spatial orientations that minimize mutual potential energy.",
+                "boardImageUrl": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=800&auto=format&fit=crop&q=80",
+                "keyTakeaway": "3D geometry is governed by minimizing electron cloud repulsion."
+            },
+            {
+                "id": "tl-che-2",
+                "timestamp": "14:30",
+                "timestampSeconds": 870,
+                "title": "The VSEPR Repulsion Hierarchy",
+                "teacherQuote": "The fundamental rule of VSEPR is: Lone Pair - Lone Pair repulsion is stronger than Lone Pair - Bond Pair repulsion, which is stronger than Bond Pair - Bond Pair repulsion.",
+                "notes": "Repulsion order:\n$$\\text{LP - LP} > \\text{LP - BP} > \\text{BP - BP}$$\nBecause lone pairs are held by only one nucleus, their electron clouds spread out more widely in space.",
+                "formulaLatex": "\\text{LP-LP} > \\text{LP-BP} > \\text{BP-BP}",
+                "boardImageUrl": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=800&auto=format&fit=crop&q=80",
+                "keyTakeaway": "Lone pairs exert greater repulsive force than bonding pairs."
+            },
+            {
+                "id": "tl-che-3",
+                "timestamp": "25:10",
+                "timestampSeconds": 1510,
+                "title": "Comparison: Methane vs Ammonia vs Water Bond Angles",
+                "teacherQuote": "Notice methane has 0 lone pairs and bond angle 109.5°. Ammonia has 1 lone pair which squeezes the N-H bonds to 107°. Water has 2 lone pairs squeezing the O-H bonds down to 104.5°.",
+                "notes": "$$\\text{CH}_4 (0\\text{ LP}) = 109.5^\\circ \\quad | \\quad \\text{NH}_3 (1\\text{ LP}) = 107^\\circ \\quad | \\quad \\text{H}_2\\text{O} (2\\text{ LP}) = 104.5^\\circ$$",
+                "formulaLatex": "\\theta(\\text{CH}_4) = 109.5^\\circ, \\; \\theta(\\text{NH}_3) = 107^\\circ, \\; \\theta(\\text{H}_2\\text{O}) = 104.5^\\circ",
+                "boardImageUrl": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=800&auto=format&fit=crop&q=80",
+                "keyTakeaway": "Each additional lone pair reduces ideal tetrahedral bond angle by approximately 2.5°."
+            },
+            {
+                "id": "tl-che-4",
+                "timestamp": "41:50",
+                "timestampSeconds": 2510,
+                "title": "Homework & Laboratory Worksheet",
+                "teacherQuote": "Draw Lewis structures and state hybridization for PCl5, SF6, and XeF4 for next Tuesday.",
+                "notes": "Worksheet on expanded octets and hybridization schemes (sp³d, sp³d²).",
+                "keyTakeaway": "Due Tuesday: PCl5, SF6, XeF4 geometries."
+            }
+        ],
+        "boardCaptures": [
+            {
+                "id": "bc-che-1",
+                "lectureId": "lec-che-101",
+                "lectureTitle": "VSEPR Theory, Molecular Geometry & Hybridization",
+                "subjectId": "subj-che-11",
+                "subjectName": "Chemistry 11",
+                "timestamp": "25:10",
+                "title": "Tetrahedral vs Trigonal Pyramidal vs Bent Geometry",
+                "imageUrl": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=900&auto=format&fit=crop&q=80",
+                "ocrLatex": "SN = 4: \\; CH_4 (109.5^\\circ), \\; NH_3 (107^\\circ), \\; H_2O (104.5^\\circ)",
+                "conceptTag": "VSEPR Theory",
+                "explanation": "Blackboard sketch of electron lone-pair cloud repulsion in methane, ammonia, and water."
+            }
+        ],
+        "audioTranscript": [
+            {
+                "timestamp": "00:00",
+                "speaker": "Dr. Neha Sharma",
+                "text": "Welcome back. Today we explore VSEPR theory and hybridization in chemical bonding."
+            },
+            {
+                "timestamp": "14:30",
+                "speaker": "Dr. Neha Sharma",
+                "text": "The repulsion order is lone pair-lone pair greater than lone pair-bond pair greater than bond pair-bond pair."
+            },
+            {
+                "timestamp": "25:10",
+                "speaker": "Dr. Neha Sharma",
+                "text": "In ammonia, the single lone pair compresses the H-N-H bond angle from the tetrahedral 109.5 degrees down to 107 degrees."
+            },
+            {
+                "timestamp": "41:50",
+                "speaker": "Dr. Neha Sharma",
+                "text": "For homework, please draw Lewis structures and determine hybridization for PCl5, SF6, and XeF4 for Tuesday."
+            }
+        ],
+        "generalizedNotes": {
+            "explanation": "VSEPR theory models molecular geometry based on electrostatic minimization between valence electron pairs. Steric number determines electron geometry, while the placement of lone pairs determines observable molecular shape.",
+            "importantConcepts": [
+                {
+                    "name": "Steric Number (SN)",
+                    "description": "Sum of bonded atoms (sigma bonds) and lone pairs on the central atom.",
+                    "formulaLatex": "\\text{SN} = \\sigma + \\text{LP}"
+                },
+                {
+                    "name": "VSEPR Repulsion Rule",
+                    "description": "Lone pairs repel more strongly than bonding pairs because their electron cloud is concentrated near one nucleus.",
+                    "formulaLatex": "\\text{LP-LP} > \\text{LP-BP} > \\text{BP-BP}"
+                }
+            ],
+            "formulas": [
+                {
+                    "name": "Steric Number Formula",
+                    "latex": "\\text{SN} = \\text{Number of } \\sigma\\text{-bonds} + \\text{Number of lone pairs}",
+                    "explanation": "Calculates steric coordination of central atom."
+                }
+            ],
+            "examples": [
+                {
+                    "problem": "Explain why water has a bent structure with angle 104.5° despite having steric number 4.",
+                    "solution": "Oxygen has 2 bond pairs and 2 lone pairs (SN = 4). The two lone pairs repel strongly (LP-LP and LP-BP), compressing the H-O-H angle from 109.5° to 104.5°."
+                }
+            ],
+            "keyPoints": [
+                "Lone pairs occupy more equatorial space in trigonal bipyramidal arrangements.",
+                "Hybridization considers only sigma bonds and lone pairs; pi bonds use pure p orbitals."
+            ],
+            "diagrams": [],
+            "homeworkMentioned": [
+                {
+                    "task": "Determine hybridization & geometry for PCl5, SF6, XeF4",
+                    "dueDate": "Next Tuesday",
+                    "context": "Announced at 41:50."
+                }
+            ]
+        },
+        "smartNotesMarkdown": "# VSEPR Theory, Molecular Geometry & Hybridization\n*ClassSarthi Lecture Capture • Chemistry 11 • Dr. Neha Sharma*\n\n## 1. Core Postulate of VSEPR (14:30)\n$$\\text{LP-LP} > \\text{LP-BP} > \\text{BP-BP}$$\nLone pairs are attracted to only one atomic nucleus, causing their charge clouds to spread wider in angular space than bonding pairs.\n\n## 2. Geometry Comparison Table (25:10)\n| Molecule | Steric No. | Bond Pairs | Lone Pairs | Ideal Angle | Actual Angle | Shape |\n| :--- | :--- | :--- | :--- | :--- | :--- | :--- |\n| $\\text{CH}_4$ | 4 | 4 | 0 | $109.5^\\circ$ | $109.5^\\circ$ | Tetrahedral |\n| $\\text{NH}_3$ | 4 | 3 | 1 | $109.5^\\circ$ | $107.0^\\circ$ | Trigonal Pyramidal |\n| $\\text{H}_2\\text{O}$ | 4 | 2 | 2 | $109.5^\\circ$ | $104.5^\\circ$ | Bent / Angular |\n\n## 3. Homework Mentioned (41:50)\n- Determine Lewis structures, shapes, and hybridization for $\\text{PCl}_5, \\text{SF}_6, \\text{XeF}_4$. Due Tuesday."
+    },
+    {
+        "id": "lec-mat-101",
+        "subjectId": "subj-mat-11",
+        "subjectCode": "MAT-11",
+        "subjectName": "Mathematics 11 (Calculus & Functions)",
+        "title": "Limits, Continuity & The Squeeze (Sandwich) Theorem",
+        "teacherName": "Dr. R. D. Raman",
+        "teacherId": "teacher-mat",
+        "date": "2026-08-31",
+        "duration": "45 mins",
+        "summary": "Rigorous exploration of limits, indeterminate forms, geometric proof of standard trigonometric limit lim(x->0) sin(x)/x = 1, and the Squeeze (Sandwich) Theorem for evaluating non-trivial limits.",
+        "topics": [
+            "Definition of Limit",
+            "Indeterminate Forms",
+            "Geometric Proof of $\\lim_{x\\to 0}\\frac{\\sin x}{x} = 1$",
+            "The Squeeze (Sandwich) Theorem",
+            "Limits with Oscillating Functions"
+        ],
+        "timeline": [
+            {
+                "id": "tl-mat-1",
+                "timestamp": "00:00",
+                "timestampSeconds": 0,
+                "title": "Introduction to Calculus of Limits",
+                "teacherQuote": "A limit tells us what value a function approaches, not necessarily what it equals at that exact point.",
+                "notes": "Formal definition: $\\lim_{x \\to c} f(x) = L$ if for every $\\epsilon > 0$, there exists $\\delta > 0$ such that $0 < |x - c| < \\delta \\implies |f(x) - L| < \\epsilon$.",
+                "formulaLatex": "\\lim_{x \\to c} f(x) = L",
+                "keyTakeaway": "Limits evaluate local behavior near a point without requiring definition at the point."
+            },
+            {
+                "id": "tl-mat-2",
+                "timestamp": "15:40",
+                "timestampSeconds": 940,
+                "title": "Proof: $\\lim_{x\\to 0}\\frac{\\sin x}{x} = 1$",
+                "teacherQuote": "Using the unit circle, we compare the area of triangle OAB, circular sector OAB, and outer triangle OAT. This yields cos(x) < sin(x)/x < 1.",
+                "notes": "Geometric sandwich:\n$$\\cos x < \\frac{\\sin x}{x} < 1 \\quad \\text{for } 0 < |x| < \\frac{\\pi}{2}$$\nAs $x \\to 0$, $\\cos x \\to 1$. By Sandwich Theorem, $\\lim_{x \\to 0} \\frac{\\sin x}{x} = 1$.",
+                "formulaLatex": "\\lim_{x \\to 0} \\frac{\\sin x}{x} = 1",
+                "keyTakeaway": "Fundamental limit from which all trigonometric derivatives originate."
+            },
+            {
+                "id": "tl-mat-3",
+                "timestamp": "24:10",
+                "timestampSeconds": 1450,
+                "title": "The Squeeze (Sandwich) Theorem Statement",
+                "teacherQuote": "If g(x) <= f(x) <= h(x) near c, and both g(x) and h(x) approach L as x approaches c, then f(x) has no choice but to approach L as well.",
+                "notes": "If $g(x) \\le f(x) \\le h(x)$ and $\\lim_{x\\to c} g(x) = \\lim_{x\\to c} h(x) = L$, then:\n$$\\lim_{x\\to c} f(x) = L$$",
+                "formulaLatex": "g(x) \\le f(x) \\le h(x) \\implies \\lim_{x\\to c} f(x) = L",
+                "keyTakeaway": "The Squeeze theorem confines unknown functions between two known bounding functions."
+            },
+            {
+                "id": "tl-mat-4",
+                "timestamp": "42:30",
+                "timestampSeconds": 2550,
+                "title": "Homework Exercises",
+                "teacherQuote": "Solve exercises 1 through 8 on trigonometric limits from Thomas Calculus page 112 for Friday.",
+                "notes": "Homework: Thomas Calculus Ch 2 exercises 1-8 on Squeeze Theorem.",
+                "keyTakeaway": "Thomas Calculus Ch 2 exercises due Friday."
+            }
+        ],
+        "boardCaptures": [
+            {
+                "id": "bc-mat-1",
+                "lectureId": "lec-mat-101",
+                "lectureTitle": "Limits, Continuity & The Squeeze (Sandwich) Theorem",
+                "subjectId": "subj-mat-11",
+                "subjectName": "Mathematics 11",
+                "timestamp": "15:40",
+                "title": "Geometric Unit Circle Proof of Trig Limit",
+                "imageUrl": "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=900&auto=format&fit=crop&q=80",
+                "ocrLatex": "\\cos(x) < \\frac{\\sin(x)}{x} < 1 \\implies \\lim_{x\\to 0} \\frac{\\sin(x)}{x} = 1",
+                "conceptTag": "Trigonometric Limits",
+                "explanation": "Unit circle geometric inequality bounding circular sector area between inscribed and circumscribed right triangles."
+            }
+        ],
+        "audioTranscript": [
+            {
+                "timestamp": "00:00",
+                "speaker": "Dr. R. D. Raman",
+                "text": "Good morning students. Today we prove the fundamental limit of calculus."
+            },
+            {
+                "timestamp": "15:40",
+                "speaker": "Dr. R. D. Raman",
+                "text": "From the unit circle geometry, cos x is strictly less than sin x over x which is less than 1."
+            },
+            {
+                "timestamp": "24:10",
+                "speaker": "Dr. R. D. Raman",
+                "text": "The Squeeze Theorem guarantees that when two boundary functions converge to the same limit L, the trapped function must also converge to L."
+            },
+            {
+                "timestamp": "42:30",
+                "speaker": "Dr. R. D. Raman",
+                "text": "Complete exercises 1 through 8 from Thomas Calculus page 112 for Friday."
+            }
+        ],
+        "generalizedNotes": {
+            "explanation": "Limits examine mathematical behavior arbitrarily close to a point. When substitution yields indeterminate ratios like 0/0, bounding theorems such as the Squeeze Theorem resolve the exact value.",
+            "importantConcepts": [
+                {
+                    "name": "The Squeeze Theorem",
+                    "description": "Traps a target function between two bounding functions possessing identical limits.",
+                    "formulaLatex": "g(x) \\le f(x) \\le h(x)"
+                }
+            ],
+            "formulas": [
+                {
+                    "name": "Standard Trig Limit",
+                    "latex": "\\lim_{x\\to 0}\\frac{\\sin x}{x} = 1",
+                    "explanation": "Valid when x is expressed in radians."
+                }
+            ],
+            "examples": [
+                {
+                    "problem": "Evaluate lim(x->0) x² sin(1/x).",
+                    "solution": "Since -1 <= sin(1/x) <= 1, multiplying by x² gives -x² <= x² sin(1/x) <= x². Since lim(x->0) -x² = lim(x->0) x² = 0, by Squeeze Theorem the limit is 0.",
+                    "latex": "\\lim_{x\\to 0} x^2 \\sin(1/x) = 0"
+                }
+            ],
+            "keyPoints": [
+                "Angle x must be in radians when using lim(x->0) sin(x)/x = 1."
+            ],
+            "diagrams": [],
+            "homeworkMentioned": [
+                {
+                    "task": "Thomas Calculus Ch 2 exercises 1-8",
+                    "dueDate": "Friday",
+                    "context": "Given at 42:30."
+                }
+            ]
+        },
+        "smartNotesMarkdown": "# Limits, Continuity & The Squeeze Theorem\n*ClassSarthi Lecture Capture • Mathematics 11 • Dr. R. D. Raman*\n\n## 1. Standard Trigonometric Limit (15:40)\n$$\\lim_{x \\to 0} \\frac{\\sin x}{x} = 1 \\quad (x \\text{ in radians})$$\n$$\\lim_{x \\to 0} \\frac{1 - \\cos x}{x^2} = \\frac{1}{2}$$\n\n## 2. The Squeeze (Sandwich) Theorem (24:10)\nIf $g(x) \\le f(x) \\le h(x)$ for all $x$ in an open interval containing $c$ (except possibly at $c$ itself), and:\n$$\\lim_{x \\to c} g(x) = \\lim_{x \\to c} h(x) = L$$\nThen:\n$$\\lim_{x \\to c} f(x) = L$$\n\n## 3. Homework Mentioned (42:30)\n- Thomas Calculus exercises 1-8 on Squeeze Theorem due Friday."
+    }
+]

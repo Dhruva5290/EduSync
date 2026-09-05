@@ -978,7 +978,9 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
     res.json({
       totalStudents,
       totalFaculty,
+      totalTeachers: totalFaculty,
       totalCourses,
+      totalSubjects: totalCourses,
       totalAssignments,
       totalSubmissions,
       departmentsCount,
@@ -2622,9 +2624,10 @@ ${personaSummary}
   // Dedicated Subject Deep Research & YouTube Video Finder
   app.post('/api/ai/research', aiRateLimiter.middleware, async (req, res) => {
     try {
-      const { prompt, subjectId } = req.body;
+      const { prompt, topic, query, subjectId } = req.body;
+      const targetPrompt = (prompt || topic || query || '').trim();
       const subject = db.subjects.find(s => s.id === subjectId) || db.subjects[0];
-      const result = await researchTopicAndVideosAI(prompt, subject);
+      const result = await researchTopicAndVideosAI(targetPrompt, subject);
       res.json(result);
     } catch (err: any) {
       console.error('Error in /api/ai/research:', err);
@@ -3033,7 +3036,7 @@ ${personaSummary}
   // ==========================================
 
   async function startServer() {
-    if (process.env.VERCEL === '1' || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+    if (process.env.VERCEL === '1' || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.TEST_MODE === 'true' || process.env.SKIP_LISTEN === 'true') {
       return;
     }
 

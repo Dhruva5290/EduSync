@@ -76,5 +76,57 @@
         "Revise concept: \"Force vs acceleration\". Launch AI Tutor to understand boundary conditions and physical reasoning."
       ]
     }
+  },
+  "student-1": {
+    "lec_phys_101": {
+      "lectureId": "lec_phys_101",
+      "completed": false,
+      "lastTimestamp": "05:32",
+      "progressPercent": 75,
+      "lastViewedAt": "2026-09-04T20:36:59.327Z",
+      "quizCompleted": true,
+      "quizScore": 0,
+      "quizTotal": 6,
+      "understoodConcepts": [],
+      "weakConcepts": [
+        "Newton's First Law",
+        "Inertia",
+        "Free Body Diagram",
+        "Force vs acceleration",
+        "Newton's Second Law"
+      ],
+      "recommendations": [
+        "Revise concept: \"Newton's First Law\". Launch AI Tutor to understand boundary conditions and physical reasoning.",
+        "Revise concept: \"Inertia\". Launch AI Tutor to understand boundary conditions and physical reasoning.",
+        "Revise concept: \"Free Body Diagram\". Launch AI Tutor to understand boundary conditions and physical reasoning.",
+        "Revise concept: \"Force vs acceleration\". Launch AI Tutor to understand boundary conditions and physical reasoning.",
+        "Revise concept: \"Newton's Second Law\". Launch AI Tutor to understand boundary conditions and physical reasoning."
+      ]
+    },
+    "lec-phy-101": {
+      "lectureId": "lec-phy-101",
+      "completed": false,
+      "lastTimestamp": "05:32",
+      "progressPercent": 75,
+      "lastViewedAt": "2026-09-05T00:08:23.619Z",
+      "quizCompleted": true,
+      "quizScore": 1,
+      "quizTotal": 6,
+      "understoodConcepts": [
+        "Newton's First Law"
+      ],
+      "weakConcepts": [
+        "Inertia",
+        "Free Body Diagram",
+        "Force vs acceleration",
+        "Newton's Second Law"
+      ],
+      "recommendations": [
+        "Revise concept: \"Inertia\". Launch AI Tutor to understand boundary conditions and physical reasoning.",
+        "Revise concept: \"Free Body Diagram\". Launch AI Tutor to understand boundary conditions and physical reasoning.",
+        "Revise concept: \"Force vs acceleration\". Launch AI Tutor to understand boundary conditions and physical reasoning.",
+        "Revise concept: \"Newton's Second Law\". Launch AI Tutor to understand boundary conditions and physical reasoning."
+      ]
+    }
   }
 }

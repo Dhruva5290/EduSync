@@ -1,5 +1,356 @@
 [
   {
+    "id": "note-vn-sim-1788566901866",
+    "studentId": "student-1",
+    "subjectId": "subj-phy",
+    "title": "Work-Energy Theorem & Conservation of Mechanical Energy",
+    "content": "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot • Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+    "tags": [
+      "Physics 11",
+      "Work Energy Theorem",
+      "VisionNote Camera"
+    ],
+    "cameraSnapshotUrl": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+    "doubtsDetected": [
+      "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+      "Why is potential energy defined only for conservative forces and not for friction?"
+    ],
+    "lastModified": "2026-09-05T00:08:21.866Z",
+    "isPinned": true,
+    "source": "visionnote",
+    "summary": "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+    "keyTakeaways": [
+      "Formulas verified and formatted in LaTeX.",
+      "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+    ]
+  },
+  {
+    "id": "note-vn-sim-1788554775873",
+    "studentId": "student-1",
+    "subjectId": "subj-phy",
+    "title": "Work-Energy Theorem & Conservation of Mechanical Energy",
+    "content": "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot • Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+    "tags": [
+      "Physics 11",
+      "Work Energy Theorem",
+      "VisionNote Camera"
+    ],
+    "cameraSnapshotUrl": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+    "doubtsDetected": [
+      "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+      "Why is potential energy defined only for conservative forces and not for friction?"
+    ],
+    "lastModified": "2026-09-04T20:46:15.873Z",
+    "isPinned": true,
+    "source": "visionnote",
+    "summary": "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+    "keyTakeaways": [
+      "Formulas verified and formatted in LaTeX.",
+      "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+    ]
+  },
+  {
+    "id": "note-vn-sim-1788554677084",
+    "studentId": "student-1",
+    "subjectId": "subj-phy",
+    "title": "Work-Energy Theorem & Conservation of Mechanical Energy",
+    "content": "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot • Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+    "tags": [
+      "Physics 11",
+      "Work Energy Theorem",
+      "VisionNote Camera"
+    ],
+    "cameraSnapshotUrl": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+    "doubtsDetected": [
+      "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+      "Why is potential energy defined only for conservative forces and not for friction?"
+    ],
+    "lastModified": "2026-09-04T20:44:37.084Z",
+    "isPinned": true,
+    "source": "visionnote",
+    "summary": "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+    "keyTakeaways": [
+      "Formulas verified and formatted in LaTeX.",
+      "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+    ]
+  },
+  {
+    "id": "note-vn-sim-1788554649169",
+    "studentId": "student-1",
+    "subjectId": "subj-phy",
+    "title": "Work-Energy Theorem & Conservation of Mechanical Energy",
+    "content": "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot • Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+    "tags": [
+      "Physics 11",
+      "Work Energy Theorem",
+      "VisionNote Camera"
+    ],
+    "cameraSnapshotUrl": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+    "doubtsDetected": [
+      "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+      "Why is potential energy defined only for conservative forces and not for friction?"
+    ],
+    "lastModified": "2026-09-04T20:44:09.169Z",
+    "isPinned": true,
+    "source": "visionnote",
+    "summary": "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+    "keyTakeaways": [
+      "Formulas verified and formatted in LaTeX.",
+      "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+    ]
+  },
+  {
+    "id": "note-vn-sim-1788554599161",
+    "studentId": "student-1",
+    "subjectId": "subj-phy",
+    "title": "Work-Energy Theorem & Conservation of Mechanical Energy",
+    "content": "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot • Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+    "tags": [
+      "Physics 11",
+      "Work Energy Theorem",
+      "VisionNote Camera"
+    ],
+    "cameraSnapshotUrl": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+    "doubtsDetected": [
+      "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+      "Why is potential energy defined only for conservative forces and not for friction?"
+    ],
+    "lastModified": "2026-09-04T20:43:19.161Z",
+    "isPinned": true,
+    "source": "visionnote",
+    "summary": "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+    "keyTakeaways": [
+      "Formulas verified and formatted in LaTeX.",
+      "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+    ]
+  },
+  {
+    "id": "note-vn-sim-1788554490327",
+    "studentId": "student-1",
+    "subjectId": "subj-phy",
+    "title": "Work-Energy Theorem & Conservation of Mechanical Energy",
+    "content": "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot • Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+    "tags": [
+      "Physics 11",
+      "Work Energy Theorem",
+      "VisionNote Camera"
+    ],
+    "cameraSnapshotUrl": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+    "doubtsDetected": [
+      "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+      "Why is potential energy defined only for conservative forces and not for friction?"
+    ],
+    "lastModified": "2026-09-04T20:41:30.327Z",
+    "isPinned": true,
+    "source": "visionnote",
+    "summary": "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+    "keyTakeaways": [
+      "Formulas verified and formatted in LaTeX.",
+      "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+    ]
+  },
+  {
+    "id": "note-vn-sim-1788554455510",
+    "studentId": "student-1",
+    "subjectId": "subj-phy",
+    "title": "Work-Energy Theorem & Conservation of Mechanical Energy",
+    "content": "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot • Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+    "tags": [
+      "Physics 11",
+      "Work Energy Theorem",
+      "VisionNote Camera"
+    ],
+    "cameraSnapshotUrl": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+    "doubtsDetected": [
+      "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+      "Why is potential energy defined only for conservative forces and not for friction?"
+    ],
+    "lastModified": "2026-09-04T20:40:55.510Z",
+    "isPinned": true,
+    "source": "visionnote",
+    "summary": "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+    "keyTakeaways": [
+      "Formulas verified and formatted in LaTeX.",
+      "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+    ]
+  },
+  {
+    "id": "note-vn-sim-1788554433025",
+    "studentId": "student-1",
+    "subjectId": "subj-phy",
+    "title": "Work-Energy Theorem & Conservation of Mechanical Energy",
+    "content": "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot • Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+    "tags": [
+      "Physics 11",
+      "Work Energy Theorem",
+      "VisionNote Camera"
+    ],
+    "cameraSnapshotUrl": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+    "doubtsDetected": [
+      "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+      "Why is potential energy defined only for conservative forces and not for friction?"
+    ],
+    "lastModified": "2026-09-04T20:40:33.025Z",
+    "isPinned": true,
+    "source": "visionnote",
+    "summary": "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+    "keyTakeaways": [
+      "Formulas verified and formatted in LaTeX.",
+      "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+    ]
+  },
+  {
+    "id": "note-vn-sim-1788554345890",
+    "studentId": "student-1",
+    "subjectId": "subj-phy",
+    "title": "Work-Energy Theorem & Conservation of Mechanical Energy",
+    "content": "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot • Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+    "tags": [
+      "Physics 11",
+      "Work Energy Theorem",
+      "VisionNote Camera"
+    ],
+    "cameraSnapshotUrl": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+    "doubtsDetected": [
+      "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+      "Why is potential energy defined only for conservative forces and not for friction?"
+    ],
+    "lastModified": "2026-09-04T20:39:05.890Z",
+    "isPinned": true,
+    "source": "visionnote",
+    "summary": "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+    "keyTakeaways": [
+      "Formulas verified and formatted in LaTeX.",
+      "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+    ]
+  },
+  {
+    "id": "note-1788554228358",
+    "studentId": "student-1",
+    "subjectId": "sub_cs101",
+    "title": "Secure Note Title",
+    "content": "<img src=x >Exploit Payload",
+    "tags": [
+      "Study"
+    ],
+    "lastModified": "2026-09-04T20:37:08.358Z",
+    "isPinned": false
+  },
+  {
+    "id": "note-1788554228343",
+    "studentId": "student-1",
+    "subjectId": "sub_cs101",
+    "title": "Prototype Pollution Test Note",
+    "content": "Normal note content",
+    "tags": [
+      "Study"
+    ],
+    "lastModified": "2026-09-04T20:37:08.343Z",
+    "isPinned": false
+  },
+  {
+    "id": "note-1788554218032",
+    "studentId": "student-1",
+    "subjectId": "sub_phys101",
+    "title": "Work-Energy Theorem & Conservation Laws",
+    "content": "# Work-Energy Principle\n\nThe net work done on an object equals the change in kinetic energy:\n$$W_{net} = \\Delta K = \\frac{1}{2}mv_f^2 - \\frac{1}{2}mv_i^2$$\n\nFor conservative forces:\n$$E_{total} = K + U = \\text{constant}$$",
+    "tags": [
+      "physics",
+      "mechanics",
+      "work-energy"
+    ],
+    "lastModified": "2026-09-04T20:36:58.032Z",
+    "isPinned": false
+  },
+  {
+    "id": "note-vn-sim-1788554217976",
+    "studentId": "student-1",
+    "subjectId": "subj-phy",
+    "title": "Work-Energy Theorem & Conservation of Mechanical Energy",
+    "content": "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot • Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+    "tags": [
+      "Physics 11",
+      "Work Energy Theorem",
+      "VisionNote Camera"
+    ],
+    "cameraSnapshotUrl": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+    "doubtsDetected": [
+      "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+      "Why is potential energy defined only for conservative forces and not for friction?"
+    ],
+    "lastModified": "2026-09-04T20:36:57.976Z",
+    "isPinned": true,
+    "source": "visionnote",
+    "summary": "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+    "keyTakeaways": [
+      "Formulas verified and formatted in LaTeX.",
+      "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+    ]
+  },
+  {
+    "id": "note-1788554123384",
+    "studentId": "student-1",
+    "subjectId": "sub_cs101",
+    "title": "Secure Note Title",
+    "content": "<img src=x >Exploit Payload",
+    "tags": [
+      "Study"
+    ],
+    "lastModified": "2026-09-04T20:35:23.384Z",
+    "isPinned": false
+  },
+  {
+    "id": "note-1788554123379",
+    "studentId": "student-1",
+    "subjectId": "sub_cs101",
+    "title": "Prototype Pollution Test Note",
+    "content": "Normal note content",
+    "tags": [
+      "Study"
+    ],
+    "lastModified": "2026-09-04T20:35:23.379Z",
+    "isPinned": false
+  },
+  {
+    "id": "note-1788554112393",
+    "studentId": "student-1",
+    "subjectId": "sub_phys101",
+    "title": "Work-Energy Theorem & Conservation Laws",
+    "content": "# Work-Energy Principle\n\nThe net work done on an object equals the change in kinetic energy:\n$$W_{net} = \\Delta K = \\frac{1}{2}mv_f^2 - \\frac{1}{2}mv_i^2$$\n\nFor conservative forces:\n$$E_{total} = K + U = \\text{constant}$$",
+    "tags": [
+      "physics",
+      "mechanics",
+      "work-energy"
+    ],
+    "lastModified": "2026-09-04T20:35:12.393Z",
+    "isPinned": false
+  },
+  {
+    "id": "note-vn-sim-1788554112359",
+    "studentId": "student-1",
+    "subjectId": "subj-phy",
+    "title": "Work-Energy Theorem & Conservation of Mechanical Energy",
+    "content": "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot • Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+    "tags": [
+      "Physics 11",
+      "Work Energy Theorem",
+      "VisionNote Camera"
+    ],
+    "cameraSnapshotUrl": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+    "doubtsDetected": [
+      "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+      "Why is potential energy defined only for conservative forces and not for friction?"
+    ],
+    "lastModified": "2026-09-04T20:35:12.359Z",
+    "isPinned": true,
+    "source": "visionnote",
+    "summary": "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+    "keyTakeaways": [
+      "Formulas verified and formatted in LaTeX.",
+      "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+    ]
+  },
+  {
     "id": "note-phy-01",
     "studentId": "student-1",
     "subjectId": "subj-phy",

@@ -27,7 +27,7 @@ interface AssignmentHubProps {
 
 export const AssignmentHub: React.FC<AssignmentHubProps> = ({
   activeSubject,
-  assignments,
+  assignments = [],
   onCreateAssignment,
   onGradeSubmission,
   fetchSubmissionsForAssignment

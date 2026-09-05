@@ -35,8 +35,8 @@ interface StudentDirectoryHubProps {
 
 export const StudentDirectoryHub: React.FC<StudentDirectoryHubProps> = ({
   currentUser,
-  allUsers,
-  subjects,
+  allUsers = [],
+  subjects = [],
   activeSubjectId,
   onRefreshUsers,
   onRefreshSubjects,

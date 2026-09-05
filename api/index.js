@@ -60425,14 +60425,11 @@ var init_users = __esm({
         gender: "Male",
         institutionalId: "EDU-FAC-201",
         department: "Department of Physics",
-        designation: "Senior Faculty of Physics (Mechanics & Electromagnetism)",
+        designation: "Senior Faculty of Physics",
         enrolledSubjectIds: [],
         teachingSubjectIds: [
           "subj-phy",
-          "subj-misc",
-          "subj-phy-11",
-          "subj-phy-12",
-          "subj-pyconfig"
+          "subj-misc"
         ],
         officeLocation: "Physics Block P - Lab 201",
         officeHours: "Mon & Thu 02:00 PM - 04:00 PM",
@@ -60450,18 +60447,16 @@ var init_users = __esm({
         gender: "Female",
         institutionalId: "EDU-FAC-202",
         department: "Department of Chemistry",
-        designation: "Lead Faculty of Chemistry (Physical & Organic)",
+        designation: "Head of Department (Chemistry)",
         enrolledSubjectIds: [],
         teachingSubjectIds: [
           "subj-che",
-          "subj-misc",
-          "subj-che-11",
-          "subj-che-12"
+          "subj-misc"
         ],
-        officeLocation: "Chemistry Block C - Hall 2",
+        officeLocation: "Chemistry Block C - Room 302",
         officeHours: "Tue & Fri 11:00 AM - 01:00 PM",
         status: "active",
-        joinedDate: "2020-08-15",
+        joinedDate: "2020-01-15",
         phone: "+91 98110 54332"
       },
       {
@@ -60474,18 +60469,16 @@ var init_users = __esm({
         gender: "Male",
         institutionalId: "EDU-FAC-203",
         department: "Department of Mathematics",
-        designation: "Senior Professor of Mathematics (Calculus & Vectors)",
+        designation: "Professor of Mathematics",
         enrolledSubjectIds: [],
         teachingSubjectIds: [
           "subj-mat",
-          "subj-misc",
-          "subj-mat-11",
-          "subj-mat-12"
+          "subj-misc"
         ],
-        officeLocation: "Ramanujan Block M - Room 101",
+        officeLocation: "Ramanujan Block M - Room 405",
         officeHours: "Wed & Fri 03:00 PM - 05:00 PM",
         status: "active",
-        joinedDate: "2018-06-01",
+        joinedDate: "2017-08-01",
         phone: "+91 98110 54333"
       },
       {
@@ -60497,32 +60490,29 @@ var init_users = __esm({
         role: "student",
         gender: "Male",
         institutionalId: "EDU-STU-1101",
-        department: "Department of Physical Sciences & Mathematics",
-        program: "Science Core Track (PCM)",
-        academicYear: "Year 2026",
+        department: "Science & Engineering Division",
+        program: "Physics, Chemistry & Mathematics Track",
+        academicYear: "1st Year",
         gpa: 9.4,
         enrolledSubjectIds: [
           "subj-phy",
           "subj-che",
           "subj-mat",
-          "subj-misc",
-          "subj-phy-11",
-          "subj-che-11",
-          "subj-mat-11"
+          "subj-misc"
         ],
         teachingSubjectIds: [],
         status: "active",
         joinedDate: "2026-04-01",
         phone: "+91 98100 11001",
         learningProfile: {
-          learningStyle: "visual",
+          learningStyle: "step_by_step",
           targetGrade: "A+",
-          explanationTone: "encouraging_mentor",
+          explanationTone: "strict_coach",
           preferredPace: "steady",
-          strengthsAndInterests: "Visual concept maps, free-body force diagrams, geometric graphs",
-          painPoints: "Abstract algebra without spatial diagrams, sign conventions",
+          strengthsAndInterests: "Newtonian mechanics, calculus proofs, integration by parts",
+          painPoints: "Rotational kinetic energy on inclines, 3D vectors",
           questionnaireCompleted: true,
-          completedAt: "2026-09-04T10:00:00.000Z"
+          completedAt: "2026-09-01T10:00:00.000Z"
         }
       },
       {
@@ -60534,32 +60524,29 @@ var init_users = __esm({
         role: "student",
         gender: "Female",
         institutionalId: "EDU-STU-1102",
-        department: "Department of Physical Sciences & Mathematics",
-        program: "Science Core Track (PCM)",
-        academicYear: "Year 2026",
+        department: "Science & Engineering Division",
+        program: "Physics, Chemistry & Mathematics Track",
+        academicYear: "1st Year",
         gpa: 9.1,
         enrolledSubjectIds: [
           "subj-phy",
           "subj-che",
           "subj-mat",
-          "subj-misc",
-          "subj-phy-11",
-          "subj-che-11",
-          "subj-mat-11"
+          "subj-misc"
         ],
         teachingSubjectIds: [],
         status: "active",
         joinedDate: "2026-04-01",
         phone: "+91 98100 11002",
         learningProfile: {
-          learningStyle: "step_by_step",
-          targetGrade: "competitive",
-          explanationTone: "practical_engineer",
-          preferredPace: "thorough",
-          strengthsAndInterests: "First-principles calculus derivations, organic mechanisms, thermodynamics proofs",
-          painPoints: "Skipped intermediate steps in mathematical proofs, ambiguous notation",
+          learningStyle: "visual",
+          targetGrade: "A",
+          explanationTone: "encouraging_mentor",
+          preferredPace: "steady",
+          strengthsAndInterests: "Chemical bonding, molecular orbital diagrams, geometry",
+          painPoints: "Second law of thermodynamics proofs, differential calculus",
           questionnaireCompleted: true,
-          completedAt: "2026-09-04T10:15:00.000Z"
+          completedAt: "2026-09-01T10:15:00.000Z"
         }
       },
       {
@@ -60571,18 +60558,15 @@ var init_users = __esm({
         role: "student",
         gender: "Male",
         institutionalId: "EDU-STU-1103",
-        department: "Department of Physical Sciences & Mathematics",
-        program: "Science Core Track (PCM)",
-        academicYear: "Year 2026",
-        gpa: 8.8,
+        department: "Science & Engineering Division",
+        program: "Physics, Chemistry & Mathematics Track",
+        academicYear: "1st Year",
+        gpa: 8.5,
         enrolledSubjectIds: [
           "subj-phy",
           "subj-che",
           "subj-mat",
-          "subj-misc",
-          "subj-phy-11",
-          "subj-che-11",
-          "subj-mat-11"
+          "subj-misc"
         ],
         teachingSubjectIds: [],
         status: "active",
@@ -60590,13 +60574,13 @@ var init_users = __esm({
         phone: "+91 98100 11003",
         learningProfile: {
           learningStyle: "socratic_dialogue",
-          targetGrade: "A",
-          explanationTone: "encouraging_mentor",
-          preferredPace: "steady",
-          strengthsAndInterests: "Real-world physical analogies, thought experiments, inquiry",
-          painPoints: "Rote formula memorization under timed conditions",
+          targetGrade: "B",
+          explanationTone: "practical_engineer",
+          preferredPace: "thorough",
+          strengthsAndInterests: "Real-world physics applications, thermodynamics",
+          painPoints: "Calculus derivatives, chemical equilibrium derivations",
           questionnaireCompleted: true,
-          completedAt: "2026-09-04T10:30:00.000Z"
+          completedAt: "2026-09-01T10:30:00.000Z"
         }
       },
       {
@@ -60719,25 +60703,17 @@ var init_users = __esm({
         role: "student",
         gender: "Male",
         institutionalId: "BMU-2026-7052",
-        department: "Department of Physical Sciences & Engineering",
-        designation: "B.Tech Science & Engineering Scholar",
+        department: "School of Engineering & Technology",
+        designation: "B.Tech / Science 1st Year",
         enrolledSubjectIds: [
           "subj-phy",
           "subj-che",
           "subj-mat",
-          "subj-misc",
-          "subj-ess",
-          "subj-calc",
-          "subj-eme",
-          "subj-cpc",
-          "subj-pyconfig"
+          "subj-misc"
         ],
         teachingSubjectIds: [],
         officeLocation: "Student Hall B",
-        officeHours: "Mon-Fri 09:00 AM - 05:00 PM",
         status: "active",
-        joinedDate: "2026-09-03",
-        phone: "+91 98765 43210",
         learningProfile: {
           learningStyle: "visual",
           targetGrade: "A+",
@@ -60746,7 +60722,7 @@ var init_users = __esm({
           strengthsAndInterests: "Interactive coding, mathematical graphs, physical models",
           painPoints: "Complex integration, multi-variable calculus",
           questionnaireCompleted: true,
-          completedAt: "2026-09-04T10:54:05.044Z"
+          completedAt: "2026-09-04T12:00:00.000Z"
         }
       },
       {
@@ -60773,6 +60749,219 @@ var init_users = __esm({
         status: "active",
         joinedDate: "2026-09-04",
         phone: "+91 98765 43210"
+      },
+      {
+        id: "student-persisted-1",
+        name: "Persisted Student",
+        email: "persisted@bmu.edu.in",
+        role: "student",
+        password: "Pass@123",
+        username: "student.persisted"
+      },
+      {
+        id: "student-1788539996907",
+        name: "Aryan",
+        email: "aryan12@123",
+        username: "student.aryan",
+        password: "7890",
+        role: "student",
+        gender: "Male",
+        program: "B.Tech Computer Science and Engineering",
+        institutionalId: "260-202687",
+        department: "Department of Computer Science & Engineering",
+        academicYear: "1st Year (Semester 1)",
+        phone: "+91 98110 24590",
+        gpa: 8.45,
+        status: "active",
+        joinedDate: "2026-09-04",
+        enrolledSubjectIds: [
+          "subj-che",
+          "subj-misc",
+          "subj-phy",
+          "subj-mat"
+        ],
+        teachingSubjectIds: []
+      },
+      {
+        id: "student-1788540475229",
+        name: "Apoorv",
+        email: "apoorv12@23",
+        username: "student.apoorv",
+        password: "12345",
+        role: "student",
+        gender: "Male",
+        program: "B.Tech Computer Science and Engineering",
+        institutionalId: "260-202924",
+        department: "Department of Computer Science & Engineering",
+        academicYear: "1st Year (Semester 1)",
+        phone: "+91 98110 24590",
+        gpa: 8.45,
+        status: "active",
+        joinedDate: "2026-09-04",
+        enrolledSubjectIds: [
+          "subj-phy",
+          "subj-mat",
+          "subj-che",
+          "subj-misc"
+        ],
+        teachingSubjectIds: []
+      },
+      {
+        id: "student-1788550256104",
+        name: "Mohit",
+        email: "mohit@123",
+        username: "student.mohit",
+        password: "12345",
+        role: "student",
+        gender: "Male",
+        program: "B.Tech Computer Science and Engineering",
+        institutionalId: "260-202989",
+        department: "Department of Computer Science & Engineering",
+        academicYear: "1st Year (Semester 1)",
+        phone: "+91 98110 24590",
+        gpa: 8.45,
+        status: "active",
+        joinedDate: "2026-09-04",
+        enrolledSubjectIds: [
+          "subj-che",
+          "subj-misc",
+          "subj-phy",
+          "subj-mat"
+        ],
+        teachingSubjectIds: []
+      },
+      {
+        id: "teacher-1788554123430",
+        name: "Dr. Elena Rostova",
+        email: "elena.rostova@edusync.edu",
+        username: "elena.rostova",
+        password: "Teacher@2062",
+        role: "teacher",
+        gender: "Male",
+        institutionalId: "BMU-FAC-2062",
+        department: "Quantum Physics",
+        designation: "Assistant Professor",
+        officeLocation: "Academic Block A",
+        officeHours: "Mon/Wed 11:00 AM - 01:00 PM",
+        phone: "+91 98525 29743",
+        status: "active",
+        joinedDate: "2026-09-04",
+        enrolledSubjectIds: [],
+        teachingSubjectIds: []
+      },
+      {
+        id: "teacher-1788554365389",
+        name: "Dr. Elena Rostova",
+        email: "elena.rostova.1788554365374@edusync.edu",
+        username: "elena.rostova.1788554365374",
+        password: "Teacher@2681",
+        role: "teacher",
+        gender: "Male",
+        institutionalId: "BMU-FAC-2681",
+        department: "Quantum Physics",
+        designation: "Assistant Professor",
+        officeLocation: "Academic Block A",
+        officeHours: "Mon/Wed 11:00 AM - 01:00 PM",
+        phone: "+91 98762 51710",
+        status: "active",
+        joinedDate: "2026-09-04",
+        enrolledSubjectIds: [],
+        teachingSubjectIds: []
+      },
+      {
+        id: "teacher-1788554442958",
+        name: "Dr. Elena Rostova",
+        email: "elena.rostova.1788554442943@edusync.edu",
+        username: "elena.rostova.1788554442943",
+        password: "Teacher@2795",
+        role: "teacher",
+        gender: "Male",
+        institutionalId: "BMU-FAC-2795",
+        department: "Quantum Physics",
+        designation: "Assistant Professor",
+        officeLocation: "Academic Block A",
+        officeHours: "Mon/Wed 11:00 AM - 01:00 PM",
+        phone: "+91 98381 66376",
+        status: "active",
+        joinedDate: "2026-09-04",
+        enrolledSubjectIds: [],
+        teachingSubjectIds: []
+      },
+      {
+        id: "teacher-1788554466155",
+        name: "Dr. Elena Rostova",
+        email: "elena.rostova.1788554466140@edusync.edu",
+        username: "elena.rostova.1788554466140",
+        password: "Teacher@2270",
+        role: "teacher",
+        gender: "Male",
+        institutionalId: "BMU-FAC-2270",
+        department: "Quantum Physics",
+        designation: "Assistant Professor",
+        officeLocation: "Academic Block A",
+        officeHours: "Mon/Wed 11:00 AM - 01:00 PM",
+        phone: "+91 99256 73504",
+        status: "active",
+        joinedDate: "2026-09-04",
+        enrolledSubjectIds: [],
+        teachingSubjectIds: []
+      },
+      {
+        id: "teacher-1788554496226",
+        name: "Dr. Elena Rostova",
+        email: "elena.rostova.1788554496212@edusync.edu",
+        username: "elena.rostova.1788554496212",
+        password: "Teacher@2216",
+        role: "teacher",
+        gender: "Male",
+        institutionalId: "BMU-FAC-2216",
+        department: "Theoretical High Energy Physics",
+        designation: "Assistant Professor",
+        officeLocation: "Academic Block A",
+        officeHours: "Mon/Wed 11:00 AM - 01:00 PM",
+        phone: "+91 99370 84146",
+        status: "active",
+        joinedDate: "2026-09-04",
+        enrolledSubjectIds: [],
+        teachingSubjectIds: []
+      },
+      {
+        id: "teacher-1788554605330",
+        name: "Dr. Elena Rostova",
+        email: "elena.rostova.1788554605314@edusync.edu",
+        username: "elena.rostova.1788554605314",
+        password: "Teacher@2351",
+        role: "teacher",
+        gender: "Male",
+        institutionalId: "BMU-FAC-2351",
+        department: "Theoretical High Energy Physics",
+        designation: "Assistant Professor",
+        officeLocation: "Academic Block A",
+        officeHours: "Mon/Wed 11:00 AM - 01:00 PM",
+        phone: "+91 98181 55136",
+        status: "active",
+        joinedDate: "2026-09-04",
+        enrolledSubjectIds: [],
+        teachingSubjectIds: []
+      },
+      {
+        id: "teacher-1788554691270",
+        name: "Dr. Elena Rostova",
+        email: "elena.rostova.1788554691268@edusync.edu",
+        username: "elena.rostova.1788554691268",
+        password: "Teacher@2012",
+        role: "teacher",
+        gender: "Male",
+        institutionalId: "BMU-FAC-2012",
+        department: "Theoretical High Energy Physics",
+        designation: "Assistant Professor",
+        officeLocation: "Academic Block A",
+        officeHours: "Mon/Wed 11:00 AM - 01:00 PM",
+        phone: "+91 98100 99431",
+        status: "active",
+        joinedDate: "2026-09-04",
+        enrolledSubjectIds: [],
+        teachingSubjectIds: []
       }
     ];
   }
@@ -60783,6 +60972,90 @@ var lectures_default;
 var init_lectures = __esm({
   "data/lectures.json"() {
     lectures_default = [
+      {
+        id: "lec-1788554775889",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-04",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1788554677100",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-04",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1788554649184",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-04",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
       {
         id: "lec-phy-101",
         subjectId: "subj-phy-11",
@@ -61304,6 +61577,332 @@ var init_notes = __esm({
   "data/notes.json"() {
     notes_default = [
       {
+        id: "note-vn-sim-1788554775873",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-04T20:46:15.873Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
+      {
+        id: "note-vn-sim-1788554677084",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-04T20:44:37.084Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
+      {
+        id: "note-vn-sim-1788554649169",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-04T20:44:09.169Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
+      {
+        id: "note-vn-sim-1788554599161",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-04T20:43:19.161Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
+      {
+        id: "note-vn-sim-1788554490327",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-04T20:41:30.327Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
+      {
+        id: "note-vn-sim-1788554455510",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-04T20:40:55.510Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
+      {
+        id: "note-vn-sim-1788554433025",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-04T20:40:33.025Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
+      {
+        id: "note-vn-sim-1788554345890",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-04T20:39:05.890Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
+      {
+        id: "note-1788554228358",
+        studentId: "student-1",
+        subjectId: "sub_cs101",
+        title: "Secure Note Title",
+        content: "<img src=x >Exploit Payload",
+        tags: [
+          "Study"
+        ],
+        lastModified: "2026-09-04T20:37:08.358Z",
+        isPinned: false
+      },
+      {
+        id: "note-1788554228343",
+        studentId: "student-1",
+        subjectId: "sub_cs101",
+        title: "Prototype Pollution Test Note",
+        content: "Normal note content",
+        tags: [
+          "Study"
+        ],
+        lastModified: "2026-09-04T20:37:08.343Z",
+        isPinned: false
+      },
+      {
+        id: "note-1788554218032",
+        studentId: "student-1",
+        subjectId: "sub_phys101",
+        title: "Work-Energy Theorem & Conservation Laws",
+        content: "# Work-Energy Principle\n\nThe net work done on an object equals the change in kinetic energy:\n$$W_{net} = \\Delta K = \\frac{1}{2}mv_f^2 - \\frac{1}{2}mv_i^2$$\n\nFor conservative forces:\n$$E_{total} = K + U = \\text{constant}$$",
+        tags: [
+          "physics",
+          "mechanics",
+          "work-energy"
+        ],
+        lastModified: "2026-09-04T20:36:58.032Z",
+        isPinned: false
+      },
+      {
+        id: "note-vn-sim-1788554217976",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-04T20:36:57.976Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
+      {
+        id: "note-1788554123384",
+        studentId: "student-1",
+        subjectId: "sub_cs101",
+        title: "Secure Note Title",
+        content: "<img src=x >Exploit Payload",
+        tags: [
+          "Study"
+        ],
+        lastModified: "2026-09-04T20:35:23.384Z",
+        isPinned: false
+      },
+      {
+        id: "note-1788554123379",
+        studentId: "student-1",
+        subjectId: "sub_cs101",
+        title: "Prototype Pollution Test Note",
+        content: "Normal note content",
+        tags: [
+          "Study"
+        ],
+        lastModified: "2026-09-04T20:35:23.379Z",
+        isPinned: false
+      },
+      {
+        id: "note-1788554112393",
+        studentId: "student-1",
+        subjectId: "sub_phys101",
+        title: "Work-Energy Theorem & Conservation Laws",
+        content: "# Work-Energy Principle\n\nThe net work done on an object equals the change in kinetic energy:\n$$W_{net} = \\Delta K = \\frac{1}{2}mv_f^2 - \\frac{1}{2}mv_i^2$$\n\nFor conservative forces:\n$$E_{total} = K + U = \\text{constant}$$",
+        tags: [
+          "physics",
+          "mechanics",
+          "work-energy"
+        ],
+        lastModified: "2026-09-04T20:35:12.393Z",
+        isPinned: false
+      },
+      {
+        id: "note-vn-sim-1788554112359",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-04T20:35:12.359Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
+      {
         id: "note-phy-01",
         studentId: "student-1",
         subjectId: "subj-phy",
@@ -61690,6 +62289,58 @@ var init_student_progress = __esm({
             `Revise concept: "Newton's First Law". Launch AI Tutor to understand boundary conditions and physical reasoning.`,
             'Revise concept: "Free Body Diagram". Launch AI Tutor to understand boundary conditions and physical reasoning.',
             'Revise concept: "Force vs acceleration". Launch AI Tutor to understand boundary conditions and physical reasoning.'
+          ]
+        }
+      },
+      "student-1": {
+        lec_phys_101: {
+          lectureId: "lec_phys_101",
+          completed: false,
+          lastTimestamp: "05:32",
+          progressPercent: 75,
+          lastViewedAt: "2026-09-04T20:36:59.327Z",
+          quizCompleted: true,
+          quizScore: 0,
+          quizTotal: 6,
+          understoodConcepts: [],
+          weakConcepts: [
+            "Newton's First Law",
+            "Inertia",
+            "Free Body Diagram",
+            "Force vs acceleration",
+            "Newton's Second Law"
+          ],
+          recommendations: [
+            `Revise concept: "Newton's First Law". Launch AI Tutor to understand boundary conditions and physical reasoning.`,
+            'Revise concept: "Inertia". Launch AI Tutor to understand boundary conditions and physical reasoning.',
+            'Revise concept: "Free Body Diagram". Launch AI Tutor to understand boundary conditions and physical reasoning.',
+            'Revise concept: "Force vs acceleration". Launch AI Tutor to understand boundary conditions and physical reasoning.',
+            `Revise concept: "Newton's Second Law". Launch AI Tutor to understand boundary conditions and physical reasoning.`
+          ]
+        },
+        "lec-phy-101": {
+          lectureId: "lec-phy-101",
+          completed: false,
+          lastTimestamp: "05:32",
+          progressPercent: 75,
+          lastViewedAt: "2026-09-04T20:46:25.207Z",
+          quizCompleted: true,
+          quizScore: 1,
+          quizTotal: 6,
+          understoodConcepts: [
+            "Newton's First Law"
+          ],
+          weakConcepts: [
+            "Inertia",
+            "Free Body Diagram",
+            "Force vs acceleration",
+            "Newton's Second Law"
+          ],
+          recommendations: [
+            'Revise concept: "Inertia". Launch AI Tutor to understand boundary conditions and physical reasoning.',
+            'Revise concept: "Free Body Diagram". Launch AI Tutor to understand boundary conditions and physical reasoning.',
+            'Revise concept: "Force vs acceleration". Launch AI Tutor to understand boundary conditions and physical reasoning.',
+            `Revise concept: "Newton's Second Law". Launch AI Tutor to understand boundary conditions and physical reasoning.`
           ]
         }
       }
@@ -65663,7 +66314,7 @@ async function researchTopicAndVideosAI(prompt, subject) {
     practiceQuestions: result.practiceQuestions,
     quiz: result.quiz || {
       id: `quiz-gen-${Date.now()}`,
-      title: `Practice Assessment: ${prompt.slice(0, 30)}`,
+      title: `Practice Assessment: ${(prompt || "Subject Concept").slice(0, 30)}`,
       topic: subject?.name || "Engineering Concepts",
       createdAt: (/* @__PURE__ */ new Date()).toISOString(),
       questions: []
@@ -66304,7 +66955,12 @@ Description: ${description}`,
     return JSON.parse(response.text || "[]");
   } catch (err) {
     console.error("Error generating syllabus timeline:", err);
-    return [];
+    return [
+      { title: `${courseName}: Unit 1 Foundations & Mathematical Invariants`, type: "lecture", weekNumber: 1, description: "Core principles, state modeling, and problem decomposition.", topicsCovered: ["Theoretical Foundations", "Recurrence Bounds"], weightagePercent: 0 },
+      { title: `${courseName}: Diagnostic Quiz 1: Core Theorems`, type: "quiz", weekNumber: 2, description: "Quick assessment of introductory concepts.", topicsCovered: ["Invariants", "Proof Techniques"], weightagePercent: 10 },
+      { title: `${courseName}: Practical Lab 1: Benchmark Suite`, type: "practical", weekNumber: 3, description: "Hands-on performance verification and benchmarking.", topicsCovered: ["Data Structures", "C Programming"], weightagePercent: 15 },
+      { title: `${courseName}: Midterm Examination`, type: "exam", weekNumber: 4, description: "Comprehensive written evaluation across units 1-3.", topicsCovered: ["All Unit 1-3 topics"], weightagePercent: 30 }
+    ];
   }
 }
 async function generateMasteryQuizAI(noteContent, title, learnerProfile, count = 6) {

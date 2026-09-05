@@ -32,10 +32,10 @@ interface QuestionBankManagerProps {
 
 export const QuestionBankManager: React.FC<QuestionBankManagerProps> = ({
   currentUser,
-  subjects,
+  subjects = [],
   activeSubjectId,
   onSelectSubject,
-  questionBanks,
+  questionBanks = [],
   onSaveQuestionBank,
   onDeleteQuestionBank,
   onShowToast

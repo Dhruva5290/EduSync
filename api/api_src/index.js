@@ -1,0 +1,400 @@
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = handler;
+const fakeData_1 = require("../src/mock/fakeData");
+const supabaseUsers_1 = require("../src/server/supabaseUsers");
+const quizGenerator_1 = require("../src/lib/quizGenerator");
+async function handler(req, res) {
+    // Enable CORS
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+    res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization, x-user-id');
+    if (req.method === 'OPTIONS') {
+        res.status(200).end();
+        return;
+    }
+    // Parse path
+    let path = req.url || '';
+    const matched = req.headers['x-matched-path'] || req.headers['x-now-route-matches'];
+    if (typeof matched === 'string')
+        path = matched;
+    path = path.split('?')[0];
+    try {
+        // 1. GET /api/auth/public-users
+        if (path.includes('/api/auth/public-users') || path.endsWith('/public-users')) {
+            const cloudUsers = await (0, supabaseUsers_1.loadUsersFromCloud)();
+            const all = [...fakeData_1.FAKE_USERS];
+            for (const cu of cloudUsers) {
+                const idx = all.findIndex(u => u.id === cu.id);
+                if (idx !== -1)
+                    all[idx] = cu;
+                else
+                    all.push(cu);
+            }
+            res.status(200).json({ users: all });
+            return;
+        }
+        // 2. POST /api/auth/login
+        if (path.includes('/api/auth/login') && req.method === 'POST') {
+            const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body || {};
+            const { identifier, password, role } = body;
+            const rawId = (identifier || '').trim();
+            const loginId = rawId.toLowerCase();
+            const loginPass = (password || '').trim();
+            if (!loginId) {
+                res.status(400).json({ error: 'Username or Institutional ID is required' });
+                return;
+            }
+            // 1. Search in local seed users
+            let user = fakeData_1.FAKE_USERS.find(u => (u.username && u.username.toLowerCase() === loginId) ||
+                (u.email && u.email.toLowerCase() === loginId) ||
+                (u.institutionalId && u.institutionalId.toLowerCase() === loginId) ||
+                (u.name && u.name.toLowerCase() === loginId));
+            // 2. Search in Supabase Cloud
+            if (!user) {
+                user = await (0, supabaseUsers_1.findUserInCloud)(loginId);
+            }
+            if (!user) {
+                res.status(401).json({
+                    error: `No registered account found matching "${rawId}". Please check your credentials or register as a new user.`
+                });
+                return;
+            }
+            const expectedPass = user.password || 'EduSync@260101';
+            if (expectedPass !== loginPass) {
+                res.status(401).json({
+                    error: 'Incorrect password. Please verify your credentials and try again.'
+                });
+                return;
+            }
+            const token = Buffer.from(JSON.stringify({ userId: user.id, role: user.role, time: Date.now() })).toString('base64');
+            res.status(200).json({ success: true, token, user });
+            return;
+        }
+        // 3. POST /api/users (Register User)
+        if ((path.includes('/api/users') || path.endsWith('/users')) && !path.includes('/api/users/') && req.method === 'POST') {
+            const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body || {};
+            const { name, email, password, role, department, program, designation, phone, gender, academicYear, gpa, initialSubjectIds, teachingSubjectIds } = body;
+            const targetRole = role || 'student';
+            const cleanName = (name || '').trim().toLowerCase().split(' ')[0];
+            const prefix = targetRole === 'teacher' ? 'BMU-FAC' : targetRole === 'admin' ? 'BMU-ADM' : '260';
+            const finalInstId = `${prefix}-${Math.floor(202600 + Math.random() * 900)}`;
+            const newUser = {
+                id: `${targetRole}-${Date.now()}`,
+                name: name || 'New User',
+                email: email || `${cleanName}@bmu.edu.in`,
+                username: `${targetRole === 'teacher' ? 'prof' : targetRole === 'admin' ? 'dean' : 'student'}.${cleanName}`,
+                password: password || 'EduSync@260101',
+                role: targetRole,
+                gender: gender || 'Male',
+                program: program || (targetRole === 'student' ? 'CSE' : undefined),
+                institutionalId: finalInstId,
+                department: department || 'Department of Computer Sciences',
+                academicYear: targetRole === 'student' ? (academicYear || '1st Year') : undefined,
+                designation: targetRole !== 'student' ? (designation || 'Faculty') : undefined,
+                phone: phone || '+91 98765 43210',
+                gpa: targetRole === 'student' ? Number(gpa || 8.0) : undefined,
+                status: 'active',
+                joinedDate: new Date().toISOString().split('T')[0],
+                enrolledSubjectIds: targetRole === 'student' ? (initialSubjectIds || ['subj-ess', 'subj-calc', 'subj-eme']) : [],
+                teachingSubjectIds: targetRole === 'teacher' ? (teachingSubjectIds || []) : []
+            };
+            await (0, supabaseUsers_1.persistUserToCloud)(newUser);
+            res.status(201).json({ success: true, user: newUser });
+            return;
+        }
+        // 4. DELETE /api/users/:id
+        if (path.includes('/api/users/') && req.method === 'DELETE') {
+            const parts = path.split('/api/users/');
+            const userId = parts[1]?.split('?')[0];
+            if (userId) {
+                await (0, supabaseUsers_1.deleteUserFromCloud)(userId);
+            }
+            res.status(200).json({ success: true, message: 'User unregistered successfully' });
+            return;
+        }
+        // 5. POST /api/admin/provision-department
+        if (path.includes('/api/admin/provision-department') && req.method === 'POST') {
+            const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body || {};
+            const { users } = body;
+            if (Array.isArray(users)) {
+                for (const u of users) {
+                    (0, supabaseUsers_1.persistUserToCloud)(u).catch(() => { });
+                }
+            }
+            res.status(200).json({ success: true, message: 'Department provisioned' });
+            return;
+        }
+        // 6. POST /api/ai/quiz/generate-mastery-quiz
+        if (path.includes('/api/ai/quiz/generate-mastery-quiz') && req.method === 'POST') {
+            const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body || {};
+            const { noteContent = '', title = 'Lecture Checkpoint', count = 5, learnerProfile } = body;
+            if (process.env.GEMINI_API_KEY) {
+                try {
+                    const { generateMasteryQuizAI } = await Promise.resolve().then(() => __importStar(require('../src/server/gemini')));
+                    const result = await generateMasteryQuizAI(noteContent, title, learnerProfile, count);
+                    if (result && Array.isArray(result.questions) && result.questions.length >= 3) {
+                        res.status(200).json(result);
+                        return;
+                    }
+                }
+                catch (geminiErr) {
+                    console.warn('[Serverless Gemini Quiz Warning]', geminiErr);
+                }
+            }
+            let questions = [];
+            const cleanT = (title || '').toLowerCase();
+            if (cleanT.includes('nda') || cleanT.includes('selection') || cleanT.includes('ssb')) {
+                const { getOrGenerateQuizQuestions } = await Promise.resolve().then(() => __importStar(require('../src/lib/quizGenerator')));
+                questions = getOrGenerateQuizQuestions({ id: 'note-misc-nda', title, content: noteContent, subjectId: 'subj-misc', tags: [], lastModified: '' }, learnerProfile);
+            }
+            else if (cleanT.includes('friction') || cleanT.includes('newton')) {
+                const { getOrGenerateQuizQuestions } = await Promise.resolve().then(() => __importStar(require('../src/lib/quizGenerator')));
+                questions = getOrGenerateQuizQuestions({ id: 'note-phy-01', title, content: noteContent, subjectId: 'subj-phy', tags: [], lastModified: '' }, learnerProfile);
+            }
+            else {
+                questions = (0, quizGenerator_1.synthesizeMasteryQuizFromContent)(noteContent, title, learnerProfile, count);
+            }
+            res.status(200).json({
+                title: `Mastery Quiz: ${title}`,
+                questions
+            });
+            return;
+        }
+        // 7. POST /api/ai/quiz/analyze-performance
+        if (path.includes('/api/ai/quiz/analyze-performance') && req.method === 'POST') {
+            const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body || {};
+            const { quizTitle = 'Quiz', questions = [], userAnswers = [], learnerProfile } = body;
+            if (process.env.GEMINI_API_KEY) {
+                try {
+                    const { analyzeQuizPerformanceAI } = await Promise.resolve().then(() => __importStar(require('../src/server/gemini')));
+                    const analysis = await analyzeQuizPerformanceAI(quizTitle, questions, userAnswers, learnerProfile);
+                    if (analysis) {
+                        res.status(200).json(analysis);
+                        return;
+                    }
+                }
+                catch (geminiErr) {
+                    console.warn('[Serverless Gemini Analysis Warning]', geminiErr);
+                }
+            }
+            const answersMap = {};
+            (userAnswers || []).forEach((ans, idx) => {
+                answersMap[idx] = ans;
+            });
+            const localAnalysis = (0, quizGenerator_1.evaluateQuizPerformance)(quizTitle, questions, answersMap, learnerProfile);
+            res.status(200).json(localAnalysis);
+            return;
+        }
+        // 8. POST /api/tutor (AI Socratic Tutor Chat)
+        if ((path.includes('/api/tutor') || path.endsWith('/tutor')) && req.method === 'POST') {
+            const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body || {};
+            const { message, history = [], lectureContext, studentContext } = body;
+            if (!message || typeof message !== 'string') {
+                res.status(400).json({ error: 'Message is required' });
+                return;
+            }
+            const ctx = studentContext || lectureContext || {};
+            const persona = ctx?.learnerProfile;
+            const SOCRATIC_SYSTEM_PROMPT = `You are "EduSync Socratic AI Tutor", an elite, empathetic university teaching assistant and academic mentor.
+
+Your Mission:
+Help students genuinely master challenging concepts through active inquiry, scaffolded reasoning, and critical thinking.
+
+CRITICAL GUARDRAIL RULES:
+1. THE SOCRATIC METHOD IS MANDATORY:
+   - NEVER write complete essays, homework solutions, or direct final answers to assignment/exam problems.
+   - If a student asks for a direct answer, decline and instead break the problem into guiding steps.
+2. CONTEXT-AWARE INSTRUCTION:
+   - Leverage any provided student context to tailor explanations and difficulty.
+   - Relate abstract concepts back to real-world physical intuitions.
+3. STRUCTURED PEDAGOGICAL RESPONSES:
+   - Use clear, inviting Markdown with LaTeX equations ($...$ for inline, $$...$$ for blocks).
+   - Provide 2-3 focused follow-up reflection questions.
+   - Recommend 1-2 authoritative learning resources.
+
+OUTPUT FORMAT:
+Return your response as a valid JSON object:
+{
+  "reply": "Your Socratic explanation and guiding prompts in clean Markdown...",
+  "followUpQuestions": ["Question 1?", "Question 2?"],
+  "recommendedResources": [{ "id": "rec-1", "title": "...", "type": "video", "provider": "...", "duration": "...", "url": "...", "description": "..." }]
+}`;
+            const personaSnippet = persona ? `
+[STUDENT_LEARNING_PERSONA]
+- Learning Modality: ${(persona.learningStyle || 'balanced').toUpperCase()}
+- Target Academic Level: ${persona.targetGrade || 'A+'}
+- Coaching Tone: ${persona.explanationTone || 'encouraging_mentor'}
+- Preferred Pace: ${persona.preferredPace || 'steady'}
+- Strengths: ${persona.strengthsAndInterests || 'General Sciences'}
+- Weak Areas: ${persona.painPoints || 'None specified'}
+[END_LEARNING_PERSONA]` : '';
+            const subjectName = ctx?.currentSubject?.name || 'General Studies';
+            const contextSnippet = `
+[STUDENT_ACADEMIC_CONTEXT]
+- Active Course: ${subjectName} (${ctx?.currentSubject?.code || 'GEN-101'})
+- Current Unit: ${ctx?.currentSubject?.currentUnit || 'General Studies'}
+[END_STUDENT_CONTEXT]
+${personaSnippet}`;
+            // Try Gemini API first
+            if (process.env.GEMINI_API_KEY) {
+                try {
+                    const { GoogleGenAI } = await Promise.resolve().then(() => __importStar(require('@google/genai')));
+                    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+                    const formattedHistory = (history || []).map((h) => ({
+                        role: h.sender === 'user' ? 'user' : 'model',
+                        parts: [{ text: h.text }]
+                    }));
+                    const fullPrompt = `${contextSnippet}\n\nStudent Query: "${message}"\n\nPlease formulate your Socratic guidance response following the JSON schema.`;
+                    const result = await ai.models.generateContent({
+                        model: 'gemini-2.5-flash',
+                        contents: [
+                            ...formattedHistory,
+                            { role: 'user', parts: [{ text: fullPrompt }] }
+                        ],
+                        config: {
+                            systemInstruction: SOCRATIC_SYSTEM_PROMPT,
+                            responseMimeType: 'application/json'
+                        }
+                    });
+                    const rawText = result.text || '{}';
+                    let parsedResult;
+                    try {
+                        parsedResult = JSON.parse(rawText);
+                    }
+                    catch {
+                        parsedResult = {
+                            reply: rawText,
+                            followUpQuestions: [
+                                'What is the fundamental equation or definition governing this concept?',
+                                'What variables are given, and what are you solving for?'
+                            ],
+                            recommendedResources: []
+                        };
+                    }
+                    res.status(200).json(parsedResult);
+                    return;
+                }
+                catch (geminiErr) {
+                    console.warn('[Tutor Gemini Error]', geminiErr?.message || geminiErr);
+                }
+            }
+            // Fallback: Local Socratic knowledge corpus
+            const clean = message.toLowerCase();
+            const KNOWLEDGE_CORPUS = [
+                {
+                    keywords: ['carnot', 'heat engine', 'efficiency', 'entropy', 'second law', 'kelvin', 'thermodynamics', 'refrigerator'],
+                    reply: `### ⚙️ Exploring Heat Engine Efficiency & The Carnot Limit\n\nIn any thermodynamic heat engine, efficiency $\\eta$ measures how effectively heat input ($Q_H$) is converted into mechanical work ($W = Q_H - Q_C$):\n\n$$\\eta = \\frac{W}{Q_H} = 1 - \\frac{Q_C}{Q_H}$$\n\nFor a reversible **Carnot cycle**:\n$$\\eta_{\\text{Carnot}} = 1 - \\frac{T_C}{T_H}$$\n\n#### 💡 Key Concept to Master:\nWhy can a real heat engine never reach $100\\%$ efficiency? Notice that for $\\eta = 1$, either $Q_C = 0$ (violating the Kelvin-Planck statement) or $T_C = 0\\text{ K}$ (unreachable by the Third Law).`,
+                    followUpQuestions: [
+                        'If an engine operates between 600 K and 300 K, what is its maximum possible efficiency?',
+                        'Why is internal energy a state function while Work and Heat depend on the specific path?'
+                    ]
+                },
+                {
+                    keywords: ['pointer', 'malloc', 'memory', 'segfault', 'array', 'address', 'dereference', 'linked list', 'c programming'],
+                    reply: `### 🧠 Pointers & Memory Architecture in C\n\nIn C, variables are stored at specific memory addresses. A **pointer** holds the memory address of another variable.\n\n\`\`\`c\nint val = 42;\nint *ptr = &val; // ptr holds the address of val\n*ptr = 100;      // Directly modifies memory at that address\n\`\`\`\n\n#### 🔍 Critical Distinction:\nPointer arithmetic (ptr + 1) advances by sizeof(*ptr) bytes, not 1 byte. For an int, that's 4 bytes.`,
+                    followUpQuestions: [
+                        'What happens in memory when you access an array as arr[i] versus *(arr + i)?',
+                        'Why does passing a pointer to a function allow modifying the caller\'s original variables?'
+                    ]
+                },
+                {
+                    keywords: ['lagrange', 'optimization', 'partial derivative', 'gradient', 'integral', 'contour', 'extrema', 'calculus'],
+                    reply: `### 📐 Constrained Optimization via Lagrange Multipliers\n\nWhen maximizing or minimizing $f(x, y)$ along a constraint $g(x, y) = c$, the optimal point occurs where the **level curves of $f$ are tangent to $g = c$**.\n\nBecause $\\nabla f$ and $\\nabla g$ are perpendicular to their respective level curves, they must be parallel:\n\n$$\\nabla f(x, y) = \\lambda \\nabla g(x, y)$$\n\nCoupled with $g(x, y) = c$, this gives a system of equations for the critical points.`,
+                    followUpQuestions: [
+                        'Why would a point where the level curve crosses the constraint curve NOT be an extremum?',
+                        'How do you set up the partial derivative equations from the Lagrangian?'
+                    ]
+                },
+                {
+                    keywords: ['nda', 'ssb', 'selection', 'interview', 'medical', 'defence', 'training', 'academy'],
+                    reply: `### 🎖️ Understanding the NDA Selection Process\n\nThe NDA Selection Process follows a structured multi-stage pipeline:\n\n1. **Written Exam** (UPSC): Tests Mathematics and General Ability (English, GK, Physics, Chemistry, etc.)\n2. **SSB Interview** (5 Days): Psychological tests, Group Testing, and Personal Interview to assess Officer-Like Qualities (OLQs)\n3. **Medical Examination**: Comprehensive fitness and health evaluation\n\n#### 💡 Let's Think About This:\nThe SSB doesn't just test knowledge — it evaluates **decision-making under pressure**, **leadership potential**, and **group dynamics**.\n\n**Executive Summary** covers the high-level pipeline overview.\n**Training Architecture** refers to how cadets are trained at NDA (Khadakwasla) across academics, physical training, and service-specific drills.\n\nLet's break down which specific area you found challenging. Can you tell me — was it the **exam structure and scoring**, the **SSB evaluation criteria**, or the **post-selection training flow**?`,
+                    followUpQuestions: [
+                        'Can you describe in your own words what Officer-Like Qualities (OLQs) the SSB evaluates?',
+                        'What is the difference between the screening test and the main SSB 5-day testing process?',
+                        'How does the training architecture at NDA differ from other military academies?'
+                    ]
+                },
+                {
+                    keywords: ['friction', 'newton', 'force', 'motion', 'inertia', 'acceleration', 'momentum'],
+                    reply: `### 🔬 Newton's Laws & Friction Analysis\n\nNewton's Laws form the foundation of classical mechanics:\n\n1. **First Law (Inertia)**: An object remains at rest or in uniform motion unless acted upon by a net external force.\n2. **Second Law**: $\\vec{F}_{\\text{net}} = m\\vec{a}$ — acceleration is directly proportional to net force and inversely proportional to mass.\n3. **Third Law**: For every action force, there is an equal and opposite reaction force.\n\n**Friction** resists relative motion between surfaces:\n- Static friction: $f_s \\leq \\mu_s N$\n- Kinetic friction: $f_k = \\mu_k N$\n\nThe key insight: static friction is *self-adjusting* up to its maximum value, while kinetic friction is constant.`,
+                    followUpQuestions: [
+                        'Why is the coefficient of static friction typically greater than kinetic friction?',
+                        'How would you draw a free-body diagram for an object on an inclined plane with friction?'
+                    ]
+                }
+            ];
+            // Match against knowledge corpus
+            for (const item of KNOWLEDGE_CORPUS) {
+                if (item.keywords.some(kw => clean.includes(kw))) {
+                    res.status(200).json({
+                        reply: item.reply,
+                        followUpQuestions: item.followUpQuestions,
+                        recommendedResources: []
+                    });
+                    return;
+                }
+            }
+            // Generic Socratic fallback
+            res.status(200).json({
+                reply: `### 💡 Let's Explore This Together\n\nGreat question! To master this concept from first principles:\n\n1. **Identify the Core Phenomenon**: What physical laws, governing equations, or computational rules define this topic?\n2. **Break Down the Knowns**: What parameters are given, and what boundary conditions must hold true?\n3. **Map the Relationships**: How do the variables connect through equations or logical dependencies?\n\nTell me what you think the first step or governing relation is, and let's work through it together step by step!\n\n*I'm here to guide you through the reasoning process, not just give you the answer — that's how real mastery happens.* 🚀`,
+                followUpQuestions: [
+                    'What equations or formulas connect the variables in your question?',
+                    'What happens at the boundary conditions (e.g., at zero or infinity)?'
+                ],
+                recommendedResources: [
+                    {
+                        id: 'res-gen-1',
+                        title: 'Undergraduate Engineering Foundations Reference',
+                        type: 'book',
+                        provider: 'University Coursepack',
+                        duration: 'Core Modules',
+                        url: '#',
+                        description: 'Comprehensive textbook reference with step-by-step conceptual walkthroughs.'
+                    }
+                ]
+            });
+            return;
+        }
+        // 9. Default health status
+        res.status(200).json({ status: 'ok', time: new Date().toISOString(), path });
+    }
+    catch (err) {
+        console.error('[Serverless Error]', err);
+        res.status(500).json({ error: err?.message || 'Internal server error' });
+    }
+}
