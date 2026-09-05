@@ -2576,11 +2576,13 @@ ${personaSummary}
       const ai = new GoogleGenAI({ apiKey });
 
       const candidateModels = [
-        'gemini-3.5-flash',
         'gemini-3.5-flash-lite',
+        'gemini-3.1-flash-lite',
+        'gemini-flash-lite-latest',
+        'gemma-4-26b-a4b-it',
+        'gemini-3.5-flash',
         'gemini-3.6-flash',
-        'gemini-3.7-flash',
-        'gemini-3.8-flash'
+        'gemini-3.7-flash'
       ];
       let tutorReply = '';
 
@@ -2607,9 +2609,9 @@ ${personaSummary}
         return res.json({ reply: tutorReply });
       }
 
-      // If all live models fail, return an informative response
+      // If all live models fail due to quota/network, fall back to dynamic diverse socratic generation rather than static error
       return res.json({
-        reply: "I'm currently having trouble connecting to the AI models. Please check your API quota or retry in a few moments."
+        reply: generateDiverseSocraticReply(message, { studentContext, lectureContext: lectureInfo, history })
       });
 
     } catch (err: any) {

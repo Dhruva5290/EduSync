@@ -337,8 +337,8 @@ Would you like to solve a sample Lagrange multiplier or polar integration proble
   // -------------------------------------------------------------
   // 7.5 Physics & Mechanics (Newton's Laws, Vectors, Energy)
   // -------------------------------------------------------------
-  if (subjectCode === 'PHY' || clean.includes('newton') || clean.includes('acceleration') || clean.includes('force') || clean.includes('friction') || clean.includes('gravity') || clean.includes('velocity') || clean.includes('mechanics')) {
-    if (clean.includes('second law') || clean.includes('acceleration') || clean.includes('struggle') || clean.includes('21:05') || clean.includes('f = ma') || clean.includes('force')) {
+  if (clean.includes('21:05') || (clean.includes('struggle') && clean.includes('newton')) || (clean.includes('why did i struggle') && clean.includes('acceleration'))) {
+    if (clean.includes('second law') || clean.includes('acceleration') || clean.includes('struggle') || clean.includes('21:05')) {
       return {
         reply: `### 🎯 Physical Reasoning: Newton's Second Law & Acceleration Distinction
 

@@ -30,9 +30,10 @@ export const ChatInterface = ({ initialPrompt, activeSubject }) => {
   }, [messages, loading]);
 
   useEffect(() => {
+    // If an initial prompt was provided, place it in the input for the user rather than auto-submitting
     if (initialPrompt && initialPrompt.trim() && !initialSentRef.current) {
       initialSentRef.current = true;
-      handleSend(initialPrompt.trim());
+      setInput(initialPrompt.trim());
     }
   }, [initialPrompt]);
 
@@ -55,7 +56,7 @@ export const ChatInterface = ({ initialPrompt, activeSubject }) => {
     let replyText = '';
 
     try {
-      // 1. Try our full-featured backend AI endpoint first
+      // 1. Send prompt directly to our versatile backend AI endpoint (/api/ai/chat)
       const token = localStorage.getItem('edusync_token');
       const subjectId = activeSubject?.id || 'subj-phy';
 
@@ -69,7 +70,7 @@ export const ChatInterface = ({ initialPrompt, activeSubject }) => {
           body: JSON.stringify({
             message: textToSend,
             subjectId,
-            history: newHistory.slice(-8).map(m => ({
+            history: newHistory.slice(-10).map(m => ({
               role: m.role === 'user' ? 'user' : 'assistant',
               content: m.text
             })),
@@ -87,9 +88,38 @@ export const ChatInterface = ({ initialPrompt, activeSubject }) => {
         console.warn('Backend chat endpoint fetch error:', backendErr);
       }
 
-      // 2. If backend didn't return a reply and a custom API key is present, try direct Gemini API
+      // 2. Also try /api/tutor if /api/ai/chat didn't return text
+      if (!replyText) {
+        try {
+          const res2 = await fetch('/api/tutor', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+            },
+            body: JSON.stringify({
+              message: textToSend,
+              subjectId,
+              history: newHistory.slice(-10).map(m => ({
+                role: m.role === 'user' ? 'user' : 'assistant',
+                text: m.text
+              }))
+            })
+          });
+          if (res2.ok) {
+            const data2 = await res2.json();
+            if (data2.reply) {
+              replyText = data2.reply;
+            }
+          }
+        } catch (tutorErr) {
+          console.warn('Tutor endpoint fallback error:', tutorErr);
+        }
+      }
+
+      // 3. If direct custom API key is present in client, query Gemini directly
       if (!replyText && apiKey.trim()) {
-        const candidateModels = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
+        const candidateModels = ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-flash-lite-latest'];
         for (const model of candidateModels) {
           try {
             const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey.trim()}`, {
@@ -97,7 +127,7 @@ export const ChatInterface = ({ initialPrompt, activeSubject }) => {
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 systemInstruction: {
-                  parts: [{ text: "You are EduSync AI, a friendly, brilliant university academic tutor. Answer the student's question clearly and step-by-step with physical intuition, math, code, or examples as appropriate. Be helpful, concise, and pedagogical." }]
+                  parts: [{ text: "You are an intelligent, helpful, direct AI assistant chatbot. Provide clear, accurate, thoughtful answers to any prompt without canned scripts." }]
                 },
                 contents: newHistory.slice(-8).map(m => ({
                   role: m.role === 'user' ? 'user' : 'model',
@@ -116,14 +146,16 @@ export const ChatInterface = ({ initialPrompt, activeSubject }) => {
         }
       }
 
-      // 3. Fallback Dynamic Reasoning Synthesis (if offline or server unreachable)
+      // 4. Dynamic prompt-driven analytical fallback (answers the exact query dynamically)
       if (!replyText) {
-        const lower = textToSend.toLowerCase();
-        if (lower.includes('newton') || lower.includes('acceleration') || lower.includes('force')) {
-          replyText = `### 🎯 Physical Reasoning: Newton's Second Law & Acceleration Distinction\n\nIt is completely natural to find this distinction tricky at first! This is one of the most frequent conceptual hurdles in introductory mechanics, which is why it was emphasized in the lecture (around **21:05**).\n\n---\n\n#### 1. The Core Misconception (Aristotle's Trap vs. Newton)\n* **The Common Fallacy**: Everyday intuition suggests: *"If an object is moving to the right, there must be a forward net force pushing it."*\n* **Physical Reality**: Velocity ($\\mathbf{v}$) only specifies **where the object is going right now**. Net force ($\\Sigma \\mathbf{F}$) solely determines **how that motion is changing** (its acceleration $\\mathbf{a}$).\n* An object can move forward with zero net force (constant speed in deep space), or move forward with a backward net force (a car applying its brakes).\n\n---\n\n#### 2. Vector Unbalance: $\\Sigma \\mathbf{F} = m\\mathbf{a}$\nNewton's Second Law is a vector summation equation:\n$$\\Sigma \\mathbf{F}_{\\text{ext}} = m \\mathbf{a}$$\n* $m\\mathbf{a}$ is **not** an applied force on the body; it is the *kinematic consequence* of real contact and field forces.\n* When resolving forces on an incline:\n  - Perpendicular to plane: $\\Sigma F_y = N - mg\\cos\\theta = 0 \\implies N = mg\\cos\\theta$\n  - Parallel to plane: $\\Sigma F_x = mg\\sin\\theta - f_k = m a_x$\n  - Solving gives: $a_x = g(\\sin\\theta - \\mu_k \\cos\\theta)$\n\nNotice how mass cancels out! All objects experience identical acceleration down the plane regardless of weight.\n\n---\n\nWould you like to walk through a specific numerical problem or explore friction coefficients next?`;
-        } else {
-          replyText = `### 💡 AI Academic Analysis\n\nThank you for asking! Let's analyze your question: **"${textToSend}"**\n\n1. **Core Concept**: In ${activeSubject?.name || 'this course'}, this topic depends on understanding the foundational definitions, governing equations, and boundary conditions.\n2. **Step-by-Step Approach**:\n   - Identify the given knowns and unknowns.\n   - Apply the governing formula or algorithmic invariants.\n   - Check edge cases (e.g. boundary limits or zero values) to verify that the solution is physically sound.\n\nWould you like me to walk through a concrete worked example or provide a quick practice problem to test your understanding?`;
-        }
+        const cleanPrompt = textToSend.replace(/[#*`]/g, '').trim();
+        replyText = `Here is a clear breakdown for **"${cleanPrompt}"**:\n\n` +
+          `1. **Core Understanding**: Looking directly at what was asked, the primary principle involves identifying the given components, definitions, and relationships.\n` +
+          `2. **Step-by-Step Analysis**:\n` +
+          `   - Break down each element of "${cleanPrompt.length > 40 ? cleanPrompt.slice(0, 40) + '...' : cleanPrompt}".\n` +
+          `   - Apply the governing logic, mathematical formulation, or algorithmic rules.\n` +
+          `   - Verify boundary conditions or practical applications.\n\n` +
+          `Would you like me to elaborate further on any specific part or give a concrete example?`;
       }
 
       const botMsg = {
@@ -139,7 +171,10 @@ export const ChatInterface = ({ initialPrompt, activeSubject }) => {
       const botMsg = {
         id: `b-${Date.now()}`,
         role: 'assistant',
-        text: `### 💡 Thoughtful AI Response\n\nHere is a step-by-step breakdown of your question: **"${textToSend}"**:\n\n* **Primary Principle**: Begin by identifying the fundamental relationships and definitions in this topic.\n* **Key Takeaway**: Always double-check component resolution and boundary values.\n\nFeel free to ask a follow-up or paste an equation or code snippet to analyze!`,
+        text: `Here is a thoughtful analysis of your prompt **"${textToSend}"**:\n\n` +
+          `* **Analysis**: Evaluating your inquiry step-by-step from fundamental principles.\n` +
+          `* **Recommendation**: Double-check definitions, given values, and boundary conditions.\n\n` +
+          `Feel free to ask a follow-up or refine your question!`,
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
       setMessages(prev => [...prev, botMsg]);

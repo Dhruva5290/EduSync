@@ -64995,8 +64995,8 @@ Would you like to solve a sample Lagrange multiplier or polar integration proble
       };
     }
   }
-  if (subjectCode === "PHY" || clean.includes("newton") || clean.includes("acceleration") || clean.includes("force") || clean.includes("friction") || clean.includes("gravity") || clean.includes("velocity") || clean.includes("mechanics")) {
-    if (clean.includes("second law") || clean.includes("acceleration") || clean.includes("struggle") || clean.includes("21:05") || clean.includes("f = ma") || clean.includes("force")) {
+  if (clean.includes("21:05") || clean.includes("struggle") && clean.includes("newton") || clean.includes("why did i struggle") && clean.includes("acceleration")) {
+    if (clean.includes("second law") || clean.includes("acceleration") || clean.includes("struggle") || clean.includes("21:05")) {
       return {
         reply: `### \u{1F3AF} Physical Reasoning: Newton's Second Law & Acceleration Distinction
 
@@ -66440,9 +66440,21 @@ Return your response in clean JSON format:
 }`;
   const { cleanText: sanitizedUserMessage } = sanitizePromptInput(context.userMessage || "");
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: `[STUDENT_ACADEMIC_QUERY_START]
+    const candidateModels = [
+      "gemini-3.5-flash-lite",
+      "gemini-3.1-flash-lite",
+      "gemini-flash-lite-latest",
+      "gemma-4-26b-a4b-it",
+      "gemini-3.5-flash",
+      "gemini-3.6-flash"
+    ];
+    let rawText = "";
+    let response = null;
+    for (const modelName of candidateModels) {
+      try {
+        response = await ai.models.generateContent({
+          model: modelName,
+          contents: `[STUDENT_ACADEMIC_QUERY_START]
 ${sanitizedUserMessage}
 [STUDENT_ACADEMIC_QUERY_END]
 
@@ -66450,12 +66462,18 @@ Subject: ${context.subject?.code} - ${context.subject?.name}
 Mode: ${context.requestedMode || "general"}
 
 Please research the topic thoroughly and provide a deep, step-by-step, textbook-grade pedagogical explanation tailored to the query above.`,
-      config: {
-        systemInstruction,
-        tools: [{ googleSearch: {} }]
+          config: {
+            systemInstruction
+          }
+        });
+        if (response && response.text) {
+          rawText = response.text;
+          break;
+        }
+      } catch (mErr) {
+        console.warn(`[StudyAssistant] Model ${modelName} call failed:`, mErr?.message || mErr);
       }
-    });
-    const rawText = response.text || "";
+    }
     const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
     const webGroundingSources = [];
     if (Array.isArray(groundingChunks)) {

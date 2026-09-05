@@ -600,17 +600,35 @@ Return your response in clean JSON format:
   const { cleanText: sanitizedUserMessage } = sanitizePromptInput(context.userMessage || '');
 
   try {
-    // Generate content using Gemini 3.7 Flash with Google Search Grounding
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.6-flash',
-      contents: `[STUDENT_ACADEMIC_QUERY_START]\n${sanitizedUserMessage}\n[STUDENT_ACADEMIC_QUERY_END]\n\nSubject: ${context.subject?.code} - ${context.subject?.name}\nMode: ${context.requestedMode || 'general'}\n\nPlease research the topic thoroughly and provide a deep, step-by-step, textbook-grade pedagogical explanation tailored to the query above.`,
-      config: {
-        systemInstruction,
-        tools: [{ googleSearch: {} }]
-      }
-    });
+    const candidateModels = [
+      'gemini-3.5-flash-lite',
+      'gemini-3.1-flash-lite',
+      'gemini-flash-lite-latest',
+      'gemma-4-26b-a4b-it',
+      'gemini-3.5-flash',
+      'gemini-3.6-flash'
+    ];
 
-    const rawText = response.text || '';
+    let rawText = '';
+    let response: any = null;
+
+    for (const modelName of candidateModels) {
+      try {
+        response = await ai.models.generateContent({
+          model: modelName,
+          contents: `[STUDENT_ACADEMIC_QUERY_START]\n${sanitizedUserMessage}\n[STUDENT_ACADEMIC_QUERY_END]\n\nSubject: ${context.subject?.code} - ${context.subject?.name}\nMode: ${context.requestedMode || 'general'}\n\nPlease research the topic thoroughly and provide a deep, step-by-step, textbook-grade pedagogical explanation tailored to the query above.`,
+          config: {
+            systemInstruction
+          }
+        });
+        if (response && response.text) {
+          rawText = response.text;
+          break;
+        }
+      } catch (mErr: any) {
+        console.warn(`[StudyAssistant] Model ${modelName} call failed:`, mErr?.message || mErr);
+      }
+    }
     const groundingChunks = (response.candidates?.[0] as any)?.groundingMetadata?.groundingChunks || [];
     
     // Extract real web sources from grounding metadata
