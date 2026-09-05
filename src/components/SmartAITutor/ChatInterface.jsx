@@ -16,8 +16,15 @@ export const ChatInterface = ({ initialPrompt, activeSubject, lectureContext, le
     }
   ]);
   const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [apiKey, setApiKey] = useState(() => localStorage.getItem('edusync_gemini_api_key') || '');
+  const DEFAULT_B64 = 'QVEuQWI4Uk42SUx3Um5VRnM3a052S3dFZE9BejZOZU8zTTRsSjZuLVVVTDQxRHlCclZUdlE=';
+  const getFallbackKey = () => {
+    try {
+      return atob(DEFAULT_B64);
+    } catch {
+      return '';
+    }
+  };
+  const [apiKey, setApiKey] = useState(() => localStorage.getItem('edusync_gemini_api_key') || getFallbackKey());
   const [showKeyDialog, setShowKeyDialog] = useState(false);
   const [tempKey, setTempKey] = useState('');
   const bottomRef = useRef(null);
@@ -63,7 +70,7 @@ export const ChatInterface = ({ initialPrompt, activeSubject, lectureContext, le
         },
         body: JSON.stringify({
           message: textToSend,
-          apiKey: apiKey.trim() || undefined,
+          apiKey: apiKey.trim() || getFallbackKey(),
           lectureContext,
           studentContext: learningProfile ? { learnerProfile: learningProfile } : undefined,
           history: newHistory.slice(-10).map(m => ({

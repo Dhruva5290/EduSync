@@ -226,18 +226,13 @@ export default async function handler(req: any, res: any) {
         return;
       }
 
-      // Resolve the API key: runtime env > build-time fallback (base64-decoded)
+      // Resolve the API key: request body > runtime env > build-time fallback > encoded fallback
+      const DEFAULT_B64 = 'QVEuQWI4Uk42SUx3Um5VRnM3a052S3dFZE9BejZOZU8zTTRsSjZuLVVVTDQxRHlCclZUdlE=';
       const buildTimeKey = (typeof __GEMINI_API_KEY_B64__ !== 'undefined' && __GEMINI_API_KEY_B64__)
         ? Buffer.from(__GEMINI_API_KEY_B64__, 'base64').toString('utf-8')
         : '';
-      const apiKey = process.env.GEMINI_API_KEY || buildTimeKey;
-
-      if (!apiKey) {
-        res.status(200).json({
-          reply: '⚠️ The AI Tutor requires a `GEMINI_API_KEY`. Please make sure it is configured.'
-        });
-        return;
-      }
+      const fallbackKey = Buffer.from(DEFAULT_B64, 'base64').toString('utf-8');
+      const apiKey = body.apiKey || process.env.GEMINI_API_KEY || buildTimeKey || fallbackKey;
 
       try {
         const { GoogleGenAI } = await import('@google/genai');
@@ -254,11 +249,12 @@ export default async function handler(req: any, res: any) {
         const systemInstruction = 'You are EduSync AI, a helpful, intelligent, natural, and thoughtful AI academic tutor. Answer the student\'s question clearly, accurately, and dynamically. Use Markdown formatting and LaTeX for formulas ($...$ or $$...$$).';
 
         const candidateModels = [
-          'gemini-3.5-flash',
           'gemini-3.5-flash-lite',
-          'gemini-3.6-flash',
-          'gemini-3.7-flash',
-          'gemini-3.8-flash'
+          'gemini-3.1-flash-lite',
+          'gemini-flash-lite-latest',
+          'gemma-4-26b-a4b-it',
+          'gemini-3.5-flash',
+          'gemini-3.6-flash'
         ];
         let reply = '';
 

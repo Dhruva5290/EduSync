@@ -61029,44 +61029,6 @@ var init_users = __esm({
           "subj-mat"
         ],
         teachingSubjectIds: []
-      },
-      {
-        id: "teacher-1788566909683",
-        name: "Dr. Elena Rostova",
-        email: "elena.rostova.1788566909664@edusync.edu",
-        username: "elena.rostova.1788566909664",
-        password: "Teacher@2658",
-        role: "teacher",
-        gender: "Male",
-        institutionalId: "BMU-FAC-2658",
-        department: "Theoretical High Energy Physics",
-        designation: "Assistant Professor",
-        officeLocation: "Academic Block A",
-        officeHours: "Mon/Wed 11:00 AM - 01:00 PM",
-        phone: "+91 98715 90379",
-        status: "active",
-        joinedDate: "2026-09-05",
-        enrolledSubjectIds: [],
-        teachingSubjectIds: []
-      },
-      {
-        id: "teacher-1788568269094",
-        name: "Dr. Elena Rostova",
-        email: "elena.rostova.1788568269079@edusync.edu",
-        username: "elena.rostova.1788568269079",
-        password: "Teacher@2126",
-        role: "teacher",
-        gender: "Male",
-        institutionalId: "BMU-FAC-2126",
-        department: "Theoretical High Energy Physics",
-        designation: "Assistant Professor",
-        officeLocation: "Academic Block A",
-        officeHours: "Mon/Wed 11:00 AM - 01:00 PM",
-        phone: "+91 99939 48513",
-        status: "active",
-        joinedDate: "2026-09-05",
-        enrolledSubjectIds: [],
-        teachingSubjectIds: []
       }
     ];
   }
@@ -61077,62 +61039,6 @@ var lectures_default;
 var init_lectures = __esm({
   "data/lectures.json"() {
     lectures_default = [
-      {
-        id: "lec-1788569432795",
-        subjectId: "subj-phy-11",
-        subjectCode: "PHY-11",
-        subjectName: "Physics 11",
-        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
-        teacherName: "Faculty Instructor",
-        teacherId: "teacher-phy",
-        date: "2026-09-05",
-        duration: "45 mins",
-        summary: "ClassSarthi captured lecture.",
-        topics: [
-          "General Discussion"
-        ],
-        timeline: [],
-        boardCaptures: [],
-        audioTranscript: [],
-        generalizedNotes: {
-          explanation: "",
-          importantConcepts: [],
-          formulas: [],
-          examples: [],
-          keyPoints: [],
-          diagrams: [],
-          homeworkMentioned: []
-        },
-        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
-      },
-      {
-        id: "lec-1788568252888",
-        subjectId: "subj-phy-11",
-        subjectCode: "PHY-11",
-        subjectName: "Physics 11",
-        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
-        teacherName: "Faculty Instructor",
-        teacherId: "teacher-phy",
-        date: "2026-09-05",
-        duration: "45 mins",
-        summary: "ClassSarthi captured lecture.",
-        topics: [
-          "General Discussion"
-        ],
-        timeline: [],
-        boardCaptures: [],
-        audioTranscript: [],
-        generalizedNotes: {
-          explanation: "",
-          importantConcepts: [],
-          formulas: [],
-          examples: [],
-          keyPoints: [],
-          diagrams: [],
-          homeworkMentioned: []
-        },
-        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
-      },
       {
         id: "lec-1788566901878",
         subjectId: "subj-phy-11",
@@ -61765,56 +61671,6 @@ var notes_default;
 var init_notes = __esm({
   "data/notes.json"() {
     notes_default = [
-      {
-        id: "note-vn-sim-1788569432779",
-        studentId: "student-1",
-        subjectId: "subj-phy",
-        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
-        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
-        tags: [
-          "Physics 11",
-          "Work Energy Theorem",
-          "VisionNote Camera"
-        ],
-        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
-        doubtsDetected: [
-          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
-          "Why is potential energy defined only for conservative forces and not for friction?"
-        ],
-        lastModified: "2026-09-05T00:50:32.779Z",
-        isPinned: true,
-        source: "visionnote",
-        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
-        keyTakeaways: [
-          "Formulas verified and formatted in LaTeX.",
-          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
-        ]
-      },
-      {
-        id: "note-vn-sim-1788568252872",
-        studentId: "student-1",
-        subjectId: "subj-phy",
-        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
-        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
-        tags: [
-          "Physics 11",
-          "Work Energy Theorem",
-          "VisionNote Camera"
-        ],
-        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
-        doubtsDetected: [
-          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
-          "Why is potential energy defined only for conservative forces and not for friction?"
-        ],
-        lastModified: "2026-09-05T00:30:52.872Z",
-        isPinned: true,
-        source: "visionnote",
-        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
-        keyTakeaways: [
-          "Formulas verified and formatted in LaTeX.",
-          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
-        ]
-      },
       {
         id: "note-vn-sim-1788566901866",
         studentId: "student-1",
@@ -62587,7 +62443,7 @@ var init_student_progress = __esm({
           completed: false,
           lastTimestamp: "05:32",
           progressPercent: 75,
-          lastViewedAt: "2026-09-05T00:50:41.678Z",
+          lastViewedAt: "2026-09-05T00:08:23.619Z",
           quizCompleted: true,
           quizScore: 1,
           quizTotal: 6,
@@ -76127,14 +75983,10 @@ async function handler(req, res) {
         res.status(400).json({ error: "Message is required" });
         return;
       }
+      const DEFAULT_B64 = "QVEuQWI4Uk42SUx3Um5VRnM3a052S3dFZE9BejZOZU8zTTRsSjZuLVVVTDQxRHlCclZUdlE=";
       const buildTimeKey = "QVEuQWI4Uk42SUx3Um5VRnM3a052S3dFZE9BejZOZU8zTTRsSjZuLVVVTDQxRHlCclZUdlE=" ? Buffer.from("QVEuQWI4Uk42SUx3Um5VRnM3a052S3dFZE9BejZOZU8zTTRsSjZuLVVVTDQxRHlCclZUdlE=", "base64").toString("utf-8") : "";
-      const apiKey = process.env.GEMINI_API_KEY || buildTimeKey;
-      if (!apiKey) {
-        res.status(200).json({
-          reply: "\u26A0\uFE0F The AI Tutor requires a `GEMINI_API_KEY`. Please make sure it is configured."
-        });
-        return;
-      }
+      const fallbackKey = Buffer.from(DEFAULT_B64, "base64").toString("utf-8");
+      const apiKey = body.apiKey || process.env.GEMINI_API_KEY || buildTimeKey || fallbackKey;
       try {
         const { GoogleGenAI: GoogleGenAI3 } = await Promise.resolve().then(() => (init_node(), node_exports));
         const ai = new GoogleGenAI3({ apiKey });
@@ -76144,11 +75996,12 @@ async function handler(req, res) {
         }));
         const systemInstruction = "You are EduSync AI, a helpful, intelligent, natural, and thoughtful AI academic tutor. Answer the student's question clearly, accurately, and dynamically. Use Markdown formatting and LaTeX for formulas ($...$ or $$...$$).";
         const candidateModels = [
-          "gemini-3.5-flash",
           "gemini-3.5-flash-lite",
-          "gemini-3.6-flash",
-          "gemini-3.7-flash",
-          "gemini-3.8-flash"
+          "gemini-3.1-flash-lite",
+          "gemini-flash-lite-latest",
+          "gemma-4-26b-a4b-it",
+          "gemini-3.5-flash",
+          "gemini-3.6-flash"
         ];
         let reply = "";
         for (const model of candidateModels) {
