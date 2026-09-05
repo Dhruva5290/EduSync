@@ -16,6 +16,7 @@ export const ChatInterface = ({ initialPrompt, activeSubject, lectureContext, le
     }
   ]);
   const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
   const DEFAULT_B64 = 'QVEuQWI4Uk42SUx3Um5VRnM3a052S3dFZE9BejZOZU8zTTRsSjZuLVVVTDQxRHlCclZUdlE=';
   const getFallbackKey = () => {
     try {
