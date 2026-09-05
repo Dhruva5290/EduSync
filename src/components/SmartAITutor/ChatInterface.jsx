@@ -1,33 +1,31 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, Loader2, RotateCcw, Key } from 'lucide-react';
+import { Send, Bot, User, Loader2, RotateCcw } from 'lucide-react';
 
 export const cleanAndFormatMath = (text = '') => {
   if (!text) return '';
   return String(text).trim();
 };
 
-export const ChatInterface = ({ initialPrompt, activeSubject, lectureContext, learningProfile }) => {
+const DEFAULT_B64 = 'QVEuQWI4Uk42SUx3Um5VRnM3a052S3dFZE9BejZOZU8zTTRsSjZuLVVVTDQxRHlCclZUdlE=';
+const getApiKey = () => {
+  try {
+    return localStorage.getItem('edusync_gemini_api_key') || atob(DEFAULT_B64);
+  } catch {
+    return '';
+  }
+};
+
+export const ChatInterface = ({ initialPrompt, activeSubject }) => {
   const [messages, setMessages] = useState([
     {
       id: 'welcome',
       role: 'assistant',
-      text: "Hello! I am your AI chatbot. Ask me any question—concepts, problems, homework, code, or study advice. How can I help you today?",
+      text: "Hello! I am your AI academic tutor. Ask me any question about your coursework, homework problems, theoretical concepts, or study strategies. How can I help you today?",
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const DEFAULT_B64 = 'QVEuQWI4Uk42SUx3Um5VRnM3a052S3dFZE9BejZOZU8zTTRsSjZuLVVVTDQxRHlCclZUdlE=';
-  const getFallbackKey = () => {
-    try {
-      return atob(DEFAULT_B64);
-    } catch {
-      return '';
-    }
-  };
-  const [apiKey, setApiKey] = useState(() => localStorage.getItem('edusync_gemini_api_key') || getFallbackKey());
-  const [showKeyDialog, setShowKeyDialog] = useState(false);
-  const [tempKey, setTempKey] = useState('');
   const bottomRef = useRef(null);
   const handledPromptRef = useRef(null);
 
@@ -35,7 +33,7 @@ export const ChatInterface = ({ initialPrompt, activeSubject, lectureContext, le
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading]);
 
-  // When an initialPrompt is provided (e.g. from "Ask AI Tutor"), take it as a normal prompt done by the user
+  // When initialPrompt is passed (e.g. from "Ask AI Tutor"), run it as a normal prompt
   useEffect(() => {
     if (initialPrompt && initialPrompt.trim() && initialPrompt !== handledPromptRef.current) {
       handledPromptRef.current = initialPrompt;
@@ -60,48 +58,19 @@ export const ChatInterface = ({ initialPrompt, activeSubject, lectureContext, le
     setLoading(true);
 
     let replyText = '';
+    const key = getApiKey();
 
-    try {
-      const token = localStorage.getItem('edusync_token');
-      const res = await fetch('/api/tutor', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-        },
-        body: JSON.stringify({
-          message: textToSend,
-          apiKey: apiKey.trim() || getFallbackKey(),
-          lectureContext,
-          studentContext: learningProfile ? { learnerProfile: learningProfile } : undefined,
-          history: newHistory.slice(-10).map(m => ({
-            role: m.role === 'user' ? 'user' : 'assistant',
-            text: m.text
-          }))
-        })
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        if (data && data.reply) {
-          replyText = data.reply;
-        }
-      }
-    } catch (err) {
-      console.warn('Tutor call error:', err);
-    }
-
-    // Direct Gemini client fallback if user provided a custom key and server was unreachable
-    if (!replyText && apiKey.trim()) {
+    // 1. Direct high-speed Gemini REST call (bypasses serverless bundler errors)
+    if (key) {
       const candidateModels = ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-flash-lite-latest'];
       for (const model of candidateModels) {
         try {
-          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey.trim()}`, {
+          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               systemInstruction: {
-                parts: [{ text: "You are a helpful, intelligent, natural AI chatbot. Provide clear, accurate, thoughtful answers without rigid canned templates." }]
+                parts: [{ text: "You are an intelligent, helpful, natural AI chatbot and academic tutor. Answer the student's question clearly, accurately, and dynamically. Use clean Markdown and LaTeX formulas where appropriate ($...$ or $$...$$). Do not use canned templates." }]
               },
               contents: newHistory.slice(-8).map(m => ({
                 role: m.role === 'user' ? 'user' : 'model',
@@ -114,14 +83,45 @@ export const ChatInterface = ({ initialPrompt, activeSubject, lectureContext, le
             replyText = data.candidates[0].content.parts[0].text;
             break;
           }
-        } catch (modelErr) {
-          console.warn(`Direct model ${model} call failed:`, modelErr);
+        } catch (e) {
+          console.warn(`Direct model ${model} failed:`, e);
         }
       }
     }
 
+    // 2. Server API fallback if direct call did not return text
     if (!replyText) {
-      replyText = "I'm having trouble connecting to the AI service right now. Please verify your internet connection or check your API key.";
+      try {
+        const token = localStorage.getItem('edusync_token');
+        const res = await fetch('/api/tutor', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+          },
+          body: JSON.stringify({
+            message: textToSend,
+            apiKey: key,
+            history: newHistory.slice(-10).map(m => ({
+              role: m.role === 'user' ? 'user' : 'assistant',
+              text: m.text
+            }))
+          })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.reply) {
+            replyText = data.reply;
+          }
+        }
+      } catch (err) {
+        console.warn('Backend tutor call error:', err);
+      }
+    }
+
+    if (!replyText) {
+      replyText = "I'm having trouble reaching the AI service right now. Please check your network connection and try again.";
     }
 
     const botMsg = {
@@ -135,21 +135,9 @@ export const ChatInterface = ({ initialPrompt, activeSubject, lectureContext, le
     setLoading(false);
   };
 
-  const saveKey = () => {
-    const trimmed = tempKey.trim();
-    if (trimmed) {
-      localStorage.setItem('edusync_gemini_api_key', trimmed);
-      setApiKey(trimmed);
-    } else {
-      localStorage.removeItem('edusync_gemini_api_key');
-      setApiKey('');
-    }
-    setShowKeyDialog(false);
-  };
-
   return (
     <div className="flex flex-col h-full bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
-      {/* Header */}
+      {/* Simple Header */}
       <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-800 bg-slate-950">
         <div className="flex items-center gap-2.5">
           <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -164,78 +152,22 @@ export const ChatInterface = ({ initialPrompt, activeSubject, lectureContext, le
           )}
         </div>
 
-        <div className="flex items-center gap-2">
-          {/* Custom API Key Button */}
-          <button
-            onClick={() => {
-              setTempKey(apiKey);
-              setShowKeyDialog(true);
-            }}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
-              apiKey
-                ? 'bg-emerald-950/80 border-emerald-600 text-emerald-300 hover:bg-emerald-900'
-                : 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-300'
-            }`}
-          >
-            <Key className="w-3.5 h-3.5" />
-            <span>{apiKey ? 'API Key Active' : 'Gemini Key'}</span>
-          </button>
-
-          {/* Reset / Clear Chat */}
-          <button
-            onClick={() => setMessages([{
-              id: 'welcome',
-              role: 'assistant',
-              text: 'Conversation cleared! What would you like to ask?',
-              time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-            }])}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-all cursor-pointer"
-            title="Clear conversation"
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span>Clear</span>
-          </button>
-        </div>
+        <button
+          onClick={() => setMessages([{
+            id: 'welcome',
+            role: 'assistant',
+            text: 'Conversation cleared! What would you like to ask?',
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          }])}
+          className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-all cursor-pointer"
+          title="Clear conversation"
+        >
+          <RotateCcw className="w-3.5 h-3.5" />
+          <span>Clear</span>
+        </button>
       </div>
 
-      {/* API Key Modal Dialog */}
-      {showKeyDialog && (
-        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-700 rounded-xl p-6 max-w-md w-full shadow-2xl space-y-4 text-slate-100">
-            <div className="flex items-center gap-2 text-indigo-400 font-bold text-base">
-              <Key className="w-5 h-5" />
-              <span>Google Gemini API Key</span>
-            </div>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              If you have a Google Gemini API key, you can enter it below to use your own direct quota.
-            </p>
-            <input
-              type="password"
-              placeholder="AIzaSy..."
-              value={tempKey}
-              onChange={(e) => setTempKey(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-hidden focus:border-indigo-500 font-mono"
-              autoFocus
-            />
-            <div className="flex items-center justify-end gap-2 pt-2">
-              <button
-                onClick={() => setShowKeyDialog(false)}
-                className="px-3.5 py-1.5 text-xs text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={saveKey}
-                className="px-4 py-1.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors cursor-pointer shadow-md"
-              >
-                Save Key
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Messages Feed */}
+      {/* Messages Thread */}
       <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
         {messages.map((m) => {
           const isUser = m.role === 'user';
@@ -285,7 +217,7 @@ export const ChatInterface = ({ initialPrompt, activeSubject, lectureContext, le
         <div ref={bottomRef} />
       </div>
 
-      {/* Input Form */}
+      {/* Input Area */}
       <div className="p-3 sm:p-4 bg-slate-950 border-t border-slate-800">
         <form
           onSubmit={(e) => {
@@ -301,6 +233,7 @@ export const ChatInterface = ({ initialPrompt, activeSubject, lectureContext, le
             placeholder="Type any message or prompt for the AI..."
             disabled={loading}
             className="flex-1 bg-transparent border-0 text-sm text-slate-100 placeholder-slate-400 focus:outline-hidden"
+            autoFocus
           />
 
           <button

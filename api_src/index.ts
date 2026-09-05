@@ -235,42 +235,39 @@ export default async function handler(req: any, res: any) {
       const apiKey = body.apiKey || process.env.GEMINI_API_KEY || buildTimeKey || fallbackKey;
 
       try {
-        const { GoogleGenAI } = await import('@google/genai');
-        const ai = new GoogleGenAI({ apiKey });
-
         const formattedHistory = (Array.isArray(history) ? history : [])
           .slice(-10)
-          .filter((h: any) => h.text)
+          .filter((h: any) => (h.text || h.content))
           .map((h: any) => ({
             role: (h.sender === 'user' || h.role === 'user') ? 'user' : 'model',
-            parts: [{ text: String(h.text) }]
+            parts: [{ text: String(h.text || h.content) }]
           }));
-
-        const systemInstruction = 'You are EduSync AI, a helpful, intelligent, natural, and thoughtful AI academic tutor. Answer the student\'s question clearly, accurately, and dynamically. Use Markdown formatting and LaTeX for formulas ($...$ or $$...$$).';
 
         const candidateModels = [
           'gemini-3.5-flash-lite',
           'gemini-3.1-flash-lite',
-          'gemini-flash-lite-latest',
-          'gemma-4-26b-a4b-it',
-          'gemini-3.5-flash',
-          'gemini-3.6-flash'
+          'gemini-flash-lite-latest'
         ];
         let reply = '';
 
         for (const model of candidateModels) {
           try {
-            const response = await ai.models.generateContent({
-              model,
-              contents: [
-                ...formattedHistory,
-                { role: 'user', parts: [{ text: message }] }
-              ],
-              config: { systemInstruction }
+            const apiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                systemInstruction: {
+                  parts: [{ text: "You are an intelligent, helpful, natural AI chatbot. Answer questions clearly, thoughtfully, and directly using clean Markdown and LaTeX math ($...$ or $$...$$) where appropriate." }]
+                },
+                contents: [
+                  ...formattedHistory,
+                  { role: 'user', parts: [{ text: message }] }
+                ]
+              })
             });
-
-            if (response && response.text) {
-              reply = response.text;
+            const data = await apiRes.json();
+            if (data?.candidates?.[0]?.content?.parts?.[0]?.text) {
+              reply = data.candidates[0].content.parts[0].text;
               break;
             }
           } catch (modelErr: any) {
@@ -279,15 +276,15 @@ export default async function handler(req: any, res: any) {
         }
 
         if (!reply) {
-          reply = 'I was unable to generate a response. Please try again.';
+          reply = 'I was unable to generate a response right now. Please try again.';
         }
 
         res.status(200).json({ reply });
         return;
       } catch (geminiErr: any) {
-        console.error('[Tutor Gemini Error]', geminiErr?.message || geminiErr);
+        console.error('[Tutor Error]', geminiErr?.message || geminiErr);
         res.status(200).json({
-          reply: `⚠️ Error generating response: ${geminiErr?.message || 'Unknown error'}. Please try again.`
+          reply: 'I encountered an error connecting to the AI. Please try again.'
         });
         return;
       }
