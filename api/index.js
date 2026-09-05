@@ -60962,6 +60962,73 @@ var init_users = __esm({
         joinedDate: "2026-09-04",
         enrolledSubjectIds: [],
         teachingSubjectIds: []
+      },
+      {
+        id: "teacher-1788554797994",
+        name: "Dr. Elena Rostova",
+        email: "elena.rostova.1788554797992@edusync.edu",
+        username: "elena.rostova.1788554797992",
+        password: "Teacher@2724",
+        role: "teacher",
+        gender: "Male",
+        institutionalId: "BMU-FAC-2724",
+        department: "Theoretical High Energy Physics",
+        designation: "Assistant Professor",
+        officeLocation: "Academic Block A",
+        officeHours: "Mon/Wed 11:00 AM - 01:00 PM",
+        phone: "+91 98728 62726",
+        status: "active",
+        joinedDate: "2026-09-04",
+        enrolledSubjectIds: [],
+        teachingSubjectIds: []
+      },
+      {
+        id: "student-1788561372354",
+        name: "Aryan Sagar",
+        email: "aryan@bmu",
+        username: "student.aryan",
+        password: "1234",
+        role: "student",
+        gender: "Male",
+        program: "B.Tech Computer Science and Engineering",
+        institutionalId: "260-203371",
+        department: "Department of Computer Science & Engineering",
+        academicYear: "1st Year (Semester 1)",
+        phone: "+91 98110 24590",
+        gpa: 8.45,
+        status: "active",
+        joinedDate: "2026-09-04",
+        enrolledSubjectIds: [
+          "subj-phy",
+          "subj-mat",
+          "subj-misc",
+          "subj-che"
+        ],
+        teachingSubjectIds: []
+      },
+      {
+        id: "student-1788565458798",
+        name: "VANSHITA",
+        email: "van@123",
+        username: "student.vanshita",
+        password: "123",
+        role: "student",
+        gender: "Female",
+        program: "B.Tech Computer Science and Engineering",
+        institutionalId: "260-203480",
+        department: "Department of Computer Science & Engineering",
+        academicYear: "1st Year (Semester 1)",
+        phone: "+91 98110 24590",
+        gpa: 8.45,
+        status: "active",
+        joinedDate: "2026-09-04",
+        enrolledSubjectIds: [
+          "subj-che",
+          "subj-misc",
+          "subj-phy",
+          "subj-mat"
+        ],
+        teachingSubjectIds: []
       }
     ];
   }
@@ -60972,6 +61039,34 @@ var lectures_default;
 var init_lectures = __esm({
   "data/lectures.json"() {
     lectures_default = [
+      {
+        id: "lec-1788566901878",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-05",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
       {
         id: "lec-1788554775889",
         subjectId: "subj-phy-11",
@@ -61576,6 +61671,31 @@ var notes_default;
 var init_notes = __esm({
   "data/notes.json"() {
     notes_default = [
+      {
+        id: "note-vn-sim-1788566901866",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-05T00:08:21.866Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
       {
         id: "note-vn-sim-1788554775873",
         studentId: "student-1",
@@ -62323,7 +62443,7 @@ var init_student_progress = __esm({
           completed: false,
           lastTimestamp: "05:32",
           progressPercent: 75,
-          lastViewedAt: "2026-09-04T20:46:25.207Z",
+          lastViewedAt: "2026-09-05T00:08:23.619Z",
           quizCompleted: true,
           quizScore: 1,
           quizTotal: 6,

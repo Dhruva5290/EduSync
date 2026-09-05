@@ -20,11 +20,11 @@ import {
 } from 'lucide-react';
 
 interface QuestionBankManagerProps {
-  currentUser: User;
-  subjects: Subject[];
-  activeSubjectId: string;
-  onSelectSubject: (id: string) => void;
-  questionBanks: QuestionBank[];
+  currentUser?: User;
+  subjects?: Subject[];
+  activeSubjectId?: string;
+  onSelectSubject?: (id: string) => void;
+  questionBanks?: QuestionBank[];
   onSaveQuestionBank: (bank: QuestionBank) => Promise<void>;
   onDeleteQuestionBank: (bankId: string) => Promise<void>;
   onShowToast: (msg: string, type?: 'success' | 'info' | 'error') => void;
@@ -32,14 +32,18 @@ interface QuestionBankManagerProps {
 
 export const QuestionBankManager: React.FC<QuestionBankManagerProps> = ({
   currentUser,
-  subjects = [],
+  subjects,
   activeSubjectId,
   onSelectSubject,
-  questionBanks = [],
+  questionBanks,
   onSaveQuestionBank,
   onDeleteQuestionBank,
   onShowToast
 }) => {
+  const safeSubjects = Array.isArray(subjects) ? subjects : [];
+  const safeQuestionBanks = Array.isArray(questionBanks) ? questionBanks : [];
+  const safeCurrentUser = currentUser || { id: 'teacher-phy', name: 'Faculty Instructor' };
+
   const [selectedSubjectFilter, setSelectedSubjectFilter] = useState<string>(activeSubjectId || 'all');
   const [expandedBankIds, setExpandedBankIds] = useState<Set<string>>(new Set(['qb-phy-01', 'qb-che-01', 'qb-mat-01']));
   const [showUploadModal, setShowUploadModal] = useState(false);
@@ -47,7 +51,7 @@ export const QuestionBankManager: React.FC<QuestionBankManagerProps> = ({
 
   // New Bank State
   const [newBankTitle, setNewBankTitle] = useState('');
-  const [newBankSubjectId, setNewBankSubjectId] = useState(activeSubjectId || subjects[0]?.id || 'subj-phy');
+  const [newBankSubjectId, setNewBankSubjectId] = useState(activeSubjectId || safeSubjects[0]?.id || 'subj-phy');
   const [newBankDescription, setNewBankDescription] = useState('');
   const [bankQuestions, setBankQuestions] = useState<QuizQuestion[]>([]);
 
@@ -94,7 +98,7 @@ export const QuestionBankManager: React.FC<QuestionBankManagerProps> = ({
       topic: qTopic.trim() || 'Core Concept',
       difficulty: qDifficulty,
       source: 'teacher_question_bank',
-      teacherName: currentUser.name
+      teacherName: safeCurrentUser.name
     };
 
     setBankQuestions(prev => [...prev, newQ]);
@@ -118,19 +122,19 @@ export const QuestionBankManager: React.FC<QuestionBankManagerProps> = ({
         return;
       }
       const validated: QuizQuestion[] = parsed.map((item, idx) => {
-        if (!item.question || !Array.isArray(item.options) || item.options.length < 2) {
+        if (!item?.question || !Array.isArray(item?.options) || item.options.length < 2) {
           throw new Error(`Question #${idx + 1} is missing a question string or options array.`);
         }
         return {
           id: item.id || `q-json-${Date.now()}-${idx}`,
           question: String(item.question),
-          options: item.options.map(String),
+          options: (item.options || []).map(String),
           correctIndex: typeof item.correctIndex === 'number' ? item.correctIndex : 0,
           explanation: item.explanation || 'Verified professor question.',
           topic: item.topic || 'General Topic',
           difficulty: item.difficulty || 'moderate',
           source: 'teacher_question_bank',
-          teacherName: currentUser.name
+          teacherName: safeCurrentUser.name
         };
       });
 
@@ -158,8 +162,8 @@ export const QuestionBankManager: React.FC<QuestionBankManagerProps> = ({
       subjectId: newBankSubjectId,
       title: newBankTitle.trim(),
       description: newBankDescription.trim() || 'Faculty curated question repository.',
-      teacherId: currentUser.id,
-      teacherName: currentUser.name,
+      teacherId: safeCurrentUser.id,
+      teacherName: safeCurrentUser.name,
       uploadedAt: new Date().toISOString(),
       questionsCount: bankQuestions.length,
       questions: bankQuestions
@@ -175,13 +179,18 @@ export const QuestionBankManager: React.FC<QuestionBankManagerProps> = ({
   };
 
   const filteredBanks = selectedSubjectFilter === 'all'
-    ? questionBanks
-    : questionBanks.filter(qb => qb.subjectId === selectedSubjectFilter);
+    ? safeQuestionBanks
+    : safeQuestionBanks.filter(qb => qb?.subjectId === selectedSubjectFilter);
 
   const getSubjectName = (subjId: string) => {
-    const subj = subjects.find(s => s.id === subjId);
+    const subj = safeSubjects.find(s => s?.id === subjId);
     return subj ? `${subj.code} · ${subj.name}` : subjId;
   };
+
+  const totalQuestionsAllSubjects = safeQuestionBanks.reduce((acc, b) => {
+    const qCount = Array.isArray(b?.questions) ? b.questions.length : (b?.questionsCount || 0);
+    return acc + qCount;
+  }, 0);
 
   return (
     <div className="space-y-6">
@@ -203,7 +212,7 @@ export const QuestionBankManager: React.FC<QuestionBankManagerProps> = ({
 
         <button
           onClick={() => {
-            setNewBankSubjectId(activeSubjectId !== 'all' ? activeSubjectId : subjects[0]?.id || 'subj-phy');
+            setNewBankSubjectId(activeSubjectId !== 'all' ? (activeSubjectId || safeSubjects[0]?.id || 'subj-phy') : (safeSubjects[0]?.id || 'subj-phy'));
             setShowUploadModal(true);
           }}
           className="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-lg text-xs font-bold shadow-md transition-all cursor-pointer shrink-0"
@@ -231,12 +240,15 @@ export const QuestionBankManager: React.FC<QuestionBankManagerProps> = ({
                 : 'bg-slate-800 text-slate-400 hover:text-white'
             }`}
           >
-            All Subjects ({questionBanks.reduce((acc, b) => acc + b.questions.length, 0)} Qs)
+            All Subjects ({totalQuestionsAllSubjects} Qs)
           </button>
-          {subjects.map(subj => {
-            const count = questionBanks
-              .filter(b => b.subjectId === subj.id)
-              .reduce((acc, b) => acc + b.questions.length, 0);
+          {safeSubjects.map(subj => {
+            const count = safeQuestionBanks
+              .filter(b => b?.subjectId === subj.id)
+              .reduce((acc, b) => {
+                const qCount = Array.isArray(b?.questions) ? b.questions.length : (b?.questionsCount || 0);
+                return acc + qCount;
+              }, 0);
             return (
               <button
                 key={subj.id}
@@ -273,6 +285,9 @@ export const QuestionBankManager: React.FC<QuestionBankManagerProps> = ({
         ) : (
           filteredBanks.map(bank => {
             const isExpanded = expandedBankIds.has(bank.id);
+            const questionsList = Array.isArray(bank?.questions) ? bank.questions : [];
+            const questionsCount = questionsList.length || bank?.questionsCount || 0;
+
             return (
               <div
                 key={bank.id}
@@ -293,7 +308,7 @@ export const QuestionBankManager: React.FC<QuestionBankManagerProps> = ({
                         Active in Student AI Quizzes
                       </span>
                       <span className="text-[11px] text-slate-400 font-mono">
-                        Uploaded by {bank.teacherName}
+                        Uploaded by {bank.teacherName || 'Faculty'}
                       </span>
                     </div>
                     <h3 className="text-sm font-bold text-white">{bank.title}</h3>
@@ -305,10 +320,10 @@ export const QuestionBankManager: React.FC<QuestionBankManagerProps> = ({
                   <div className="flex items-center gap-3 shrink-0 self-end md:self-center">
                     <div className="text-right">
                       <span className="text-xs font-mono font-bold text-blue-400">
-                        {bank.questions.length} Questions
+                        {questionsCount} Questions
                       </span>
                       <p className="text-[10px] text-slate-500">
-                        {new Date(bank.uploadedAt).toLocaleDateString()}
+                        {bank.uploadedAt ? new Date(bank.uploadedAt).toLocaleDateString() : 'Active'}
                       </p>
                     </div>
 
@@ -335,74 +350,81 @@ export const QuestionBankManager: React.FC<QuestionBankManagerProps> = ({
                 {isExpanded && (
                   <div className="p-4 space-y-3 bg-slate-950/50">
                     <div className="flex items-center justify-between text-xs font-mono text-slate-400 pb-2 border-b border-slate-800">
-                      <span>Curated Questions ({bank.questions.length})</span>
+                      <span>Curated Questions ({questionsList.length})</span>
                       <span className="text-[11px] text-emerald-400">
                         ✓ Injected into Note-to-Quiz & AI Study Assistant
                       </span>
                     </div>
 
                     <div className="space-y-3">
-                      {bank.questions.map((q, qIdx) => (
-                        <div
-                          key={q.id || qIdx}
-                          className="p-3 bg-slate-900/90 border border-slate-800/90 rounded-lg space-y-2 text-xs"
-                        >
-                          <div className="flex items-start justify-between gap-2">
-                            <span className="font-bold text-slate-200">
-                              <strong className="text-blue-400 font-mono">Q{qIdx + 1}.</strong> {q.question}
-                            </span>
-                            <div className="flex items-center gap-1.5 shrink-0">
-                              <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-slate-800 text-slate-300">
-                                {q.topic || 'General'}
-                              </span>
-                              <span className={`px-1.5 py-0.5 rounded text-[9px] font-mono uppercase ${
-                                q.difficulty === 'hard'
-                                  ? 'bg-rose-950 text-rose-300'
-                                  : q.difficulty === 'moderate'
-                                  ? 'bg-amber-950 text-amber-300'
-                                  : 'bg-emerald-950 text-emerald-300'
-                              }`}>
-                                {q.difficulty || 'moderate'}
-                              </span>
-                            </div>
-                          </div>
-
-                          {/* Options grid */}
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-1">
-                            {q.options.map((opt, oIdx) => {
-                              const isCorrect = oIdx === q.correctIndex;
-                              return (
-                                <div
-                                  key={oIdx}
-                                  className={`px-2.5 py-1.5 rounded flex items-center gap-2 border text-[11px] ${
-                                    isCorrect
-                                      ? 'bg-emerald-950/60 border-emerald-700 text-emerald-200 font-medium'
-                                      : 'bg-slate-950/60 border-slate-800 text-slate-400'
-                                  }`}
-                                >
-                                  <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold font-mono shrink-0 ${
-                                    isCorrect ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-400'
-                                  }`}>
-                                    {String.fromCharCode(65 + oIdx)}
+                      {questionsList.length === 0 ? (
+                        <p className="text-xs text-slate-500 italic p-3">No individual question entries stored in this bank.</p>
+                      ) : (
+                        questionsList.map((q, qIdx) => {
+                          const optionsList = Array.isArray(q?.options) ? q.options : [];
+                          return (
+                            <div
+                              key={q?.id || qIdx}
+                              className="p-3 bg-slate-900/90 border border-slate-800/90 rounded-lg space-y-2 text-xs"
+                            >
+                              <div className="flex items-start justify-between gap-2">
+                                <span className="font-bold text-slate-200">
+                                  <strong className="text-blue-400 font-mono">Q{qIdx + 1}.</strong> {q?.question || 'Question'}
+                                </span>
+                                <div className="flex items-center gap-1.5 shrink-0">
+                                  <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-slate-800 text-slate-300">
+                                    {q?.topic || 'General'}
                                   </span>
-                                  <span className="truncate">{opt}</span>
-                                  {isCorrect && (
-                                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 ml-auto shrink-0" />
-                                  )}
+                                  <span className={`px-1.5 py-0.5 rounded text-[9px] font-mono uppercase ${
+                                    q?.difficulty === 'hard'
+                                      ? 'bg-rose-950 text-rose-300'
+                                      : q?.difficulty === 'moderate'
+                                      ? 'bg-amber-950 text-amber-300'
+                                      : 'bg-emerald-950 text-emerald-300'
+                                  }`}>
+                                    {q?.difficulty || 'moderate'}
+                                  </span>
                                 </div>
-                              );
-                            })}
-                          </div>
+                              </div>
 
-                          {/* Explanation */}
-                          {q.explanation && (
-                            <div className="pt-1.5 text-[11px] text-slate-400 bg-slate-950/40 p-2 rounded border border-slate-800/60">
-                              <span className="font-semibold text-blue-300">Faculty Explanation: </span>
-                              {q.explanation}
+                              {/* Options grid */}
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-1">
+                                {optionsList.map((opt, oIdx) => {
+                                  const isCorrect = oIdx === q?.correctIndex;
+                                  return (
+                                    <div
+                                      key={oIdx}
+                                      className={`px-2.5 py-1.5 rounded flex items-center gap-2 border text-[11px] ${
+                                        isCorrect
+                                          ? 'bg-emerald-950/60 border-emerald-700 text-emerald-200 font-medium'
+                                          : 'bg-slate-950/60 border-slate-800 text-slate-400'
+                                      }`}
+                                    >
+                                      <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold font-mono shrink-0 ${
+                                        isCorrect ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-400'
+                                      }`}>
+                                        {String.fromCharCode(65 + oIdx)}
+                                      </span>
+                                      <span className="truncate">{opt}</span>
+                                      {isCorrect && (
+                                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 ml-auto shrink-0" />
+                                      )}
+                                    </div>
+                                  );
+                                })}
+                              </div>
+
+                              {/* Explanation */}
+                              {q?.explanation && (
+                                <div className="pt-1.5 text-[11px] text-slate-400 bg-slate-950/40 p-2 rounded border border-slate-800/60">
+                                  <span className="font-semibold text-blue-300">Faculty Explanation: </span>
+                                  {q.explanation}
+                                </div>
+                              )}
                             </div>
-                          )}
-                        </div>
-                      ))}
+                          );
+                        })
+                      )}
                     </div>
                   </div>
                 )}
@@ -455,7 +477,7 @@ export const QuestionBankManager: React.FC<QuestionBankManagerProps> = ({
                   onChange={e => setNewBankSubjectId(e.target.value)}
                   className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-blue-500"
                 >
-                  {subjects.map(subj => (
+                  {safeSubjects.map(subj => (
                     <option key={subj.id} value={subj.id}>
                       {subj.code} — {subj.name}
                     </option>

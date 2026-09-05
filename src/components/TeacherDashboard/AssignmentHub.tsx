@@ -18,8 +18,8 @@ import {
 } from 'lucide-react';
 
 interface AssignmentHubProps {
-  activeSubject: Subject;
-  assignments: Assignment[];
+  activeSubject?: Subject;
+  assignments?: Assignment[];
   onCreateAssignment: (assignment: Partial<Assignment>) => Promise<void>;
   onGradeSubmission: (submissionId: string, grade: number, feedback: string) => Promise<void>;
   fetchSubmissionsForAssignment: (assignmentId: string) => Promise<Submission[]>;
@@ -27,11 +27,21 @@ interface AssignmentHubProps {
 
 export const AssignmentHub: React.FC<AssignmentHubProps> = ({
   activeSubject,
-  assignments = [],
+  assignments,
   onCreateAssignment,
   onGradeSubmission,
   fetchSubmissionsForAssignment
 }) => {
+  const safeAssignments = Array.isArray(assignments) ? assignments : [];
+  const safeActiveSubject: Subject = activeSubject || {
+    id: 'subj-phy',
+    code: 'PHY',
+    name: 'Physics',
+    department: 'Department of Applied Sciences',
+    teacherName: 'Faculty',
+    enrolledCount: 15
+  };
+
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
@@ -56,16 +66,26 @@ export const AssignmentHub: React.FC<AssignmentHubProps> = ({
   const [gradeInput, setGradeInput] = useState<number>(90);
   const [feedbackInput, setFeedbackInput] = useState<string>('');
 
+  const safeSubmissions = Array.isArray(submissions) ? submissions : [];
+
   const handleOpenSubmissions = async (assignment: Assignment) => {
     setSelectedAssignment(assignment);
     setLoadingSubmissions(true);
-    const data = await fetchSubmissionsForAssignment(assignment.id);
-    setSubmissions(data);
-    setLoadingSubmissions(false);
-    if (data.length > 0) {
-      handleSelectSubmission(data[0]);
-    } else {
+    try {
+      const data = await fetchSubmissionsForAssignment(assignment.id);
+      const safeData = Array.isArray(data) ? data : [];
+      setSubmissions(safeData);
+      setLoadingSubmissions(false);
+      if (safeData.length > 0) {
+        handleSelectSubmission(safeData[0]);
+      } else {
+        setActiveSubmission(null);
+      }
+    } catch (err) {
+      console.error('Error fetching submissions:', err);
+      setSubmissions([]);
       setActiveSubmission(null);
+      setLoadingSubmissions(false);
     }
   };
 
@@ -80,7 +100,7 @@ export const AssignmentHub: React.FC<AssignmentHubProps> = ({
     if (!activeSubmission) return;
     await onGradeSubmission(activeSubmission.id, gradeInput, feedbackInput);
     // update local state
-    const updated = submissions.map(s => s.id === activeSubmission.id ? { ...s, grade: gradeInput, feedback: feedbackInput, status: 'graded' as const } : s);
+    const updated = safeSubmissions.map(s => s.id === activeSubmission.id ? { ...s, grade: gradeInput, feedback: feedbackInput, status: 'graded' as const } : s);
     setSubmissions(updated);
     setActiveSubmission({ ...activeSubmission, grade: gradeInput, feedback: feedbackInput, status: 'graded' });
   };
@@ -88,7 +108,7 @@ export const AssignmentHub: React.FC<AssignmentHubProps> = ({
   const handleCreateAssignmentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await onCreateAssignment({
-      subjectId: activeSubject.id,
+      subjectId: safeActiveSubject.id,
       title,
       description,
       richTextInstructions: richInstructions || description,
@@ -112,7 +132,7 @@ export const AssignmentHub: React.FC<AssignmentHubProps> = ({
         <div>
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-bold px-2 py-0.5 rounded-sm bg-slate-950 text-blue-400 font-mono border border-slate-800">
-              {activeSubject.code}
+              {safeActiveSubject.code || 'SUBJ'}
             </span>
             <h2 className="text-base font-bold uppercase tracking-tight text-white">
               Assignment & Evaluation Hub
@@ -126,7 +146,7 @@ export const AssignmentHub: React.FC<AssignmentHubProps> = ({
         <button
           id="assignment-create-new-btn"
           onClick={() => setShowCreateModal(true)}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm bg-blue-600 text-white text-xs font-semibold hover:bg-blue-500 transition-all shadow-xs shrink-0"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm bg-blue-600 text-white text-xs font-semibold hover:bg-blue-500 transition-all shadow-xs shrink-0 cursor-pointer"
         >
           <Plus className="w-3.5 h-3.5" />
           <span>Publish New Assignment</span>
@@ -134,57 +154,73 @@ export const AssignmentHub: React.FC<AssignmentHubProps> = ({
       </div>
 
       {/* Main Grid: Assignments List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {assignments.map((assignment) => (
-          <div
-            key={assignment.id}
-            className="bg-slate-900 p-5 rounded-md border border-slate-800 shadow-sm hover:border-slate-700 transition-all flex flex-col justify-between space-y-4 text-slate-100"
+      {safeAssignments.length === 0 ? (
+        <div className="text-center py-12 bg-slate-900/50 border border-dashed border-slate-800 rounded-xl space-y-3 p-8">
+          <FileText className="w-8 h-8 text-slate-500 mx-auto" />
+          <h3 className="text-sm font-bold text-slate-300 uppercase">No Assignments Created Yet</h3>
+          <p className="text-xs text-slate-500 max-w-sm mx-auto">
+            Publish your first assignment for {safeActiveSubject.name} to assign problem sets, deadlines, and AI-assisted grading rubrics.
+          </p>
+          <button
+            onClick={() => setShowCreateModal(true)}
+            className="px-3 py-1.5 bg-blue-600 text-white rounded text-xs font-bold hover:bg-blue-500 transition-all cursor-pointer"
           >
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-mono font-bold text-blue-300 bg-blue-950 border border-blue-800 px-2 py-0.5 rounded-sm">
-                  {assignment.points} PTS
-                </span>
-                {assignment.strictDueDate && (
-                  <span className="inline-flex items-center gap-1 text-[10px] font-mono font-semibold text-rose-300 bg-rose-950 border border-rose-800 px-1.5 py-0.5 rounded-sm">
-                    <Clock className="w-3 h-3 text-rose-400" />
-                    Strict Deadline
-                  </span>
-                )}
-              </div>
-
-              <div>
-                <h3 className="font-bold text-sm text-white line-clamp-2">
-                  {assignment.title}
-                </h3>
-                <p className="text-xs text-slate-400 mt-1 line-clamp-3 leading-relaxed">
-                  {assignment.description}
-                </p>
-              </div>
-
-              {/* Tags & Due Date */}
-              <div className="space-y-1.5 pt-2 border-t border-slate-800 text-xs text-slate-400">
-                <div className="flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5 text-slate-500" />
-                  <span className="font-mono text-[11px]">Due: <strong className="text-slate-200">{new Date(assignment.dueDate).toLocaleDateString()}</strong> at {new Date(assignment.dueDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                  <span className="font-mono text-[11px]">{assignment.submissionCount || 0} / {activeSubject.enrolledCount || 15} Submitted</span>
-                </div>
-              </div>
-            </div>
-
-            <button
-              onClick={() => handleOpenSubmissions(assignment)}
-              className="w-full py-1.5 px-3 rounded-sm bg-slate-950 hover:bg-blue-950 hover:text-blue-300 text-slate-300 text-xs font-semibold border border-slate-800 hover:border-blue-800 transition-colors flex items-center justify-center gap-1.5"
+            Publish New Assignment
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {safeAssignments.map((assignment) => (
+            <div
+              key={assignment.id}
+              className="bg-slate-900 p-5 rounded-md border border-slate-800 shadow-sm hover:border-slate-700 transition-all flex flex-col justify-between space-y-4 text-slate-100"
             >
-              <Eye className="w-3.5 h-3.5" />
-              <span>Review Submissions & Grade</span>
-            </button>
-          </div>
-        ))}
-      </div>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-mono font-bold text-blue-300 bg-blue-950 border border-blue-800 px-2 py-0.5 rounded-sm">
+                    {assignment.points} PTS
+                  </span>
+                  {assignment.strictDueDate && (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-mono font-semibold text-rose-300 bg-rose-950 border border-rose-800 px-1.5 py-0.5 rounded-sm">
+                      <Clock className="w-3 h-3 text-rose-400" />
+                      Strict Deadline
+                    </span>
+                  )}
+                </div>
+
+                <div>
+                  <h3 className="font-bold text-sm text-white line-clamp-2">
+                    {assignment.title}
+                  </h3>
+                  <p className="text-xs text-slate-400 mt-1 line-clamp-3 leading-relaxed">
+                    {assignment.description}
+                  </p>
+                </div>
+
+                {/* Tags & Due Date */}
+                <div className="space-y-1.5 pt-2 border-t border-slate-800 text-xs text-slate-400">
+                  <div className="flex items-center gap-1.5">
+                    <Calendar className="w-3.5 h-3.5 text-slate-500" />
+                    <span className="font-mono text-[11px]">Due: <strong className="text-slate-200">{new Date(assignment.dueDate).toLocaleDateString()}</strong> at {new Date(assignment.dueDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                    <span className="font-mono text-[11px]">{assignment.submissionCount || 0} / {safeActiveSubject.enrolledCount || 15} Submitted</span>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={() => handleOpenSubmissions(assignment)}
+                className="w-full py-1.5 px-3 rounded-sm bg-slate-950 hover:bg-blue-950 hover:text-blue-300 text-slate-300 text-xs font-semibold border border-slate-800 hover:border-blue-800 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <Eye className="w-3.5 h-3.5" />
+                <span>Review Submissions & Grade</span>
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Submissions Review Modal / Drawer */}
       {selectedAssignment && (
@@ -213,19 +249,19 @@ export const AssignmentHub: React.FC<AssignmentHubProps> = ({
               {/* Left Submissions List */}
               <div className="md:col-span-4 border-r border-slate-800 overflow-y-auto p-3 space-y-2 bg-slate-950">
                 <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-2 py-1 font-mono">
-                  Cohort Submissions ({submissions.length})
+                  Cohort Submissions ({safeSubmissions.length})
                 </p>
 
-                {submissions.length === 0 ? (
+                {safeSubmissions.length === 0 ? (
                   <div className="text-center py-8 text-xs text-slate-500">
                     No submissions received yet.
                   </div>
                 ) : (
-                  submissions.map((sub) => (
+                  safeSubmissions.map((sub) => (
                     <button
                       key={sub.id}
                       onClick={() => handleSelectSubmission(sub)}
-                      className={`w-full text-left p-3 rounded-sm border transition-all text-xs space-y-1.5 ${
+                      className={`w-full text-left p-3 rounded-sm border transition-all text-xs space-y-1.5 cursor-pointer ${
                         activeSubmission?.id === sub.id
                           ? 'bg-blue-950/80 border-blue-700 text-white font-semibold shadow-xs'
                           : 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800/60'
@@ -260,7 +296,7 @@ export const AssignmentHub: React.FC<AssignmentHubProps> = ({
                     <div className="flex items-center justify-between p-3.5 bg-slate-950 rounded-sm border border-slate-800">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-sm bg-blue-600 text-white flex items-center justify-center font-bold text-xs">
-                          {activeSubmission.studentName.charAt(0)}
+                          {activeSubmission.studentName ? activeSubmission.studentName.charAt(0) : 'S'}
                         </div>
                         <div>
                           <p className="font-bold text-sm text-white">{activeSubmission.studentName}</p>
@@ -281,7 +317,7 @@ export const AssignmentHub: React.FC<AssignmentHubProps> = ({
                         Student Submission Solution & Code
                       </h4>
                       <div className="bg-slate-950 p-4 rounded-sm border border-slate-800 text-xs font-mono text-slate-200 whitespace-pre-wrap max-h-56 overflow-y-auto leading-relaxed">
-                        {activeSubmission.submissionText}
+                        {activeSubmission.submissionText || 'No plain text submitted.'}
                       </div>
                     </div>
 
@@ -350,7 +386,7 @@ export const AssignmentHub: React.FC<AssignmentHubProps> = ({
                       <div className="flex justify-end">
                         <button
                           type="submit"
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white rounded-sm text-xs font-semibold hover:bg-blue-500 shadow-xs"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white rounded-sm text-xs font-semibold hover:bg-blue-500 shadow-xs cursor-pointer"
                         >
                           <Send className="w-3.5 h-3.5" />
                           <span>Publish Verified Grade</span>
@@ -377,7 +413,7 @@ export const AssignmentHub: React.FC<AssignmentHubProps> = ({
               <h3 className="font-bold text-sm uppercase tracking-tight text-white">
                 Publish New Course Assignment
               </h3>
-              <button type="button" onClick={() => setShowCreateModal(false)} className="text-slate-400 hover:text-white text-sm">
+              <button type="button" onClick={() => setShowCreateModal(false)} className="text-slate-400 hover:text-white text-sm cursor-pointer">
                 ✕
               </button>
             </div>
@@ -470,13 +506,13 @@ export const AssignmentHub: React.FC<AssignmentHubProps> = ({
               <button
                 type="button"
                 onClick={() => setShowCreateModal(false)}
-                className="px-3 py-1.5 rounded-sm text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 border border-slate-700"
+                className="px-3 py-1.5 rounded-sm text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 border border-slate-700 cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-3 py-1.5 rounded-sm bg-blue-600 text-white text-xs font-semibold hover:bg-blue-500 shadow-xs"
+                className="px-3 py-1.5 rounded-sm bg-blue-600 text-white text-xs font-semibold hover:bg-blue-500 shadow-xs cursor-pointer"
               >
                 Publish Assignment
               </button>

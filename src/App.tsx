@@ -1522,7 +1522,7 @@ export default function App() {
                 }`}
               >
                 <BrainCircuit className="w-4 h-4 shrink-0 text-cyan-400" />
-                <span>Question Bank Hub ({questionBanks.filter(qb => qb.subjectId === activeSubjectId).length})</span>
+                <span>Question Bank Hub ({(questionBanks || []).filter(qb => qb?.subjectId === activeSubjectId).length})</span>
               </button>
             </>
           ) : (
@@ -1879,7 +1879,7 @@ export default function App() {
               {activeTab === 'assignments' && (
                 <AssignmentHub
                   activeSubject={activeSubject}
-                  assignments={assignments}
+                  assignments={assignments || []}
                   onCreateAssignment={handleCreateAssignment}
                   onGradeSubmission={handleGradeSubmission}
                   fetchSubmissionsForAssignment={fetchSubmissionsForAssignment}
@@ -1888,11 +1888,11 @@ export default function App() {
 
               {activeTab === 'question-banks' && (
                 <QuestionBankManager
-                  currentUser={currentUser}
-                  subjects={subjects}
+                  currentUser={currentUser || undefined}
+                  subjects={subjects || []}
                   activeSubjectId={activeSubjectId}
                   onSelectSubject={(id) => setActiveSubjectId(id)}
-                  questionBanks={questionBanks}
+                  questionBanks={questionBanks || []}
                   onSaveQuestionBank={handleSaveQuestionBank}
                   onDeleteQuestionBank={handleDeleteQuestionBank}
                   onShowToast={(msg, type) => showToast(msg, type || 'success')}
