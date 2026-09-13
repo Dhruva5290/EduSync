@@ -1,6 +1,6 @@
 import { GoogleGenAI, Type } from '@google/genai';
 import { sanitizePromptInput } from './security';
-import { synthesizeIntelligentAcademicResponse } from './knowledgeBase';
+import { synthesizeIntelligentAcademicResponse, SUBJECT_KNOWLEDGE_BASE } from './knowledgeBase';
 import {
   Subject,
   TimelineItem,
@@ -2164,4 +2164,133 @@ $$\\sum F_{\\perp} = N - mg\\cos\\theta = 0 \\implies N = mg\\cos\\theta$$\n\n`;
     reinforcedConcepts: weakConcepts
   };
 }
+
+// =========================================================================
+// 14. CONTEXTUAL SOCRATIC TUTOR ENGINE
+// =========================================================================
+
+export interface SocraticContextPayload {
+  message?: string;
+  history?: Array<{ sender?: string; role?: string; content?: string; text?: string }>;
+  context?: {
+    weakTopics?: Array<{ topic?: string; concept?: string } | string> | string;
+    weakestTopicName?: string;
+    currentLectureId?: string;
+    lastLectureTitle?: string;
+    recentQuizAnswers?: Record<string, any>;
+  };
+  learnerProfile?: LearnerPersona;
+}
+
+export async function generateSocraticResponse(payload: SocraticContextPayload): Promise<{ reply: string; videoRecommendation?: YouTubeVideoRecommendation | null }> {
+  const context = payload.context || {};
+  let weakTopicsStr = '';
+  let weakestTopicName = context.weakestTopicName || '';
+
+  if (Array.isArray(context.weakTopics) && context.weakTopics.length > 0) {
+    weakTopicsStr = context.weakTopics
+      .map(t => typeof t === 'string' ? t : (t.topic || t.concept || ''))
+      .filter(Boolean)
+      .join(', ');
+    if (!weakestTopicName) {
+      const first = context.weakTopics[0];
+      weakestTopicName = typeof first === 'string' ? first : (first.topic || first.concept || '');
+    }
+  } else if (typeof context.weakTopics === 'string') {
+    weakTopicsStr = context.weakTopics;
+    if (!weakestTopicName) weakestTopicName = context.weakTopics;
+  }
+
+  if (!weakestTopicName) {
+    weakestTopicName = "Newton's Second Law & Acceleration Distinction";
+  }
+
+  const lectureTitle = context.lastLectureTitle || "Newton's Laws of Motion & Free Body Diagrams";
+  const userMessage = payload.message || '';
+  const learningStyle = payload.learnerProfile?.learningStyle || 'visual';
+  const styleLabel = learningStyle === 'step_by_step'
+    ? 'Step-by-Step Mathematical Rigor'
+    : learningStyle === 'exam_focused'
+    ? 'High-Yield Exam Focus'
+    : learningStyle === 'socratic_dialogue'
+    ? 'Socratic & Conversational'
+    : 'Visual & Mental Models';
+
+  const systemInstruction = `You are the EduSync Contextual Socratic AI Tutor.
+The student just failed ${weakTopicsStr || weakestTopicName} from today's lecture '${lectureTitle}'.
+Their learning style is ${styleLabel}.
+When they ask a question, explain the concept using their preferred learning style.
+If applicable, suggest a specific YouTube video, a mental model, or a step-by-step trick to remember it.
+Do NOT just give textbook definitions—give them a hook based on their persona.
+Format all math in LaTeX ($...$ or $$...$$).`;
+
+  // Check knowledge base for fallback video recommendations
+  let matchingVideo: YouTubeVideoRecommendation | null = null;
+  const lowerTopic = (weakestTopicName + ' ' + (weakTopicsStr || '')).toLowerCase();
+  for (const list of Object.values(SUBJECT_KNOWLEDGE_BASE)) {
+    for (const item of list) {
+      const isMatch = item.topicMatchKeywords.some(kw => lowerTopic.includes(kw.toLowerCase()) || kw.toLowerCase().includes('newton') || kw.toLowerCase().includes('incline'));
+      if (isMatch && item.videos && item.videos.length > 0) {
+        matchingVideo = item.videos[0];
+        break;
+      }
+    }
+    if (matchingVideo) break;
+  }
+
+  if (!matchingVideo) {
+    matchingVideo = {
+      title: "Newton's Laws of Motion & Incline Forces Visualized (3Blue1Brown Style)",
+      url: "https://www.youtube.com/watch?v=kKKM8Y-u7ds",
+      searchQuery: "Newton's laws of motion incline forces",
+      channelOrTopic: "Physics Visualized",
+      duration: "11:42",
+      thumbnail: "https://images.unsplash.com/photo-1636466497217-26a8cbeaf0aa?auto=format&fit=crop&w=400&q=80"
+    };
+  }
+
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    let reply = `I see you struggled with **${weakestTopicName}** from today's class on "${lectureTitle}".\n\n`;
+    if (learningStyle === 'visual') {
+      reply += `💡 **Visual Mental Model**: Picture the block on the ramp. Gravity pulls straight down, but the ramp only pushes back *perpendicular* to its surface. That's why the normal force is $N = mg\\cos\\theta$, scaling to zero when the ramp becomes vertical!\n\nTo test this: What happens to the sliding acceleration when you tilt the ramp steeper toward $90^\\circ$?`;
+    } else {
+      reply += `📐 **Step-by-Step Derivation**: Along the incline coordinate system:\n$$\\Sigma F_\\parallel = mg\\sin\\theta - f_k = m \\cdot a$$\n$$\\Sigma F_\\perp = N - mg\\cos\\theta = 0 \\implies N = mg\\cos\\theta$$\n\nWhat is the net acceleration if the incline is frictionless?`;
+    }
+
+    if (matchingVideo) {
+      reply += `\n\n📺 **Recommended Video Breakdown**:\n[Watch: ${matchingVideo.title}](${matchingVideo.url}) — *${matchingVideo.channelOrTopic} (${matchingVideo.duration})*`;
+    }
+
+    return { reply, videoRecommendation: matchingVideo };
+  }
+
+  try {
+    const ai = getAI();
+    const response = await ai.models.generateContent({
+      model: 'gemini-3.6-flash',
+      contents: userMessage || `[System Trigger]: Initial Socratic conversation hook on ${weakestTopicName}`,
+      config: {
+        systemInstruction
+      }
+    });
+
+    let rawReply = response.text || `I see you struggled with **${weakestTopicName}** from today's class on "${lectureTitle}".`;
+    if (matchingVideo && !rawReply.includes('youtube.com') && !rawReply.includes('Recommended Video')) {
+      rawReply += `\n\n📺 **Recommended Video Breakdown**:\n[Watch: ${matchingVideo.title}](${matchingVideo.url}) — *${matchingVideo.channelOrTopic} (${matchingVideo.duration})*`;
+    }
+
+    return {
+      reply: rawReply,
+      videoRecommendation: matchingVideo
+    };
+  } catch (err) {
+    console.warn('Error in generateSocraticResponse:', err);
+    return {
+      reply: `I see you struggled with **${weakestTopicName}** from today's lecture on "${lectureTitle}".\n\nLet's break it down using your preferred ${styleLabel} approach: what is the net force along the direction of motion?\n\n📺 **Recommended Video Breakdown**:\n[Watch: ${matchingVideo.title}](${matchingVideo.url})`,
+      videoRecommendation: matchingVideo
+    };
+  }
+}
+
 

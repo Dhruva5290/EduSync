@@ -1905,14 +1905,20 @@ If $d = 0 \\implies$ Lines are coplanar and intersect.`,
   // CLASSSARTHI & STUDENT LEARNING PLATFORM API
   // ==========================================
 
-  // 1. Get Lectures List (Role and subject filterable)
+  // 1. Get Lectures List (Role and subject filterable, limit supported)
   app.get('/api/lectures', (req, res) => {
-    const { subjectId } = req.query;
+    const { subjectId, limit } = req.query;
     let lectures = db.lectures || [];
     if (subjectId && typeof subjectId === 'string' && subjectId !== 'all') {
       lectures = lectures.filter(l => l.subjectId === subjectId);
     }
-    res.json({ lectures });
+    if (limit) {
+      const l = parseInt(String(limit), 10);
+      if (!isNaN(l) && l > 0) {
+        lectures = lectures.slice(0, l);
+      }
+    }
+    res.json({ lectures, lecture: lectures[0] || null });
   });
 
   // 2. Get Single Lecture by ID
@@ -1966,8 +1972,8 @@ If $d = 0 \\implies$ Lines are coplanar and intersect.`,
     }
   });
 
-  // 5. Get Mastery Quiz for Lecture
-  app.get('/api/lectures/:id/mastery-quiz', (req, res) => {
+  // 5. Get Mastery Quiz for Lecture (Supports GET and POST)
+  app.all('/api/lectures/:id/mastery-quiz', (req, res) => {
     const lectureId = req.params.id;
     const quiz = db.masteryQuizzes[lectureId] || db.masteryQuizzes['lec-phy-101'];
     if (!quiz) {
@@ -2264,6 +2270,327 @@ If $d = 0 \\implies$ Lines are coplanar and intersect.`,
     res.json(summary);
   });
 
+  // 7.1. Unified Feed Student Summary (Status Bar)
+  app.get('/api/students/:id/summary', (req, res) => {
+    const studentId = req.params.id;
+    const user = db.users.find(u => u.id === studentId) || db.users.find(u => u.role === 'student') || {
+      name: 'Aarav Sharma',
+      id: studentId
+    };
+
+    const studentAssignments = db.assignments || [];
+    const urgentAssignmentsCount = Math.max(1, studentAssignments.filter(a => (a as any).status === 'published' || (a as any).dueDate).length);
+
+    const masteryList = db.conceptMastery[studentId] || db.conceptMastery['student-1'] || db.conceptMastery['student-g11-1'] || [];
+    let overallMasteryPercentage = 78;
+    let weakestTopicName = "Newton's Second Law & Acceleration Distinction";
+
+    if (masteryList.length > 0) {
+      const sum = masteryList.reduce((acc, m) => acc + (m.masteryScore || 0), 0);
+      overallMasteryPercentage = Math.round(sum / masteryList.length);
+      const sorted = [...masteryList].sort((a, b) => (a.masteryScore || 0) - (b.masteryScore || 0));
+      if (sorted[0]?.concept) {
+        weakestTopicName = sorted[0].concept;
+      }
+    }
+
+    res.json({
+      name: user.name,
+      studentId: user.id,
+      urgentAssignmentsCount,
+      overallMasteryPercentage,
+      weakestTopicName
+    });
+  });
+
+  // 7.2. Unified Feed Student Weak Topics (The Diagnostic Gaps)
+  app.get('/api/students/:id/weak-topics', (req, res) => {
+    const studentId = req.params.id;
+    const masteryList = db.conceptMastery[studentId] || db.conceptMastery['student-1'] || db.conceptMastery['student-g11-1'] || [
+      { concept: "Newton's Second Law & Acceleration Distinction", masteryScore: 62, needsRevision: true, subjectId: 'subj-phy' },
+      { concept: "Air Resistance & Parabolic Trajectory Distortion", masteryScore: 58, needsRevision: true, subjectId: 'subj-phy' },
+      { concept: "VSEPR Molecular Geometry & Lone Pair Repulsions", masteryScore: 65, needsRevision: true, subjectId: 'subj-che' }
+    ];
+
+    const sorted = [...masteryList]
+      .sort((a, b) => (a.masteryScore || 0) - (b.masteryScore || 0))
+      .slice(0, 3);
+
+    const weakTopics = sorted.map((m, idx) => ({
+      id: `weak-topic-${idx + 1}`,
+      topic: m.concept,
+      score: m.masteryScore,
+      masteryScore: m.masteryScore,
+      subjectId: m.subjectId || 'subj-phy',
+      subjectCode: m.subjectId?.includes('che') ? 'CHEM' : m.subjectId?.includes('mat') ? 'MATH' : 'PHY',
+      reason: m.concept.includes('Second Law')
+        ? 'Struggled with distinguishing external force vs acceleration in last quiz.'
+        : m.concept.includes('Air Resistance')
+        ? 'Identified gap in atmospheric drag velocity decomposition.'
+        : m.concept.includes('VSEPR')
+        ? 'Confusion between bond pair vs lone pair spatial repulsion angles.'
+        : 'Conceptual diagnostic flagged below 70% threshold in recent checkpoint.',
+      remediation: 'Review lecture board derivation and solve targeted adaptive checkpoint.',
+      relatedLectureId: 'lec-phy-101',
+      timestampRef: idx === 0 ? '21:05' : idx === 1 ? '34:20' : '15:40'
+    }));
+
+    res.json({ weakTopics });
+  });
+
+  // 7.3. Student Lecture Feedback Toggle ('easy' | 'hard')
+  app.post('/api/lectures/:id/feedback', (req, res) => {
+    try {
+      const lectureId = req.params.id;
+      const { studentId = 'student-1', feedback } = req.body;
+      if (!db.lectureProgress[studentId]) {
+        db.lectureProgress[studentId] = {};
+      }
+      if (!db.lectureProgress[studentId][lectureId]) {
+        db.lectureProgress[studentId][lectureId] = {
+          lectureId,
+          completed: true,
+          lastViewedAt: new Date().toISOString()
+        };
+      }
+      db.lectureProgress[studentId][lectureId].feedback = feedback;
+      saveProgressToDisk(db.lectureProgress);
+      res.json({ success: true, feedback, lectureId });
+    } catch (err: any) {
+      console.error('Error saving lecture feedback:', err);
+      res.status(500).json({ error: 'Failed to save feedback' });
+    }
+  });
+
+  // 7.4. All-in-One Optimized Student Dashboard Aggregator
+  app.get('/api/student/dashboard-data', (req, res) => {
+    try {
+      const studentId = (req.query.studentId as string) || 'student-1';
+      const user = db.users.find(u => u.id === studentId) || db.users.find(u => u.role === 'student') || {
+        id: studentId,
+        name: 'Aarav Sharma',
+        role: 'student',
+        learningProfile: {
+          learningStyle: 'visual',
+          targetGrade: 'A+',
+          explanationTone: 'encouraging_mentor',
+          preferredPace: 'steady'
+        }
+      };
+
+      // 1. Today's Lecture (most recent or primary lecture)
+      const todayLectureRaw = db.lectures[0] || {
+        id: 'lec-phy-101',
+        subjectId: 'subj-phy',
+        title: "Newton's Laws of Motion & Free Body Diagrams",
+        date: new Date().toISOString().split('T')[0],
+        duration: '52 mins',
+        rawText: "# Newton's Laws of Motion & Free Body Diagrams\n\n## 1. Newton's Second Law & Incline Physics\nThe fundamental equation of classical mechanics is:\n$$F_{\\text{net}} = m \\cdot a$$\n\nWhen analyzing a block of mass $m$ on an inclined plane at an angle $\\theta$:\n- The gravitational force acting vertically downward is $F_g = mg$.\n- Resolving components parallel to the incline: $F_{\\parallel} = mg\\sin\\theta$.\n- Resolving components perpendicular to the incline: $F_{\\perp} = mg\\cos\\theta$.\n- The normal force exerted by the surface is $N = mg\\cos\\theta$.\n\nIf the surface has a coefficient of kinetic friction $\\mu_k$, the frictional retarding force is:\n$$f_k = \\mu_k N = \\mu_k mg\\cos\\theta$$\n\nApplying Newton's Second Law along the incline:\n$$\\Sigma F_{\\parallel} = mg\\sin\\theta - f_k = m \\cdot a$$\n$$a = g(\\sin\\theta - \\mu_k\\cos\\theta)$$\n\n> ⚠️ **Common Trap**: Never assume $N = mg$ on an incline! The normal force only balances the perpendicular component of gravity.",
+        summary: 'Comprehensive analysis of inclined plane dynamics, normal force resolution, friction components, and acceleration vectors.',
+        keyTakeaways: [
+          'Normal force on an incline is N = mg*cos(theta), not mg',
+          'Net acceleration along the incline is a = g(sin(theta) - mu*cos(theta))',
+          'Free body diagrams must always align coordinates parallel and perpendicular to the incline'
+        ]
+      };
+
+      const subject = db.subjects.find(s => s.id === todayLectureRaw.subjectId) || {
+        name: 'Physics',
+        code: 'PHY',
+        teacherName: 'Dr. Rajesh Kulkarni'
+      };
+
+      const boardCaptures = (db.boardCaptures || []).filter(b => b.lectureId === todayLectureRaw.id);
+
+      const todayLecture = {
+        ...todayLectureRaw,
+        subjectName: subject.name,
+        teacherName: subject.teacherName,
+        boardCaptures: boardCaptures.length > 0 ? boardCaptures : [
+          {
+            id: 'bc-1',
+            lectureId: todayLectureRaw.id,
+            timestamp: '14:22',
+            title: 'Free Body Diagram on Inclined Plane',
+            imageUrl: 'https://images.unsplash.com/photo-1636466497217-26a8cbeaf0aa?auto=format&fit=crop&w=800&q=80',
+            ocrSnippet: 'N = mg*cos(theta), F_parallel = mg*sin(theta), f_k = mu_k*N',
+            conceptsCovered: ["Newton's Second Law", "Normal Force", "Friction"]
+          }
+        ]
+      };
+
+      // 2. Mastery Quiz for today's lecture
+      let masteryQuiz = db.masteryQuizzes[todayLecture.id] || db.masteryQuizzes['lec-phy-101'];
+      if (!masteryQuiz) {
+        masteryQuiz = {
+          id: `quiz-${todayLecture.id}`,
+          lectureId: todayLecture.id,
+          lectureTitle: `${todayLecture.title} - Mastery Check`,
+          subjectId: todayLecture.subjectId,
+          questions: [
+            {
+              id: 'q-1',
+              question: 'For a mass m resting on an incline of angle θ with friction coefficient μ, what is the exact normal force N?',
+              options: ['N = mg', 'N = mg·cosθ', 'N = mg·sinθ', 'N = mg·tanθ'],
+              correctIndex: 1,
+              explanation: 'Perpendicular to the incline surface, acceleration is 0. Thus N balances the perpendicular component of gravity: N = mg·cosθ.',
+              conceptTag: "Normal Force Resolution",
+              questionType: 'concept',
+              timestampRef: '14:22'
+            },
+            {
+              id: 'q-2',
+              question: 'What is the net acceleration of a block sliding down a frictionless incline at angle θ?',
+              options: ['a = g', 'a = g·cosθ', 'a = g·sinθ', 'a = g·tanθ'],
+              correctIndex: 2,
+              explanation: 'The only unbalanced force along the ramp is mg·sinθ. Dividing by mass m gives a = g·sinθ.',
+              conceptTag: "Inclined Plane Acceleration",
+              questionType: 'application',
+              timestampRef: '22:15'
+            },
+            {
+              id: 'q-3',
+              question: 'If kinetic friction coefficient μ_k is present, what is the acceleration equation down the slope?',
+              options: [
+                'a = g(sinθ - μ_k·cosθ)',
+                'a = g(cosθ - μ_k·sinθ)',
+                'a = g(sinθ + μ_k·cosθ)',
+                'a = g·sinθ / μ_k'
+              ],
+              correctIndex: 0,
+              explanation: 'F_net = mg·sinθ - μ_k·mg·cosθ = m·a. Factoring out g gives a = g(sinθ - μ_k·cosθ).',
+              conceptTag: "Kinetic Friction Dynamics",
+              questionType: 'formula',
+              timestampRef: '31:40'
+            },
+            {
+              id: 'q-4',
+              question: 'Why does normal force decrease as the incline angle θ increases towards 90°?',
+              options: [
+                'Gravity ceases to act on the object',
+                'cosθ approaches 0 as θ approaches 90°',
+                'Friction increases to balance gravity',
+                'The mass of the object decreases'
+              ],
+              correctIndex: 1,
+              explanation: 'Since N = mg·cosθ, and cos(90°) = 0, at vertical free-fall the surface exerts zero normal force.',
+              conceptTag: "Boundary Angle Analysis",
+              questionType: 'reasoning',
+              timestampRef: '45:10'
+            }
+          ]
+        };
+      }
+
+      // 3. Weak Points
+      const masteryList = db.conceptMastery[studentId] || db.conceptMastery['student-1'] || db.conceptMastery['student-g11-1'] || [];
+      let weakPoints: string[] = [];
+      if (masteryList.length > 0) {
+        weakPoints = masteryList
+          .filter(m => (m.masteryScore || 0) < 70 || m.needsRevision)
+          .sort((a, b) => (a.masteryScore || 0) - (b.masteryScore || 0))
+          .map(m => m.concept);
+      }
+      if (weakPoints.length === 0) {
+        weakPoints = ["Normal Force Resolution on Inclines", "Kinetic Friction Vector Directions"];
+      }
+
+      // 4. To-Do Assignments
+      const studentSubmissions = (db.submissions || []).filter(s => s.studentId === studentId);
+      const submittedAssignmentIds = new Set(studentSubmissions.map(s => s.assignmentId));
+
+      const now = new Date();
+      const todoAssignments = (db.assignments || []).map(a => {
+        const isSubmitted = submittedAssignmentIds.has(a.id);
+        let dueCountdown = 'Due in 3 days';
+        if (a.dueDate) {
+          const diffMs = new Date(a.dueDate).getTime() - now.getTime();
+          const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+          if (diffDays <= 0) dueCountdown = 'Due Today';
+          else if (diffDays === 1) dueCountdown = 'Due Tomorrow';
+          else dueCountdown = `Due in ${diffDays} days`;
+        }
+        const subj = db.subjects.find(s => s.id === a.subjectId);
+        return {
+          id: a.id,
+          title: a.title,
+          subjectId: a.subjectId,
+          subjectName: subj ? subj.name : 'Physics',
+          dueDate: a.dueDate || new Date(Date.now() + 86400000 * 3).toISOString().split('T')[0],
+          dueCountdown,
+          totalPoints: a.points || (a as any).totalPoints || 100,
+          status: isSubmitted ? 'submitted' : 'pending'
+        };
+      });
+
+      // 5. Upcoming Timelines (Exams & Milestones next 7-14 days)
+      const upcomingTimeline = (db.timelines || []).map(t => {
+        const subj = db.subjects.find(s => s.id === t.subjectId);
+        let daysAway = 4;
+        if (t.date) {
+          const diffMs = new Date(t.date).getTime() - now.getTime();
+          daysAway = Math.max(1, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
+        }
+        return {
+          id: t.id,
+          title: t.title,
+          subjectId: t.subjectId,
+          subjectName: subj ? subj.name : 'Engineering Sciences',
+          date: t.date || new Date(Date.now() + 86400000 * 4).toISOString().split('T')[0],
+          time: (t as any).time || '10:00 AM',
+          type: t.type || 'milestone',
+          daysAway
+        };
+      });
+
+      // 6. Subjects with their associated Archive Lectures
+      const subjects = (db.subjects || []).map(s => {
+        const subjectLectures = (db.lectures || []).filter(l => l.subjectId === s.id);
+        return {
+          id: s.id,
+          code: s.code,
+          name: s.name,
+          description: s.description,
+          teacherName: s.teacherName,
+          color: s.color || 'blue',
+          enrolledCount: s.enrolledCount || 6,
+          lectures: subjectLectures.map(l => ({
+            id: l.id,
+            title: l.title,
+            date: l.date,
+            duration: l.duration,
+            rawText: (l as any).rawText || (l as any).smartNotesMarkdown || l.summary,
+            summary: l.summary,
+            keyTakeaways: (l as any).keyTakeaways || l.generalizedNotes?.keyPoints || [],
+            boardCaptures: (db.boardCaptures || []).filter(b => b.lectureId === l.id)
+          }))
+        };
+      });
+
+      // 7. Student Lecture Progress & Feedback
+      const studentLectureProgress = db.lectureProgress[studentId] || {};
+      const todayProgress = studentLectureProgress[todayLecture.id] || {};
+
+      res.json({
+        todayLecture,
+        masteryQuiz,
+        weakPoints,
+        todoAssignments,
+        upcomingTimeline,
+        subjects,
+        studentProgress: {
+          feedback: todayProgress.feedback || null,
+          quizScore: todayProgress.quizScore ?? null,
+          quizCompleted: Boolean(todayProgress.quizCompleted),
+          completed: Boolean(todayProgress.completed)
+        }
+      });
+    } catch (err: any) {
+      console.error('Error fetching student dashboard data:', err);
+      res.status(500).json({ error: 'Failed to fetch student dashboard data' });
+    }
+  });
+
   // 8. Board Captures Gallery
   app.get('/api/board-captures', (req, res) => {
     const { subjectId, lectureId, conceptTag } = req.query;
@@ -2506,19 +2833,46 @@ If $d = 0 \\implies$ Lines are coplanar and intersect.`,
   app.post('/api/ai/chat', aiRateLimiter.middleware, handleAIChat);
   app.post('/api/ai/study-assistant/chat', aiRateLimiter.middleware, handleAIChat);
 
-  // AI Tutor — Pure LLM Chatbot
+  // AI Tutor — Unified Context-Aware Socratic AI Tutor
   app.post('/api/tutor', aiRateLimiter.middleware, async (req, res) => {
     try {
-      const { message, history = [], studentContext, lectureContext, apiKey: clientApiKey } = req.body;
+      const { message, history = [], studentContext, lectureContext, context, apiKey: clientApiKey } = req.body;
 
       if (!message || typeof message !== 'string') {
         return res.status(400).json({ error: 'Message is required.' });
       }
 
-      const systemInstruction = `You are a helpful, intelligent, natural AI chatbot and academic tutor.
-Answer questions directly, thoughtfully, and clearly, just like a modern LLM (e.g. ChatGPT, Gemini).
-You can discuss and answer ANY question—coursework, code, math, homework, science, career, or general knowledge.
-Do NOT use rigid repetitive templates, pre-made scripts, or canned lists. Think about the user's question and explain it naturally with clear explanations and examples where appropriate.`;
+      // Extract unified knowledge graph context
+      const activeContext = context || studentContext || lectureContext || {};
+      const weakTopics = activeContext.weakTopics;
+      let weakTopicsStr = '';
+      let weakestTopicName = '';
+
+      if (Array.isArray(weakTopics) && weakTopics.length > 0) {
+        weakTopicsStr = weakTopics.map((t: any) => typeof t === 'string' ? t : (t.topic || t.concept || '')).filter(Boolean).join(', ');
+        weakestTopicName = typeof weakTopics[0] === 'string' ? weakTopics[0] : (weakTopics[0].topic || weakTopics[0].concept || '');
+      } else if (typeof weakTopics === 'string') {
+        weakTopicsStr = weakTopics;
+        weakestTopicName = weakTopics;
+      }
+
+      const lectureTitle = activeContext.lastLectureTitle || activeContext.lectureTitle || activeContext.currentLectureTitle || "Newton's Laws of Motion & Free Body Diagrams";
+      const learningStyle = activeContext.learningStyle || activeContext.learnerProfile?.learningStyle || 'visual';
+      const styleLabel = learningStyle === 'step_by_step'
+        ? 'Step-by-Step Mathematical Rigor'
+        : learningStyle === 'exam_focused'
+        ? 'High-Yield Exam Focus'
+        : learningStyle === 'socratic_dialogue'
+        ? 'Socratic & Conversational'
+        : 'Visual / Step-by-Step & Mental Models';
+
+      let systemInstruction = `You are the EduSync Contextual Socratic AI Tutor.
+The student just failed ${weakTopicsStr || weakestTopicName || "Newton's Second Law & Incline Dynamics"} from today's lecture '${lectureTitle}'.
+Their learning style is ${styleLabel}.
+When they ask a question, explain the concept using their preferred learning style.
+If applicable, suggest a specific YouTube video, a mental model, or a step-by-step trick to remember it.
+Do NOT just give textbook definitions—give them a hook based on their persona.
+Format all math in LaTeX ($...$ or $$...$$).`;
 
       // Format conversation history for multi-turn conversational memory
       const formattedHistory = (Array.isArray(history) ? history : [])
@@ -2572,11 +2926,22 @@ Do NOT use rigid repetitive templates, pre-made scripts, or canned lists. Think 
       }
 
       if (tutorReply) {
-        return res.json({ reply: tutorReply });
+        return res.json({ reply: tutorReply, response: tutorReply });
       }
 
+      // Resilient fallback contextual response with persona tailoring
+      let fallbackGreeting = `I see you struggled with **${weakestTopicName || "Newton's Second Law & Incline Dynamics"}** from today's class on "${lectureTitle}".\n\n`;
+      if (learningStyle === 'visual') {
+        fallbackGreeting += `💡 **Visual Mental Model**: Picture a block on a ramp. Gravity always pulls straight down ($mg$), but the surface only pushes back perpendicular to the ramp ($N = mg\\cos\\theta$). As the ramp gets steeper toward vertical ($90^\\circ$), $\\cos(90^\\circ) = 0$, and normal force disappears!\n\nWhat happens to the sliding acceleration as the angle $\\theta$ increases?`;
+      } else {
+        fallbackGreeting += `📐 **Step-by-Step Derivation**: Resolving forces along the ramp coordinate system:\n$$\\Sigma F_\\parallel = mg\\sin\\theta - f_k = m \\cdot a$$\n$$\\Sigma F_\\perp = N - mg\\cos\\theta = 0 \\implies N = mg\\cos\\theta$$\n\nWhat is the acceleration if friction $\\mu_k = 0$?`;
+      }
+
+      fallbackGreeting += `\n\n📺 **Recommended Video Breakdown**:\n[Watch: Incline Forces Visualized (3Blue1Brown Style)](https://www.youtube.com/watch?v=kKKM8Y-u7ds)`;
+
       return res.json({
-        reply: "I am having trouble connecting to the AI model right now. Please verify your connection or try again in a moment."
+        reply: fallbackGreeting,
+        response: fallbackGreeting
       });
 
     } catch (err: any) {

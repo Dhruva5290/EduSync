@@ -3,6 +3,7 @@ import {
   Camera,
   Layers,
   Sparkles,
+  Shield,
   ArrowRight,
   CheckCircle2,
   RefreshCw,
@@ -260,17 +261,14 @@ $$\\frac{P(x)}{(x - a)(x^2 + bx + c)} = \\frac{A}{x - a} + \\frac{Bx + C}{x^2 + 
   return (
     <div className="space-y-6">
       {/* 1. Header Banner & High-Level Switchers */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 p-6 md:p-8 border border-indigo-500/20 shadow-2xl text-white">
-        <div className="absolute top-0 right-0 -mt-8 -mr-8 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/3 -mb-8 w-48 h-48 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none" />
-
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+      <div className="rounded-2xl bg-slate-900 p-6 md:p-8 border border-slate-800 shadow-xl text-white">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 text-xs font-semibold tracking-wide uppercase">
-              <Sparkles className="w-3.5 h-3.5 text-indigo-400 animate-pulse" />
-              Senior Secondary Science Sandbox • ClassSarthi Vision
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-950 border border-slate-800 text-blue-400 text-xs font-semibold tracking-wide uppercase">
+              <Shield className="w-3.5 h-3.5 text-blue-400" />
+              Senior Secondary Science Sandbox · ClassSarthi Vision
             </div>
-            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-indigo-100 to-cyan-200">
+            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white">
               Grade 11 & 12 Science Audit & VisionNote (VN) Sync
             </h1>
             <p className="text-sm text-slate-300 max-w-2xl leading-relaxed">

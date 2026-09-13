@@ -1,13 +1,59 @@
-export type UserRole = 'teacher' | 'student' | 'admin';
+export type UserRole = 'student' | 'teacher' | 'admin';
+
+export type NavRoute =
+  | 'dashboard'
+  | 'classes'
+  | 'ai-tutor'
+  | 'assignments'
+  | 'quiz'
+  | 'faculty-analytics'
+  | 'timeline-manager'
+  | 'question-bank'
+  | 'rubric-grader'
+  | 'admin-metrics'
+  | 'user-provisioning'
+  | 'vault-recovery'
+  | 'security-audit'
+  | 'to-do-list'
+  | 'plugins'
+  | 'settings';
+
+export type LearningStyle = 'visual' | 'step_by_step' | 'socratic' | 'exam_focused' | 'visual_learner' | 'verbal_listener' | 'practical_builder' | 'rapid_summarizer' | 'socratic_inquisitor';
+
+export type AssignmentItem = Assignment;
+export type FlashcardItem = Flashcard;
+export interface RubricCriterion {
+  id?: string;
+  criterion?: string;
+  name?: string;
+  maxPoints?: number;
+  points?: number;
+  description?: string;
+  weight?: number;
+}
+export type RubricItem = RubricCriterion;
+export type TimelineType = 'lecture' | 'exam' | 'practical' | 'assignment' | 'quiz' | 'milestone' | string;
+export interface SecurityAuditResult {
+  id: string;
+  category: string;
+  name?: string;
+  description?: string;
+  status: 'passed' | 'warning' | 'critical' | string;
+  details?: string;
+  timestamp?: string;
+}
 
 export interface LearnerPersona {
-  learningStyle: 'visual' | 'step_by_step' | 'socratic_dialogue' | 'exam_focused';
-  targetGrade: 'A+' | 'A' | 'B' | 'competitive';
-  explanationTone: 'encouraging_mentor' | 'strict_coach' | 'practical_engineer';
-  preferredPace: 'accelerated' | 'steady' | 'thorough';
-  strengthsAndInterests?: string;
-  painPoints?: string;
-  questionnaireCompleted: boolean;
+  learningStyle: 'visual' | 'step_by_step' | 'socratic' | 'exam_focused' | string;
+  explanationTone?: 'intuitive_visual' | 'structured_rigorous' | 'socratic_dialogue' | 'bullet_summary' | string;
+  preferredPace?: 'slow_thorough' | 'standard' | 'rapid_review' | string;
+  pacePreference?: string;
+  targetGrade?: 'competitive_exam' | 'academic_mastery' | 'foundational_pass' | 'A+' | string;
+  strengthsAndInterests?: string[] | string;
+  painPoints?: string[] | string;
+  strengths?: string[];
+  areasForImprovement?: string[];
+  questionnaireCompleted?: boolean;
   completedAt?: string;
 }
 
@@ -17,23 +63,38 @@ export interface User {
   email: string;
   username?: string;
   password?: string;
-  role: UserRole;
-  avatar?: string;
-  institutionalId: string;
-  department: string;
-  gender?: 'Male' | 'Female' | 'Other' | string;
-  program?: string;
-  enrolledSubjectIds: string[];
-  teachingSubjectIds: string[];
-  gpa?: number;
+  gender?: string;
+  designation?: string;
   academicYear?: string;
+  role: UserRole;
+  institutionalId?: string;
+  studentId?: string;
+  department?: string;
+  program?: string;
+  academicProgram?: string;
+  avatarInitials?: string;
+  avatar?: string;
+  enrolledSubjectIds?: string[];
+  teachingSubjectIds?: string[];
+  gpa?: number;
+  learningProfile?: LearnerPersona;
   officeLocation?: string;
   officeHours?: string;
-  status?: 'active' | 'probation' | 'graduated' | 'leave';
   joinedDate?: string;
   phone?: string;
-  designation?: string;
-  learningProfile?: LearnerPersona;
+  status?: string;
+}
+
+export interface StudentProfile {
+  name: string;
+  email: string;
+  studentId: string;
+  department: string;
+  academicProgram: string;
+  explanationStyle: 'visual' | 'step-by-step' | 'socratic' | 'exam-focused' | string;
+  avatarInitials: string;
+  gpa?: number;
+  grade?: string;
 }
 
 export interface Subject {
@@ -43,167 +104,186 @@ export interface Subject {
   description: string;
   teacherId: string;
   teacherName: string;
-  teacherEmail: string;
-  color: string;
-  accentBg: string;
+  teacherEmail?: string;
+  credits: number;
+  department: string;
+  syllabusTopics: string[];
   enrolledCount: number;
-  semester: string;
-  room: string;
-  syllabusTopics: string[];
-  credits?: number;
-  schedule?: string;
-  department?: string;
-}
-
-export interface NewStudentPayload {
-  name: string;
-  email: string;
-  username?: string;
-  password?: string;
-  department: string;
-  academicYear: string;
-  institutionalId?: string;
-  initialSubjectIds?: string[];
-  gpa?: number;
-  phone?: string;
-}
-
-export interface NewTeacherPayload {
-  name: string;
-  email: string;
-  username?: string;
-  password?: string;
-  department: string;
-  designation: string;
-  institutionalId?: string;
-  officeLocation?: string;
-  teachingSubjectIds?: string[];
-  phone?: string;
-}
-
-export interface NewClassPayload {
-  code: string;
-  name: string;
-  description: string;
-  teacherId: string;
-  semester: string;
-  room: string;
-  credits?: number;
-  department?: string;
-  syllabusTopics: string[];
-  initialEnrolledStudentIds?: string[];
+  colorTheme?: string;
   color?: string;
+  accentBg?: string;
+  room?: string;
+  semester?: string;
+  currentTopic?: string;
 }
-
-export type TimelineType = 'exam' | 'quiz' | 'practical' | 'assignment' | 'lecture' | 'milestone';
 
 export interface TimelineItem {
   id: string;
   subjectId: string;
+  subjectName?: string;
   title: string;
-  type: TimelineType;
-  date: string; // YYYY-MM-DD
-  startTime: string;
-  endTime: string;
-  location: string;
-  description: string;
-  topicsCovered: string[];
+  date: string;
+  startTime?: string;
+  endTime?: string;
+  type: 'lecture' | 'exam' | 'practical' | 'assignment' | 'quiz' | 'milestone' | string;
+  status: 'completed' | 'current' | 'upcoming' | string;
+  details?: string;
+  description?: string;
+  topicsCovered?: string[];
+  room?: string;
+  location?: string;
   weightagePercent?: number;
-  status: 'upcoming' | 'ongoing' | 'completed';
 }
 
-export interface ReferenceResource {
+export interface ClassScheduleItem {
   id: string;
-  subjectId: string;
   title: string;
-  category: 'Textbook' | 'Lecture Notes' | 'Research Paper' | 'Video Guide' | 'Lab Manual';
-  url: string;
-  archiveUrl?: string;
-  author: string;
-  description: string;
-  keyTopics: string[];
-  dateAdded: string;
+  code: string;
+  instructor: string;
+  room: string;
+  timeSlot: string;
+  status: 'Live Notes Ready' | 'Upcoming' | 'Scheduled' | 'Completed' | 'In Progress';
+  statusColor: 'tertiary' | 'secondary' | 'neutral' | 'orange';
+  tags: string[];
+  quote?: string;
+  notesSummary: string;
+  fullNotesId: string;
+  lectureClipDuration?: string;
 }
 
-export interface RubricItem {
-  criterion: string;
-  maxPoints: number;
-  description: string;
+export interface LectureArchiveItem {
+  id: string;
+  title: string;
+  subjectTag?: string;
+  subject?: string;
+  category?: string;
+  iconType?: string;
+  duration?: string;
+  date: string;
+  description?: string;
+  notesSummary?: string;
+  tags?: string[];
+  teacher?: string;
+  fullNotesId?: string;
+  formulaLatex?: string;
+  ocrSnippet?: string;
 }
 
 export interface Assignment {
   id: string;
-  subjectId: string;
+  subjectId?: string;
+  subjectName?: string;
+  subject?: string;
+  instructor?: string;
   title: string;
   description: string;
-  richTextInstructions: string;
-  points: number;
-  createdDate: string;
   dueDate: string;
-  strictDueDate: boolean;
-  attachments: string[];
-  rubric: RubricItem[];
-  tags: string[];
+  dueStatus?: string;
+  strictDueDate?: boolean | string;
+  createdDate?: string;
+  points: number;
+  rubricCriteria?: string[];
+  rubric?: any;
+  rubricSummary?: string;
+  feedback?: string;
+  latePenalty?: string;
+  grade?: string | number;
+  score?: string | number;
+  submittedFile?: string;
+  status?: 'pending' | 'submitted' | 'graded';
   submissionCount?: number;
+  relatedLectureId?: string;
+  relatedLectureTitle?: string;
+  createdAt?: string;
+  urgent?: boolean;
+  isUrgent?: boolean;
+  tags?: string[];
+  attachments?: string[];
+  richTextInstructions?: string;
+  rubricBreakdown?: {
+    theoreticalRigor: number;
+    mathematicalFormulation: number;
+    unitsAndDiagrams: number;
+  };
 }
 
 export interface Submission {
   id: string;
   assignmentId: string;
+  assignmentTitle?: string;
+  subjectId?: string;
+  subjectName?: string;
   studentId: string;
   studentName: string;
-  studentEmail: string;
-  submissionText: string;
-  fileAttachment?: string;
+  studentEmail?: string;
+  studentAvatar?: string;
   submittedAt: string;
-  status: 'submitted' | 'graded' | 'late';
-  grade?: number;
-  maxPoints?: number;
+  content?: string;
+  solutionText?: string;
+  submissionText?: string;
+  fileAttachment?: string;
+  attachedFileName?: string;
+  attachments?: string[];
+  status: 'submitted' | 'graded' | 'pending';
+  score?: number | string;
+  maxScore?: number | string;
+  maxPoints?: number | string;
+  grade?: number | string;
   feedback?: string;
   aiSuggestedGrade?: number;
   aiFeedbackSummary?: string;
+  rubricGrades?: Record<string, number>;
+  sourceFile?: string;
 }
 
-export interface Flashcard {
+export type StudentSubmission = Submission;
+
+export interface TodoTask {
   id: string;
-  question: string;
-  answer: string;
-  hint?: string;
-  topic?: string;
+  title: string;
+  subject: string;
+  dueDate: string;
+  dateStr?: string;
+  priority: 'High' | 'Medium' | 'Low';
+  completed: boolean;
+  category?: 'study' | 'assignment' | 'exam' | 'general';
+}
+
+export interface CustomTutorPersona {
+  id: string;
+  name: string;
+  tagline?: string;
+  specialty?: string;
+  prompt: string;
+  avatarInitials?: string;
+  initials?: string;
+  subject?: string;
+  isDefault?: boolean;
+}
+
+export interface QuizOption {
+  key: 'A' | 'B' | 'C' | 'D' | string;
+  text: string;
 }
 
 export interface QuizQuestion {
-  id: string;
+  id: string | number;
   question: string;
-  options: string[];
-  correctIndex: number;
-  explanation: string;
-  topic: string;
-  difficulty?: 'easy' | 'moderate' | 'hard';
-  source?: 'teacher_question_bank' | 'ai_generated';
-  questionBankTitle?: string;
+  tag?: string;
+  topic?: string;
+  difficulty?: 'Easy' | 'Medium' | 'Hard' | string;
+  options: any;
+  correctKey?: 'A' | 'B' | 'C' | 'D' | string;
+  correctIndex?: number;
+  hint?: string;
+  explanation?: string;
+  source?: 'ai_generated' | 'teacher_question_bank' | string;
   teacherName?: string;
-}
-
-export interface QuestionBankItem extends QuizQuestion {
-  subjectId: string;
-}
-
-export interface QuestionBank {
-  id: string;
-  subjectId: string;
-  title: string;
-  description?: string;
-  teacherId: string;
-  teacherName: string;
-  uploadedAt: string;
-  questionsCount: number;
-  questions: QuizQuestion[];
 }
 
 export interface GeneratedQuiz {
   id: string;
-  title: string;
+  title?: string;
   topic: string;
   questions: QuizQuestion[];
   createdAt: string;
@@ -213,6 +293,9 @@ export interface GeneratedQuiz {
 
 export interface LectureQuizAnalysis {
   summary: string;
+  score?: number;
+  totalQuestions?: number;
+  percentage?: number;
   masteryLevel: 'Mastered' | 'Proficient' | 'Needs Review';
   difficultyBreakdown: {
     easy: { correct: number; total: number };
@@ -224,19 +307,121 @@ export interface LectureQuizAnalysis {
   suggestedTutorPrompt: string;
 }
 
+export interface Flashcard {
+  id: string;
+  question?: string;
+  answer?: string;
+  hint?: string;
+  front?: string;
+  back?: string;
+  topic?: string;
+  subject?: string;
+  mastered?: boolean;
+  formulaLatex?: string;
+}
+
+export interface ReferenceResource {
+  id: string;
+  subjectId: string;
+  title: string;
+  url: string;
+  type?: 'pdf' | 'doc' | 'slides' | 'link' | 'video' | string;
+  topicTag?: string;
+  category?: string;
+  author?: string;
+  description?: string;
+  keyTopics?: string[];
+  dateAdded?: string;
+}
+
+export interface QuestionBankItem {
+  id: string;
+  subjectId?: string;
+  subjectName?: string;
+  topic: string;
+  question: string;
+  difficulty: 'Easy' | 'Medium' | 'Hard' | 'easy' | 'moderate' | string;
+  type?: 'concept' | 'numerical' | 'derivation' | 'proof' | string;
+  marks?: number;
+  source: string;
+  sampleAnswer?: string;
+  formulaLatex?: string;
+  options?: any;
+  correctIndex?: number;
+  explanation?: string;
+  questionBankTitle?: string;
+  teacherName?: string;
+}
+
+export interface QuestionBank {
+  id: string;
+  subjectId: string;
+  title: string;
+  description: string;
+  questionsCount: number;
+  questions: QuestionBankItem[] | QuizQuestion[] | any;
+  teacherId?: string;
+  teacherName?: string;
+  uploadedAt?: string;
+}
+
+export interface VaultSnapshot {
+  id: string;
+  name?: string;
+  title?: string;
+  timestamp: string;
+  size?: string;
+  recordCount?: any;
+  sizeBytes?: any;
+  status?: string;
+  stateCounts?: {
+    students: number;
+    subjects: number;
+    assignments: number;
+    notes: number;
+  };
+}
+
+export interface SecurityAuditItem {
+  id: string;
+  category: string;
+  status: 'passed' | 'warning' | 'critical';
+  details: string;
+  timestamp: string;
+}
+
+export interface FacultyAnalyticsData {
+  classAverage: number;
+  submissionRate: number;
+  atRiskCount: number;
+  topPerformingTopic: string;
+  weakestTopic: string;
+  distribution: { grade: string; count: number; percentage: number }[];
+  weakTopics: {
+    topic: string;
+    errorRate: number;
+    affectedStudents: number;
+    urgency: 'high' | 'medium' | 'low';
+  }[];
+}
+
 export interface StudentNote {
   id: string;
   studentId?: string;
   subjectId: string;
+  subjectName?: string;
   title: string;
   content: string;
   tags: string[];
-  lastModified: string;
+  lastModified?: string;
+  lastEdited?: string;
+  pinned?: boolean;
   isPinned?: boolean;
   isPersonalized?: boolean;
   summary?: string;
   keyTakeaways?: string[];
   flashcards?: Flashcard[];
+  formulas?: any[];
   quiz?: GeneratedQuiz;
   source?: 'manual' | 'visionnote' | 'ocr_stream';
   cameraSnapshotUrl?: string;
@@ -263,7 +448,7 @@ export interface VisionNotePayload {
 
 export interface WeakTopic {
   topic: string;
-  errorRate: number; // e.g. 42%
+  errorRate: number;
   averageScore: number;
   affectedStudents: number;
   recommendedRemediation: string;
@@ -322,7 +507,7 @@ export interface GroundingSourceItem {
 
 export interface StudyChatMessage {
   id: string;
-  role: 'user' | 'assistant';
+  role: 'user' | 'assistant' | 'tutor' | 'system' | string;
   content: string;
   timestamp: string;
   recommendedVideos?: YouTubeVideoRecommendation[];
@@ -336,9 +521,19 @@ export interface StudyChatMessage {
 
 export interface ChatMessage {
   id: string;
-  sender: 'user' | 'assistant';
-  text: string;
+  sender?: 'user' | 'assistant' | 'tutor' | 'system' | string;
+  role?: 'user' | 'assistant' | 'tutor' | 'system' | string;
+  text?: string;
+  content?: string;
   timestamp: string;
+  method?: string;
+  videoClip?: {
+    title: string;
+    source?: string;
+    duration?: string;
+  };
+  isSocraticPrompt?: boolean;
+  suggestions?: string[];
   recommendedVideos?: YouTubeVideoRecommendation[];
   practiceQuestions?: PracticeQuestionItem[];
   sources?: string[];
@@ -347,20 +542,16 @@ export interface ChatMessage {
   quiz?: GeneratedQuiz;
 }
 
-// =======================================================
-// CLASSSARTHI + EDUSYNC UNIFIED PLATFORM DATA MODELS
-// =======================================================
-
 export interface LectureTimelineEvent {
   id: string;
-  timestamp: string; // e.g. "05:32", "21:05"
+  timestamp: string;
   timestampSeconds: number;
   title: string;
-  teacherQuote: string; // Exact or summarized speech from teacher
-  notes: string; // Relevant notes for this section
-  boardImageUrl?: string; // Captured blackboard frame
-  formulaLatex?: string; // Formula rendered via LaTeX/KaTeX
-  diagramUrl?: string; // Diagram/graph if available
+  teacherQuote: string;
+  notes: string;
+  boardImageUrl?: string;
+  formulaLatex?: string;
+  diagramUrl?: string;
   keyTakeaway?: string;
 }
 
@@ -370,8 +561,8 @@ export interface BoardCapture {
   lectureTitle: string;
   subjectId: string;
   subjectName: string;
-  timestamp: string; // e.g. "21:05"
-  title: string; // e.g. "Free Body Diagram", "VSEPR Geometry"
+  timestamp: string;
+  title: string;
   imageUrl: string;
   ocrLatex?: string;
   diagramType?: string;
@@ -415,7 +606,7 @@ export interface MasteryQuizQuestion {
   explanation: string;
   conceptTag: string;
   questionType: 'concept' | 'formula' | 'application' | 'reasoning' | 'numerical';
-  timestampRef: string; // e.g. "21:05"
+  timestampRef: string;
   misconceptionHint?: string;
 }
 
@@ -451,7 +642,7 @@ export interface QuizEvaluationResult {
 export interface StudentConceptMastery {
   concept: string;
   subjectId: string;
-  masteryScore: number; // 0 - 100
+  masteryScore: number;
   timesTested: number;
   needsRevision: boolean;
   lastTestedDate: string;
@@ -512,10 +703,10 @@ export interface ClassLevelInsight {
   classSize: number;
   weakConcepts: Array<{
     concept: string;
-    struggleRatePercent: number; // e.g. 62%
+    struggleRatePercent: number;
     affectedStudentCount: number;
     totalStudents: number;
-    recommendation: string; // e.g. "62% of students struggled with Newton's Second Law. This topic may need to be explained again."
+    recommendation: string;
     relatedLectureId: string;
     timestampRef: string;
   }>;

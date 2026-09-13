@@ -85,26 +85,23 @@
     "phone": "+91 98110 54333"
   },
   {
-    "id": "teacher-elena-rostova",
+    "id": "teacher-1788570692864",
     "name": "Dr. Elena Rostova",
-    "email": "elena.rostova@edusync.edu.in",
-    "username": "elena.rostova",
-    "password": "Elena@EduSync2026!",
+    "email": "elena.rostova.1788570692862@edusync.edu",
+    "username": "elena.rostova.1788570692862",
+    "password": "Teacher@2782",
     "role": "teacher",
-    "gender": "Female",
-    "institutionalId": "EDU-FAC-204",
-    "department": "Department of Computer Science & AI",
-    "designation": "Associate Professor of AI & Robotics",
-    "enrolledSubjectIds": [],
-    "teachingSubjectIds": [
-      "subj-phy",
-      "subj-mat"
-    ],
-    "officeLocation": "Turing Tower - Room 502",
-    "officeHours": "Tue & Thu 02:00 PM - 04:00 PM",
+    "gender": "Male",
+    "institutionalId": "BMU-FAC-2782",
+    "department": "Theoretical High Energy Physics",
+    "designation": "Assistant Professor",
+    "officeLocation": "Academic Block A",
+    "officeHours": "Mon/Wed 11:00 AM - 01:00 PM",
+    "phone": "+91 98391 37297",
     "status": "active",
-    "joinedDate": "2021-08-15",
-    "phone": "+91 98110 54334"
+    "joinedDate": "2026-09-05",
+    "enrolledSubjectIds": [],
+    "teachingSubjectIds": []
   },
   {
     "id": "student-1",
@@ -342,12 +339,12 @@
     "learningProfile": {
       "learningStyle": "visual",
       "targetGrade": "A+",
-      "explanationTone": "encouraging_mentor",
+      "explanationTone": "practical_engineer",
       "preferredPace": "steady",
       "strengthsAndInterests": "Interactive coding, mathematical graphs, physical models",
       "painPoints": "Complex integration, multi-variable calculus",
       "questionnaireCompleted": true,
-      "completedAt": "2026-09-04T12:00:00.000Z"
+      "completedAt": "2026-09-08T10:16:49.639Z"
     }
   },
   {
@@ -502,26 +499,5 @@
       "subj-mat"
     ],
     "teachingSubjectIds": []
-  },
-  {
-    "id": "teacher-elena-rostova",
-    "name": "Dr. Elena Rostova",
-    "email": "elena.rostova@edusync.edu",
-    "username": "elena.rostova",
-    "password": "Teacher@2026!",
-    "role": "teacher",
-    "gender": "Female",
-    "institutionalId": "BMU-FAC-2062",
-    "department": "Theoretical High Energy Physics",
-    "designation": "Assistant Professor",
-    "officeLocation": "Academic Block A",
-    "officeHours": "Mon/Wed 11:00 AM - 01:00 PM",
-    "phone": "+91 98525 29743",
-    "status": "active",
-    "joinedDate": "2026-09-04",
-    "enrolledSubjectIds": [],
-    "teachingSubjectIds": [
-      "subj-phy"
-    ]
   }
 ]

@@ -1,480 +1,288 @@
-import React, { useState } from 'react';
-import { User, Subject } from '../types';
+import React, { useState, useRef, useEffect } from 'react';
 import {
-  GraduationCap,
-  Sparkles,
-  ShieldCheck,
-  UserCheck,
-  ChevronDown,
-  BookOpen,
-  Zap,
-  RefreshCw,
+  Search,
+  Bell,
+  Menu,
+  X,
+  CheckCircle,
+  AlertTriangle,
   LogOut,
-  Building2,
-  Sun,
-  Moon,
-  Shield,
-  Eye,
-  Camera,
-  UploadCloud,
-  Palette,
-  Key
+  UserCheck,
+  Settings,
+  ChevronDown,
 } from 'lucide-react';
+import { User as UserType } from '../types';
 
 interface HeaderProps {
-  currentUser: User;
-  allUsers: User[];
-  onSwitchUser: (userId: string) => void;
+  currentUser: UserType;
+  collapsed: boolean;
+  onOpenMobileSidebar: () => void;
+  onSearchQuery?: (q: string) => void;
+  onNavigateTo: (route: any) => void;
+  onSwitchUser?: (userId: string) => void;
   onLogout?: () => void;
-  subjects: Subject[];
-  activeSubjectId: string;
-  onSelectSubject: (subjectId: string) => void;
-  rateLimitRemaining?: number;
-  theme?: 'dark' | 'light';
-  onToggleTheme?: () => void;
-  isAuditing?: boolean;
-  onExitAudit?: () => void;
-  activeTab?: string;
-  onOpenPersonalization?: () => void;
-  onNavigateToVisionNote?: () => void;
-  isDemoMode?: boolean;
-  onToggleDemoMode?: (demo: boolean) => void;
-  onOpenVNImport?: () => void;
-  accentColor?: string;
-  onChangeAccentColor?: (color: string) => void;
+  allUsers?: UserType[];
 }
 
 export const Header: React.FC<HeaderProps> = ({
   currentUser,
-  allUsers,
+  collapsed,
+  onOpenMobileSidebar,
+  onNavigateTo,
   onSwitchUser,
   onLogout,
-  subjects,
-  activeSubjectId,
-  onSelectSubject,
-  rateLimitRemaining = 58,
-  theme = 'dark',
-  onToggleTheme,
-  isAuditing = false,
-  onExitAudit,
-  activeTab,
-  onOpenPersonalization,
-  onNavigateToVisionNote,
-  isDemoMode = true,
-  onToggleDemoMode,
-  onOpenVNImport,
-  accentColor = 'blue',
-  onChangeAccentColor
+  allUsers = [],
 }) => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [showKeyModal, setShowKeyModal] = useState(false);
-  const [tempKey, setTempKey] = useState('');
-  const [hasKey, setHasKey] = useState(() => Boolean(localStorage.getItem('edusync_user_gemini_key')));
-  const activeSubject = subjects.find(s => s.id === activeSubjectId) || subjects[0];
-  const isTutorTab = activeTab === 'tutor';
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
-  const handleSaveKey = () => {
-    const trimmed = tempKey.trim();
-    if (trimmed) {
-      localStorage.setItem('edusync_user_gemini_key', trimmed);
-      setHasKey(true);
-    } else {
-      localStorage.removeItem('edusync_user_gemini_key');
-      setHasKey(false);
-    }
-    setShowKeyModal(false);
-  };
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setShowUserMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
-  const toggleRole = () => {
-    // Only admins have the authority to cycle between perspectives
-    if (currentUser.role !== 'admin' && !isAuditing) return;
-    
-    // Cycle between admin, teacher, and student
-    const student = allUsers.find(u => u.role === 'student');
-    if (student) onSwitchUser(student.id);
-  };
+  const notifications = [
+    {
+      id: 1,
+      title: 'Classroom Notes Synchronized',
+      desc: 'Physics 11 OCR Whiteboard sync completed.',
+      time: '10m ago',
+      urgent: false,
+    },
+    {
+      id: 2,
+      title: 'Problem Set #3 Evaluation',
+      desc: 'Dhruva submitted Problem Set 3 - Ramp Friction. Ready for rubric review.',
+      time: '25m ago',
+      urgent: true,
+    },
+    {
+      id: 3,
+      title: 'Disaster Recovery Automated Check',
+      desc: 'All 14 OWASP & data vault checkpoints verified with 100% pass.',
+      time: '1h ago',
+      urgent: false,
+    },
+  ];
 
   return (
-    <header className="sticky top-0 z-40 bg-slate-900 border-b border-slate-800 shadow-sm transition-colors w-full min-w-0">
-      <div className="w-full px-3 sm:px-4 lg:px-6">
-        <div className="flex items-center justify-between h-16 gap-2 sm:gap-4 min-w-0">
-          {/* Course Selector & Context */}
-          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-            {currentUser.role === 'admin' ? (
-              <div className="flex items-center gap-2 min-w-0">
-                <Shield className="w-4 h-4 text-purple-400 shrink-0" />
-                <h2 className="text-sm sm:text-base font-bold text-white tracking-tight truncate">
-                  Academic Administration
-                </h2>
-                <span className="px-2 py-0.5 bg-purple-950/80 text-purple-300 text-[10px] font-mono rounded border border-purple-800 shrink-0 font-bold">
-                  REGISTRAR
-                </span>
-              </div>
-            ) : isTutorTab ? (
-              <div className="flex items-center gap-2 min-w-0">
-                <Sparkles className="w-4 h-4 text-indigo-400 shrink-0" />
-                <h2 className="text-sm sm:text-base font-bold text-white tracking-tight">
-                  EduSync AI Tutor
-                </h2>
-                <span className="px-2 py-0.5 bg-indigo-950/80 text-indigo-300 text-[10px] font-mono rounded border border-indigo-800 shrink-0 font-bold">
-                  SOCRATIC
-                </span>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2 min-w-0">
-                <div className="flex items-center gap-1.5 shrink-0">
-                  <BookOpen className="w-4 h-4 text-blue-400" />
-                  <span className="text-[11px] uppercase font-bold tracking-wider text-slate-400 hidden md:inline">
-                    Select Subject:
+    <header
+      className={`fixed top-0 right-0 h-16 bg-white/90 backdrop-blur-xl z-40 shadow-[0_1px_8px_rgba(0,0,0,0.03)] border-b border-[#eff4ff] transition-all duration-300 ${
+        collapsed ? 'left-20' : 'left-0 lg:left-64'
+      }`}
+    >
+      <div className="h-16 w-full px-4 lg:px-6 flex items-center justify-between gap-3">
+        {/* Left: Mobile hamburger + Global Search */}
+        <div className="flex items-center gap-3 flex-1 max-w-xl">
+          <button
+            onClick={onOpenMobileSidebar}
+            className="lg:hidden w-9 h-9 rounded-full bg-[#eff4ff] flex items-center justify-center text-[#5a4138] hover:text-[#0b1c30] cursor-pointer"
+            type="button"
+            aria-label="Open menu"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+
+          <div className="flex items-center gap-2 bg-[#eff4ff] px-3.5 py-2 rounded-full w-full max-w-md focus-within:ring-2 focus-within:ring-[#0051d5]/30 transition-all">
+            <Search className="w-4 h-4 text-[#5a4138] flex-shrink-0" />
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search lessons, formulas, notes, assignments..."
+              className="bg-transparent border-none outline-none text-xs text-[#0b1c30] placeholder:text-[#5a4138] w-full font-medium"
+            />
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm('')}
+                className="text-xs text-[#5a4138] hover:text-black cursor-pointer"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Right actions: Notifications + User Profile Avatar */}
+        <div className="flex items-center gap-2.5 relative">
+          {/* Notifications button & popover */}
+          <div className="relative">
+            <button
+              onClick={() => {
+                setShowNotifications(!showNotifications);
+                setShowUserMenu(false);
+              }}
+              className="w-9 h-9 rounded-full bg-[#eff4ff] flex items-center justify-center text-[#5a4138] hover:text-[#0b1c30] hover:bg-[#dce9ff] transition-colors relative cursor-pointer"
+              type="button"
+              aria-label="Notifications"
+            >
+              <Bell className="w-4 h-4" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#ba1a1a]" />
+            </button>
+
+            {showNotifications && (
+              <div className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-xl border border-[#e2e8f0] p-4 z-50 animate-in fade-in zoom-in-95 duration-150">
+                <div className="flex items-center justify-between pb-2 border-b border-[#eff4ff]">
+                  <span className="font-bold text-sm text-[#0b1c30]">Notifications</span>
+                  <span className="text-[11px] font-semibold text-[#0051d5] cursor-pointer hover:underline">
+                    Mark all read
                   </span>
                 </div>
-                <select
-                  id="header-subject-select"
-                  aria-label="Select Subject"
-                  value={activeSubjectId}
-                  onChange={(e) => onSelectSubject(e.target.value)}
-                  className="bg-slate-950 text-xs sm:text-sm font-bold text-white border border-slate-700 hover:border-blue-500 rounded-lg px-2.5 sm:px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer min-w-[160px] sm:min-w-[230px] md:min-w-[280px] shadow-sm transition-all"
-                >
-                  {subjects.map((subj) => (
-                    <option key={subj.id} value={subj.id} className="bg-slate-900 text-white font-medium py-1">
-                      {subj.code} — {subj.name}
-                    </option>
+                <div className="flex flex-col gap-2 mt-2 max-h-72 overflow-y-auto">
+                  {notifications.map((n) => (
+                    <div
+                      key={n.id}
+                      className="p-2.5 rounded-xl hover:bg-[#eff4ff] transition-colors cursor-pointer flex gap-2.5 items-start"
+                      onClick={() => setShowNotifications(false)}
+                    >
+                      {n.urgent ? (
+                        <AlertTriangle className="w-4 h-4 text-[#ba1a1a] flex-shrink-0 mt-0.5" />
+                      ) : (
+                        <CheckCircle className="w-4 h-4 text-[#006947] flex-shrink-0 mt-0.5" />
+                      )}
+                      <div className="flex flex-col min-w-0">
+                        <span className="font-semibold text-xs text-[#0b1c30]">{n.title}</span>
+                        <span className="text-[11px] text-[#5a4138] leading-tight mt-0.5">
+                          {n.desc}
+                        </span>
+                        <span className="text-[10px] text-gray-400 mt-1">{n.time}</span>
+                      </div>
+                    </div>
                   ))}
-                </select>
+                </div>
               </div>
             )}
           </div>
 
-          {/* Right Controls: Personalization Button, Audit Return, Theme Toggle */}
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-            {/* Sleek Compact AI Persona Badge */}
-            {currentUser.role === 'student' && onOpenPersonalization && (
-              <button
-                id="header-personalize-ai-btn"
-                onClick={onOpenPersonalization}
-                className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm cursor-pointer shrink-0 border ${
-                  currentUser.learningProfile?.questionnaireCompleted
-                    ? 'bg-slate-950 text-purple-300 border-purple-800/80 hover:bg-purple-950/60 hover:border-purple-600'
-                    : 'bg-purple-600 hover:bg-purple-500 text-white border-purple-500'
-                }`}
-                title="Cognitive Tuning & Learning Persona"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-amber-300 shrink-0" />
-                <span className="font-sans">
-                  {currentUser.learningProfile?.questionnaireCompleted
-                    ? `AI Persona: ${currentUser.learningProfile.learningStyle.replace('_', ' ').split(' ')[0].toUpperCase()}`
-                    : 'AI Persona Setup'}
-                </span>
-              </button>
-            )}
-
-            {/* If Registrar is in Audit Mode, show Return Button */}
-            {isAuditing && onExitAudit && (
-              <button
-                id="header-exit-audit-btn"
-                onClick={onExitAudit}
-                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded text-xs font-bold bg-purple-600 hover:bg-purple-500 text-white shadow-md transition-all shrink-0"
-                title="Dean Privilege: Return to Registrar Dashboard"
-              >
-                <Shield className="w-3.5 h-3.5 shrink-0" />
-                <span className="hidden sm:inline">Return to Registrar</span>
-              </button>
-            )}
-
-            {/* Quick Role Switcher Button - Strictly for Deans/Registrars */}
-            {currentUser.role === 'admin' && (
-              <button
-                id="header-quick-role-toggle-btn"
-                onClick={toggleRole}
-                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded text-xs font-semibold border transition-all bg-purple-950/60 text-purple-300 border-purple-800 hover:bg-purple-900/80 shrink-0"
-                title="Dean Privilege: Click to inspect Student viewpoint"
-              >
-                <RefreshCw className="w-3.5 h-3.5 text-purple-400 shrink-0" />
-                <span className="hidden lg:inline">Audit Student View</span>
-              </button>
-            )}
-
-            {/* Universal API Key Configuration Trigger */}
+          {/* User profile avatar & menu */}
+          <div className="relative" ref={userMenuRef}>
             <button
-              id="header-api-key-btn"
               onClick={() => {
-                setTempKey(localStorage.getItem('edusync_user_gemini_key') || '');
-                setShowKeyModal(true);
+                setShowUserMenu(!showUserMenu);
+                setShowNotifications(false);
               }}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 shadow-sm cursor-pointer border ${
-                hasKey
-                  ? 'bg-emerald-950/80 hover:bg-emerald-900/80 border-emerald-700/80 text-emerald-300'
-                  : 'bg-amber-950/80 hover:bg-amber-900/80 border-amber-700/80 text-amber-300 animate-pulse'
+              className={`flex items-center gap-2 py-1 px-2 rounded-full hover:bg-[#eff4ff] transition-all cursor-pointer ${
+                showUserMenu ? 'bg-[#eff4ff]' : ''
               }`}
-              title="Set Gemini API Key for Instant AI Features"
+              type="button"
+              aria-label="User Profile Menu"
             >
-              <Key className="w-3.5 h-3.5 shrink-0" />
-              <span>{hasKey ? 'Gemini Key ✓' : '🔑 Set API Key'}</span>
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-xs shadow-xs ${
+                  currentUser.role === 'admin'
+                    ? 'bg-[#0051d5]'
+                    : currentUser.role === 'teacher'
+                    ? 'bg-[#a33900]'
+                    : 'bg-[#006947]'
+                }`}
+              >
+                <span>{currentUser.role === 'student' ? 'S' : currentUser.avatarInitials}</span>
+              </div>
+              <span className="text-xs font-bold text-[#0b1c30] hidden md:inline max-w-[120px] truncate">
+                {currentUser.name}
+              </span>
+              <ChevronDown className="w-3.5 h-3.5 text-[#5a4138]" />
             </button>
 
-            {/* VisionNote Direct Import Button */}
-            {onOpenVNImport && (
-              <button
-                id="header-import-vn-btn"
-                onClick={onOpenVNImport}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-cyan-950/80 border border-cyan-700/80 text-cyan-300 hover:bg-cyan-900/80 transition-all shrink-0 shadow-sm hover:shadow-cyan-900/20"
-                title="Paste OCR text or load .txt file from VisionNote"
-              >
-                <UploadCloud className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-                <span>Import VN Note</span>
-              </button>
-            )}
-
-            {/* Theme Toggle (Light / Dark) */}
-            {onToggleTheme && (
-              <button
-                id="header-theme-toggle-btn"
-                onClick={onToggleTheme}
-                className="p-2 rounded-lg bg-slate-950 hover:bg-slate-800 text-slate-300 hover:text-amber-300 border border-slate-800 hover:border-slate-700 transition-all cursor-pointer shrink-0"
-                title={theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
-                aria-label="Toggle Theme"
-              >
-                {theme === 'dark' ? (
-                  <Sun className="w-4 h-4 text-amber-400" />
-                ) : (
-                  <Moon className="w-4 h-4 text-indigo-400" />
-                )}
-              </button>
-            )}
-
-            {/* User Profile Trigger with Settings Dropdown */}
-            <div className="relative shrink-0">
-              <button
-                id="header-user-menu-btn"
-                onClick={() => setShowUserMenu(!showUserMenu)}
-                className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-slate-800 border border-slate-800/80 hover:border-slate-700 transition-all text-left bg-slate-950/60 cursor-pointer"
-              >
-                <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold border shrink-0 ${
-                  currentUser.role === 'admin'
-                    ? 'bg-purple-900/40 text-purple-300 border-purple-500/50'
-                    : currentUser.role === 'teacher'
-                    ? 'bg-emerald-900/40 text-emerald-300 border-emerald-500/50'
-                    : 'bg-blue-900/40 text-blue-300 border-blue-500/50'
-                }`}>
-                  {currentUser.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                </div>
-                <div className="hidden sm:block text-left">
-                  <div className="text-xs font-bold text-white flex items-center gap-1.5 leading-none">
-                    <span className="truncate max-w-[100px]">{currentUser.name.split(' ')[0]}</span>
+            {showUserMenu && (
+              <div className="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-[#e2e8f0] p-3 z-50 animate-in fade-in zoom-in-95 duration-150 flex flex-col gap-2">
+                {/* User info card */}
+                <div className="p-2.5 rounded-xl bg-[#eff4ff] flex items-center gap-3">
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-xs ${
+                      currentUser.role === 'admin'
+                        ? 'bg-[#0051d5]'
+                        : currentUser.role === 'teacher'
+                        ? 'bg-[#a33900]'
+                        : 'bg-[#006947]'
+                    }`}
+                  >
+                    <span>{currentUser.role === 'student' ? 'S' : currentUser.avatarInitials}</span>
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="font-bold text-xs text-[#0b1c30] truncate">{currentUser.name}</span>
+                    <span className="text-[10px] text-[#5a4138] truncate">{currentUser.email || currentUser.username}</span>
                     <span
-                      className={`text-[9px] px-1.5 py-0.5 rounded font-mono font-bold uppercase ${
+                      className={`inline-block w-fit mt-0.5 px-2 py-0.2 rounded-full text-[9px] font-bold uppercase ${
                         currentUser.role === 'admin'
-                          ? 'bg-purple-900/60 text-purple-300 border border-purple-700/50'
+                          ? 'bg-[#eff4ff] text-[#0051d5]'
                           : currentUser.role === 'teacher'
-                          ? 'bg-emerald-900/60 text-emerald-300 border border-emerald-700/50'
-                          : 'bg-blue-900/60 text-blue-300 border border-blue-700/50'
+                          ? 'bg-[#fff3ea] text-[#a33900]'
+                          : 'bg-[#e6f4ea] text-[#006947]'
                       }`}
                     >
-                      {currentUser.role === 'admin' ? 'Dean' : currentUser.role === 'teacher' ? 'Faculty' : 'Student'}
+                      {currentUser.role}
                     </span>
                   </div>
                 </div>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-              </button>
 
-              {/* User Dropdown Modal */}
-              {showUserMenu && (
-                <div className="absolute right-0 mt-2 w-80 bg-slate-900 rounded-xl shadow-2xl border border-slate-800 py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                  <div className="px-3.5 py-2.5 border-b border-slate-800 bg-slate-950/70">
-                    <div className="flex items-center justify-between mb-1">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                        BML Munjal University
-                      </p>
-                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 font-mono">
-                        {currentUser.role.toUpperCase()}
-                      </span>
+                {/* Quick Persona Switch */}
+                {allUsers && allUsers.length > 1 && onSwitchUser && (
+                  <div className="py-1 border-t border-b border-[#eff4ff]">
+                    <span className="text-[10px] font-bold text-[#5a4138] uppercase px-2 mb-1 block">
+                      Switch Role
+                    </span>
+                    <div className="flex flex-col gap-1">
+                      {allUsers.map((u) => {
+                        const isCurrent = u.id === currentUser.id;
+                        return (
+                          <button
+                            key={u.id}
+                            onClick={() => {
+                              onSwitchUser(u.id);
+                              setShowUserMenu(false);
+                            }}
+                            className={`flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-semibold text-left transition-colors cursor-pointer ${
+                              isCurrent
+                                ? 'bg-[#fff3ea] text-[#a33900]'
+                                : 'text-[#0b1c30] hover:bg-[#eff4ff]'
+                            }`}
+                          >
+                            <span className="truncate">{u.name} ({u.role})</span>
+                            {isCurrent && <UserCheck className="w-3.5 h-3.5 text-[#a33900]" />}
+                          </button>
+                        );
+                      })}
                     </div>
-                    <p className="text-xs font-bold text-white truncate">{currentUser.name}</p>
-                    <p className="text-[11px] text-slate-400 font-mono truncate">{currentUser.email}</p>
-                    <p className="text-[10px] text-blue-400 font-medium mt-0.5 truncate">{currentUser.department}</p>
                   </div>
+                )}
 
-                  {/* Real-time Theme Accent Color Picker Section */}
-                  {onChangeAccentColor && (
-                    <div className="px-3.5 py-2.5 border-b border-slate-800 space-y-1.5">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
-                          <Palette className="w-3.5 h-3.5 text-blue-400" />
-                          Color Palette (Live)
-                        </span>
-                        <span className="text-[10px] font-mono text-cyan-400 uppercase font-bold">
-                          {accentColor}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between pt-1">
-                        {[
-                          { id: 'blue', name: 'Blue', color: 'bg-blue-500', ring: 'ring-blue-400' },
-                          { id: 'emerald', name: 'Emerald', color: 'bg-emerald-500', ring: 'ring-emerald-400' },
-                          { id: 'purple', name: 'Purple', color: 'bg-purple-500', ring: 'ring-purple-400' },
-                          { id: 'cyan', name: 'Cyan', color: 'bg-cyan-500', ring: 'ring-cyan-400' },
-                          { id: 'rose', name: 'Rose', color: 'bg-rose-500', ring: 'ring-rose-400' },
-                          { id: 'amber', name: 'Amber', color: 'bg-amber-500', ring: 'ring-amber-400' }
-                        ].map((item) => {
-                          const isSelected = accentColor === item.id;
-                          return (
-                            <button
-                              key={item.id}
-                              type="button"
-                              onClick={() => {
-                                onChangeAccentColor(item.id);
-                              }}
-                              className={`w-6 h-6 rounded-full ${item.color} transition-all flex items-center justify-center cursor-pointer ${
-                                isSelected ? `ring-2 ring-white scale-110 shadow-lg` : 'opacity-70 hover:opacity-100 hover:scale-105'
-                              }`}
-                              title={`Switch to ${item.name} Accent`}
-                            >
-                              {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-white block" />}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
+                {/* Menu items */}
+                <button
+                  onClick={() => {
+                    onNavigateTo('settings');
+                    setShowUserMenu(false);
+                  }}
+                  className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-[#0b1c30] hover:bg-[#eff4ff] transition-colors cursor-pointer"
+                >
+                  <Settings className="w-4 h-4 text-[#5a4138]" />
+                  <span>Profile & Settings</span>
+                </button>
 
-                  {/* Mode Switcher Section (Demo Mode vs Clean Slate) */}
-                  {onToggleDemoMode && (
-                    <div className="px-3.5 py-2.5 border-b border-slate-800">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-xs font-bold text-white flex items-center gap-1.5">
-                            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                            {isDemoMode ? 'Mentor Demo Mode' : 'Clean Slate (Prod)'}
-                          </p>
-                          <p className="text-[10px] text-slate-400">
-                            {isDemoMode ? 'Presentation data active' : 'Fresh production slate'}
-                          </p>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            onToggleDemoMode(!isDemoMode);
-                          }}
-                          className={`px-2.5 py-1 rounded text-[11px] font-bold transition-all border ${
-                            isDemoMode
-                              ? 'bg-amber-950/70 text-amber-300 border-amber-600/80 hover:bg-amber-900/80'
-                              : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
-                          }`}
-                        >
-                          {isDemoMode ? 'Switch to Reset' : 'Load Demo'}
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* If Admin/Dean, allow inspecting perspectives */}
-                  {currentUser.role === 'admin' && allUsers.length > 0 ? (
-                    <div className="p-2 max-h-80 overflow-y-auto space-y-3">
-                      <div>
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-purple-400 px-2 py-1 flex items-center justify-between">
-                          <span>Dean Audit Switcher</span>
-                          <span className="font-mono text-[9px] text-slate-400">Authorized</span>
-                        </p>
-                        <div className="space-y-1">
-                          {allUsers.map((user) => (
-                            <button
-                              key={user.id}
-                              onClick={() => {
-                                onSwitchUser(user.id);
-                                setShowUserMenu(false);
-                              }}
-                              className={`w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-sm text-left text-xs transition-colors ${
-                                user.id === currentUser.id
-                                  ? 'bg-purple-950/90 text-purple-200 border border-purple-700 font-semibold'
-                                  : 'hover:bg-slate-800 text-slate-300'
-                              }`}
-                            >
-                              <div className="w-6 h-6 rounded-full bg-slate-800 text-slate-200 border border-slate-700 flex items-center justify-center text-[10px] font-bold shrink-0">
-                                {user.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                              </div>
-                              <div className="flex-1 truncate">
-                                <div className="flex items-center justify-between">
-                                  <span className="truncate text-white font-medium">{user.name}</span>
-                                  <span className="text-[9px] px-1 rounded-xs bg-slate-800 text-slate-300 font-mono">
-                                    {user.role}
-                                  </span>
-                                </div>
-                                <span className="text-[10px] text-slate-400 font-mono block truncate">{user.department}</span>
-                              </div>
-                              {user.id === currentUser.id && <UserCheck className="w-4 h-4 text-purple-400 shrink-0" />}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="p-3 text-xs text-slate-400 space-y-2">
-                      <p className="leading-relaxed text-[11px]">
-                        🔒 <strong>Role Isolation:</strong> Your account is restricted to your authorized {currentUser.role} dashboard workspace.
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Bottom Logout in Dropdown */}
-                  {onLogout && (
-                    <div className="px-2 pt-2 border-t border-slate-800">
-                      <button
-                        onClick={() => {
-                          setShowUserMenu(false);
-                          onLogout();
-                        }}
-                        className="w-full flex items-center justify-center gap-2 py-2 px-3 bg-rose-950/40 hover:bg-rose-950 text-rose-300 border border-rose-800/60 rounded-sm text-xs font-bold transition-colors"
-                      >
-                        <LogOut className="w-3.5 h-3.5" />
-                        <span>Sign Out of EduSync</span>
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
+                {onLogout && (
+                  <button
+                    onClick={() => {
+                      onLogout();
+                      setShowUserMenu(false);
+                    }}
+                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-[#ba1a1a] hover:bg-[#fff0f0] transition-colors cursor-pointer"
+                  >
+                    <LogOut className="w-4 h-4 text-[#ba1a1a]" />
+                    <span>Sign Out</span>
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
-
-      {/* Global API Key Configuration Modal */}
-      {showKeyModal && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-700 rounded-xl p-6 max-w-md w-full shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center gap-2 text-indigo-400 font-bold text-base">
-              <Key className="w-5 h-5 text-indigo-400" />
-              <span>Configure Gemini API Key</span>
-            </div>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              Paste your Google Gemini API key below to activate the live AI Tutor, VisionNote synthesis, and AI Quiz generator without depending on cloud environment variables.
-            </p>
-            <div className="space-y-1.5">
-              <label className="text-[11px] font-mono text-slate-400 uppercase tracking-wider block">Google AI API Key</label>
-              <input
-                type="password"
-                placeholder="Paste AIzaSy... or AQ... key"
-                value={tempKey}
-                onChange={(e) => setTempKey(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-hidden focus:border-indigo-500 font-mono"
-                autoFocus
-              />
-            </div>
-            <div className="flex items-center justify-end gap-2 pt-2">
-              <button
-                onClick={() => setShowKeyModal(false)}
-                className="px-3.5 py-2 text-xs font-semibold text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSaveKey}
-                className="px-4 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors shadow-sm cursor-pointer"
-              >
-                Save & Activate Key
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </header>
   );
 };

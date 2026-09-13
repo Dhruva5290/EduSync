@@ -33,14 +33,14 @@ export const AssignmentHub: React.FC<AssignmentHubProps> = ({
   fetchSubmissionsForAssignment
 }) => {
   const safeAssignments = Array.isArray(assignments) ? assignments : [];
-  const safeActiveSubject: Subject = activeSubject || {
+  const safeActiveSubject: Subject = activeSubject || ({
     id: 'subj-phy',
     code: 'PHY',
     name: 'Physics',
     department: 'Department of Applied Sciences',
     teacherName: 'Faculty',
     enrolledCount: 15
-  };
+  } as Subject);
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null);
@@ -91,7 +91,7 @@ export const AssignmentHub: React.FC<AssignmentHubProps> = ({
 
   const handleSelectSubmission = (sub: Submission) => {
     setActiveSubmission(sub);
-    setGradeInput(sub.grade !== undefined ? sub.grade : (sub.aiSuggestedGrade || 85));
+    setGradeInput(sub.grade !== undefined ? Number(sub.grade) : (sub.aiSuggestedGrade || 85));
     setFeedbackInput(sub.feedback || sub.aiFeedbackSummary || 'Good work on this problem set.');
   };
 

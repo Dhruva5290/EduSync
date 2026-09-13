@@ -43,14 +43,14 @@ export const AIClassAnalytics: React.FC<AIClassAnalyticsProps> = ({
   const [activeTab, setActiveTab] = useState<'overview' | 'weakTopics' | 'trends'>('overview');
   const [classInsights, setClassInsights] = useState<ClassLevelInsight | null>(null);
 
-  const activeSubject: Subject = propActiveSubject || {
+  const activeSubject: Subject = propActiveSubject || ({
     id: 'subj-phy',
     code: 'PHY',
     name: 'Physics',
     department: 'Department of Applied Sciences',
     teacherName: 'Dr. Ramesh Sharma',
     enrolledCount: 32
-  };
+  } as Subject);
 
   const analytics: ClassAnalytics = propAnalytics || {
     subjectId: activeSubject.id,

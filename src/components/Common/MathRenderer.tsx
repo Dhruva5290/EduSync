@@ -11,7 +11,8 @@ declare global {
 }
 
 interface MathRendererProps {
-  content: string;
+  content?: string;
+  math?: string;
   className?: string;
   isBlock?: boolean;
 }
@@ -316,11 +317,13 @@ function formatInlineSpans(line: string): string {
 
 export const MathRenderer: React.FC<MathRendererProps> = React.memo(({
   content,
+  math,
   className = '',
   isBlock = false
 }) => {
   const renderedHtml = useMemo(() => {
-    const trimmed = (content || '').trim();
+    const rawText = content || math || '';
+    const trimmed = rawText.trim();
 
     // Check if content is pure math formula (e.g. "$$N = mg\cos\theta$$")
     const isPureBlock = trimmed.startsWith('$$') && trimmed.endsWith('$$');

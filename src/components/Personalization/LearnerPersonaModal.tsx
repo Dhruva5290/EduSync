@@ -56,11 +56,15 @@ export const LearnerPersonaModal: React.FC<LearnerPersonaModalProps> = ({
   const [preferredPace, setPreferredPace] = useState<LearnerPersona['preferredPace']>(
     currentProfile?.preferredPace || 'steady'
   );
-  const [strengthsAndInterests, setStrengthsAndInterests] = useState(
-    currentProfile?.strengthsAndInterests || ''
+  const [strengthsAndInterests, setStrengthsAndInterests] = useState<string>(
+    Array.isArray(currentProfile?.strengthsAndInterests)
+      ? currentProfile.strengthsAndInterests.join(', ')
+      : (currentProfile?.strengthsAndInterests || '')
   );
-  const [painPoints, setPainPoints] = useState(
-    currentProfile?.painPoints || ''
+  const [painPoints, setPainPoints] = useState<string>(
+    Array.isArray(currentProfile?.painPoints)
+      ? currentProfile.painPoints.join(', ')
+      : (currentProfile?.painPoints || '')
   );
   const [isSaving, setIsSaving] = useState(false);
 
