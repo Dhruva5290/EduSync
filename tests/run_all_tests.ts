@@ -11,6 +11,7 @@ import { runVisionNoteClassSarthiTests } from './03_visionnote_classsarthi.test'
 import { runSmartNotesAndMasteryTests } from './04_smart_notes_mastery.test';
 import { runSocraticAiTutorTests } from './05_socratic_ai_tutor.test';
 import { runSecurityAndBugHunterTests } from './06_security_bug_hunter.test';
+import { runPluginsSystemTests } from './07_plugins_system.test';
 
 async function main() {
   console.log('\n\x1b[1m\x1b[36m===============================================================\x1b[0m');
@@ -21,7 +22,7 @@ async function main() {
   let ctx;
 
   try {
-    console.log('\x1b[90m[1/7] Bootstrapping isolated test server runtime...\x1b[0m');
+    console.log('\x1b[90m[1/8] Bootstrapping isolated test server runtime...\x1b[0m');
     ctx = await setupTestServer();
     console.log(`\x1b[32m✔\x1b[0m Server initialized at ${ctx.baseUrl}\n`);
 
@@ -42,6 +43,9 @@ async function main() {
 
     console.log('\n\x1b[1m--- Suite 6: Security, OWASP Guards & Bug Hunter ---\x1b[0m');
     await runSecurityAndBugHunterTests(ctx, runner);
+
+    console.log('\n\x1b[1m--- Suite 7: Plugins System, Automation Rules & MCP Tutors ---\x1b[0m');
+    await runPluginsSystemTests(ctx, runner);
 
   } catch (fatalErr) {
     console.error('\n\x1b[31mFatal test suite error:\x1b[0m', fatalErr);

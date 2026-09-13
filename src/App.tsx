@@ -547,6 +547,12 @@ export function App() {
             customTutors={customTutors}
             onAddCustomTutor={handleAddCustomTutor}
             onRemoveCustomTutor={handleRemoveCustomTutor}
+            currentUser={currentUser}
+            onNavigateToTutor={(topic?: string) => {
+              if (topic) setTutorPrefillTopic(topic);
+              setCurrentRoute('ai-tutor');
+            }}
+            showToast={showToast}
           />
         )}
 

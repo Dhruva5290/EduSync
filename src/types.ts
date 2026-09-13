@@ -249,6 +249,16 @@ export interface TodoTask {
   category?: 'study' | 'assignment' | 'exam' | 'general';
 }
 
+export interface MCPConfig {
+  provider: 'edusync_ai' | 'anthropic' | 'openai' | 'custom';
+  mcpUrl?: string;
+  apiKey?: string;
+  authMethod: 'bearer' | 'header' | 'oauth2';
+  capabilities: string[];
+  status?: 'verified' | 'untested' | 'failed';
+  lastTested?: string;
+}
+
 export interface CustomTutorPersona {
   id: string;
   name: string;
@@ -258,8 +268,77 @@ export interface CustomTutorPersona {
   avatarInitials?: string;
   initials?: string;
   subject?: string;
+  bio?: string;
+  method?: 'socratic' | 'feynman' | 'direct' | 'visual' | 'project_based' | 'custom' | string;
+  mcpConfig?: MCPConfig;
+  status?: 'approved' | 'pending_approval' | 'rejected' | 'draft';
+  submittedAt?: string;
+  approvedAt?: string;
+  authorId?: string;
+  authorName?: string;
+  adminNotes?: string;
   isDefault?: boolean;
 }
+
+export type PluginId = 'google_classroom' | 'gmail' | 'google_calendar' | 'notion';
+
+export interface AutomationRule {
+  id: string;
+  pluginId: PluginId;
+  ruleName: string;
+  description: string;
+  enabled: boolean;
+  trigger: string;
+  action: string;
+  lastSyncDetails?: string;
+}
+
+export interface PluginSyncHistoryItem {
+  id: string;
+  timestamp: string;
+  status: 'success' | 'warning' | 'error';
+  summary: string;
+  itemsSynced?: number;
+}
+
+export interface PluginConnection {
+  id: string;
+  pluginId: PluginId;
+  name: string;
+  description: string;
+  status: 'connected' | 'disconnected' | 'error';
+  accountEmail?: string;
+  lastSync?: string;
+  syncFrequency: 'realtime' | 'hourly' | 'daily' | 'manual';
+  permissions: string[];
+  rules: AutomationRule[];
+  syncHistory: PluginSyncHistoryItem[];
+  icon: string;
+  category: 'classroom' | 'communication' | 'productivity' | 'notes';
+  settings?: Record<string, any>;
+}
+
+export interface TutorApprovalRequest {
+  id: string;
+  tutorId: string;
+  tutorName: string;
+  authorId: string;
+  authorName: string;
+  specialty: string;
+  method: string;
+  prompt: string;
+  mcpConfig?: MCPConfig;
+  submittedAt: string;
+  status: 'pending' | 'approved' | 'rejected';
+  adminNotes?: string;
+  testResult?: {
+    question: string;
+    response: string;
+    latencyMs: number;
+    success: boolean;
+  };
+}
+
 
 export interface QuizOption {
   key: 'A' | 'B' | 'C' | 'D' | string;

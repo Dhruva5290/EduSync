@@ -31,6 +31,10 @@ export const AiTutorView: React.FC<AiTutorViewProps> = ({
     'Chapter 3: Laws of Motion & Incline Forces'
   );
   const [method, setMethod] = useState('Socratic Method');
+  const [selectedTutorId, setSelectedTutorId] = useState<string>(
+    customTutors[0]?.id || 'tutor-1'
+  );
+  const activeTutor = customTutors.find(t => t.id === selectedTutorId) || customTutors[0];
   const [activeTab, setActiveTab] = useState<
     'context' | 'freeform' | 'solver'
   >('context');
@@ -97,8 +101,8 @@ export const AiTutorView: React.FC<AiTutorViewProps> = ({
     setIsLoading(true);
 
     try {
-      const activePersona = customTutors[0]?.name || '';
-      const customPrompt = customTutors[0]?.prompt || '';
+      const activePersona = activeTutor?.name || 'EduSync AI Tutor';
+      const customPrompt = activeTutor?.prompt || '';
 
       const res = await fetch('/api/chat', {
         method: 'POST',
@@ -107,7 +111,7 @@ export const AiTutorView: React.FC<AiTutorViewProps> = ({
           message: text,
           subject,
           chapter,
-          method,
+          method: activeTutor?.method ? `${activeTutor.method.toUpperCase()} (${method})` : method,
           persona: activePersona,
           customPrompt,
           history: messages.slice(-4),
@@ -204,6 +208,24 @@ export const AiTutorView: React.FC<AiTutorViewProps> = ({
                 <option value="Chapter 7: Rotational Mechanics">
                   Chapter 7: Rotational Mechanics
                 </option>
+              </select>
+            </div>
+
+            {/* Persona selector */}
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-[#5a4138] uppercase tracking-wider">
+                Persona:
+              </span>
+              <select
+                value={selectedTutorId}
+                onChange={(e) => setSelectedTutorId(e.target.value)}
+                className="bg-[#eff4ff] text-xs font-bold text-[#7c3aed] px-3 py-1.5 rounded-full border border-[#dce9ff] outline-none cursor-pointer max-w-[200px] truncate"
+              >
+                {customTutors.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    🎓 {t.name}
+                  </option>
+                ))}
               </select>
             </div>
 

@@ -11,7 +11,10 @@ import {
   BoardCapture,
   LectureMasteryQuiz,
   StudentConceptMastery,
-  QuestionBank
+  QuestionBank,
+  PluginConnection,
+  CustomTutorPersona,
+  TutorApprovalRequest
 } from '../types';
 import { FAKE_QUESTION_BANKS } from '../mock/fakeData';
 import {
@@ -28,6 +31,7 @@ import seedUsersJson from '../../data/users.json';
 import seedLecturesJson from '../../data/lectures.json';
 import seedNotesJson from '../../data/notes.json';
 import seedProgressJson from '../../data/student_progress.json';
+import { initialPlugins, initialCustomTutors, initialTutorApprovalRequests } from '../data/initialData';
 
 export interface InMemoryDatabase {
   users: User[];
@@ -44,6 +48,9 @@ export interface InMemoryDatabase {
   lectureProgress: Record<string, Record<string, any>>;
   masteryQuizzes: Record<string, LectureMasteryQuiz>;
   questionBanks: QuestionBank[];
+  plugins: PluginConnection[];
+  customTutors: CustomTutorPersona[];
+  tutorApprovalRequests: TutorApprovalRequest[];
 }
 
 const isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
@@ -2151,6 +2158,9 @@ $$2I = \\int_{0}^{\\pi/2} 1 \\, dx = \\frac{\\pi}{2} \\implies I = \\frac{\\pi}{
   conceptMastery: seedConceptMastery,
   lectureProgress: loadProgressFromDisk(seedStudentLectureProgress),
   masteryQuizzes: seedMasteryQuizzes,
-  questionBanks: [...FAKE_QUESTION_BANKS]
+  questionBanks: [...FAKE_QUESTION_BANKS],
+  plugins: JSON.parse(JSON.stringify(initialPlugins)),
+  customTutors: JSON.parse(JSON.stringify(initialCustomTutors)),
+  tutorApprovalRequests: JSON.parse(JSON.stringify(initialTutorApprovalRequests))
 };
 
