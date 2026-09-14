@@ -1,5 +1,97 @@
 export type UserRole = 'student' | 'teacher' | 'admin';
 
+export interface LearnerPersona {
+  learningStyle: 'visual' | 'step_by_step' | 'socratic_dialogue' | 'exam_focused' | 'socratic' | string;
+  targetGrade?: 'A+' | 'A' | 'B' | 'competitive' | 'competitive_exam' | 'academic_mastery' | 'foundational_pass' | string;
+  explanationTone?: 'encouraging_mentor' | 'strict_coach' | 'practical_engineer' | 'intuitive_visual' | 'structured_rigorous' | 'socratic_dialogue' | 'bullet_summary' | string;
+  preferredPace?: 'accelerated' | 'steady' | 'thorough' | 'slow_thorough' | 'standard' | 'rapid_review' | string;
+  pacePreference?: string;
+  strengthsAndInterests?: string | string[];
+  painPoints?: string | string[];
+  strengths?: string[];
+  areasForImprovement?: string[];
+  questionnaireCompleted?: boolean;
+  completedAt?: string;
+  preferredLanguage?: 'en' | 'hi' | 'bilingual';
+  cognitiveBlocker?: 'derivations' | 'formula_memorization' | 'visualization' | 'problem_speed';
+  academicLevel?: 'class_10' | 'class_11_12' | 'competitive_jee_neet' | 'college_eng';
+  diagnosticAnswers?: Record<string, string>;
+}
+
+export type ColorFlashcardCategory = 'trap' | 'formula' | 'intuition' | 'shortcut';
+
+export interface ColorFlashcard {
+  id?: string;
+  category: ColorFlashcardCategory;
+  front: string;
+  back: string;
+  tag: string;
+  eli10Analogy?: string;
+  keyFormula?: string;
+  commonTrap?: string;
+  visualHint?: string;
+  asciiDiagram?: string;
+}
+
+export interface AgenticPersonalizedNote {
+  id?: string;
+  studentId: string;
+  lectureId: string;
+  generalizedNoteId?: string;
+  customTitle: string;
+  tailoredExplanationMarkdown: string;
+  groundUpAnalogy: string;
+  hindiVoiceSummary: string;
+  englishVoiceSummary: string;
+  asciiDiagram?: string;
+  graphicDetails?: Array<{
+    title: string;
+    asciiArt: string;
+    explanation: string;
+  }>;
+  doubtClarifications: Array<{
+    doubt: string;
+    clarification: string;
+    keyTakeaway: string;
+    eli10Analogy?: string;
+    recommendedVideoId?: string;
+  }>;
+  pyqQuestions: Array<{
+    examSource: string;
+    question: string;
+    solution: string;
+    conceptTested: string;
+    eli10Analogy?: string;
+    trapToAvoid?: string;
+  }>;
+  practiceQuestions: Array<{
+    question: string;
+    hint: string;
+    answer: string;
+    eli10Hint?: string;
+  }>;
+  animatedVideos: Array<{
+    title: string;
+    youtubeSearchQuery: string;
+    whyWatch: string;
+    url?: string;
+    videoId?: string;
+    thumbnail?: string;
+    timestampRef?: string;
+    targetedMistake?: string;
+  }>;
+  flashcards: ColorFlashcard[];
+  studyTimeRecommendation: string;
+  reinforcedConcepts: string[];
+  doubtPatternTriggers?: Array<{
+    doubt: string;
+    trapWarning: string;
+    resolvedCount: number;
+  }>;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 export type NavRoute =
   | 'dashboard'
   | 'classes'
@@ -41,20 +133,6 @@ export interface SecurityAuditResult {
   status: 'passed' | 'warning' | 'critical' | string;
   details?: string;
   timestamp?: string;
-}
-
-export interface LearnerPersona {
-  learningStyle: 'visual' | 'step_by_step' | 'socratic' | 'exam_focused' | string;
-  explanationTone?: 'intuitive_visual' | 'structured_rigorous' | 'socratic_dialogue' | 'bullet_summary' | string;
-  preferredPace?: 'slow_thorough' | 'standard' | 'rapid_review' | string;
-  pacePreference?: string;
-  targetGrade?: 'competitive_exam' | 'academic_mastery' | 'foundational_pass' | 'A+' | string;
-  strengthsAndInterests?: string[] | string;
-  painPoints?: string[] | string;
-  strengths?: string[];
-  areasForImprovement?: string[];
-  questionnaireCompleted?: boolean;
-  completedAt?: string;
 }
 
 export interface User {
@@ -796,4 +874,541 @@ export interface ClassLevelInsight {
     weakConceptCount: number;
     urgent: boolean;
   }>;
+}
+
+// =======================================================
+// EDUSYNC FOR TEACHERS - ADVANCED FACULTY WORKSPACE TYPES
+// =======================================================
+
+export type AttendanceRiskLevel = 'safe' | 'warning_75' | 'danger_60';
+
+export interface TeacherScheduleSlot {
+  id: string;
+  subjectId?: string;
+  subjectCode: string;
+  subjectName: string;
+  section?: string;
+  division?: string;
+  dayOfWeek?: string;
+  startTime: string;
+  endTime: string;
+  room?: string;
+  roomNumber?: string;
+  allottedStudentsCount?: number;
+  totalStudents?: number;
+  todayTopic?: string;
+  status?: 'upcoming' | 'ongoing' | 'completed' | 'Upcoming' | 'In Progress' | 'Completed';
+  attendanceTaken?: boolean;
+  isAttendanceTaken?: boolean;
+}
+
+export interface StudentAttendanceItem {
+  id?: string;
+  studentId: string;
+  rollNo?: string;
+  rollNumber?: string;
+  studentName?: string;
+  name?: string;
+  email?: string;
+  contactEmail?: string;
+  guardianPhone?: string;
+  avatar?: string;
+  division?: string;
+  subjectCode?: string;
+  totalClassesHeld: number;
+  classesAttended: number;
+  currentPercentage?: number;
+  attendancePercentage?: number;
+  riskLevel: AttendanceRiskLevel;
+  todayStatus: 'present' | 'absent' | 'late' | 'unmarked';
+  lastMarkedAt?: string;
+  consecutiveAbsences: number;
+}
+export type StudentAttendanceRecord = StudentAttendanceItem;
+
+export interface AntiProxyDiscrepancy {
+  id: string;
+  studentId: string;
+  studentName: string;
+  rollNo: string;
+  date: string;
+  earlySlotTime: string;
+  earlySlotSubject: string;
+  subsequentSlotTime: string;
+  subsequentSlotSubject: string;
+  flagReason: string;
+  status: 'unresolved' | 'justified' | 'reported_to_dean';
+  teacherNote?: string;
+}
+
+export interface StudentTelemetryMetric {
+  id?: string;
+  studentId: string;
+  studentName?: string;
+  name?: string;
+  rollNo?: string;
+  rollNumber?: string;
+  division?: string;
+  avatar?: string;
+  avgScore?: number;
+  currentGrade?: string;
+  attendancePercentage?: number;
+  studyHoursOnPlatform?: number;
+  studyHours?: number;
+  doubtsAskedCount?: number;
+  doubtsRaised?: number;
+  questionsSolvedCount?: number;
+  drillsSolved?: number;
+  growthRatePercent?: number;
+  growthTrajectoryPercent?: number;
+  trajectory?: 'accelerating' | 'steady' | 'needs_boost';
+  lastActiveDate?: string;
+  recentDoubtTopics?: string[];
+  weeklyPerformanceScores?: number[];
+  identifiedMistakes?: string[];
+  laggingConcepts?: string[];
+  remediationAction?: string;
+}
+export type StudentTelemetrySummary = StudentTelemetryMetric;
+
+export interface CommonDoubtCluster {
+  id: string;
+  subjectId?: string;
+  subjectCode?: string;
+  topicName?: string;
+  topicTitle?: string;
+  doubtCount?: number;
+  flaggedCount?: number;
+  affectedStudentNames?: string[];
+  sampleDoubts?: string[];
+  commonStudentQuestion?: string;
+  remedialConcept?: string;
+  actionScript?: string;
+  aiRemediationSuggestion?: string;
+  urgency?: 'high' | 'medium' | 'low';
+  priority?: 'High' | 'Medium' | 'Low';
+}
+export type CommonDoubtTopic = CommonDoubtCluster;
+
+export interface TeacherQuickStickyNote {
+  id: string;
+  teacherId?: string;
+  title: string;
+  content: string;
+  color: 'yellow' | 'blue' | 'emerald' | 'purple' | 'rose';
+  priority: 'high' | 'medium' | 'low' | 'urgent' | 'normal';
+  reminderTime?: string;
+  isCompleted?: boolean;
+  completed?: boolean;
+  createdAt?: string;
+}
+export type TeacherStickyNote = TeacherQuickStickyNote;
+
+export interface TeacherLessonTask {
+  id: string;
+  subjectId?: string;
+  subjectCode?: string;
+  task: string;
+  dueDate: string;
+  isDone?: boolean;
+  completed?: boolean;
+  createdAt?: string;
+}
+
+export interface TeacherLeaveRequest {
+  id: string;
+  teacherId: string;
+  teacherName: string;
+  leaveType: 'Casual Leave' | 'Paid Leave' | 'Duty Leave' | 'Medical Leave' | 'Academic Conference';
+  startDate: string;
+  endDate: string;
+  dateOfJoining?: string;
+  totalDays: number;
+  reason: string;
+  substituteTeacher: string;
+  contactPhone?: string;
+  handoverNotes?: string;
+  status: 'Pending HOD Approval' | 'Approved' | 'Rejected';
+  appliedAt: string;
+}
+
+export interface TeacherAttendanceLog {
+  teacherId: string;
+  date: string;
+  punchInTime?: string;
+  punchOutTime?: string;
+  status: 'Present' | 'On Duty' | 'Not Punched';
+}
+
+export interface AcademicCalendarEvent {
+  id: string;
+  subjectId: string;
+  subjectCode: string;
+  title: string;
+  type: 'Quiz' | 'Mid-Term Exam' | 'Final Exam' | 'Assignment Deadline' | 'Lab Practical';
+  date: string;
+  time: string;
+  room: string;
+  totalStudents: number;
+  submissionSubmittedCount?: number;
+  submissionPendingCount?: number;
+}
+
+// =======================================================
+// EDUSYNC STUDENT PORTAL (WIREFRAME ARCHITECTURE MODELS)
+// =======================================================
+
+export type TutorStyleId = 'feynman' | 'alakh_pandey' | 'niti_garg' | 'socrates' | string;
+
+export interface TutorPersona {
+  id: TutorStyleId;
+  name: string;
+  title: string;
+  tagline: string;
+  avatar: string;
+  styleDescription: string;
+  systemPrompt: string;
+  accentColor: string;
+  greetingMessage: string;
+  badgeText: string;
+  isCustom?: boolean;
+}
+
+export type TaskPriority = 'urgent' | 'high' | 'medium' | 'low';
+
+export interface StudentTaskItem {
+  id: string;
+  title: string;
+  description?: string;
+  priority: TaskPriority;
+  categoryTag: string;
+  dueDate: string;
+  dueTime?: string;
+  completed: boolean;
+  subtasks?: Array<{ id: string; text: string; done: boolean }>;
+  source?: 'manual' | 'google_classroom' | 'gmail' | 'calendar';
+  pomodoroSessions?: number;
+  subjectCode?: string;
+  createdAt: string;
+}
+
+export type PluginType = 'google_classroom' | 'google_calendar' | 'gmail' | 'bmu_portal' | 'custom_teacher';
+
+export interface PluginIntegration {
+  id: string;
+  type: PluginType;
+  name: string;
+  description: string;
+  icon: string;
+  connected: boolean;
+  autoSyncTasks: boolean;
+  lastSyncedAt?: string;
+  itemCountSynced?: number;
+}
+
+export interface StudentLectureCard {
+  id: string;
+  lectureNumber: number;
+  subjectId: string;
+  subjectCode: string;
+  subjectName: string;
+  title: string;
+  topicsCovered: string[];
+  date: string;
+  time: string;
+  duration: string;
+  teacherName: string;
+  room: string;
+  isToday: boolean;
+  notesMarkdown: string;
+  keyFormulas?: Array<{ name: string; latex: string }>;
+  boardCaptureThumb?: string;
+}
+
+export interface QuizQuestionItem {
+  id: string;
+  question: string;
+  options: string[];
+  correctIndex: number;
+  explanation: string;
+  topicRef: string;
+}
+
+export interface StudentQuizSubmission {
+  id: string;
+  subjectId: string;
+  subjectCode: string;
+  topicName: string;
+  lectureRef?: string;
+  dateTaken: string;
+  questions: QuizQuestionItem[];
+  userAnswers: Record<string, number>;
+  score: number;
+  total: number;
+  mistakes: Array<{
+    questionId: string;
+    question: string;
+    selectedOption: string;
+    correctOption: string;
+    mistakeReason: string;
+    coreTakeaway: string;
+  }>;
+  suggestedTutorPrompt: string;
+}
+
+// =======================================================
+// COMMAND CENTER SPECIFICATION TYPES
+// =======================================================
+
+export interface DoubtLogEntry {
+  id: string;
+  studentId: string;
+  studentName: string;
+  subjectCode: string;
+  topic: string;
+  question: string;
+  frequencyCount: number;
+  timestamp: string;
+}
+
+export interface DoubtPatternCluster {
+  topic: string;
+  frequencyBucket: 'High' | 'Moderate' | 'Low';
+  count: number;
+  sampleQuestions: string[];
+  aiMisconceptionExplanation: string;
+  subjectCode: string;
+}
+
+export interface TeacherMaterialItem {
+  id: string;
+  title: string;
+  fileName: string;
+  fileSize: string;
+  fileUrl?: string;
+  keyTopics: string[];
+  subjectCode: string;
+  uploadedAt: string;
+  published: boolean;
+  openedByCount: number;
+  avgTimeSpentSeconds: number;
+}
+
+export interface MaterialViewEvent {
+  studentId: string;
+  materialId: string;
+  openedAt: string;
+  durationSeconds: number;
+}
+
+export interface TeacherBroadcastMessage {
+  id: string;
+  authorId: string;
+  authorName: string;
+  title: string;
+  message: string;
+  targetSections: string[];
+  createdAt: string;
+  pinned?: boolean;
+}
+
+export interface CalendarAcademicDay {
+  date: string;
+  isHoliday: boolean;
+  holidayName?: string;
+  events: Array<{
+    id: string;
+    title: string;
+    type: 'Quiz' | 'Assignment Deadline' | 'Mid-Term Exam' | 'Regular Class' | 'Holiday';
+    time?: string;
+    subjectCode?: string;
+  }>;
+}
+
+export interface SimulatedGateScanLog {
+  id: string;
+  teacherId: string;
+  date: string;
+  scanType: 'check_in' | 'check_out';
+  timestamp: string;
+  isSimulated: boolean;
+  isManualOverride: boolean;
+  gateLocation: string;
+}
+
+export interface ManagementStickyNote {
+  id: string;
+  title: string;
+  content: string;
+  from: string;
+  isPinned: boolean;
+  createdAt: string;
+  priority?: 'high' | 'normal';
+}
+
+export interface TeacherChecklistItem {
+  id: string;
+  text: string;
+  completed: boolean;
+  category?: string;
+  createdAt: string;
+}
+
+export interface TeacherLeaveSubmission {
+  id: string;
+  teacherId: string;
+  teacherName: string;
+  startDate: string;
+  endDate?: string;
+  reason: string;
+  status: 'pending' | 'approved' | 'rejected';
+  submittedAt: string;
+}
+
+export interface DeskBoardSummary {
+  hoursToday: number;
+  hoursThisWeek: number;
+  classesScheduledToday: number;
+  classesCompletedToday: number;
+}
+
+export type AgentCallableIntent =
+  | 'schedule_meeting'
+  | 'mark_leave'
+  | 'start_class'
+  | 'cancel_class'
+  | 'generate_doubt_report'
+  | 'draft_announcement'
+  | 'summarize_student'
+  | 'sync_attendance';
+
+export interface AgentActionProposal {
+  id: string;
+  intents: AgentCallableIntent[];
+  parsedParameters: Record<string, any>;
+  description: string;
+  requiresConfirmation: boolean;
+  status: 'pending_confirmation' | 'executed' | 'dismissed';
+  executedAt?: string;
+  resultSummary?: string;
+}
+
+export interface AgentMessage {
+  id: string;
+  sender: 'user' | 'assistant';
+  text: string;
+  timestamp: string;
+  actionProposal?: AgentActionProposal;
+  isReadonlyResult?: boolean;
+  resultData?: any;
+}
+
+// =======================================================
+// STITCH EDUSYNC FACULTY PORTAL TYPES
+// =======================================================
+
+export type ScreenId =
+  | 'daily-schedule'
+  | 'student-attendance'
+  | 'student-performance'
+  | 'upload-documents'
+  | 'academic-calendar'
+  | 'teacher-workspace-and-leaves'
+  | 'ai-teacher-assistant';
+
+export type ScreenType = ScreenId;
+
+export interface LectureSlot {
+  id: string;
+  timeStart: string;
+  timeEnd: string;
+  courseCode: string;
+  courseTitle: string;
+  division: string;
+  studentsCount: number;
+  room: string;
+  roomDetail?: string;
+  status: 'completed' | 'in_session' | 'upcoming';
+  badgeLabel?: string;
+  elapsed?: string;
+  totalDuration?: string;
+  attendanceInfo?: string;
+  workstationsPrepared?: string;
+  actionType: 'view_roster' | 'live_attendance' | 'notes' | 'lab_setup';
+}
+
+export interface Student {
+  id: string;
+  rollNo: string;
+  name: string;
+  avatar: string;
+  status: 'present' | 'absent' | 'late' | 'excused';
+  punchTime?: string;
+  streak: boolean[];
+  batch: string;
+  quizScore: number;
+  midTermReadiness: number;
+  doubtsCount: number;
+  isAtRisk?: boolean;
+}
+
+export interface StickyNote {
+  id: string;
+  tag: string;
+  tagBg: string;
+  tagText: string;
+  dueText: string;
+  content: string;
+  completed: boolean;
+  meta: string;
+  urgent?: boolean;
+  category: 'exam' | 'co-instructor' | 'lab' | 'general';
+}
+
+export interface LeaveRequest {
+  id: string;
+  type: 'Casual' | 'Medical' | 'Academic Duty' | 'Special' | 'Paid';
+  fromDate: string;
+  toDate: string;
+  days: number;
+  reason: string;
+  proxyFaculty: string;
+  dateOfJoining?: string;
+  contactPhone?: string;
+  handoverNotes?: string;
+  status: 'Approved' | 'Pending' | 'Reviewing';
+  submittedDate: string;
+}
+
+export interface CourseDocument {
+  id: string;
+  title: string;
+  courseCode: string;
+  category: 'Notes & Slides' | 'Question Paper' | 'Lab Manual' | 'Reference' | 'Syllabus';
+  fileSize: string;
+  uploadedAt: string;
+  status: 'Published' | 'Locked & Watermarked' | 'Draft';
+  downloads: number;
+}
+
+export interface FlaggedDoubt {
+  id: string;
+  studentName: string;
+  rollNo: string;
+  courseCode: string;
+  topic: string;
+  question: string;
+  submittedTime: string;
+  resolved: boolean;
+  priority: 'High' | 'Medium';
+}
+
+export interface CalendarEvent {
+  id: string;
+  title: string;
+  date: string;
+  time: string;
+  type: 'exam' | 'lecture' | 'meeting' | 'holiday' | 'lab';
+  courseCode?: string;
+  room?: string;
 }

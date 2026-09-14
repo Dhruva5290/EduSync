@@ -1,0 +1,58 @@
+[
+  {
+    "id": "cal-1",
+    "subjectId": "subj-ess",
+    "subjectCode": "ES-101",
+    "title": "Mid-Semester Written Examination",
+    "type": "Mid-Term Exam",
+    "date": "2026-09-22",
+    "time": "10:00 AM - 12:00 PM",
+    "room": "Auditorium Hall 1",
+    "totalStudents": 45,
+    "submissionSubmittedCount": 0,
+    "submissionPendingCount": 45,
+    "description": "Covers Units 1 & 2: Atmospheric Physics, Inversion Layers, Water Quality Indices and Environmental Legislation."
+  },
+  {
+    "id": "cal-2",
+    "subjectId": "subj-eme",
+    "subjectCode": "ME-102",
+    "title": "Problem Set 3 Submission (Carnot Efficiency & Reversibility)",
+    "type": "Assignment Deadline",
+    "date": "2026-09-18",
+    "time": "11:59 PM",
+    "room": "EduSync Portal Upload",
+    "totalStudents": 52,
+    "submissionSubmittedCount": 38,
+    "submissionPendingCount": 14,
+    "description": "Mandatory 6-question analytical set on second law thermodynamic cycles and entropy balances."
+  },
+  {
+    "id": "cal-3",
+    "subjectId": "subj-ess-lab",
+    "subjectCode": "ES-101L",
+    "title": "Winkler Method DO Titration Practical Viva",
+    "type": "Lab Practical",
+    "date": "2026-09-25",
+    "time": "03:00 PM - 04:30 PM",
+    "room": "Science Block C - Lab 302",
+    "totalStudents": 45,
+    "submissionSubmittedCount": 0,
+    "submissionPendingCount": 45,
+    "description": "Individual titrations and calibration curve preparation for dissolved oxygen determination."
+  },
+  {
+    "id": "cal-4",
+    "subjectId": "subj-ess",
+    "subjectCode": "ES-101",
+    "title": "Surprise Micro-Quiz (Air Quality Indices & Dispersion)",
+    "type": "Quiz",
+    "date": "2026-09-15",
+    "time": "09:45 AM - 10:00 AM",
+    "room": "Science Block C - Room 304",
+    "totalStudents": 45,
+    "submissionSubmittedCount": 41,
+    "submissionPendingCount": 4,
+    "description": "15-minute closed-book conceptual quiz on particulate matter PM2.5 and AQI calculation."
+  }
+]

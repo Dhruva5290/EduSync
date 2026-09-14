@@ -3,6 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import dotenv from 'dotenv';
 import { db, saveUsersToDisk, saveNotesToDisk, saveLecturesToDisk, saveProgressToDisk } from './src/server/db';
+import { databaseRouter } from './src/server/databaseRouter';
 import {
   generateStudyAssistantReply,
   summarizeNoteAI,
@@ -68,6 +69,9 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
   // 4. General API Rate Limiter
   app.use(generalApiLimiter.middleware);
+
+  // 5. Faculty & Student Persistent Database Engine
+  app.use('/api/db', databaseRouter);
 
   // ==========================================
   // SECURITY & AUDIT ENDPOINTS

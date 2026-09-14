@@ -52,12 +52,23 @@ import { VaultRecoveryView } from './components/VaultRecoveryView';
 import { SecurityAuditView } from './components/SecurityAuditView';
 import { LectureNotesModal } from './components/LectureNotesModal';
 import { LoginScreen } from './components/LoginScreen';
+import { TeacherMasterPortal } from './components/TeacherPortal/TeacherMasterPortal';
 
 export function App() {
   // Auth & Session State
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
     return Boolean(localStorage.getItem('edusync_token'));
   });
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    return (localStorage.getItem('edusync_theme') as 'light' | 'dark') || 'light';
+  });
+  const toggleTheme = () => {
+    setTheme((prev) => {
+      const next = prev === 'light' ? 'dark' : 'light';
+      localStorage.setItem('edusync_theme', next);
+      return next;
+    });
+  };
 
   // Active User & Identity
   const [users, setUsers] = useState<User[]>(initialUsers);
@@ -463,6 +474,19 @@ export function App() {
       <LoginScreen
         onLoginSuccess={handleLoginSuccess}
         allUsers={users}
+      />
+    );
+  }
+
+  if (currentUser.role === 'teacher') {
+    return (
+      <TeacherMasterPortal
+        currentUser={currentUser}
+        allUsers={users}
+        onSwitchUser={handleSwitchUser}
+        onLogout={handleLogout}
+        theme={theme}
+        onToggleTheme={toggleTheme}
       />
     );
   }

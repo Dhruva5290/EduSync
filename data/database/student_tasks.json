@@ -1,0 +1,41 @@
+[
+  {
+    "id": "stask-01",
+    "studentId": "student-1788461612290",
+    "title": "Complete Thermodynamics Problem Set 3 (Carnot Efficiency)",
+    "categoryTag": "Assignment",
+    "subjectCode": "ME-102",
+    "dueDate": "2026-09-18",
+    "dueTime": "11:59 PM",
+    "completed": false,
+    "priority": "high",
+    "source": "google_classroom",
+    "createdAt": "2026-09-10T10:00:00.000Z"
+  },
+  {
+    "id": "stask-02",
+    "studentId": "student-1788461612290",
+    "title": "Prepare Wet Lab Notebook for Dissolved Oxygen Titration",
+    "categoryTag": "Lab Record",
+    "subjectCode": "ES-101L",
+    "dueDate": "2026-09-25",
+    "dueTime": "02:00 PM",
+    "completed": true,
+    "priority": "medium",
+    "source": "manual",
+    "createdAt": "2026-09-11T12:00:00.000Z"
+  },
+  {
+    "id": "stask-03",
+    "studentId": "student-1788461612290",
+    "title": "Review Lagrange Multipliers Practice Questions with AI Tutor",
+    "categoryTag": "Exam Prep",
+    "subjectCode": "MA-101",
+    "dueDate": "2026-09-16",
+    "dueTime": "09:00 AM",
+    "completed": false,
+    "priority": "medium",
+    "source": "manual",
+    "createdAt": "2026-09-12T09:30:00.000Z"
+  }
+]

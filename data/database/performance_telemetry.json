@@ -1,0 +1,187 @@
+[
+  {
+    "studentId": "stud-103",
+    "studentName": "Student Dhruva",
+    "rollNo": "BMU-2026-7052",
+    "avatar": "SD",
+    "studyHoursOnPlatform": 34.5,
+    "doubtsAskedCount": 19,
+    "questionsSolvedCount": 112,
+    "growthRatePercent": 24.8,
+    "trajectory": "accelerating",
+    "lastActiveDate": "Today, 2:15 PM",
+    "recentDoubtTopics": [
+      "Carnot Efficiency Formulas",
+      "Biochemical Oxygen Demand Titration"
+    ]
+  },
+  {
+    "studentId": "stud-110",
+    "studentName": "Meera Deshmukh",
+    "rollNo": "BMU-2026-7115",
+    "avatar": "MD",
+    "studyHoursOnPlatform": 38.2,
+    "doubtsAskedCount": 22,
+    "questionsSolvedCount": 130,
+    "growthRatePercent": 28.1,
+    "trajectory": "accelerating",
+    "lastActiveDate": "Today, 1:40 PM",
+    "recentDoubtTopics": [
+      "Clausius-Clapeyron Equation",
+      "Photochemical Smog Reaction Mechanism"
+    ]
+  },
+  {
+    "studentId": "stud-106",
+    "studentName": "Kavya Nair",
+    "rollNo": "BMU-2026-7041",
+    "avatar": "KN",
+    "studyHoursOnPlatform": 27,
+    "doubtsAskedCount": 14,
+    "questionsSolvedCount": 88,
+    "growthRatePercent": 16.4,
+    "trajectory": "steady",
+    "lastActiveDate": "Yesterday, 8:10 PM",
+    "recentDoubtTopics": [
+      "Entropy of Mixing",
+      "Acid Rain Neutralization Stoichiometry"
+    ]
+  },
+  {
+    "studentId": "stud-107",
+    "studentName": "Aditya Malhotra",
+    "rollNo": "BMU-2026-7065",
+    "avatar": "AM",
+    "studyHoursOnPlatform": 25.4,
+    "doubtsAskedCount": 12,
+    "questionsSolvedCount": 76,
+    "growthRatePercent": 14.2,
+    "trajectory": "steady",
+    "lastActiveDate": "Today, 11:30 AM",
+    "recentDoubtTopics": [
+      "Reversible vs Irreversible Heat Engines"
+    ]
+  },
+  {
+    "studentId": "stud-105",
+    "studentName": "Simran Kaur",
+    "rollNo": "BMU-2026-7034",
+    "avatar": "SK",
+    "studyHoursOnPlatform": 19.8,
+    "doubtsAskedCount": 16,
+    "questionsSolvedCount": 52,
+    "growthRatePercent": 9.5,
+    "trajectory": "steady",
+    "lastActiveDate": "Yesterday, 6:45 PM",
+    "recentDoubtTopics": [
+      "Eutrophication Nitrogen Cycles",
+      "Entropy Balance"
+    ]
+  },
+  {
+    "studentId": "stud-102",
+    "studentName": "Priya Sharma",
+    "rollNo": "BMU-2026-7018",
+    "avatar": "PS",
+    "studyHoursOnPlatform": 16.2,
+    "doubtsAskedCount": 15,
+    "questionsSolvedCount": 44,
+    "growthRatePercent": 7.1,
+    "trajectory": "needs_boost",
+    "lastActiveDate": "2 days ago",
+    "recentDoubtTopics": [
+      "Turbidity Calibration Curves",
+      "Isothermal vs Adiabatic Work"
+    ]
+  },
+  {
+    "studentId": "stud-108",
+    "studentName": "Ananya Roy",
+    "rollNo": "BMU-2026-7088",
+    "avatar": "AR",
+    "studyHoursOnPlatform": 14.5,
+    "doubtsAskedCount": 11,
+    "questionsSolvedCount": 38,
+    "growthRatePercent": 4.8,
+    "trajectory": "needs_boost",
+    "lastActiveDate": "3 days ago",
+    "recentDoubtTopics": [
+      "Ozone Depletion Catalytic Cycles"
+    ]
+  },
+  {
+    "studentId": "stud-111",
+    "studentName": "Tanishq Iyer",
+    "rollNo": "BMU-2026-7128",
+    "avatar": "TI",
+    "studyHoursOnPlatform": 15,
+    "doubtsAskedCount": 13,
+    "questionsSolvedCount": 40,
+    "growthRatePercent": 5.2,
+    "trajectory": "needs_boost",
+    "lastActiveDate": "Yesterday, 9:20 PM",
+    "recentDoubtTopics": [
+      "Solid Waste Leachate Control"
+    ]
+  },
+  {
+    "studentId": "stud-104",
+    "rollNo": "BMU-2026-7009",
+    "studentName": "Aarav Patel",
+    "avatar": "AP",
+    "studyHoursOnPlatform": 8.2,
+    "doubtsAskedCount": 6,
+    "questionsSolvedCount": 18,
+    "growthRatePercent": -2.4,
+    "trajectory": "needs_boost",
+    "lastActiveDate": "5 days ago",
+    "recentDoubtTopics": [
+      "Carnot Cycle Steps"
+    ]
+  },
+  {
+    "studentId": "stud-101",
+    "rollNo": "BMU-2026-7012",
+    "studentName": "Rohan Verma",
+    "avatar": "RV",
+    "studyHoursOnPlatform": 6.4,
+    "doubtsAskedCount": 4,
+    "questionsSolvedCount": 12,
+    "growthRatePercent": -6.8,
+    "trajectory": "needs_boost",
+    "lastActiveDate": "6 days ago",
+    "recentDoubtTopics": [
+      "Entropy Concept"
+    ]
+  },
+  {
+    "studentId": "stud-112",
+    "rollNo": "BMU-2026-7140",
+    "studentName": "Ishaan Gupta",
+    "avatar": "IG",
+    "studyHoursOnPlatform": 5.8,
+    "doubtsAskedCount": 3,
+    "questionsSolvedCount": 10,
+    "growthRatePercent": -8.1,
+    "trajectory": "needs_boost",
+    "lastActiveDate": "1 week ago",
+    "recentDoubtTopics": [
+      "Atmospheric Inversion Layers"
+    ]
+  },
+  {
+    "studentId": "stud-109",
+    "rollNo": "BMU-2026-7102",
+    "studentName": "Vikas Kumar",
+    "avatar": "VK",
+    "studyHoursOnPlatform": 3.5,
+    "doubtsAskedCount": 2,
+    "questionsSolvedCount": 6,
+    "growthRatePercent": -12.5,
+    "trajectory": "needs_boost",
+    "lastActiveDate": "9 days ago",
+    "recentDoubtTopics": [
+      "Basic Definitions"
+    ]
+  }
+]

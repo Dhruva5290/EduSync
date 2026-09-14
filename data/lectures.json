@@ -1,5 +1,33 @@
 [
   {
+    "id": "lec-1789387363072",
+    "subjectId": "subj-phy-11",
+    "subjectCode": "PHY-11",
+    "subjectName": "Physics 11",
+    "title": "ClassSarthi Live Camera Session: Rotational Mechanics",
+    "teacherName": "Faculty Instructor",
+    "teacherId": "teacher-phy",
+    "date": "2026-09-14",
+    "duration": "45 mins",
+    "summary": "ClassSarthi captured lecture.",
+    "topics": [
+      "General Discussion"
+    ],
+    "timeline": [],
+    "boardCaptures": [],
+    "audioTranscript": [],
+    "generalizedNotes": {
+      "explanation": "",
+      "importantConcepts": [],
+      "formulas": [],
+      "examples": [],
+      "keyPoints": [],
+      "diagrams": [],
+      "homeworkMentioned": []
+    },
+    "smartNotesMarkdown": "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+  },
+  {
     "id": "lec-1789331331251",
     "subjectId": "subj-phy-11",
     "subjectCode": "PHY-11",
