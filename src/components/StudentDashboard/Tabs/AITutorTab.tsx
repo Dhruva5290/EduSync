@@ -98,6 +98,7 @@ export const AITutorTab: React.FC<AITutorTabProps> = ({
     setInputText('');
     setIsThinking(true);
 
+    const isCasual = /^(hi|hello|hey|greetings|howdy|sup|good\s*(morning|afternoon|evening)|how\s*are\s*you|who\s*are\s*you|what\s*can\s*you\s*do|tell\s*me\s*about\s*yourself|what'?s\s*up|yo)\b/i.test(q.trim());
     const methodPrompt = TEACHING_METHODS.find(m => m.id === teachingMethod)?.prompt || '';
 
     try {
@@ -105,15 +106,17 @@ export const AITutorTab: React.FC<AITutorTabProps> = ({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          message: `${q}\n\n[Subject: ${selectedSubject} | ${selectedChapter} | Method Directive: ${methodPrompt}]`,
+          message: q,
+          isCasual,
           history: messages.slice(-6).map(m => ({
             role: m.sender === 'user' ? 'user' : 'assistant',
             text: m.text
           })),
-          context: {
+          context: isCasual ? {} : {
             subject: selectedSubject,
             chapter: selectedChapter,
             weakTopics: weakPoints,
+            methodPrompt,
             lastLectureTitle: dashboardData?.todayLecture?.title,
             learningStyle: currentUser.learningProfile?.learningStyle || 'visual'
           }
@@ -125,7 +128,7 @@ export const AITutorTab: React.FC<AITutorTabProps> = ({
         const tutorReply: ChatMessage = {
           id: `tut-${Date.now()}`,
           sender: 'tutor',
-          text: data.reply || data.explanation || "Let's examine the physical constraints and forces at play in this scenario.",
+          text: data.reply || data.explanation || (isCasual ? "Hello! How can I help you today?" : "Let's examine the foundational principles of this concept."),
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           video: data.references?.[0] ? {
             title: data.references[0].title || "Concept Video Breakdown",
@@ -146,7 +149,14 @@ export const AITutorTab: React.FC<AITutorTabProps> = ({
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            contents: [{ role: 'user', parts: [{ text: `${q}\n(Subject: ${selectedSubject}, Chapter: ${selectedChapter})` }] }]
+            contents: [{
+              role: 'user',
+              parts: [{
+                text: isCasual
+                  ? `You are an AI assistant. The user says: "${q}". Respond warmly, politely, and conversationally without forcing an academic lecture.`
+                  : `${q}\n(Subject: ${selectedSubject}, Chapter: ${selectedChapter})`
+              }]
+            }]
           })
         });
         if (geminiRes.ok) {
@@ -156,7 +166,9 @@ export const AITutorTab: React.FC<AITutorTabProps> = ({
       } catch {}
 
       if (!fallbackText) {
-        fallbackText = `I'm having trouble connecting to the AI service right now. Please check your internet connection and try again.`;
+        fallbackText = isCasual
+          ? "Hello! I'm your AI tutor and study assistant. How can I help you today?"
+          : `I'm having trouble connecting to the AI service right now. Please check your internet connection and try again.`;
       }
 
       setMessages(prev => [
@@ -309,13 +321,13 @@ export const AITutorTab: React.FC<AITutorTabProps> = ({
                     className={`p-4 rounded-2xl text-xs sm:text-sm leading-relaxed ${
                       isUser
                         ? 'bg-[#c2410c] text-white rounded-tr-xs shadow-sm font-medium'
-                        : 'bg-slate-50 border border-slate-100 text-[#0b1c30] rounded-tl-xs'
+                        : 'bg-white border border-slate-200 text-slate-900 rounded-tl-xs shadow-xs'
                     }`}
                   >
                     {isUser ? (
                       <p className="whitespace-pre-wrap">{m.text}</p>
                     ) : (
-                      <div className="prose prose-sm max-w-none text-[#0b1c30]">
+                      <div className="text-slate-900 font-normal">
                         <MathRenderer content={m.text} />
                       </div>
                     )}

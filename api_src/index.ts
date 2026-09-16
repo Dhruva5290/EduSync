@@ -260,9 +260,19 @@ export default async function handler(req: any, res: any) {
         ];
         let reply = '';
 
-        const systemPrompt = body.customPrompt ||
-          (body.method ? `You are an expert AI tutor teaching using the ${body.method}. ` : '') +
-          `You are an intelligent, natural, helpful academic AI tutor and study companion. Answer questions clearly, thoughtfully, and directly using clean Markdown and LaTeX math ($...$ or $$...$$) where appropriate. Explain concepts step-by-step and provide intuitive examples when helpful.`;
+        const isCasual = Boolean(body.isCasual) || /^(hi|hello|hey|greetings|howdy|sup|good\s*(morning|afternoon|evening)|how\s*are\s*you|who\s*are\s*you|what\s*can\s*you\s*do|tell\s*me\s*about\s*yourself|what'?s\s*up|yo)\b/i.test(message.trim());
+
+        const baseSystemPrompt = `You are ClassSarthi AI, an intelligent, natural, helpful conversational AI assistant and academic tutor.
+CRITICAL INSTRUCTIONS:
+- If the user provides a casual greeting, conversational remark, or general non-academic question (such as "hi", "hello", "how are you", "who are you", "what can you do", etc.), respond naturally, warmly, and concisely as a friendly companion. NEVER force an unsolicited academic lecture, syllabus topic, physics formula, or Socratic quiz onto a casual prompt or greeting.
+- Only provide academic instruction, derivations, step-by-step problem solving, and LaTeX formulas ($...$ or $$...$$) when the user asks an academic, homework, or educational question.`;
+
+        const systemPrompt = isCasual
+          ? baseSystemPrompt
+          : (body.customPrompt ||
+              (body.method ? `You are an expert AI tutor teaching using the ${body.method}. ` : '') +
+              baseSystemPrompt +
+              (body.subject ? `\nCurrent subject focus: ${body.subject}${body.chapter ? ` (${body.chapter})` : ''}.` : ''));
 
         for (const model of candidateModels) {
           try {
@@ -290,7 +300,9 @@ export default async function handler(req: any, res: any) {
         }
 
         if (!reply) {
-          reply = 'I was unable to generate a response right now. Please try again.';
+          reply = isCasual
+            ? "Hello! I'm your ClassSarthi AI assistant and tutor. How can I help you today? Feel free to ask about your coursework or any topic you'd like to explore!"
+            : 'I was unable to generate a response right now. Please try again.';
         }
 
         res.status(200).json({ reply, response: reply });

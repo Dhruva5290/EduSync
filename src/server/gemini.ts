@@ -715,7 +715,7 @@ export async function researchTopicAndVideosAI(prompt: string, subject?: Subject
  */
 export async function summarizeNoteAI(noteContent: string, subjectName?: string, learnerProfile?: LearnerPersona): Promise<{ summary: string; keyTakeaways: string[] }> {
   const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
+  if (!apiKey || process.env.TEST_MODE === 'true') {
     return {
       summary: 'Executive summary generated from lecture notes focusing on primary engineering principles, invariants, and complexity bounds.',
       keyTakeaways: [
@@ -730,7 +730,7 @@ export async function summarizeNoteAI(noteContent: string, subjectName?: string,
   try {
     const personaGuidance = buildPersonaPromptInstructions(learnerProfile);
     const response = await ai.interactions.create({
-      model: 'gemini-3.8-flash',
+      model: 'gemini-2.5-flash',
       input: `Please summarize the following student study notes for ${subjectName || 'the academic course'} into an executive conceptual summary and 3-5 punchy key takeaways:\n\n${noteContent}`,
       
         system_instruction: `You are an academic synthesis engine. Return crisp, high-yield summary text and bullet takeaways tailored to the student's learning profile.\n\n${personaGuidance}`,
@@ -791,7 +791,7 @@ export async function generateDetailedTopicNoteAI(payload: GenerateNotePayload):
   const subjectName = subject?.name || 'Engineering Course';
   const subjectCode = subject?.code || 'CRS';
 
-  if (!apiKey) {
+  if (!apiKey || process.env.TEST_MODE === 'true') {
     const depthTitle = depth === 'cheat_sheet' ? 'Quick Revision Cheat Sheet' : depth === 'formula_sheet' ? 'Formula & Definitions Sheet' : 'Comprehensive Lecture & Exam Notes';
     const noteTitle = `${subjectCode}: ${sanitizedPrompt.slice(0, 45)} (${depthTitle})`;
     const generatedMarkdown = `# ${noteTitle}
@@ -936,7 +936,7 @@ Please generate comprehensive, publication-ready academic study notes.`;
  */
 export async function generateFlashcardsAI(noteContent: string, count: number = 5, learnerProfile?: LearnerPersona): Promise<Flashcard[]> {
   const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
+  if (!apiKey || process.env.TEST_MODE === 'true') {
     return [
       { id: `fc-gen-${Date.now()}-1`, question: 'What is the primary theorem discussed in the note?', answer: 'The fundamental balance or invariant bound guaranteeing optimal system runtime or efficiency.', hint: 'Think about asymptotic limits', topic: 'Core Concept' },
       { id: `fc-gen-${Date.now()}-2`, question: 'What is the operational complexity or efficiency formula?', answer: 'O(log n) or thermodynamic Carnot limit depending on domain constraints.', hint: 'Compare against baseline', topic: 'Complexity' },
@@ -1005,7 +1005,7 @@ export async function generateNoteQuizAI(
       }))
     : [];
 
-  if (!apiKey) {
+  if (!apiKey || process.env.TEST_MODE === 'true') {
     if (facultyQuestions.length > 0) {
       return {
         title: title ? `Faculty Verified Quiz: ${title}` : 'Faculty Curated Assessment',
@@ -1157,7 +1157,7 @@ export async function generatePromptQuizAI(prompt: string, subject?: Subject, co
   const apiKey = process.env.GEMINI_API_KEY;
   const subjName = subject?.name || 'Engineering Curriculum';
 
-  if (!apiKey) {
+  if (!apiKey || process.env.TEST_MODE === 'true') {
     return {
       id: `quiz-gen-${Date.now()}`,
       title: `Diagnostic Quiz: ${prompt}`,
@@ -1296,7 +1296,7 @@ export async function generateClassDiagnosticsAI(subject: Subject, currentAnalyt
   weakTopics: Array<{ topic: string; errorRate: number; averageScore: number; affectedStudents: number; recommendedRemediation: string; urgency: 'high' | 'medium' | 'low' }>;
 }> {
   const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
+  if (!apiKey || process.env.TEST_MODE === 'true') {
     return {
       aiExecutiveSummary: `Class performance for ${subject.code} is currently averaging ${currentAnalytics.classAverage}% across ${currentAnalytics.totalStudents} enrolled students. Focus areas include rotation cases, thermodynamic cycle derivations, and memory layout tracking.`,
       keyActionItems: [
@@ -1377,7 +1377,7 @@ export async function generateSyllabusTimelineAI(courseName: string, description
   weightagePercent?: number;
 }>> {
   const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
+  if (!apiKey || process.env.TEST_MODE === 'true') {
     return [
       { title: 'Unit 1 Foundations & Mathematical Invariants', type: 'lecture', weekNumber: 1, description: 'Core principles, state modeling, and problem decomposition.', topicsCovered: ['Theoretical Foundations', 'Recurrence Bounds'], weightagePercent: 0 },
       { title: 'Diagnostic Quiz 1: Core Theorems', type: 'quiz', weekNumber: 2, description: 'Quick assessment of introductory concepts.', topicsCovered: ['Invariants', 'Proof Techniques'], weightagePercent: 10 },
@@ -1598,7 +1598,7 @@ export async function analyzeQuizPerformanceAI(
   };
 
   const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey || missedQuestions.length === 0) {
+  if (!apiKey || missedQuestions.length === 0 || process.env.TEST_MODE === 'true') {
     return fallbackAnalysis;
   }
 

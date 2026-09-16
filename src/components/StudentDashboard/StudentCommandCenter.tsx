@@ -293,17 +293,20 @@ export const StudentCommandCenter: React.FC<StudentCommandCenterProps> = ({
     setInputText('');
     setIsTutorThinking(true);
 
+    const isCasual = /^(hi|hello|hey|greetings|howdy|sup|good\s*(morning|afternoon|evening)|how\s*are\s*you|who\s*are\s*you|what\s*can\s*you\s*do|tell\s*me\s*about\s*yourself|what'?s\s*up|yo)\b/i.test(query.trim());
+
     try {
       const res = await fetch('/api/tutor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: query,
+          isCasual,
           history: messages.slice(-6).map(m => ({
             role: m.sender === 'user' ? 'user' : 'assistant',
             text: m.text
           })),
-          context: {
+          context: isCasual ? {} : {
             weakTopics: weakPoints,
             weakestTopicName: weakPoints[0] || (quizWeakPoints[0] || "Newton's Second Law"),
             lastLectureTitle: todayLecture?.title || "Newton's Laws of Motion",
@@ -314,7 +317,7 @@ export const StudentCommandCenter: React.FC<StudentCommandCenterProps> = ({
 
       if (res.ok) {
         const data = await res.json();
-        const rawReply = data.reply || data.response || 'Let us explore this step by step.';
+        const rawReply = data.reply || data.response || (isCasual ? 'Hello! How can I help you today?' : 'Let us explore this step by step.');
         const parsed = parseTutorReply(rawReply);
         
         const tutorMsg: ChatMessage = {
@@ -340,7 +343,14 @@ export const StudentCommandCenter: React.FC<StudentCommandCenterProps> = ({
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            contents: [{ role: 'user', parts: [{ text: query }] }]
+            contents: [{
+              role: 'user',
+              parts: [{
+                text: isCasual
+                  ? `The user greeted you with: "${query}". Respond politely, warmly, and naturally without forcing an academic lesson.`
+                  : query
+              }]
+            }]
           })
         });
         if (geminiRes.ok) {
@@ -350,7 +360,9 @@ export const StudentCommandCenter: React.FC<StudentCommandCenterProps> = ({
       } catch {}
 
       if (!fallbackText) {
-        fallbackText = `I'm having trouble connecting to the AI right now. Please check your network connection and try again.`;
+        fallbackText = isCasual
+          ? "Hello! I'm your AI tutor. How can I help you today? Feel free to ask about your coursework or any topic you'd like to explore!"
+          : `I'm having trouble connecting to the AI right now. Please check your network connection and try again.`;
       }
 
       const fallbackMsg: ChatMessage = {
@@ -918,10 +930,10 @@ export const StudentCommandCenter: React.FC<StudentCommandCenterProps> = ({
                     </div>
                   )}
 
-                  <div className={`max-w-[85%] rounded-2xl p-3 leading-relaxed ${
+                  <div className={`max-w-[85%] rounded-2xl p-3.5 leading-relaxed ${
                     m.sender === 'user'
                       ? 'bg-blue-600 text-white shadow-2xs'
-                      : 'bg-teal-50/50 border border-teal-200/80 text-slate-800'
+                      : 'bg-white border border-slate-200 text-slate-900 shadow-xs'
                   }`}>
                     <MathRenderer content={m.text} />
 

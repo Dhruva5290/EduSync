@@ -188,16 +188,18 @@ export const AiTutorView: React.FC<AiTutorViewProps> = ({
 
     let replyText = '';
 
+    const isCasual = /^(hi|hello|hey|greetings|howdy|sup|good\s*(morning|afternoon|evening)|how\s*are\s*you|who\s*are\s*you|what\s*can\s*you\s*do|tell\s*me\s*about\s*yourself|what'?s\s*up|yo)\b/i.test(text.trim());
+
     const activePersona = activeTutor?.name || 'ClassSarthi AI Tutor';
     const customPrompt = activeTutor?.prompt || '';
     const methodDirective = method === 'Socratic Method'
-      ? 'Guide the student using the Socratic method: ask probing questions, give subtle hints, and encourage independent reasoning.'
+      ? 'When discussing academic topics, guide the student using the Socratic method: ask probing questions, give subtle hints, and encourage independent reasoning.'
       : method === 'Step-by-Step Derivation'
-      ? 'Provide an extremely clear, step-by-step mathematical and conceptual derivation with full LaTeX formulas ($...$ or $$...$$).'
+      ? 'When working through problems, provide an extremely clear, step-by-step mathematical and conceptual derivation with full LaTeX formulas ($...$ or $$...$$).'
       : method === 'First Principles'
-      ? 'Explain from fundamental physical/mathematical axioms and first principles.'
+      ? 'When explaining concepts, explain from fundamental physical/mathematical axioms and first principles.'
       : method === 'Exam-Focused Preparation'
-      ? 'Focus on high-yield exam tips, common scoring pitfalls, and standard question patterns.'
+      ? 'When reviewing coursework, focus on high-yield exam tips, common scoring pitfalls, and standard question patterns.'
       : 'Explain clearly and intuitively.';
 
     // 1. Try server endpoint (/api/tutor and /api/chat)
@@ -211,11 +213,12 @@ export const AiTutorView: React.FC<AiTutorViewProps> = ({
         },
         body: JSON.stringify({
           message: text,
-          subject,
-          chapter,
-          method,
+          isCasual,
+          subject: isCasual ? undefined : subject,
+          chapter: isCasual ? undefined : chapter,
+          method: isCasual ? undefined : method,
           persona: activePersona,
-          customPrompt: `${customPrompt}\n${methodDirective}`,
+          customPrompt: isCasual ? undefined : `${customPrompt}\n${methodDirective}`,
           history: newHistory.slice(-8).map(m => ({
             role: m.sender === 'user' ? 'user' : 'model',
             text: m.text
@@ -244,7 +247,9 @@ export const AiTutorView: React.FC<AiTutorViewProps> = ({
         'gemini-3.7-flash'
       ];
 
-      const systemInstruction = `You are ${activePersona}, an expert academic AI tutor specialized in ${subject} (${chapter}).
+      const systemInstruction = isCasual
+        ? `You are ${activePersona}, a versatile, friendly AI assistant and academic tutor. The user greeted you or asked a casual question. Reply warmly, naturally, and conversationally. Do NOT force a physics lesson, formula derivation, or academic quiz onto a casual prompt.`
+        : `You are ${activePersona}, an expert academic AI tutor specialized in ${subject} (${chapter}).
 ${methodDirective}
 ${customPrompt ? `Persona guidelines: ${customPrompt}` : ''}
 Always format mathematical and scientific equations in clean LaTeX notation ($...$ or $$...$$).
@@ -288,12 +293,18 @@ Be intelligent, helpful, concise, and pedagogical. Never output generic error me
 
     // 3. Graceful fallback if completely offline
     if (!replyText) {
-      replyText = "I'm having trouble reaching the AI service right now. Please check your internet connection or try again in a few moments.";
+      replyText = isCasual
+        ? "Hello! I'm your ClassSarthi AI tutor. How can I help you today? Feel free to ask about your coursework or any topic you'd like to explore!"
+        : "I'm having trouble reaching the AI service right now. Please check your internet connection or try again in a few moments.";
     }
 
     // Generate dynamic follow-up suggestions
     const dynamicSuggestions: string[] = [];
-    if (text.toLowerCase().includes('why') || text.toLowerCase().includes('how')) {
+    if (isCasual) {
+      dynamicSuggestions.push(`What topics can we study in ${subject}?`);
+      dynamicSuggestions.push('Explain a foundational concept');
+      dynamicSuggestions.push('Give me a quick practice problem');
+    } else if (text.toLowerCase().includes('why') || text.toLowerCase().includes('how')) {
       dynamicSuggestions.push('Can you show a numerical example?');
       dynamicSuggestions.push('What are the key assumptions?');
     } else if (text.toLowerCase().includes('solve') || text.toLowerCase().includes('calculate')) {
@@ -313,7 +324,7 @@ Be intelligent, helpful, concise, and pedagogical. Never output generic error me
         minute: '2-digit',
       }),
       method,
-      isSocraticPrompt: method === 'Socratic Method',
+      isSocraticPrompt: !isCasual && method === 'Socratic Method',
       suggestions: dynamicSuggestions,
     };
 
@@ -503,7 +514,7 @@ Be intelligent, helpful, concise, and pedagogical. Never output generic error me
               >
                 {/* User Message */}
                 {m.sender === 'user' && (
-                  <div className="bg-[#a33900] text-white px-5 py-3 rounded-3xl rounded-br-xs max-w-lg shadow-xs text-sm font-medium">
+                  <div className="bg-[#0051d5] text-white px-5 py-3 rounded-3xl rounded-br-xs max-w-lg shadow-sm text-sm font-medium">
                     <p className="whitespace-pre-wrap">{m.text}</p>
                     <span className="text-[10px] text-white/70 block text-right mt-1">
                       {m.timestamp}
@@ -515,19 +526,19 @@ Be intelligent, helpful, concise, and pedagogical. Never output generic error me
                 {m.sender === 'tutor' && (
                   <div className="flex flex-col gap-3 max-w-2xl">
                     <div
-                      className={`p-5 rounded-3xl rounded-tl-xs shadow-2xs border text-sm ${
+                      className={`p-5 rounded-3xl rounded-tl-xs shadow-xs border text-sm ${
                         m.isSocraticPrompt
-                          ? 'bg-[#eff4ff] border-[#dce9ff] text-[#0b1c30]'
-                          : 'bg-[#f8f9ff] border-[#eff4ff] text-[#0b1c30]'
+                          ? 'bg-[#f0f5ff] border-blue-200 text-slate-900'
+                          : 'bg-white border-slate-200 text-slate-900'
                       }`}
                     >
                       {m.isSocraticPrompt && (
-                        <div className="flex items-center gap-1.5 text-[#a33900] font-bold text-xs uppercase tracking-wider mb-2">
+                        <div className="flex items-center gap-1.5 text-[#0051d5] font-bold text-xs uppercase tracking-wider mb-2">
                           <Lightbulb className="w-4 h-4" />
                           <span>{method}</span>
                         </div>
                       )}
-                      <div className="leading-relaxed prose prose-sm max-w-none text-[#0b1c30]">
+                      <div className="leading-relaxed text-slate-900 font-normal">
                         <MathRenderer content={m.text} />
                       </div>
                     </div>

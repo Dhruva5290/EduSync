@@ -60077,21 +60077,21 @@ var init_users = __esm({
         phone: "+91 98110 54333"
       },
       {
-        id: "teacher-1788570692864",
+        id: "teacher-1789534920863",
         name: "Dr. Elena Rostova",
-        email: "elena.rostova.1788570692862@classsarthi.edu",
-        username: "elena.rostova.1788570692862",
-        password: "Teacher@2782",
+        email: "elena.rostova.1789534920855@classsarthi.edu",
+        username: "elena.rostova.1789534920855",
+        password: "Teacher@2195",
         role: "teacher",
         gender: "Male",
-        institutionalId: "BMU-FAC-2782",
+        institutionalId: "BMU-FAC-2195",
         department: "Theoretical High Energy Physics",
         designation: "Assistant Professor",
         officeLocation: "Academic Block A",
         officeHours: "Mon/Wed 11:00 AM - 01:00 PM",
-        phone: "+91 98391 37297",
+        phone: "+91 98692 98517",
         status: "active",
-        joinedDate: "2026-09-05",
+        joinedDate: "2026-09-16",
         enrolledSubjectIds: [],
         teachingSubjectIds: []
       },
@@ -60501,6 +60501,90 @@ var lectures_default;
 var init_lectures = __esm({
   "data/lectures.json"() {
     lectures_default = [
+      {
+        id: "lec-1789548500285",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-16",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1789548403240",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-16",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1789548070412",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-16",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
       {
         id: "lec-1789534640093",
         subjectId: "subj-phy-11",
@@ -61833,6 +61917,95 @@ var notes_default;
 var init_notes = __esm({
   "data/notes.json"() {
     notes_default = [
+      {
+        id: "note-vn-sim-1789548500270",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-16T08:48:20.270Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
+      {
+        id: "note-vn-sim-1789548403221",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-16T08:46:43.221Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
+      {
+        id: "note-1789548070451",
+        studentId: "student-1",
+        subjectId: "sub_phys101",
+        title: "Work-Energy Theorem & Conservation Laws",
+        content: "# Work-Energy Principle\n\nThe net work done on an object equals the change in kinetic energy:\n$$W_{net} = \\Delta K = \\frac{1}{2}mv_f^2 - \\frac{1}{2}mv_i^2$$\n\nFor conservative forces:\n$$E_{total} = K + U = \\text{constant}$$",
+        tags: [
+          "physics",
+          "mechanics",
+          "work-energy"
+        ],
+        lastModified: "2026-09-16T08:41:10.451Z",
+        isPinned: false
+      },
+      {
+        id: "note-vn-sim-1789548070397",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-16T08:41:10.397Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
       {
         id: "note-vn-sim-1789534640077",
         studentId: "student-1",
@@ -63317,7 +63490,7 @@ var init_student_progress = __esm({
           completed: false,
           lastTimestamp: "05:32",
           progressPercent: 75,
-          lastViewedAt: "2026-09-16T04:59:32.225Z",
+          lastViewedAt: "2026-09-16T08:48:20.379Z",
           quizCompleted: true,
           quizScore: 1,
           quizTotal: 6,
@@ -67757,7 +67930,7 @@ async function researchTopicAndVideosAI(prompt, subject) {
 }
 async function summarizeNoteAI(noteContent, subjectName, learnerProfile) {
   const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
+  if (!apiKey || process.env.TEST_MODE === "true") {
     return {
       summary: "Executive summary generated from lecture notes focusing on primary engineering principles, invariants, and complexity bounds.",
       keyTakeaways: [
@@ -67771,7 +67944,7 @@ async function summarizeNoteAI(noteContent, subjectName, learnerProfile) {
   try {
     const personaGuidance = buildPersonaPromptInstructions(learnerProfile);
     const response = await ai.interactions.create({
-      model: "gemini-3.8-flash",
+      model: "gemini-2.5-flash",
       input: `Please summarize the following student study notes for ${subjectName || "the academic course"} into an executive conceptual summary and 3-5 punchy key takeaways:
 
 ${noteContent}`,
@@ -67811,7 +67984,7 @@ async function generateDetailedTopicNoteAI(payload) {
   const apiKey = process.env.GEMINI_API_KEY;
   const subjectName = subject?.name || "Engineering Course";
   const subjectCode = subject?.code || "CRS";
-  if (!apiKey) {
+  if (!apiKey || process.env.TEST_MODE === "true") {
     const depthTitle = depth === "cheat_sheet" ? "Quick Revision Cheat Sheet" : depth === "formula_sheet" ? "Formula & Definitions Sheet" : "Comprehensive Lecture & Exam Notes";
     const noteTitle = `${subjectCode}: ${sanitizedPrompt.slice(0, 45)} (${depthTitle})`;
     const generatedMarkdown = `# ${noteTitle}
@@ -67952,7 +68125,7 @@ Comprehensive notes covering ${sanitizedPrompt} for ${subjectName}.
 }
 async function generateFlashcardsAI(noteContent, count = 5, learnerProfile) {
   const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
+  if (!apiKey || process.env.TEST_MODE === "true") {
     return [
       { id: `fc-gen-${Date.now()}-1`, question: "What is the primary theorem discussed in the note?", answer: "The fundamental balance or invariant bound guaranteeing optimal system runtime or efficiency.", hint: "Think about asymptotic limits", topic: "Core Concept" },
       { id: `fc-gen-${Date.now()}-2`, question: "What is the operational complexity or efficiency formula?", answer: "O(log n) or thermodynamic Carnot limit depending on domain constraints.", hint: "Compare against baseline", topic: "Complexity" },
@@ -68010,7 +68183,7 @@ async function generateNoteQuizAI(noteContent, title, learnerProfile, teacherQue
     id: tq.id || `q-fac-${Date.now()}-${i2}`,
     source: "teacher_question_bank"
   })) : [];
-  if (!apiKey) {
+  if (!apiKey || process.env.TEST_MODE === "true") {
     if (facultyQuestions.length > 0) {
       return {
         title: title ? `Faculty Verified Quiz: ${title}` : "Faculty Curated Assessment",
@@ -68159,7 +68332,7 @@ ${personaGuidance}`,
 async function generatePromptQuizAI(prompt, subject, count = 4) {
   const apiKey = process.env.GEMINI_API_KEY;
   const subjName = subject?.name || "Engineering Curriculum";
-  if (!apiKey) {
+  if (!apiKey || process.env.TEST_MODE === "true") {
     return {
       id: `quiz-gen-${Date.now()}`,
       title: `Diagnostic Quiz: ${prompt}`,
@@ -68287,7 +68460,7 @@ Make each question rigorous with 4 distinct choices, exact 0-based correctIndex,
 }
 async function generateClassDiagnosticsAI(subject, currentAnalytics) {
   const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
+  if (!apiKey || process.env.TEST_MODE === "true") {
     return {
       aiExecutiveSummary: `Class performance for ${subject.code} is currently averaging ${currentAnalytics.classAverage}% across ${currentAnalytics.totalStudents} enrolled students. Focus areas include rotation cases, thermodynamic cycle derivations, and memory layout tracking.`,
       keyActionItems: [
@@ -68354,7 +68527,7 @@ Grade Distribution: ${JSON.stringify(currentAnalytics.gradeDistribution || [])}`
 }
 async function generateSyllabusTimelineAI(courseName, description, weeksCount = 6) {
   const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
+  if (!apiKey || process.env.TEST_MODE === "true") {
     return [
       { title: "Unit 1 Foundations & Mathematical Invariants", type: "lecture", weekNumber: 1, description: "Core principles, state modeling, and problem decomposition.", topicsCovered: ["Theoretical Foundations", "Recurrence Bounds"], weightagePercent: 0 },
       { title: "Diagnostic Quiz 1: Core Theorems", type: "quiz", weekNumber: 2, description: "Quick assessment of introductory concepts.", topicsCovered: ["Invariants", "Proof Techniques"], weightagePercent: 10 },
@@ -68540,7 +68713,7 @@ async function analyzeQuizPerformanceAI(quizTitle, questions, userAnswers, learn
     suggestedTutorPrompt: missedQuestions.length > 0 ? `I completed the VisionNote mastery quiz on "${quizTitle}" and scored ${totalScore}/${totalQuestions} (${percentage}%). I need Socratic guidance on: "${missedQuestions[0].question}". Please guide me from first principles without giving away the direct answer.` : `I scored 100% on the VisionNote mastery quiz for "${quizTitle}". Please challenge me with an advanced Olympiad-level Socratic problem on ${primaryMissedTopic}.`
   };
   const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey || missedQuestions.length === 0) {
+  if (!apiKey || missedQuestions.length === 0 || process.env.TEST_MODE === "true") {
     return fallbackAnalysis;
   }
   const ai = getAI();
@@ -77349,7 +77522,13 @@ async function handler(req, res) {
           "gemini-3.7-flash"
         ];
         let reply = "";
-        const systemPrompt = body.customPrompt || (body.method ? `You are an expert AI tutor teaching using the ${body.method}. ` : "") + `You are an intelligent, natural, helpful academic AI tutor and study companion. Answer questions clearly, thoughtfully, and directly using clean Markdown and LaTeX math ($...$ or $$...$$) where appropriate. Explain concepts step-by-step and provide intuitive examples when helpful.`;
+        const isCasual = Boolean(body.isCasual) || /^(hi|hello|hey|greetings|howdy|sup|good\s*(morning|afternoon|evening)|how\s*are\s*you|who\s*are\s*you|what\s*can\s*you\s*do|tell\s*me\s*about\s*yourself|what'?s\s*up|yo)\b/i.test(message.trim());
+        const baseSystemPrompt = `You are ClassSarthi AI, an intelligent, natural, helpful conversational AI assistant and academic tutor.
+CRITICAL INSTRUCTIONS:
+- If the user provides a casual greeting, conversational remark, or general non-academic question (such as "hi", "hello", "how are you", "who are you", "what can you do", etc.), respond naturally, warmly, and concisely as a friendly companion. NEVER force an unsolicited academic lecture, syllabus topic, physics formula, or Socratic quiz onto a casual prompt or greeting.
+- Only provide academic instruction, derivations, step-by-step problem solving, and LaTeX formulas ($...$ or $$...$$) when the user asks an academic, homework, or educational question.`;
+        const systemPrompt = isCasual ? baseSystemPrompt : body.customPrompt || (body.method ? `You are an expert AI tutor teaching using the ${body.method}. ` : "") + baseSystemPrompt + (body.subject ? `
+Current subject focus: ${body.subject}${body.chapter ? ` (${body.chapter})` : ""}.` : "");
         for (const model of candidateModels) {
           try {
             const apiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
@@ -77375,7 +77554,7 @@ async function handler(req, res) {
           }
         }
         if (!reply) {
-          reply = "I was unable to generate a response right now. Please try again.";
+          reply = isCasual ? "Hello! I'm your ClassSarthi AI assistant and tutor. How can I help you today? Feel free to ask about your coursework or any topic you'd like to explore!" : "I was unable to generate a response right now. Please try again.";
         }
         res.status(200).json({ reply, response: reply });
         return;

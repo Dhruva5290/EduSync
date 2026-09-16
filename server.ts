@@ -2945,15 +2945,17 @@ If $d = 0 \\implies$ Lines are coplanar and intersect.`,
         ? 'Socratic & Conversational'
         : 'Visual / Step-by-Step & Mental Models';
 
-      let systemInstruction = `You are the ClassSarthi Contextual Socratic AI Tutor and comprehensive academic assistant.`;
-      if (weakTopicsStr || weakestTopicName) {
-        systemInstruction += `\nThe student is currently reviewing weak areas: ${weakTopicsStr || weakestTopicName}${activeContext.lastLectureTitle ? ` related to '${activeContext.lastLectureTitle}'` : ''}.`;
+      const isCasual = Boolean(req.body.isCasual) || /^(hi|hello|hey|greetings|howdy|sup|good\s*(morning|afternoon|evening)|how\s*are\s*you|who\s*are\s*you|what\s*can\s*you\s*do|tell\s*me\s*about\s*yourself|what'?s\s*up|yo)\b/i.test(message.trim());
+
+      let systemInstruction = `You are the ClassSarthi AI Assistant and Academic Tutor.
+CRITICAL INSTRUCTIONS:
+- If the user provides a casual greeting, conversational remark, or general non-academic question (such as "hi", "hello", "how are you", "who are you", etc.), respond naturally, warmly, and concisely like standard ChatGPT/Gemini. NEVER force an unsolicited academic lecture, syllabus topic, physics formula, or Socratic homework quiz onto a casual prompt.
+- Socratic Guidance: When a student asks for homework answers or direct solutions (e.g. "Give me the exact final numerical answer to question 4 on the homework"), do not provide naked numbers. Guide them by asking: "What concept or equation is involved? Let us work through it step-by-step!"
+- Only provide academic analysis, derivations, Socratic questioning, and LaTeX formulas ($...$ or $$...$$) when the user asks an academic, homework, or educational question.`;
+
+      if (!isCasual && (weakTopicsStr || weakestTopicName)) {
+        systemInstruction += `\nWhen the user asks for academic help, their current focus area is: ${weakTopicsStr || weakestTopicName}${activeContext.lastLectureTitle ? ` related to '${activeContext.lastLectureTitle}'` : ''}. Preferred learning style: ${styleLabel}.`;
       }
-      systemInstruction += `
-Their preferred learning style is ${styleLabel}.
-When they ask a question, answer thoroughly, helpfully, and dynamically using clean Markdown and LaTeX math ($...$ or $$...$$).
-Explain step-by-step, providing intuitive physical or mathematical insights.
-Answer the user's exact question thoughtfully without rigid canned templates.`;
 
       // Format conversation history for multi-turn conversational memory
       const formattedHistory = (Array.isArray(history) ? history : [])
@@ -3006,6 +3008,13 @@ Answer the user's exact question thoughtfully without rigid canned templates.`;
 
       if (tutorReply) {
         return res.json({ reply: tutorReply, response: tutorReply });
+      }
+
+      if (isCasual) {
+        return res.json({
+          reply: "Hello! I'm your ClassSarthi AI tutor. How can I help you today? Feel free to ask any question or dive into your coursework!",
+          response: "Hello! I'm your ClassSarthi AI tutor. How can I help you today? Feel free to ask any question or dive into your coursework!"
+        });
       }
 
       // Resilient fallback contextual response with persona tailoring
