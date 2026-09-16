@@ -67,7 +67,7 @@ async function main() {
   console.log('\x1b[1m===============================================================\x1b[0m');
   console.log(`  Total Tests Run:  \x1b[1m${total}\x1b[0m`);
   console.log(`  Passed:           \x1b[32m\x1b[1m${passed}\x1b[0m`);
-  console.log(`  Failed / Bugs:    \x1b[${failed > 0 ? '31' : '32'}\x1b[1m${failed}\x1b[0m`);
+  console.log(`  Failed / Bugs:    \x1b[${failed > 0 ? '31m' : '32m'}\x1b[1m${failed}\x1b[0m`);
   console.log(`  Features Covered: \x1b[36m\x1b[1m${EDU_SYNC_FEATURES.length} / ${EDU_SYNC_FEATURES.length} (100%)\x1b[0m`);
   console.log('===============================================================\n');
 

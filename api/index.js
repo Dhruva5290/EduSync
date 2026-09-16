@@ -60502,6 +60502,202 @@ var init_lectures = __esm({
   "data/lectures.json"() {
     lectures_default = [
       {
+        id: "lec-1789481072043",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-15",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1789480886509",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-15",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1789387363072",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-14",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1789331331251",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-13",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1789330346831",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-13",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1789330100076",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-13",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1789328328301",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-13",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
         id: "lec-1789312973740",
         subjectId: "subj-phy-11",
         subjectCode: "PHY-11",
@@ -61609,6 +61805,181 @@ var notes_default;
 var init_notes = __esm({
   "data/notes.json"() {
     notes_default = [
+      {
+        id: "note-vn-sim-1789481072039",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-15T14:04:32.039Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
+      {
+        id: "note-vn-sim-1789480886506",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-15T14:01:26.506Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
+      {
+        id: "note-vn-sim-1789387363062",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-14T12:02:43.062Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
+      {
+        id: "note-vn-sim-1789331331246",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-13T20:28:51.246Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
+      {
+        id: "note-vn-sim-1789330346823",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-13T20:12:26.823Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
+      {
+        id: "note-vn-sim-1789330100066",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-13T20:08:20.066Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
+      {
+        id: "note-vn-sim-1789328328295",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-13T19:38:48.295Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
       {
         id: "note-vn-sim-1789312973736",
         studentId: "student-1",
@@ -62893,7 +63264,7 @@ var init_student_progress = __esm({
           completed: false,
           lastTimestamp: "05:32",
           progressPercent: 75,
-          lastViewedAt: "2026-09-13T15:22:53.757Z",
+          lastViewedAt: "2026-09-15T14:04:32.057Z",
           quizCompleted: true,
           quizScore: 1,
           quizTotal: 6,
@@ -62915,6 +63286,336 @@ var init_student_progress = __esm({
         }
       }
     };
+  }
+});
+
+// src/data/initialData.ts
+var initialPlugins, initialCustomTutors, initialTutorApprovalRequests;
+var init_initialData = __esm({
+  "src/data/initialData.ts"() {
+    initialPlugins = [
+      {
+        id: "plugin-gc",
+        pluginId: "google_classroom",
+        name: "Google Classroom Sync",
+        description: "Auto-sync coursework, lecture materials, and assignment gradebooks directly from your enrolled university classes.",
+        status: "connected",
+        accountEmail: "student.dhruva@bmu.edu.in",
+        lastSync: "12 mins ago",
+        syncFrequency: "realtime",
+        category: "classroom",
+        icon: "GraduationCap",
+        permissions: [
+          "View classroom courses and rosters",
+          "Access course materials, syllabus, and announcements",
+          "Read assignment submissions and grade updates"
+        ],
+        rules: [
+          {
+            id: "rule-gc-1",
+            pluginId: "google_classroom",
+            ruleName: "Auto-sync assignments to To-Do List",
+            description: "Pulls newly published homework assignments straight into your personalized study tasks.",
+            enabled: true,
+            trigger: "New assignment published in Classroom",
+            action: "Add high-priority task to To-Do feed",
+            lastSyncDetails: "3 assignments imported (PHY-1101, MAT-1101, CHE-1101)"
+          },
+          {
+            id: "rule-gc-2",
+            pluginId: "google_classroom",
+            ruleName: "Sync deadlines to Calendar",
+            description: "Adds submission deadlines with automated 15-minute exam and quiz alerts.",
+            enabled: true,
+            trigger: "Assignment due date set",
+            action: "Push event to synced calendar with 15-min reminder",
+            lastSyncDetails: "2 deadlines scheduled for Friday"
+          },
+          {
+            id: "rule-gc-3",
+            pluginId: "google_classroom",
+            ruleName: "Auto-pull lecture notes & attachments",
+            description: "Synchronizes blackboard snapshots, attached PDFs, and lecture handouts into Student Notes.",
+            enabled: true,
+            trigger: "Teacher attaches study material",
+            action: "Parse text and append to Smart Notes archive",
+            lastSyncDetails: "1 lecture slide deck imported"
+          }
+        ],
+        syncHistory: [
+          {
+            id: "hist-1",
+            timestamp: "Today, 01:40 AM",
+            status: "success",
+            summary: "Classroom sync completed: 3 assignments imported, 2 deadlines scheduled.",
+            itemsSynced: 5
+          },
+          {
+            id: "hist-2",
+            timestamp: "Yesterday, 06:15 PM",
+            status: "success",
+            summary: "Synchronized Physics 11 Chapter 3 lecture materials.",
+            itemsSynced: 2
+          }
+        ]
+      },
+      {
+        id: "plugin-gmail",
+        pluginId: "gmail",
+        name: "Gmail Integration",
+        description: "Receive morning study digests, real-time assignment notifications, and grade updates straight to your inbox.",
+        status: "connected",
+        accountEmail: "student.dhruva@gmail.com",
+        lastSync: "1 hour ago",
+        syncFrequency: "daily",
+        category: "communication",
+        icon: "Mail",
+        permissions: [
+          "Send automated study recap emails on your behalf",
+          "Read official university notifications regarding test schedules"
+        ],
+        rules: [
+          {
+            id: "rule-gm-1",
+            pluginId: "gmail",
+            ruleName: "Daily Morning Study Digest",
+            description: "Dispatches a 7:00 AM summary of pending tasks, streak milestones, and upcoming lectures.",
+            enabled: true,
+            trigger: "Daily at 07:00 AM IST",
+            action: "Send rich HTML digest to student.dhruva@gmail.com",
+            lastSyncDetails: "Dispatched morning digest (3 pending tasks, 5-day streak)"
+          },
+          {
+            id: "rule-gm-2",
+            pluginId: "gmail",
+            ruleName: "Assignment Alerts",
+            description: "Sends an instant email notification whenever faculty posts new coursework.",
+            enabled: true,
+            trigger: "New assignment posted",
+            action: "Send urgent reminder to student email",
+            lastSyncDetails: "Alert sent for PHY-1101 Incline Plane problem"
+          },
+          {
+            id: "rule-gm-3",
+            pluginId: "gmail",
+            ruleName: "Grade & Feedback Notifications",
+            description: "Sends email breakdown when rubric scores and AI feedback are finalized.",
+            enabled: false,
+            trigger: "Submission graded by faculty",
+            action: "Send grade breakdown email",
+            lastSyncDetails: "Disabled by student"
+          }
+        ],
+        syncHistory: [
+          {
+            id: "hist-gm-1",
+            timestamp: "Today, 07:00 AM",
+            status: "success",
+            summary: "Daily study digest email sent successfully.",
+            itemsSynced: 1
+          }
+        ]
+      },
+      {
+        id: "plugin-gcal",
+        pluginId: "google_calendar",
+        name: "Google Calendar Sync",
+        description: "Keep your academic timetable, lab slots, revision checkpoints, and assignment deadlines in perfect harmony.",
+        status: "connected",
+        accountEmail: "student.dhruva@bmu.edu.in",
+        lastSync: "45 mins ago",
+        syncFrequency: "hourly",
+        category: "productivity",
+        icon: "Calendar",
+        permissions: [
+          "Create and manage EduSync academic calendar",
+          "Add reminders and invite alarms for class schedules"
+        ],
+        rules: [
+          {
+            id: "rule-gc-cal-1",
+            pluginId: "google_calendar",
+            ruleName: "Sync assignment deadlines",
+            description: "Adds coursework deadlines with 15-minute popup and push alarms.",
+            enabled: true,
+            trigger: "Assignment due date added",
+            action: "Create calendar event with 15m notification",
+            lastSyncDetails: "Synced 4 deadlines to EduSync Calendar"
+          },
+          {
+            id: "rule-gc-cal-2",
+            pluginId: "google_calendar",
+            ruleName: "Sync live class schedule",
+            description: "Populates daily lecture slots, lab timings, and classroom room numbers.",
+            enabled: true,
+            trigger: "Weekly timetable published",
+            action: "Create recurring lecture calendar blocks",
+            lastSyncDetails: "5 lecture blocks scheduled for tomorrow"
+          },
+          {
+            id: "rule-gc-cal-3",
+            pluginId: "google_calendar",
+            ruleName: "Sync spaced repetition review reminders",
+            description: "Schedules smart revision sessions 24 hours and 7 days after lectures.",
+            enabled: true,
+            trigger: "Lecture completed in ClassSarthi",
+            action: "Schedule 20-min AI review slot",
+            lastSyncDetails: "Revision checkpoint added for Physics Ch 3"
+          }
+        ],
+        syncHistory: [
+          {
+            id: "hist-cal-1",
+            timestamp: "Today, 01:05 AM",
+            status: "success",
+            summary: "Calendar sync completed: 5 lecture blocks & 2 deadline reminders updated.",
+            itemsSynced: 7
+          }
+        ]
+      },
+      {
+        id: "plugin-notion",
+        pluginId: "notion",
+        name: "Notion Workspace Export",
+        description: "Export AI study summaries, formulas, and assignment logs into your personal Notion workspace databases.",
+        status: "disconnected",
+        syncFrequency: "manual",
+        category: "notes",
+        icon: "FileText",
+        permissions: [
+          "Create pages in selected Notion workspace",
+          "Insert databases for assignments and notes"
+        ],
+        rules: [
+          {
+            id: "rule-notion-1",
+            pluginId: "notion",
+            ruleName: "Export Smart Notes to Notion page",
+            description: "Automatically backs up generated study notes and formulas to your Notion database.",
+            enabled: false,
+            trigger: "Note created or edited",
+            action: "Sync page to Notion workspace"
+          },
+          {
+            id: "rule-notion-2",
+            pluginId: "notion",
+            ruleName: "Sync Assignment Tracker Database",
+            description: "Maintains a live Notion table of all pending and graded assignments.",
+            enabled: false,
+            trigger: "Assignment status change",
+            action: "Update Notion database row"
+          }
+        ],
+        syncHistory: []
+      }
+    ];
+    initialCustomTutors = [
+      {
+        id: "tutor-1",
+        name: "Prof. Walter Lewin",
+        specialty: "Intuitive Demonstrations & High School Physics",
+        prompt: "Always begin with a real-world demonstration, show why common misconceptions fail, and derive equations from first principles. Maintain an enthusiastic, inspiring tone.",
+        initials: "WL",
+        bio: "MIT Physics Professor renowned for dramatic lecture demonstrations and intuitive mechanics pedagogy.",
+        method: "visual",
+        status: "approved",
+        submittedAt: "2026-09-01T10:00:00Z",
+        approvedAt: "2026-09-01T11:30:00Z",
+        authorName: "Faculty Physics Team",
+        mcpConfig: {
+          provider: "edusync_ai",
+          authMethod: "bearer",
+          capabilities: ["Answer questions", "Generate examples", "Create practice problems"],
+          status: "verified"
+        },
+        isDefault: true
+      },
+      {
+        id: "tutor-2",
+        name: "Dr. Richard Feynman",
+        specialty: "First Principles & Intuitive Analogy",
+        prompt: "Explain concepts using the Feynman Technique: assume the student is an intelligent 12-year-old, avoid jargon, use physical analogies, and identify the exact gap in understanding.",
+        initials: "RF",
+        bio: "Nobel laureate physicist master of simplicity, first principles derivation, and intuitive mental models.",
+        method: "feynman",
+        status: "approved",
+        submittedAt: "2026-09-03T14:20:00Z",
+        approvedAt: "2026-09-03T16:00:00Z",
+        authorName: "Dean of Sciences",
+        mcpConfig: {
+          provider: "anthropic",
+          mcpUrl: "https://api.edusync.internal/mcp/feynman-v1",
+          authMethod: "bearer",
+          capabilities: ["Answer questions", "Generate examples", "Derive from first principles"],
+          status: "verified"
+        }
+      },
+      {
+        id: "tutor-3",
+        name: "Socrates of Athens",
+        specialty: "Dialectical Socratic Inquiry",
+        prompt: "Never give the direct answer immediately. Ask probing questions, lead the student to uncover contradictions in their premise, and guide them to reason through the solution themselves.",
+        initials: "SO",
+        bio: "Classical philosopher guiding learners via relentless dialectic inquiry and structured questioning.",
+        method: "socratic",
+        status: "approved",
+        submittedAt: "2026-09-05T09:00:00Z",
+        approvedAt: "2026-09-05T09:45:00Z",
+        authorName: "Academic Pedagogy Lab",
+        mcpConfig: {
+          provider: "edusync_ai",
+          authMethod: "bearer",
+          capabilities: ["Answer questions", "Ask guided leading questions"],
+          status: "verified"
+        }
+      }
+    ];
+    initialTutorApprovalRequests = [
+      {
+        id: "req-101",
+        tutorId: "tutor-pending-1",
+        tutorName: "Prof. Maryam Mirzakhani",
+        authorId: "student-1",
+        authorName: "Student Dhruva",
+        specialty: "Hyperbolic Geometry & Visual Topology",
+        method: "visual",
+        prompt: "Approach mathematical problems visually by drawing geometric surfaces, billiard trajectories on Riemann surfaces, and breaking down proofs into intuitive spatial steps.",
+        mcpConfig: {
+          provider: "custom",
+          mcpUrl: "https://mcp.geometry-lab.org/v1",
+          apiKey: "mcp_live_geom_983147823",
+          authMethod: "bearer",
+          capabilities: ["Answer questions", "Generate examples", "Create practice problems"],
+          status: "verified",
+          lastTested: "10 mins ago"
+        },
+        submittedAt: "2026-09-13T22:15:00 IST",
+        status: "pending",
+        adminNotes: "Awaiting faculty reviewer test with calculus sample."
+      },
+      {
+        id: "req-102",
+        tutorId: "tutor-pending-2",
+        tutorName: "Dr. Gilbert Strang",
+        authorId: "student-2",
+        authorName: "Aarav Sharma",
+        specialty: "Linear Algebra & Column Space Intuition",
+        method: "direct",
+        prompt: "Emphasize the 4 fundamental subspaces: Row space, Column space, Nullspace, and Left Nullspace. Use matrix factorizations (LU, QR, SVD) and geometric vectors rather than formulaic rote memorization.",
+        mcpConfig: {
+          provider: "openai",
+          mcpUrl: "https://api.linalg.internal/mcp",
+          apiKey: "sk-linalg-demo-mcp-99012",
+          authMethod: "bearer",
+          capabilities: ["Answer questions", "Generate examples", "Matrix derivations"],
+          status: "verified",
+          lastTested: "1 hour ago"
+        },
+        submittedAt: "2026-09-13T23:30:00 IST",
+        status: "pending",
+        adminNotes: "Ready for admin sample validation."
+      }
+    ];
   }
 });
 
@@ -62994,6 +63695,7 @@ var init_db = __esm({
     init_lectures();
     init_notes();
     init_student_progress();
+    init_initialData();
     isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
     USERS_FILE_PATH = path2.resolve(process.cwd(), "data", "users.json");
     NOTES_FILE_PATH = path2.resolve(process.cwd(), "data", "notes.json");
@@ -65101,7 +65803,10 @@ $$2I = \\int_{0}^{\\pi/2} 1 \\, dx = \\frac{\\pi}{2} \\implies I = \\frac{\\pi}{
       conceptMastery: seedConceptMastery,
       lectureProgress: loadProgressFromDisk(seedStudentLectureProgress),
       masteryQuizzes: seedMasteryQuizzes,
-      questionBanks: [...FAKE_QUESTION_BANKS]
+      questionBanks: [...FAKE_QUESTION_BANKS],
+      plugins: JSON.parse(JSON.stringify(initialPlugins)),
+      customTutors: JSON.parse(JSON.stringify(initialCustomTutors)),
+      tutorApprovalRequests: JSON.parse(JSON.stringify(initialTutorApprovalRequests))
     };
   }
 });
@@ -66890,11 +67595,10 @@ Return your response in clean JSON format:
   try {
     const candidateModels = [
       "gemini-3.5-flash-lite",
-      "gemini-3.1-flash-lite",
-      "gemini-flash-lite-latest",
-      "gemma-4-26b-a4b-it",
+      "gemini-3.6-flash",
+      "gemini-3.7-flash",
       "gemini-3.5-flash",
-      "gemini-3.6-flash"
+      "gemini-flash-lite-latest"
     ];
     let rawText = "";
     let response = null;
@@ -67641,7 +68345,7 @@ async function generateMasteryQuizAI(noteContent, title, learnerProfile, count =
   }
   const ai = getAI();
   const personaGuidance = buildPersonaPromptInstructions(learnerProfile);
-  const candidateModels = ["gemini-3.6-flash", "gemini-2.5-flash", "gemini-1.5-flash"];
+  const candidateModels = ["gemini-3.6-flash", "gemini-3.5-flash-lite", "gemini-3.7-flash", "gemini-3.5-flash"];
   for (const modelName of candidateModels) {
     try {
       const response = await ai.models.generateContent({
@@ -67979,7 +68683,7 @@ async function personalizeNoteAI(noteContent, title, learnerProfile) {
   try {
     const personaGuidance = buildPersonaPromptInstructions(learnerProfile);
     const response = await ai.models.generateContent({
-      model: "gemini-3.7-flash",
+      model: "gemini-3.6-flash",
       contents: `Please re-frame and personalize the following lecture notes to match the student's cognitive learning profile:
 
 TITLE: ${sanitizedTitle}

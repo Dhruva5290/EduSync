@@ -2782,10 +2782,10 @@ If $d = 0 \\implies$ Lines are coplanar and intersect.`,
       const ai = new GoogleGenAI({ apiKey });
       const candidateModels = [
         'gemini-3.5-flash-lite',
-        'gemini-3.1-flash-lite',
-        'gemini-flash-lite-latest',
-        'gemma-4-26b-a4b-it',
-        'gemini-3.5-flash'
+        'gemini-3.6-flash',
+        'gemini-3.7-flash',
+        'gemini-3.5-flash',
+        'gemini-flash-lite-latest'
       ];
 
       // Format conversation history
@@ -2901,12 +2901,10 @@ Format all math in LaTeX ($...$ or $$...$$).`;
 
       const candidateModels = [
         'gemini-3.5-flash-lite',
-        'gemini-3.1-flash-lite',
-        'gemini-flash-lite-latest',
-        'gemma-4-26b-a4b-it',
-        'gemini-3.5-flash',
         'gemini-3.6-flash',
-        'gemini-3.7-flash'
+        'gemini-3.7-flash',
+        'gemini-3.5-flash',
+        'gemini-flash-lite-latest'
       ];
       let tutorReply = '';
 

@@ -602,11 +602,10 @@ Return your response in clean JSON format:
   try {
     const candidateModels = [
       'gemini-3.5-flash-lite',
-      'gemini-3.1-flash-lite',
-      'gemini-flash-lite-latest',
-      'gemma-4-26b-a4b-it',
+      'gemini-3.6-flash',
+      'gemini-3.7-flash',
       'gemini-3.5-flash',
-      'gemini-3.6-flash'
+      'gemini-flash-lite-latest'
     ];
 
     let rawText = '';
@@ -1441,7 +1440,7 @@ export async function generateMasteryQuizAI(
   const personaGuidance = buildPersonaPromptInstructions(learnerProfile);
 
   // Try candidate models in order: gemini-3.6-flash is primary, followed by fallbacks
-  const candidateModels = ['gemini-3.6-flash', 'gemini-2.5-flash', 'gemini-1.5-flash'];
+  const candidateModels = ['gemini-3.6-flash', 'gemini-3.5-flash-lite', 'gemini-3.7-flash', 'gemini-3.5-flash'];
 
   for (const modelName of candidateModels) {
     try {
@@ -1841,7 +1840,7 @@ export async function personalizeNoteAI(
   try {
     const personaGuidance = buildPersonaPromptInstructions(learnerProfile);
     const response = await ai.models.generateContent({
-      model: 'gemini-3.7-flash',
+      model: 'gemini-3.6-flash',
       contents: `Please re-frame and personalize the following lecture notes to match the student's cognitive learning profile:\n\nTITLE: ${sanitizedTitle}\n\nORIGINAL CONTENT:\n${noteContent}\n\nSTYLE INSTRUCTIONS:
 - If visual: emphasize ASCII schematics, real-world analogies, and geometric interpretations.
 - If step_by_step: provide thorough step-by-step mathematical derivations with no skipped algebra.
