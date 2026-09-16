@@ -87,7 +87,7 @@ export default async function handler(req: any, res: any) {
         return;
       }
 
-      const expectedPass = user.password || 'EduSync@260101';
+      const expectedPass = user.password || 'ClassSarthi@260101';
       if (expectedPass !== loginPass) {
         res.status(401).json({
           error: 'Incorrect password. Please verify your credentials and try again.'
@@ -114,7 +114,7 @@ export default async function handler(req: any, res: any) {
         name: name || 'New User',
         email: email || `${cleanName}@bmu.edu.in`,
         username: `${targetRole === 'teacher' ? 'prof' : targetRole === 'admin' ? 'dean' : 'student'}.${cleanName}`,
-        password: password || 'EduSync@260101',
+        password: password || 'ClassSarthi@260101',
         role: targetRole,
         gender: gender || 'Male',
         program: program || (targetRole === 'student' ? 'CSE' : undefined),
@@ -223,10 +223,10 @@ export default async function handler(req: any, res: any) {
       return;
     }
 
-    // 8. POST /api/tutor (Simple Standard AI LLM Tutor)
-    if ((path.includes('/api/tutor') || path.endsWith('/tutor')) && req.method === 'POST') {
+    // 8. POST /api/tutor and POST /api/chat (Simple Standard AI LLM Tutor & Chatbot)
+    if ((path.includes('/api/tutor') || path.endsWith('/tutor') || path.includes('/api/chat') || path.endsWith('/chat')) && req.method === 'POST') {
       const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body || {};
-      const { message, history = [] } = body;
+      const message = body.message || body.prompt || body.content;
 
       if (!message || typeof message !== 'string') {
         res.status(400).json({ error: 'Message is required' });
@@ -234,7 +234,7 @@ export default async function handler(req: any, res: any) {
       }
 
       // Resolve the API key: request body > runtime env > build-time fallback > encoded fallback
-      const DEFAULT_B64 = 'QVEuQWI4Uk42SUx3Um5VRnM3a052S3dFZE9BejZOZU8zTTRsSjZuLVVVTDQxRHlCclZUdlE=';
+      const DEFAULT_B64 = 'QVEuQWI4Uk42SlBDTjAzMC1GeDFiU3g0XzEzejRvMkdwMW5HSlhTdHFvSW5vcWQzTXI2d3c=';
       const buildTimeKey = (typeof __GEMINI_API_KEY_B64__ !== 'undefined' && __GEMINI_API_KEY_B64__)
         ? Buffer.from(__GEMINI_API_KEY_B64__, 'base64').toString('utf-8')
         : '';
@@ -242,6 +242,7 @@ export default async function handler(req: any, res: any) {
       const apiKey = body.apiKey || process.env.GEMINI_API_KEY || buildTimeKey || fallbackKey;
 
       try {
+        const history = body.history || [];
         const formattedHistory = (Array.isArray(history) ? history : [])
           .slice(-10)
           .filter((h: any) => (h.text || h.content))
@@ -253,9 +254,25 @@ export default async function handler(req: any, res: any) {
         const candidateModels = [
           'gemini-3.5-flash-lite',
           'gemini-3.1-flash-lite',
-          'gemini-flash-lite-latest'
+          'gemini-flash-lite-latest',
+          'gemini-3.6-flash',
+          'gemini-3.7-flash'
         ];
         let reply = '';
+
+        const isCasual = Boolean(body.isCasual) || /^(hi|hello|hey|greetings|howdy|sup|good\s*(morning|afternoon|evening)|how\s*are\s*you|who\s*are\s*you|what\s*can\s*you\s*do|tell\s*me\s*about\s*yourself|what'?s\s*up|yo)\b/i.test(message.trim());
+
+        const baseSystemPrompt = `You are ClassSarthi AI, an intelligent, natural, helpful conversational AI assistant and academic tutor.
+CRITICAL INSTRUCTIONS:
+- If the user provides a casual greeting, conversational remark, or general non-academic question (such as "hi", "hello", "how are you", "who are you", "what can you do", etc.), respond naturally, warmly, and concisely as a friendly companion. NEVER force an unsolicited academic lecture, syllabus topic, physics formula, or Socratic quiz onto a casual prompt or greeting.
+- Only provide academic instruction, derivations, step-by-step problem solving, and LaTeX formulas ($...$ or $$...$$) when the user asks an academic, homework, or educational question.`;
+
+        const systemPrompt = isCasual
+          ? baseSystemPrompt
+          : (body.customPrompt ||
+              (body.method ? `You are an expert AI tutor teaching using the ${body.method}. ` : '') +
+              baseSystemPrompt +
+              (body.subject ? `\nCurrent subject focus: ${body.subject}${body.chapter ? ` (${body.chapter})` : ''}.` : ''));
 
         for (const model of candidateModels) {
           try {
@@ -264,7 +281,7 @@ export default async function handler(req: any, res: any) {
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 systemInstruction: {
-                  parts: [{ text: "You are an intelligent, helpful, natural AI chatbot. Answer questions clearly, thoughtfully, and directly using clean Markdown and LaTeX math ($...$ or $$...$$) where appropriate." }]
+                  parts: [{ text: systemPrompt }]
                 },
                 contents: [
                   ...formattedHistory,
@@ -283,15 +300,18 @@ export default async function handler(req: any, res: any) {
         }
 
         if (!reply) {
-          reply = 'I was unable to generate a response right now. Please try again.';
+          reply = isCasual
+            ? "Hello! I'm your ClassSarthi AI assistant and tutor. How can I help you today? Feel free to ask about your coursework or any topic you'd like to explore!"
+            : 'I was unable to generate a response right now. Please try again.';
         }
 
-        res.status(200).json({ reply });
+        res.status(200).json({ reply, response: reply });
         return;
       } catch (geminiErr: any) {
         console.error('[Tutor Error]', geminiErr?.message || geminiErr);
         res.status(200).json({
-          reply: 'I encountered an error connecting to the AI. Please try again.'
+          reply: 'I encountered an error connecting to the AI. Please try again.',
+          response: 'I encountered an error connecting to the AI. Please try again.'
         });
         return;
       }

@@ -26,8 +26,8 @@ import {
 } from '../../../types';
 
 export const PersonalWorkspaceView: React.FC = () => {
-  const teacherId = 'prof.sanmitra';
-  const teacherName = 'Dr. Sanmitra Bhattacharya';
+  const teacherId = 'prof.rajesh';
+  const teacherName = 'Dr. Rajesh Kulkarni';
 
   // State
   const [gateScan, setGateScan] = useState<SimulatedGateScanLog>(() =>

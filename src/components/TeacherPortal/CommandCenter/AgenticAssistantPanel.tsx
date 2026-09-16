@@ -40,7 +40,7 @@ export const AgenticAssistantPanel: React.FC<AgenticAssistantPanelProps> = ({
     {
       id: 'msg-welcome',
       sender: 'assistant',
-      text: 'Hello Dr. Bhattacharya. I am your Command Center Agentic Assistant. You can speak or type commands like:\n- "Cancel my class, I\'m unwell"\n- "Start my 10:15 lecture"\n- "Draft announcement for Sec A on lab viva"\n- "Show me student doubt report"',
+      text: 'Hello Rajesh. I am your Command Center Agentic Assistant. You can speak or type commands like:\n- "Cancel my class, I\'m unwell"\n- "Start my 10:15 lecture"\n- "Draft announcement for Sec A on lab viva"\n- "Show me student doubt report"',
       timestamp: 'Just now'
     }
   ]);
@@ -251,7 +251,7 @@ export const AgenticAssistantPanel: React.FC<AgenticAssistantPanelProps> = ({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: raw.trim(),
-          teacherContext: { teacherId: 'prof.sanmitra' }
+          teacherContext: { teacherId: 'prof.rajesh' }
         })
       });
 

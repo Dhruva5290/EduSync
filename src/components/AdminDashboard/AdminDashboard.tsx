@@ -147,12 +147,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   };
 
   const handleDownloadSampleCsv = () => {
-    const sample = `Name,Email Address,Role,Student ID\nAarav Sharma,aarav.sharma@edusync.edu.in,student,EDU-STU-1101\nDiya Patel,diya.patel@edusync.edu.in,student,EDU-STU-1102\nDr. Rajesh Kulkarni,rajesh.kulkarni@edusync.edu.in,teacher,EDU-FAC-201`;
+    const sample = `Name,Email Address,Role,Student ID\nAarav Sharma,aarav.sharma@classsarthi.edu.in,student,EDU-STU-1101\nDiya Patel,diya.patel@classsarthi.edu.in,student,EDU-STU-1102\nDr. Rajesh Kulkarni,rajesh.kulkarni@classsarthi.edu.in,teacher,EDU-FAC-201`;
     const blob = new Blob([sample], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'edusync_sample_roster.csv';
+    a.download = 'classsarthi_sample_roster.csv';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -362,7 +362,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <textarea
                 value={csvText}
                 onChange={(e) => setCsvText(e.target.value)}
-                placeholder="Aarav Sharma, aarav.sharma@edusync.edu.in, student, EDU-STU-1101&#10;Diya Patel, diya.patel@edusync.edu.in, student, EDU-STU-1102"
+                placeholder="Aarav Sharma, aarav.sharma@classsarthi.edu.in, student, EDU-STU-1101&#10;Diya Patel, diya.patel@classsarthi.edu.in, student, EDU-STU-1102"
                 rows={6}
                 className="w-full bg-slate-950 border border-slate-800 focus:border-purple-500 rounded-xl p-3.5 text-xs text-white font-mono focus:outline-none"
               />

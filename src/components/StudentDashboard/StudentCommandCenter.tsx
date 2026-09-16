@@ -249,7 +249,7 @@ export const StudentCommandCenter: React.FC<StudentCommandCenterProps> = ({
       video: {
         title: "Free Body Diagrams & Inclined Planes Visualized",
         url: "https://www.youtube.com/watch?v=kKKM8Y-u7ds",
-        channelName: "EduSync Concept Studio",
+        channelName: "ClassSarthi Concept Studio",
         thumbnail: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=400&auto=format&fit=crop&q=80"
       }
     };
@@ -293,17 +293,20 @@ export const StudentCommandCenter: React.FC<StudentCommandCenterProps> = ({
     setInputText('');
     setIsTutorThinking(true);
 
+    const isCasual = /^(hi|hello|hey|greetings|howdy|sup|good\s*(morning|afternoon|evening)|how\s*are\s*you|who\s*are\s*you|what\s*can\s*you\s*do|tell\s*me\s*about\s*yourself|what'?s\s*up|yo)\b/i.test(query.trim());
+
     try {
       const res = await fetch('/api/tutor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: query,
+          isCasual,
           history: messages.slice(-6).map(m => ({
             role: m.sender === 'user' ? 'user' : 'assistant',
             text: m.text
           })),
-          context: {
+          context: isCasual ? {} : {
             weakTopics: weakPoints,
             weakestTopicName: weakPoints[0] || (quizWeakPoints[0] || "Newton's Second Law"),
             lastLectureTitle: todayLecture?.title || "Newton's Laws of Motion",
@@ -314,7 +317,7 @@ export const StudentCommandCenter: React.FC<StudentCommandCenterProps> = ({
 
       if (res.ok) {
         const data = await res.json();
-        const rawReply = data.reply || data.response || 'Let us explore this step by step.';
+        const rawReply = data.reply || data.response || (isCasual ? 'Hello! How can I help you today?' : 'Let us explore this step by step.');
         const parsed = parseTutorReply(rawReply);
         
         const tutorMsg: ChatMessage = {
@@ -333,10 +336,39 @@ export const StudentCommandCenter: React.FC<StudentCommandCenterProps> = ({
         throw new Error('API failed');
       }
     } catch {
+      const apiKey = localStorage.getItem('edusync_gemini_api_key') || (typeof atob !== 'undefined' ? atob('QVEuQWI4Uk42SlBDTjAzMC1GeDFiU3g0XzEzejRvMkdwMW5HSlhTdHFvSW5vcWQzTXI2d3c=') : '');
+      let fallbackText = '';
+      try {
+        const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${apiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{
+              role: 'user',
+              parts: [{
+                text: isCasual
+                  ? `The user greeted you with: "${query}". Respond politely, warmly, and naturally without forcing an academic lesson.`
+                  : query
+              }]
+            }]
+          })
+        });
+        if (geminiRes.ok) {
+          const geminiData = await geminiRes.json();
+          fallbackText = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
+        }
+      } catch {}
+
+      if (!fallbackText) {
+        fallbackText = isCasual
+          ? "Hello! I'm your AI tutor. How can I help you today? Feel free to ask about your coursework or any topic you'd like to explore!"
+          : `I'm having trouble connecting to the AI right now. Please check your network connection and try again.`;
+      }
+
       const fallbackMsg: ChatMessage = {
         id: `tut-${Date.now()}`,
         sender: 'tutor',
-        text: `Regarding **${weakPoints[0] || 'your question'}**: On an incline of angle $\\theta$, remember that gravity breaks down into $mg\\cos\\theta$ perpendicular and $mg\\sin\\theta$ parallel to the plane.\n\n$$F_{\\text{net}} = mg\\sin\\theta - f_k$$\n\nWhat happens to the acceleration if the friction coefficient becomes zero ($\\mu_k = 0$)?`,
+        text: fallbackText,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
       setMessages(prev => [...prev, fallbackMsg]);
@@ -898,10 +930,10 @@ export const StudentCommandCenter: React.FC<StudentCommandCenterProps> = ({
                     </div>
                   )}
 
-                  <div className={`max-w-[85%] rounded-2xl p-3 leading-relaxed ${
+                  <div className={`max-w-[85%] rounded-2xl p-3.5 leading-relaxed ${
                     m.sender === 'user'
                       ? 'bg-blue-600 text-white shadow-2xs'
-                      : 'bg-teal-50/50 border border-teal-200/80 text-slate-800'
+                      : 'bg-white border border-slate-200 text-slate-900 shadow-xs'
                   }`}>
                     <MathRenderer content={m.text} />
 

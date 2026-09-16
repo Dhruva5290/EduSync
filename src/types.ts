@@ -328,7 +328,7 @@ export interface TodoTask {
 }
 
 export interface MCPConfig {
-  provider: 'edusync_ai' | 'anthropic' | 'openai' | 'custom';
+  provider: 'classsarthi_ai' | 'anthropic' | 'openai' | 'custom';
   mcpUrl?: string;
   apiKey?: string;
   authMethod: 'bearer' | 'header' | 'oauth2';
@@ -394,6 +394,12 @@ export interface PluginConnection {
   icon: string;
   category: 'classroom' | 'communication' | 'productivity' | 'notes';
   settings?: Record<string, any>;
+
+  // --- Backend only (Tokens should not be sent to frontend) ---
+  accessToken?: string;
+  refreshToken?: string;
+  tokenExpiry?: number;
+  syncToken?: string; // used for incremental syncs
 }
 
 export interface TutorApprovalRequest {
@@ -877,7 +883,7 @@ export interface ClassLevelInsight {
 }
 
 // =======================================================
-// EDUSYNC FOR TEACHERS - ADVANCED FACULTY WORKSPACE TYPES
+// CLASSSARTHI FOR TEACHERS - ADVANCED FACULTY WORKSPACE TYPES
 // =======================================================
 
 export type AttendanceRiskLevel = 'safe' | 'warning_75' | 'danger_60';
@@ -1055,7 +1061,7 @@ export interface AcademicCalendarEvent {
 }
 
 // =======================================================
-// EDUSYNC STUDENT PORTAL (WIREFRAME ARCHITECTURE MODELS)
+// CLASSSARTHI STUDENT PORTAL (WIREFRAME ARCHITECTURE MODELS)
 // =======================================================
 
 export type TutorStyleId = 'feynman' | 'alakh_pandey' | 'niti_garg' | 'socrates' | string;
@@ -1304,7 +1310,7 @@ export interface AgentMessage {
 }
 
 // =======================================================
-// STITCH EDUSYNC FACULTY PORTAL TYPES
+// STITCH CLASSSARTHI FACULTY PORTAL TYPES
 // =======================================================
 
 export type ScreenId =

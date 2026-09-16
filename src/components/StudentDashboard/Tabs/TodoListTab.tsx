@@ -23,7 +23,7 @@ export const TodoListTab: React.FC = () => {
 
   const [tasks, setTasks] = useState<TodoTask[]>(() => {
     try {
-      const saved = localStorage.getItem('edusync_personal_todos');
+      const saved = localStorage.getItem('classsarthi_personal_todos');
       if (saved) return JSON.parse(saved);
     } catch {}
     const today = new Date().toISOString().split('T')[0];
@@ -42,7 +42,7 @@ export const TodoListTab: React.FC = () => {
   const [newSubject, setNewSubject] = useState('Physics');
 
   useEffect(() => {
-    localStorage.setItem('edusync_personal_todos', JSON.stringify(tasks));
+    localStorage.setItem('classsarthi_personal_todos', JSON.stringify(tasks));
   }, [tasks]);
 
   const handleAddTask = () => {

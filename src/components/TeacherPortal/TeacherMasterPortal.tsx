@@ -433,7 +433,7 @@ export const TeacherMasterPortal: React.FC<TeacherMasterPortalProps> = ({
                 setStudents((prev) => [newStudent, ...prev]);
               }}
               onSaveAttendanceRecord={(batch, summary) => {
-                console.log(`[EduSync Attendance] Saved record for ${batch}:`, summary);
+                console.log(`[ClassSarthi Attendance] Saved record for ${batch}:`, summary);
               }}
             />
           )}
@@ -557,7 +557,7 @@ export const TeacherMasterPortal: React.FC<TeacherMasterPortalProps> = ({
 
             <div className="mt-3 pt-3 border-t border-[#f2f3ff] flex items-center justify-between text-[11px] font-['JetBrains_Mono'] text-[#777587]">
               <span>Press ESC to dismiss</span>
-              <span>EduSync Campus Quick-Index</span>
+              <span>ClassSarthi Campus Quick-Index</span>
             </div>
           </div>
         </div>

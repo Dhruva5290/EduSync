@@ -64,6 +64,31 @@ export const PluginsView: React.FC<PluginsViewProps> = ({
 
   // Plugins State
   const [plugins, setPlugins] = useState<PluginConnection[]>(initialPlugins);
+  
+  React.useEffect(() => {
+    // Check for OAuth callbacks
+    const params = new URLSearchParams(window.location.hash.split('?')[1]);
+    const successPlugin = params.get('success');
+    const errorMsg = params.get('error');
+
+    if (successPlugin) {
+      showToast(`Successfully connected Google integration.`);
+      // clean up URL
+      window.history.replaceState(null, '', window.location.href.split('?')[0]);
+    } else if (errorMsg) {
+      showToast(`Connection failed: ${errorMsg}`);
+      window.history.replaceState(null, '', window.location.href.split('?')[0]);
+    }
+
+    fetch('/api/plugins')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.plugins && data.plugins.length > 0) {
+          setPlugins(data.plugins);
+        }
+      })
+      .catch(err => console.warn('Failed to fetch plugins:', err));
+  }, []);
   const [approvalRequests, setApprovalRequests] = useState<TutorApprovalRequest[]>(
     initialTutorApprovalRequests
   );
@@ -90,8 +115,8 @@ export const PluginsView: React.FC<PluginsViewProps> = ({
   const [tutorMethod, setTutorMethod] = useState<string>('socratic');
   const [tutorPrompt, setTutorPrompt] = useState('');
   const [useExternalMcp, setUseExternalMcp] = useState(false);
-  const [mcpProvider, setMcpProvider] = useState<'edusync_ai' | 'anthropic' | 'openai' | 'custom'>('edusync_ai');
-  const [mcpUrl, setMcpUrl] = useState('https://api.edusync.internal/mcp/v1');
+  const [mcpProvider, setMcpProvider] = useState<'classsarthi_ai' | 'anthropic' | 'openai' | 'custom'>('classsarthi_ai');
+  const [mcpUrl, setMcpUrl] = useState('https://api.classsarthi.internal/mcp/v1');
   const [mcpApiKey, setMcpApiKey] = useState('sk-mcp-demo-key-9821');
   const [showApiKey, setShowApiKey] = useState(false);
   const [mcpAuthMethod, setMcpAuthMethod] = useState<'bearer' | 'header' | 'oauth2'>('bearer');
@@ -127,48 +152,17 @@ export const PluginsView: React.FC<PluginsViewProps> = ({
   const handleConfirmOAuthConnect = async () => {
     if (!connectingPlugin) return;
     setIsAuthorizing(true);
-
     try {
-      // Simulate OAuth2 exchange delay
-      await new Promise((resolve) => setTimeout(resolve, 800));
-
-      const updated = plugins.map((p) => {
-        if (p.id === connectingPlugin.id) {
-          const syncItem = {
-            id: `hist-${Date.now()}`,
-            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ', Today',
-            status: 'success' as const,
-            summary: `OAuth2 connection established with ${p.name} (${selectedOAuthAccount}).`,
-            itemsSynced: 1,
-          };
-          return {
-            ...p,
-            status: 'connected' as const,
-            accountEmail: selectedOAuthAccount,
-            lastSync: 'Just now',
-            syncHistory: [syncItem, ...p.syncHistory],
-          };
-        }
-        return p;
-      });
-
-      setPlugins(updated);
-      setIsAuthorizing(false);
-      setConnectingPlugin(null);
-      showToast(`✓ Connected ${connectingPlugin.name} to ${selectedOAuthAccount}`);
-
-      // Sync with server in background
-      try {
-        await fetch('/api/plugins/connect', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            pluginId: connectingPlugin.pluginId,
-            accountEmail: selectedOAuthAccount,
-          }),
-        });
-      } catch {}
-    } catch (err) {
+      const res = await fetch(`/api/auth/google/url?pluginId=${connectingPlugin.id}`);
+      const data = await res.json();
+      if (data.success && data.url) {
+        window.location.href = data.url;
+      } else {
+        showToast('Failed to generate connection URL.');
+        setIsAuthorizing(false);
+      }
+    } catch (e) {
+      showToast('Error connecting to provider.');
       setIsAuthorizing(false);
     }
   };
@@ -283,7 +277,7 @@ export const PluginsView: React.FC<PluginsViewProps> = ({
       'You are an inspiring mentor. Always begin with a real-world demonstration, uncover common misconceptions, and guide the student to derive the solution from first principles.'
     );
     setUseExternalMcp(false);
-    setMcpProvider('edusync_ai');
+    setMcpProvider('classsarthi_ai');
     setMcpTestPassed(null);
     setIsWizardOpen(true);
   };
@@ -330,7 +324,7 @@ export const PluginsView: React.FC<PluginsViewProps> = ({
             status: 'verified' as const,
           }
         : {
-            provider: 'edusync_ai' as const,
+            provider: 'classsarthi_ai' as const,
             authMethod: 'bearer' as const,
             capabilities: mcpCapabilities,
             status: 'verified' as const,
@@ -504,7 +498,7 @@ export const PluginsView: React.FC<PluginsViewProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 text-xs font-semibold text-[#5a4138]">
-            <span>EduSync</span>
+            <span>ClassSarthi</span>
             <span>&gt;</span>
             <span className="text-[#0b1c30]">Plugins & MCP Automation Hub</span>
           </div>
@@ -1101,7 +1095,7 @@ export const PluginsView: React.FC<PluginsViewProps> = ({
                           MCP Provider & Endpoint:
                         </span>
                         <span className="font-bold text-[#0b1c30]">
-                          {req.mcpConfig?.provider.toUpperCase() || 'EDUSYNC AI'} •{' '}
+                          {req.mcpConfig?.provider.toUpperCase() || 'CLASSSARTHI AI'} •{' '}
                           {req.mcpConfig?.mcpUrl || 'Built-in Model'}
                         </span>
                       </div>
@@ -1615,7 +1609,7 @@ export const PluginsView: React.FC<PluginsViewProps> = ({
                           onChange={(e) => setMcpProvider(e.target.value as any)}
                           className="bg-white border border-[#dce9ff] px-4 py-2.5 rounded-xl text-xs text-[#0b1c30] font-bold outline-none cursor-pointer"
                         >
-                          <option value="edusync_ai">EduSync Core AI Engine</option>
+                          <option value="classsarthi_ai">ClassSarthi Core AI Engine</option>
                           <option value="anthropic">Anthropic Claude MCP</option>
                           <option value="openai">OpenAI GPT-4o Gateway</option>
                           <option value="custom">Custom University MCP Server</option>
@@ -1718,7 +1712,7 @@ export const PluginsView: React.FC<PluginsViewProps> = ({
                     <div>
                       <span className="text-gray-500 font-semibold block">MCP Protocol:</span>
                       <strong className="text-[#0b1c30]">
-                        {useExternalMcp ? mcpProvider.toUpperCase() : 'EduSync Core AI'}
+                        {useExternalMcp ? mcpProvider.toUpperCase() : 'ClassSarthi Core AI'}
                       </strong>
                     </div>
                   </div>

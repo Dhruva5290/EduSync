@@ -530,7 +530,7 @@ export const SEED_CALENDAR_EVENTS: DbCalendarEvent[] = [
     type: 'Assignment Deadline',
     date: '2026-09-18',
     time: '11:59 PM',
-    room: 'EduSync Portal Upload',
+    room: 'ClassSarthi Portal Upload',
     totalStudents: 52,
     submissionSubmittedCount: 38,
     submissionPendingCount: 14,
@@ -592,7 +592,7 @@ export const SEED_TEACHER_STICKY_NOTES: DbTeacherStickyNote[] = [
   {
     id: 'note-3',
     teacherId: 'teacher-ess',
-    title: 'Upload Mid-Term Problem Sheet to EduSync',
+    title: 'Upload Mid-Term Problem Sheet to ClassSarthi',
     content: 'Include 3 PYQ questions from 2024 semester paper on Carnot cycle and BOD5 dilution.',
     color: 'yellow',
     priority: 'high',
@@ -637,7 +637,7 @@ export const SEED_TEACHER_LEAVES: DbTeacherLeave[] = [
   {
     id: 'leave-1',
     teacherId: 'teacher-ess',
-    teacherName: 'Dr. Sanmitra Bhattacharya',
+    teacherName: 'Dr. Rajesh Kulkarni',
     leaveType: 'Academic Conference',
     startDate: '2026-09-24',
     endDate: '2026-09-26',
@@ -650,7 +650,7 @@ export const SEED_TEACHER_LEAVES: DbTeacherLeave[] = [
   {
     id: 'leave-2',
     teacherId: 'teacher-ess',
-    teacherName: 'Dr. Sanmitra Bhattacharya',
+    teacherName: 'Dr. Rajesh Kulkarni',
     leaveType: 'Casual Leave',
     startDate: '2026-10-03',
     endDate: '2026-10-03',

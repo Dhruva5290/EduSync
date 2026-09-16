@@ -425,7 +425,7 @@ databaseRouter.get('/export', (_req: Request, res: Response) => {
   try {
     const dump = eduSyncDb.exportAll();
     res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Content-Disposition', `attachment; filename="edusync-database-dump-${Date.now()}.json"`);
+    res.setHeader('Content-Disposition', `attachment; filename="classsarthi-database-dump-${Date.now()}.json"`);
     res.json(dump);
   } catch (err: any) {
     res.status(500).json({ error: 'Failed to export database.' });

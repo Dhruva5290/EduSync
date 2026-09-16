@@ -28,7 +28,7 @@ export function appendAuditLog(entry: Omit<DbAuditLogEntry, 'id' | 'timestamp'>)
     };
     fs.appendFileSync(AUDIT_LOG_PATH, JSON.stringify(logItem) + '\n', 'utf-8');
   } catch (err) {
-    console.error('[EduSync DB Audit] Failed to record audit log:', err);
+    console.error('[ClassSarthi DB Audit] Failed to record audit log:', err);
   }
 }
 
@@ -64,7 +64,7 @@ export class JsonCollection<T extends { id?: string }> {
         }
       }
     } catch (err) {
-      console.warn(`[EduSync DB] Failed to read ${this.name}.json, initializing with default seed:`, err);
+      console.warn(`[ClassSarthi DB] Failed to read ${this.name}.json, initializing with default seed:`, err);
     }
 
     // Seed file if missing or corrupt
@@ -88,7 +88,7 @@ export class JsonCollection<T extends { id?: string }> {
       fs.writeFileSync(tmpPath, JSON.stringify(this.items, null, 2), 'utf-8');
       fs.renameSync(tmpPath, this.filePath);
     } catch (err) {
-      console.error(`[EduSync DB] Fatal error writing ${this.name}.json:`, err);
+      console.error(`[ClassSarthi DB] Fatal error writing ${this.name}.json:`, err);
       if (fs.existsSync(tmpPath)) {
         try { fs.unlinkSync(tmpPath); } catch {}
       }

@@ -176,7 +176,7 @@ export const INITIAL_TASKS: StudentTaskItem[] = [
     pomodoroSessions: 1,
     subtasks: [
       { id: 'st-6', text: 'Memorize Gaussian dispersion equation', done: false },
-      { id: 'st-7', text: 'Take practice diagnostic quiz on EduSync', done: false }
+      { id: 'st-7', text: 'Take practice diagnostic quiz on ClassSarthi', done: false }
     ],
     createdAt: new Date().toISOString()
   },
@@ -203,7 +203,7 @@ export const INITIAL_TODAY_CLASSES = [
     subjectName: 'Environmental Studies & Sustainability',
     topic: 'Atmospheric Thermal Inversion & Plume Types',
     room: 'Science Block C - Room 304',
-    teacherName: 'Dr. Sanmitra Bhattacharya',
+    teacherName: 'Dr. Rajesh Kulkarni',
     status: 'completed',
     hasNotes: true
   },
@@ -236,7 +236,7 @@ export const INITIAL_TODAY_CLASSES = [
     subjectName: 'Environmental Systems Lab',
     topic: 'BOD5 Dissolved Oxygen Analysis Lab Protocol',
     room: 'Environmental Chemistry Lab 1',
-    teacherName: 'Dr. Sanmitra Bhattacharya',
+    teacherName: 'Dr. Rajesh Kulkarni',
     status: 'upcoming',
     hasNotes: true
   }
@@ -254,7 +254,7 @@ export const INITIAL_LECTURES: StudentLectureCard[] = [
     date: new Date().toISOString().split('T')[0],
     time: '09:00 - 10:00 AM',
     duration: '55 mins',
-    teacherName: 'Dr. Sanmitra Bhattacharya',
+    teacherName: 'Dr. Rajesh Kulkarni',
     room: 'Science Block C - Room 304',
     isToday: true,
     keyFormulas: [
@@ -440,12 +440,12 @@ export const TOPIC_QUIZ_BANK: Record<string, QuizQuestionItem[]> = {
 // =======================================================
 
 const STORAGE_KEYS = {
-  PERSONAS: 'edusync_student_tutor_personas',
-  ACTIVE_PERSONA: 'edusync_student_active_tutor_id',
-  TASKS: 'edusync_student_tasks',
-  PLUGINS: 'edusync_student_plugins',
-  LECTURES: 'edusync_student_lectures',
-  QUIZ_HISTORY: 'edusync_student_quiz_history'
+  PERSONAS: 'classsarthi_student_tutor_personas',
+  ACTIVE_PERSONA: 'classsarthi_student_active_tutor_id',
+  TASKS: 'classsarthi_student_tasks',
+  PLUGINS: 'classsarthi_student_plugins',
+  LECTURES: 'classsarthi_student_lectures',
+  QUIZ_HISTORY: 'classsarthi_student_quiz_history'
 };
 
 export const studentBackendService = {

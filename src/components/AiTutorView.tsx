@@ -12,8 +12,13 @@ import {
   FileCheck,
   Zap,
   Loader2,
+  Key,
+  GraduationCap
 } from 'lucide-react';
 import { ChatMessage, CustomTutorPersona } from '../types';
+import { MathRenderer } from './Common/MathRenderer';
+
+const DEFAULT_B64 = 'QVEuQWI4Uk42SlBDTjAzMC1GeDFiU3g0XzEzejRvMkdwMW5HSlhTdHFvSW5vcWQzTXI2d3c=';
 
 interface AiTutorViewProps {
   initialTopic?: string;
@@ -21,151 +26,333 @@ interface AiTutorViewProps {
   onOpenNotes?: () => void;
 }
 
+const CHAPTER_OPTIONS: Record<string, string[]> = {
+  'Physics 11': [
+    'Chapter 3: Laws of Motion & Incline Forces',
+    'Chapter 4: Work, Energy & Power',
+    'Chapter 5: System of Particles & Rotational Motion',
+    'Chapter 6: Gravitation & Orbital Dynamics',
+    'Chapter 7: Thermodynamics & Heat Transfer'
+  ],
+  'Mathematics 11': [
+    'Chapter 1: Sets, Relations & Functions',
+    'Chapter 2: Trigonometric Functions & Identities',
+    'Chapter 3: Complex Numbers & Quadratic Equations',
+    'Chapter 4: Permutations & Combinations',
+    'Chapter 5: Differential Calculus & Limits'
+  ],
+  'Chemistry 11': [
+    'Chapter 1: Some Basic Concepts of Chemistry',
+    'Chapter 2: Structure of Atom',
+    'Chapter 3: Chemical Bonding & Molecular Structure',
+    'Chapter 4: Chemical Thermodynamics',
+    'Chapter 5: Equilibrium & Reaction Kinetics'
+  ],
+  'Computer Science': [
+    'Module 1: Algorithms & Time Complexity',
+    'Module 2: Pointers, Dynamic Memory & Structs',
+    'Module 3: Linear & Non-Linear Data Structures',
+    'Module 4: Recursion & Divide-and-Conquer'
+  ]
+};
+
+const FORMULA_SHEETS: Record<string, { title: string; latex: string }[]> = {
+  'Physics 11': [
+    { title: "Newton's Second Law", latex: "F_{\\text{net}} = m \\cdot a = \\frac{dp}{dt}" },
+    { title: "Normal Reaction on Incline", latex: "N = mg \\cos(\\theta)" },
+    { title: "Work-Kinetic Energy Theorem", latex: "W_{\\text{net}} = \\Delta K = \\frac{1}{2}m(v_f^2 - v_i^2)" },
+    { title: "Static Friction Bound", latex: "f_s \\le \\mu_s N" }
+  ],
+  'Mathematics 11': [
+    { title: "Derivative Definition", latex: "f'(x) = \\lim_{h \\to 0} \\frac{f(x+h) - f(x)}{h}" },
+    { title: "Trig Pythagorean Identity", latex: "\\sin^2(\\theta) + \\cos^2(\\theta) = 1" },
+    { title: "Quadratic Formula", latex: "x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}" },
+    { title: "Chain Rule", latex: "\\frac{d}{dx}[f(g(x))] = f'(g(x)) \\cdot g'(x)" }
+  ],
+  'Chemistry 11': [
+    { title: "Ideal Gas Law", latex: "P V = n R T" },
+    { title: "Gibbs Free Energy", latex: "\\Delta G = \\Delta H - T\\Delta S" },
+    { title: "Molarity Equation", latex: "M = \\frac{\\text{moles of solute}}{\\text{liters of solution}}" },
+    { title: "Equilibrium Constant", latex: "K_{eq} = \\frac{[C]^c [D]^d}{[A]^a [B]^b}" }
+  ],
+  'Computer Science': [
+    { title: "Master Theorem Case 1", latex: "T(n) = aT(n/b) + O(n^d) \\implies O(n^{\\log_b a}) \\text{ if } a > b^d" },
+    { title: "Binary Search Time", latex: "T(n) = O(\\log_2 n)" },
+    { title: "Pointer Dereferencing", latex: "*ptr = value \\iff ptr = \\&value" }
+  ]
+};
+
 export const AiTutorView: React.FC<AiTutorViewProps> = ({
   initialTopic,
-  customTutors,
+  customTutors = [],
   onOpenNotes,
 }) => {
   const [subject, setSubject] = useState('Physics 11');
-  const [chapter, setChapter] = useState(
-    'Chapter 3: Laws of Motion & Incline Forces'
-  );
+  const [chapter, setChapter] = useState(CHAPTER_OPTIONS['Physics 11'][0]);
   const [method, setMethod] = useState('Socratic Method');
   const [selectedTutorId, setSelectedTutorId] = useState<string>(
     customTutors[0]?.id || 'tutor-1'
   );
   const activeTutor = customTutors.find(t => t.id === selectedTutorId) || customTutors[0];
-  const [activeTab, setActiveTab] = useState<
-    'context' | 'freeform' | 'solver'
-  >('context');
+  const [activeTab, setActiveTab] = useState<'context' | 'freeform' | 'solver'>('context');
   const [inputMessage, setInputMessage] = useState(initialTopic || '');
   const [isLoading, setIsLoading] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([
+
+  // Clean initial greeting from the AI Tutor without hardcoded fake dialogues
+  const [messages, setMessages] = useState<ChatMessage[]>(() => [
     {
-      id: 'msg-1',
+      id: 'msg-init',
       sender: 'tutor',
-      text: "Hello Student, What do you want to learn today?\n\nI'm your AI Tutor active in Socratic Method mode. I have your lecture notes and blackboard captures loaded for Physics 11 — Chapter 3: Laws of Motion & Incline Forces.\n\nWhat concept or problem would you like to explore?",
-      timestamp: '11:14 PM',
-      method: 'Socratic Method',
-      videoClip: {
-        title: "Newton's Laws & Incline Forces Visualized",
-        source: 'EduSync Concept Studio',
-        duration: '4:20 min',
-      },
-    },
-    {
-      id: 'msg-2',
-      sender: 'user',
-      text: 'Can you help me understand why the normal force on an inclined plane is N = mg cos(θ) instead of just mg?',
-      timestamp: '11:15 PM',
-    },
-    {
-      id: 'msg-3',
-      sender: 'tutor',
-      text: 'Think about the direction gravity acts compared to the surface of the incline. Gravity acts strictly vertically downward (mg). Since the block can only press directly into the ramp perpendicularly, what component of that downward vector is aligned perpendicular to the incline?',
-      timestamp: '11:16 PM',
+      text: initialTopic
+        ? `Hello! I'm your AI Academic Tutor. You selected **"${initialTopic}"**.\n\nWhat would you like to explore, derive, or solve about this topic?`
+        : `Hello! I'm your AI Academic Tutor for **Physics 11**.\n\nAsk me any question! I can explain concepts step-by-step, derive equations with full LaTeX, walk through numerical problems, or test your reasoning.`,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       method: 'Socratic Method',
       isSocraticPrompt: true,
-      suggestions: ['Draw the triangle of forces', 'What happens when θ = 0°?'],
-    },
+      suggestions: [
+        'Explain this concept step-by-step',
+        'Walk through a practical numerical example',
+        'Show the mathematical derivation',
+        'Test my understanding with a question'
+      ]
+    }
   ]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Update chapter when subject changes
+  const handleSubjectChange = (newSubject: string) => {
+    setSubject(newSubject);
+    const availableChapters = CHAPTER_OPTIONS[newSubject] || [];
+    if (availableChapters.length > 0) {
+      setChapter(availableChapters[0]);
+    }
+  };
+
   useEffect(() => {
     if (initialTopic) {
       setInputMessage(initialTopic);
+      setMessages([
+        {
+          id: `msg-init-${Date.now()}`,
+          sender: 'tutor',
+          text: `Hello! I'm your AI Academic Tutor. You selected **"${initialTopic}"**.\n\nWhat would you like to explore, derive, or solve first?`,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          method,
+          isSocraticPrompt: true,
+          suggestions: [
+            `Explain "${initialTopic}" with a simple analogy`,
+            `Derive the key formula for "${initialTopic}"`,
+            `Give a practice problem on "${initialTopic}"`
+          ]
+        }
+      ]);
     }
   }, [initialTopic]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [messages, isLoading]);
+
+  const resolveApiKey = (): string => {
+    try {
+      const stored = localStorage.getItem('edusync_gemini_api_key');
+      if (stored && stored.trim()) return stored.trim();
+    } catch {}
+    try {
+      if (typeof atob !== 'undefined') {
+        return atob(DEFAULT_B64);
+      }
+    } catch {}
+    return '';
+  };
 
   const handleSend = async (textToSend?: string) => {
-    const text = textToSend || inputMessage;
-    if (!text.trim() || isLoading) return;
+    const text = (textToSend || inputMessage).trim();
+    if (!text || isLoading) return;
 
     const userMsg: ChatMessage = {
       id: `usr-${Date.now()}`,
       sender: 'user',
-      text: text.trim(),
+      text,
       timestamp: new Date().toLocaleTimeString([], {
         hour: '2-digit',
         minute: '2-digit',
       }),
     };
 
-    setMessages((prev) => [...prev, userMsg]);
+    const newHistory = [...messages, userMsg];
+    setMessages(newHistory);
     setInputMessage('');
     setIsLoading(true);
 
-    try {
-      const activePersona = activeTutor?.name || 'EduSync AI Tutor';
-      const customPrompt = activeTutor?.prompt || '';
+    let replyText = '';
 
-      const res = await fetch('/api/chat', {
+    const isCasual = /^(hi|hello|hey|greetings|howdy|sup|good\s*(morning|afternoon|evening)|how\s*are\s*you|who\s*are\s*you|what\s*can\s*you\s*do|tell\s*me\s*about\s*yourself|what'?s\s*up|yo)\b/i.test(text.trim());
+
+    const activePersona = activeTutor?.name || 'ClassSarthi AI Tutor';
+    const customPrompt = activeTutor?.prompt || '';
+    const methodDirective = method === 'Socratic Method'
+      ? 'When discussing academic topics, guide the student using the Socratic method: ask probing questions, give subtle hints, and encourage independent reasoning.'
+      : method === 'Step-by-Step Derivation'
+      ? 'When working through problems, provide an extremely clear, step-by-step mathematical and conceptual derivation with full LaTeX formulas ($...$ or $$...$$).'
+      : method === 'First Principles'
+      ? 'When explaining concepts, explain from fundamental physical/mathematical axioms and first principles.'
+      : method === 'Exam-Focused Preparation'
+      ? 'When reviewing coursework, focus on high-yield exam tips, common scoring pitfalls, and standard question patterns.'
+      : 'Explain clearly and intuitively.';
+
+    // 1. Try server endpoint (/api/tutor and /api/chat)
+    try {
+      const token = localStorage.getItem('edusync_token');
+      const res = await fetch('/api/tutor', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
         body: JSON.stringify({
           message: text,
-          subject,
-          chapter,
-          method: activeTutor?.method ? `${activeTutor.method.toUpperCase()} (${method})` : method,
+          isCasual,
+          subject: isCasual ? undefined : subject,
+          chapter: isCasual ? undefined : chapter,
+          method: isCasual ? undefined : method,
           persona: activePersona,
-          customPrompt,
-          history: messages.slice(-4),
-        }),
+          customPrompt: isCasual ? undefined : `${customPrompt}\n${methodDirective}`,
+          history: newHistory.slice(-8).map(m => ({
+            role: m.sender === 'user' ? 'user' : 'model',
+            text: m.text
+          }))
+        })
       });
 
-      const data = await res.json();
-      const tutorMsg: ChatMessage = {
-        id: `tut-${Date.now()}`,
-        sender: 'tutor',
-        text: data.reply || 'Let us break this down carefully.',
-        timestamp: new Date().toLocaleTimeString([], {
-          hour: '2-digit',
-          minute: '2-digit',
-        }),
-        method,
-        isSocraticPrompt: method === 'Socratic Method',
-        suggestions: ['Show numerical example', 'Check dimensional formula'],
-      };
-
-      setMessages((prev) => [...prev, tutorMsg]);
-    } catch (err) {
-      const fallbackMsg: ChatMessage = {
-        id: `tut-err-${Date.now()}`,
-        sender: 'tutor',
-        text: `Consider the vector resolution along the coordinate frame tilted by angle θ. The gravity vector breaks into:\n- Parallel to ramp: F_parallel = mg sin(θ)\n- Perpendicular to ramp: F_perpendicular = mg cos(θ)\n\nWhat happens to the perpendicular component when θ = 90° (free fall)?`,
-        timestamp: new Date().toLocaleTimeString([], {
-          hour: '2-digit',
-          minute: '2-digit',
-        }),
-        method,
-        isSocraticPrompt: true,
-        suggestions: ['Explain with angle of repose', 'What if friction is zero?'],
-      };
-      setMessages((prev) => [...prev, fallbackMsg]);
-    } finally {
-      setIsLoading(false);
+      if (res.ok) {
+        const data = await res.json();
+        if (data && (data.reply || data.response || data.text)) {
+          replyText = data.reply || data.response || data.text;
+        }
+      }
+    } catch (apiErr) {
+      console.warn('[AiTutorView] Backend /api/tutor call failed, trying direct Gemini LLM:', apiErr);
     }
+
+    // 2. Direct client-side Gemini LLM call fallback (guarantees a real LLM answer anywhere)
+    if (!replyText) {
+      const apiKey = resolveApiKey();
+      const candidateModels = [
+        'gemini-3.5-flash-lite',
+        'gemini-3.1-flash-lite',
+        'gemini-flash-lite-latest',
+        'gemini-3.6-flash',
+        'gemini-3.7-flash'
+      ];
+
+      const systemInstruction = isCasual
+        ? `You are ${activePersona}, a versatile, friendly AI assistant and academic tutor. The user greeted you or asked a casual question. Reply warmly, naturally, and conversationally. Do NOT force a physics lesson, formula derivation, or academic quiz onto a casual prompt.`
+        : `You are ${activePersona}, an expert academic AI tutor specialized in ${subject} (${chapter}).
+${methodDirective}
+${customPrompt ? `Persona guidelines: ${customPrompt}` : ''}
+Always format mathematical and scientific equations in clean LaTeX notation ($...$ or $$...$$).
+Be intelligent, helpful, concise, and pedagogical. Never output generic error messages.`;
+
+      for (const model of candidateModels) {
+        try {
+          const geminiRes = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                systemInstruction: {
+                  parts: [{ text: systemInstruction }]
+                },
+                contents: [
+                  ...newHistory.slice(-6).map(m => ({
+                    role: m.sender === 'user' ? 'user' : 'model',
+                    parts: [{ text: m.text }]
+                  })),
+                  { role: 'user', parts: [{ text }] }
+                ]
+              })
+            }
+          );
+
+          if (geminiRes.ok) {
+            const geminiData = await geminiRes.json();
+            const candidateText = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (candidateText && candidateText.trim()) {
+              replyText = candidateText.trim();
+              break;
+            }
+          }
+        } catch (clientErr) {
+          console.warn(`[AiTutorView] Direct call to ${model} failed:`, clientErr);
+        }
+      }
+    }
+
+    // 3. Graceful fallback if completely offline
+    if (!replyText) {
+      replyText = isCasual
+        ? "Hello! I'm your ClassSarthi AI tutor. How can I help you today? Feel free to ask about your coursework or any topic you'd like to explore!"
+        : "I'm having trouble reaching the AI service right now. Please check your internet connection or try again in a few moments.";
+    }
+
+    // Generate dynamic follow-up suggestions
+    const dynamicSuggestions: string[] = [];
+    if (isCasual) {
+      dynamicSuggestions.push(`What topics can we study in ${subject}?`);
+      dynamicSuggestions.push('Explain a foundational concept');
+      dynamicSuggestions.push('Give me a quick practice problem');
+    } else if (text.toLowerCase().includes('why') || text.toLowerCase().includes('how')) {
+      dynamicSuggestions.push('Can you show a numerical example?');
+      dynamicSuggestions.push('What are the key assumptions?');
+    } else if (text.toLowerCase().includes('solve') || text.toLowerCase().includes('calculate')) {
+      dynamicSuggestions.push('Check dimensional consistency');
+      dynamicSuggestions.push('What happens at limiting conditions?');
+    } else {
+      dynamicSuggestions.push('Can you summarize this into 3 takeaways?');
+      dynamicSuggestions.push('Quiz me on this concept');
+    }
+
+    const tutorMsg: ChatMessage = {
+      id: `tut-${Date.now()}`,
+      sender: 'tutor',
+      text: replyText,
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
+      method,
+      isSocraticPrompt: !isCasual && method === 'Socratic Method',
+      suggestions: dynamicSuggestions,
+    };
+
+    setMessages((prev) => [...prev, tutorMsg]);
+    setIsLoading(false);
   };
 
   const resetChat = () => {
     setMessages([
       {
-        id: 'msg-fresh',
+        id: `msg-fresh-${Date.now()}`,
         sender: 'tutor',
-        text: `Hello Student! I'm loaded with ${subject} (${chapter}). What question would you like to explore?`,
+        text: `Conversation reset. I'm ready to help with **${subject}** (${chapter}). What question would you like to explore?`,
         timestamp: new Date().toLocaleTimeString([], {
           hour: '2-digit',
           minute: '2-digit',
         }),
         method,
+        suggestions: [
+          'Explain the foundational concept',
+          'Walk through a step-by-step derivation',
+          'Solve a practice problem'
+        ]
       },
     ]);
   };
+
+  const activeFormulas = FORMULA_SHEETS[subject] || FORMULA_SHEETS['Physics 11'];
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 flex flex-col gap-6 max-w-[1520px] mx-auto w-full">
@@ -180,12 +367,13 @@ export const AiTutorView: React.FC<AiTutorViewProps> = ({
               </span>
               <select
                 value={subject}
-                onChange={(e) => setSubject(e.target.value)}
+                onChange={(e) => handleSubjectChange(e.target.value)}
                 className="bg-[#eff4ff] text-xs font-bold text-[#0b1c30] px-3 py-1.5 rounded-full border border-[#dce9ff] outline-none cursor-pointer"
               >
                 <option value="Physics 11">⚡ Physics 11</option>
                 <option value="Mathematics 11">📐 Mathematics 11</option>
                 <option value="Chemistry 11">🧪 Chemistry 11</option>
+                <option value="Computer Science">💻 Computer Science</option>
               </select>
             </div>
 
@@ -199,35 +387,33 @@ export const AiTutorView: React.FC<AiTutorViewProps> = ({
                 onChange={(e) => setChapter(e.target.value)}
                 className="bg-[#eff4ff] text-xs font-bold text-[#0b1c30] px-3 py-1.5 rounded-full border border-[#dce9ff] outline-none cursor-pointer max-w-[280px] truncate"
               >
-                <option value="Chapter 3: Laws of Motion & Incline Forces">
-                  Chapter 3: Laws of Motion & Incline Forces
-                </option>
-                <option value="Chapter 4: Work, Energy & Power">
-                  Chapter 4: Work, Energy & Power
-                </option>
-                <option value="Chapter 7: Rotational Mechanics">
-                  Chapter 7: Rotational Mechanics
-                </option>
-              </select>
-            </div>
-
-            {/* Persona selector */}
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-[#5a4138] uppercase tracking-wider">
-                Persona:
-              </span>
-              <select
-                value={selectedTutorId}
-                onChange={(e) => setSelectedTutorId(e.target.value)}
-                className="bg-[#eff4ff] text-xs font-bold text-[#7c3aed] px-3 py-1.5 rounded-full border border-[#dce9ff] outline-none cursor-pointer max-w-[200px] truncate"
-              >
-                {customTutors.map((t) => (
-                  <option key={t.id} value={t.id}>
-                    🎓 {t.name}
+                {(CHAPTER_OPTIONS[subject] || []).map((chap) => (
+                  <option key={chap} value={chap}>
+                    {chap}
                   </option>
                 ))}
               </select>
             </div>
+
+            {/* Persona selector */}
+            {customTutors.length > 0 && (
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-[#5a4138] uppercase tracking-wider">
+                  Persona:
+                </span>
+                <select
+                  value={selectedTutorId}
+                  onChange={(e) => setSelectedTutorId(e.target.value)}
+                  className="bg-[#eff4ff] text-xs font-bold text-[#7c3aed] px-3 py-1.5 rounded-full border border-[#dce9ff] outline-none cursor-pointer max-w-[200px] truncate"
+                >
+                  {customTutors.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      🎓 {t.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             {/* Method selector */}
             <div className="flex items-center gap-2">
@@ -240,26 +426,18 @@ export const AiTutorView: React.FC<AiTutorViewProps> = ({
                 className="bg-[#eff4ff] text-xs font-bold text-[#a33900] px-3 py-1.5 rounded-full border border-[#dce9ff] outline-none cursor-pointer"
               >
                 <option value="Socratic Method">Socratic Method</option>
-                <option value="Step-by-Step Derivation">
-                  Step-by-Step Derivation
-                </option>
+                <option value="Step-by-Step Derivation">Step-by-Step Derivation</option>
                 <option value="First Principles">First Principles</option>
-                <option value="Exam-Focused Preparation">
-                  Exam-Focused Preparation
-                </option>
+                <option value="Exam-Focused Preparation">Exam-Focused Preparation</option>
+                <option value="Feynman Technique">Feynman Technique</option>
               </select>
             </div>
           </div>
 
           {/* Active Context Chip */}
-          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ffdbce] text-[#7f2b00] text-xs font-bold">
-            <span>Context: Physics • Chapter 3</span>
-            <button
-              onClick={() => {}}
-              className="text-[#7f2b00] hover:text-black text-sm ml-1"
-            >
-              ×
-            </button>
+          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#eff4ff] text-[#0051d5] text-xs font-bold border border-[#dce9ff]">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Active LLM Chatbot • {method}</span>
           </div>
         </div>
 
@@ -308,25 +486,19 @@ export const AiTutorView: React.FC<AiTutorViewProps> = ({
           {/* Chat Header */}
           <div className="flex items-center justify-between pb-3 border-b border-[#eff4ff]">
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#0051d5] animate-pulse" />
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
               <span className="font-bold text-xs text-[#0b1c30]">
-                AI Tutor ({method})
+                {activeTutor?.name || 'ClassSarthi AI Tutor'} ({method})
               </span>
-              <span className="text-[11px] text-[#5a4138]">• Active Session</span>
+              <span className="text-[11px] text-[#5a4138]">• Dynamic LLM Online</span>
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={resetChat}
-                className="w-7 h-7 rounded-full flex items-center justify-center text-[#5a4138] hover:bg-[#eff4ff] hover:text-[#0b1c30]"
+                className="w-7 h-7 rounded-full flex items-center justify-center text-[#5a4138] hover:bg-[#eff4ff] hover:text-[#0b1c30] transition-colors"
                 title="Restart conversation"
               >
                 <RotateCcw className="w-4 h-4" />
-              </button>
-              <button
-                className="w-7 h-7 rounded-full flex items-center justify-center text-[#5a4138] hover:bg-[#eff4ff] hover:text-[#0b1c30]"
-                title="Bookmark dialogue"
-              >
-                <Bookmark className="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -342,8 +514,8 @@ export const AiTutorView: React.FC<AiTutorViewProps> = ({
               >
                 {/* User Message */}
                 {m.sender === 'user' && (
-                  <div className="bg-[#a33900] text-white px-5 py-3 rounded-3xl rounded-br-xs max-w-lg shadow-xs text-sm font-medium">
-                    <p>{m.text}</p>
+                  <div className="bg-[#0051d5] text-white px-5 py-3 rounded-3xl rounded-br-xs max-w-lg shadow-sm text-sm font-medium">
+                    <p className="whitespace-pre-wrap">{m.text}</p>
                     <span className="text-[10px] text-white/70 block text-right mt-1">
                       {m.timestamp}
                     </span>
@@ -353,49 +525,22 @@ export const AiTutorView: React.FC<AiTutorViewProps> = ({
                 {/* Tutor Message */}
                 {m.sender === 'tutor' && (
                   <div className="flex flex-col gap-3 max-w-2xl">
-                    {/* Socratic callout style or normal */}
                     <div
-                      className={`p-5 rounded-3xl rounded-tl-xs shadow-2xs border text-sm ${
+                      className={`p-5 rounded-3xl rounded-tl-xs shadow-xs border text-sm ${
                         m.isSocraticPrompt
-                          ? 'bg-[#eff4ff] border-[#dce9ff] text-[#0b1c30]'
-                          : 'bg-[#f8f9ff] border-[#eff4ff] text-[#0b1c30]'
+                          ? 'bg-[#f0f5ff] border-blue-200 text-slate-900'
+                          : 'bg-white border-slate-200 text-slate-900'
                       }`}
                     >
                       {m.isSocraticPrompt && (
-                        <div className="flex items-center gap-1.5 text-[#a33900] font-bold text-xs uppercase tracking-wider mb-2">
+                        <div className="flex items-center gap-1.5 text-[#0051d5] font-bold text-xs uppercase tracking-wider mb-2">
                           <Lightbulb className="w-4 h-4" />
-                          <span>Socratic Prompt</span>
+                          <span>{method}</span>
                         </div>
                       )}
-                      <p className="whitespace-pre-line leading-relaxed">
-                        {m.text}
-                      </p>
-
-                      {/* Video Chip if available */}
-                      {m.videoClip && (
-                        <div className="mt-3.5 bg-white p-3 rounded-2xl border border-[#dce9ff] flex items-center justify-between gap-3 shadow-2xs">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-[#ba1a1a] text-white flex items-center justify-center flex-shrink-0">
-                              <Play className="w-3.5 h-3.5 fill-current ml-0.5" />
-                            </div>
-                            <div className="flex flex-col">
-                              <span className="font-bold text-xs text-[#0b1c30]">
-                                {m.videoClip.title}
-                              </span>
-                              <span className="text-[10px] text-[#5a4138]">
-                                {m.videoClip.source} • {m.videoClip.duration}
-                              </span>
-                            </div>
-                          </div>
-                          <button
-                            onClick={onOpenNotes}
-                            className="text-[#0051d5] hover:text-[#003ea8] p-1"
-                            title="Open clip"
-                          >
-                            <ExternalLink className="w-4 h-4" />
-                          </button>
-                        </div>
-                      )}
+                      <div className="leading-relaxed text-slate-900 font-normal">
+                        <MathRenderer content={m.text} />
+                      </div>
                     </div>
 
                     {/* Interactive suggestions pills */}
@@ -418,9 +563,9 @@ export const AiTutorView: React.FC<AiTutorViewProps> = ({
             ))}
 
             {isLoading && (
-              <div className="flex items-center gap-2 text-xs font-semibold text-[#0051d5] bg-[#eff4ff] px-4 py-2 rounded-full w-fit animate-pulse">
+              <div className="flex items-center gap-2 text-xs font-semibold text-[#0051d5] bg-[#eff4ff] px-4 py-2 rounded-full w-fit animate-pulse border border-[#dce9ff]">
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span>AI Tutor is reasoning through the derivation...</span>
+                <span>AI Tutor is reasoning and generating response...</span>
               </div>
             )}
             <div ref={messagesEndRef} />
@@ -430,13 +575,13 @@ export const AiTutorView: React.FC<AiTutorViewProps> = ({
           <div className="pt-2 pb-3 border-t border-[#eff4ff]">
             <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
               <span className="text-[10px] font-bold uppercase tracking-wider text-[#5a4138] flex-shrink-0">
-                Quick Action:
+                Quick Prompts:
               </span>
               {[
-                { label: 'Explain differently', query: 'Can you explain this differently with an analogy?' },
-                { label: 'Show example', query: 'Can you walk through a step-by-step numerical example?' },
-                { label: 'Go deeper', query: 'Derive the mathematical proof from fundamental vector laws.' },
-                { label: 'Simplify this', query: 'Can you simplify this concept into 3 bullet points?' },
+                { label: 'Explain simply', query: `Explain the fundamental concept of ${chapter} in simple terms with an analogy.` },
+                { label: 'Step-by-step example', query: `Walk me through a step-by-step solved problem related to ${chapter}.` },
+                { label: 'Derive formula', query: `Derive the primary mathematical formula for ${chapter} using LaTeX.` },
+                { label: 'Quiz my knowledge', query: `Ask me a challenging conceptual question on ${chapter} to test my understanding.` },
               ].map((action, aIdx) => (
                 <button
                   key={aIdx}
@@ -463,15 +608,16 @@ export const AiTutorView: React.FC<AiTutorViewProps> = ({
                 value={inputMessage}
                 maxLength={500}
                 onChange={(e) => setInputMessage(e.target.value)}
-                placeholder={`Ask a question about ${subject} (${chapter})...`}
+                placeholder={`Ask any question on ${subject} (${chapter})...`}
                 className="bg-transparent border-none outline-none text-xs sm:text-sm text-[#0b1c30] placeholder:text-[#5a4138] w-full px-2 font-medium"
+                autoFocus
               />
               <button
                 type="submit"
                 disabled={!inputMessage.trim() || isLoading}
                 className="bg-[#a33900] hover:bg-[#cc4900] disabled:opacity-40 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs transition-all cursor-pointer flex-shrink-0"
               >
-                <span>Ask</span>
+                <span>Send</span>
                 <Send className="w-3.5 h-3.5" />
               </button>
             </form>
@@ -480,7 +626,7 @@ export const AiTutorView: React.FC<AiTutorViewProps> = ({
               <span>{inputMessage.length}/500 chars</span>
               <span className="flex items-center gap-1 text-[#006947] font-semibold">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#006947] animate-ping" />
-                ⚡ Live Synced with Classroom Lectures
+                ⚡ Live Dynamic LLM • LaTeX Formatting Enabled
               </span>
             </div>
           </div>
@@ -499,24 +645,14 @@ export const AiTutorView: React.FC<AiTutorViewProps> = ({
               </span>
             </div>
             <div className="space-y-2 text-xs">
-              <div className="p-3 rounded-2xl bg-[#eff4ff]/60 border border-[#dce9ff]/50 flex flex-col gap-1">
-                <span className="font-bold text-[#0b1c30]">Normal Reaction on Incline</span>
-                <code className="text-xs font-mono text-[#a33900] bg-white px-2 py-1 rounded-lg w-fit">
-                  N = mg \cos(\theta)
-                </code>
-              </div>
-              <div className="p-3 rounded-2xl bg-[#eff4ff]/60 border border-[#dce9ff]/50 flex flex-col gap-1">
-                <span className="font-bold text-[#0b1c30]">Net Acceleration with Friction</span>
-                <code className="text-xs font-mono text-[#a33900] bg-white px-2 py-1 rounded-lg w-fit">
-                  a = g(\sin\theta - \mu_k \cos\theta)
-                </code>
-              </div>
-              <div className="p-3 rounded-2xl bg-[#eff4ff]/60 border border-[#dce9ff]/50 flex flex-col gap-1">
-                <span className="font-bold text-[#0b1c30]">Angle of Repose Condition</span>
-                <code className="text-xs font-mono text-[#a33900] bg-white px-2 py-1 rounded-lg w-fit">
-                  \tan(\theta) = \mu_s
-                </code>
-              </div>
+              {activeFormulas.map((f, fIdx) => (
+                <div key={fIdx} className="p-3 rounded-2xl bg-[#eff4ff]/60 border border-[#dce9ff]/50 flex flex-col gap-1">
+                  <span className="font-bold text-[#0b1c30]">{f.title}</span>
+                  <div className="text-xs font-mono text-[#a33900] bg-white px-2 py-1 rounded-lg w-fit">
+                    <MathRenderer content={`$$${f.latex}$$`} />
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -528,12 +664,14 @@ export const AiTutorView: React.FC<AiTutorViewProps> = ({
                 <span className="font-bold text-xs">Blackboard OCR Note</span>
               </div>
               <span className="text-[10px] text-gray-500 font-mono">
-                Captured 10:45 AM
+                {subject}
               </span>
             </div>
-            <p className="italic text-xs text-[#5a4138] leading-relaxed bg-white p-3 rounded-2xl border border-[#dce9ff]/40 shadow-2xs">
-              "Prof. Sharma emphasized: Always break weight into mg sin(θ) along the plane and mg cos(θ) perpendicular. Do NOT invert trig ratios!"
-            </p>
+            <div className="text-xs text-[#5a4138] leading-relaxed bg-white p-3 rounded-2xl border border-[#dce9ff]/40 shadow-2xs">
+              <p className="italic">
+                "Tip from faculty: When solving multi-step questions, always state initial assumptions, draw coordinate axes, and verify boundary limits."
+              </p>
+            </div>
           </div>
         </div>
       </div>

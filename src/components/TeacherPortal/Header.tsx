@@ -241,15 +241,15 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <img
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZhppTRPu4AYwpSc7FogmrWYNU-MGZ_QACBWCi0pIY4Pd_JBADPwtyhhGht2YhKfvgkZFr0fma-1g8ngZgO4MVESI86tK73V4ztr86-FjGyROHzqRbs92eMCpazY0C5IN6kIFl9Q4DCYFUaqVy8KV0KfTzRrsgvngbaxPaVJvYP2iojN4clflVLnqyOaVF0YZ1GZU7GyD6aqv7aLNseMeKhV2gqFLw7GQIqADxa4e9PNC8z8SRrhZQ"
-              alt="Dr. Sanmitra Bhattacharya Profile Avatar"
+              alt="Dr. Rajesh Kulkarni Profile Avatar"
               className="w-8 h-8 rounded-full object-cover ring-1 ring-white"
             />
             <div className="hidden sm:flex flex-col text-left">
               <span className="font-semibold text-[13px] text-[#131b2e] leading-tight">
-                Dr. Sanmitra Bhattacharya
+                Dr. Rajesh Kulkarni
               </span>
               <span className="font-['JetBrains_Mono'] text-[11px] text-[#464555] leading-none mt-0.5">
-                Assoc. Professor • CSE
+                Senior Faculty • Physics
               </span>
             </div>
             <ChevronDown className="w-4 h-4 text-[#777587] ml-0.5" />

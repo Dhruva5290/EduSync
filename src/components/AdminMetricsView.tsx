@@ -35,7 +35,7 @@ export const AdminMetricsView: React.FC<AdminMetricsViewProps> = ({
     { name: 'School of Engineering & Applied Sciences', head: 'Dr. Rajesh Kulkarni', students: 38, gpa: 8.85, status: 'Optimal' },
     { name: 'Department of Mathematics & Computing', head: 'Prof. Vikramaditya Roy', students: 32, gpa: 9.12, status: 'Optimal' },
     { name: 'Chemical Sciences & Nanotechnology', head: 'Dr. Ramesh Sharma', students: 28, gpa: 8.74, status: 'Optimal' },
-    { name: 'Earth & Environmental Systems', head: 'Dr. Sanmitra Bhattacharya', students: 24, gpa: 8.91, status: 'Optimal' },
+    { name: 'Earth & Environmental Systems', head: 'Dr. Rajesh Kulkarni', students: 24, gpa: 8.91, status: 'Optimal' },
   ];
 
   return (

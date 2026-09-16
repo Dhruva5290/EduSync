@@ -272,7 +272,7 @@ $$\\frac{P(x)}{(x - a)(x^2 + bx + c)} = \\frac{A}{x - a} + \\frac{Bx + C}{x^2 + 
               Grade 11 & 12 Science Audit & VisionNote (VN) Sync
             </h1>
             <p className="text-sm text-slate-300 max-w-2xl leading-relaxed">
-              Real-time synchronization bridge between <strong>VisionNote (Camera OCR Studio)</strong> and <strong>EduSync LMS</strong>.
+              Real-time synchronization bridge between <strong>VisionNote (Camera OCR Studio)</strong> and <strong>ClassSarthi LMS</strong>.
               Seamlessly push handwritten derivations, ingest camera blackboard feeds, extract Socratic doubts, and audit senior secondary student mastery.
             </p>
           </div>
@@ -878,7 +878,7 @@ $$\\frac{P(x)}{(x - a)(x^2 + bx + c)} = \\frac{A}{x - a} + \\frac{Bx + C}{x^2 + 
                   disabled={syncing}
                   className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-lg shadow-indigo-600/30 disabled:opacity-50"
                 >
-                  {syncing ? 'Synchronizing Note...' : 'Ingest & Sync to EduSync'}
+                  {syncing ? 'Synchronizing Note...' : 'Ingest & Sync to ClassSarthi'}
                 </button>
               </div>
             </form>

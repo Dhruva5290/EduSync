@@ -46,7 +46,7 @@ export const TeacherCockpit: React.FC<TeacherCockpitProps> = ({
     department: 'Department of Applied Sciences',
     teacherId: 'teacher-1',
     teacherName: 'Dr. Rajesh Kulkarni',
-    teacherEmail: 'rajesh.kulkarni@edusync.edu',
+    teacherEmail: 'rajesh.kulkarni@classsarthi.edu',
     enrolledCount: 6,
     semester: 'Academic Year 2026-27',
     room: 'Physics Block P - Lab 201',
@@ -147,12 +147,12 @@ export const TeacherCockpit: React.FC<TeacherCockpitProps> = ({
   // At-Risk Roster: Students sorted by lowest concept mastery aggregate
   const studentUsers = allUsers.filter(u => u.role === 'student');
   const rosterData = (studentUsers.length > 0 ? studentUsers : [
-    { id: 'student-3', name: 'Kabir Mehta', email: 'kabir.mehta@edusync.edu.in', institutionalId: 'EDU-STU-1103' },
-    { id: 'student-5', name: 'Rohan Gupta', email: 'rohan.gupta@edusync.edu.in', institutionalId: 'EDU-STU-1202' },
-    { id: 'student-6', name: 'Ishaan Verma', email: 'ishaan.verma@edusync.edu.in', institutionalId: 'EDU-STU-1203' },
-    { id: 'student-1', name: 'Aarav Sharma', email: 'aarav.sharma@edusync.edu.in', institutionalId: 'EDU-STU-1101' },
-    { id: 'student-2', name: 'Diya Patel', email: 'diya.patel@edusync.edu.in', institutionalId: 'EDU-STU-1102' },
-    { id: 'student-4', name: 'Ananya Iyer', email: 'ananya.iyer@edusync.edu.in', institutionalId: 'EDU-STU-1201' }
+    { id: 'student-3', name: 'Kabir Mehta', email: 'kabir.mehta@classsarthi.edu.in', institutionalId: 'EDU-STU-1103' },
+    { id: 'student-5', name: 'Rohan Gupta', email: 'rohan.gupta@classsarthi.edu.in', institutionalId: 'EDU-STU-1202' },
+    { id: 'student-6', name: 'Ishaan Verma', email: 'ishaan.verma@classsarthi.edu.in', institutionalId: 'EDU-STU-1203' },
+    { id: 'student-1', name: 'Aarav Sharma', email: 'aarav.sharma@classsarthi.edu.in', institutionalId: 'EDU-STU-1101' },
+    { id: 'student-2', name: 'Diya Patel', email: 'diya.patel@classsarthi.edu.in', institutionalId: 'EDU-STU-1102' },
+    { id: 'student-4', name: 'Ananya Iyer', email: 'ananya.iyer@classsarthi.edu.in', institutionalId: 'EDU-STU-1201' }
   ]).map((s, idx) => {
     // Computed aggregate mastery (lowest to highest)
     const mockMasteryScores = [48, 56, 64, 78, 86, 94];

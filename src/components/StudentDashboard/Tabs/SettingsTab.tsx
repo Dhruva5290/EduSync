@@ -18,6 +18,29 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({ currentUser }) => {
     currentUser.learningProfile?.learningStyle || learningStyle || 'visual'
   );
   const [savedToast, setSavedToast] = useState<boolean>(false);
+  const [apiKey, setApiKey] = useState('');
+  const [apiKeyStatus, setApiKeyStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+
+  const handleSaveApiKey = async () => {
+    if (!apiKey.trim()) return;
+    setApiKeyStatus('saving');
+    try {
+      const res = await fetch('/api/settings/api-key', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ apiKey: apiKey.trim() }),
+      });
+      if (res.ok) {
+        setApiKeyStatus('saved');
+        setApiKey('');
+        setTimeout(() => setApiKeyStatus('idle'), 3000);
+      } else {
+        setApiKeyStatus('error');
+      }
+    } catch (e) {
+      setApiKeyStatus('error');
+    }
+  };
 
   const handleSave = () => {
     setLearningStyle(selectedStyle as any);
@@ -147,6 +170,50 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({ currentUser }) => {
             <span>Save Preferences</span>
           </button>
         </div>
+      </section>
+
+      {/* API Key Settings */}
+      <section className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-sm">
+        <div className="flex items-center gap-2.5 mb-2">
+          <Sparkles className="w-5 h-5 text-[#0d9488]" />
+          <h3 className="text-base font-bold text-[#0f172a]">AI Configuration</h3>
+        </div>
+        <p className="text-xs text-slate-500 mb-6 font-normal">
+          Add your Google Gemini API Key to enable AI features. The key will be saved globally.
+        </p>
+
+        <div className="flex flex-col sm:flex-row gap-3">
+          <input
+            type="password"
+            placeholder="Enter Gemini API Key (AIzaSy...)"
+            value={apiKey}
+            onChange={(e) => setApiKey(e.target.value)}
+            className="flex-1 bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2563eb]/20 focus:border-[#2563eb]"
+          />
+          <button
+            onClick={handleSaveApiKey}
+            disabled={!apiKey.trim() || apiKeyStatus === 'saving'}
+            className="bg-[#2563eb] hover:bg-[#1d4ed8] disabled:bg-slate-300 disabled:cursor-not-allowed text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors whitespace-nowrap flex items-center justify-center min-w-[120px]"
+          >
+            {apiKeyStatus === 'saving' ? 'Saving...' : apiKeyStatus === 'saved' ? 'Saved!' : 'Save Key'}
+          </button>
+        </div>
+        
+        {apiKeyStatus === 'saved' && (
+          <div className="mt-4 bg-emerald-50 border border-emerald-200 p-3 rounded-xl flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+            <span className="text-xs font-bold text-emerald-700">
+              API key saved successfully. It may take a moment to apply. You can test the AI features now.
+            </span>
+          </div>
+        )}
+        {apiKeyStatus === 'error' && (
+          <div className="mt-4 bg-red-50 border border-red-200 p-3 rounded-xl flex items-center gap-2">
+            <span className="text-xs font-bold text-red-700">
+              Failed to save API key. Check console for details.
+            </span>
+          </div>
+        )}
       </section>
     </div>
   );

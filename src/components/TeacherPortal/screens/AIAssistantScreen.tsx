@@ -40,7 +40,7 @@ export const AIAssistantScreen: React.FC<AIAssistantScreenProps> = ({
   const [activeMode, setActiveMode] = useState<'lesson_plan' | 'exam_gen' | 'doubt_solver' | 'chat'>('lesson_plan');
 
   // Gemini API Key State (persisted in localStorage)
-  const [apiKey, setApiKey] = useState<string>(() => localStorage.getItem('edusync_gemini_api_key') || '');
+  const [apiKey, setApiKey] = useState<string>(() => localStorage.getItem('classsarthi_gemini_api_key') || '');
   const [showKeyModal, setShowKeyModal] = useState<boolean>(false);
   const [tempApiKey, setTempApiKey] = useState<string>(apiKey);
   const [keySaveSuccess, setKeySaveSuccess] = useState<boolean>(false);
@@ -127,7 +127,7 @@ A linear resistive two-terminal active circuit contains independent sources and 
   const [chatMessages, setChatMessages] = useState<Array<{ role: 'user' | 'assistant'; text: string }>>([
     {
       role: 'assistant',
-      text: `Good morning Dr. Bhattacharya! I am your AI Academic Brain.
+      text: `Good morning Rajesh! I am your AI Academic Brain.
 
 I do not use pre-made canned scripts. Every inquiry is analyzed in real-time through an authentic cognitive reasoning pipeline:
 1. **Think & Identify**: Discipline, governing invariant equations, and target cognitive level.
@@ -144,10 +144,10 @@ How can I assist you with lecture flows, question formulation, or student doubts
   const handleSaveApiKey = () => {
     const trimmed = tempApiKey.trim();
     if (trimmed) {
-      localStorage.setItem('edusync_gemini_api_key', trimmed);
+      localStorage.setItem('classsarthi_gemini_api_key', trimmed);
       setApiKey(trimmed);
     } else {
-      localStorage.removeItem('edusync_gemini_api_key');
+      localStorage.removeItem('classsarthi_gemini_api_key');
       setApiKey('');
     }
     setKeySaveSuccess(true);
@@ -225,7 +225,7 @@ How can I assist you with lecture flows, question formulation, or student doubts
       dueText: 'Today',
       content: `${title}: ${text.slice(0, 110)}...`,
       completed: false,
-      meta: 'EduSync AI Copilot',
+      meta: 'ClassSarthi AI Copilot',
       category: 'exam',
     });
     setSavedToSticky(true);
@@ -352,7 +352,7 @@ Regarding your inquiry on **"${userText}"**:
           <div className="flex items-center gap-2 flex-wrap">
             <span className="font-['JetBrains_Mono'] text-[11px] px-2 py-0.5 rounded bg-[#e9ddff] text-[#6b38d4] font-bold flex items-center gap-1">
               <Sparkles className="w-3.5 h-3.5" />
-              EDUSYNC AI COGNITIVE BRAIN
+              CLASSSARTHI AI COGNITIVE BRAIN
             </span>
             <span className="font-['JetBrains_Mono'] text-[11px] text-[#464555]">
               Think • Identify • Formulate • Zero Hardcoding
@@ -725,7 +725,7 @@ Regarding your inquiry on **"${userText}"**:
             <div className="flex items-center gap-2">
               <span className="font-['JetBrains_Mono'] text-[11px] px-2.5 py-0.5 rounded-full bg-[#6ffbbe] text-[#002113] font-bold flex items-center gap-1">
                 <span className="w-2 h-2 rounded-full bg-[#008f4c] animate-pulse" />
-                {apiKey ? 'Gemini 2.5 Flash' : 'EduSync Cognitive Brain'}
+                {apiKey ? 'Gemini 2.5 Flash' : 'ClassSarthi Cognitive Brain'}
               </span>
             </div>
           </div>
@@ -818,8 +818,8 @@ Regarding your inquiry on **"${userText}"**:
             </div>
 
             <p className="text-[13px] text-[#464555] leading-relaxed">
-              EduSync's AI is powered by <strong>Google Gemini 2.5 Flash</strong> with real-time cognitive reasoning.
-              You can connect your own Google AI Studio API key below, or leave it blank to utilize the embedded EduSync Cognitive Academic Engine.
+              ClassSarthi's AI is powered by <strong>Google Gemini 2.5 Flash</strong> with real-time cognitive reasoning.
+              You can connect your own Google AI Studio API key below, or leave it blank to utilize the embedded ClassSarthi Cognitive Academic Engine.
             </p>
 
             <div className="flex flex-col gap-1.5">
@@ -834,7 +834,7 @@ Regarding your inquiry on **"${userText}"**:
                 className="w-full h-10 px-3 rounded-lg bg-[#f2f3ff] text-[13px] text-[#131b2e] border border-[#e2e7ff] focus:outline-none focus:ring-1 focus:ring-[#3525cd] font-mono"
               />
               <span className="text-[11px] text-[#777587]">
-                Saved locally in browser storage (<code className="bg-[#f2f3ff] px-1 py-0.5 rounded text-[#3525cd]">edusync_gemini_api_key</code>).
+                Saved locally in browser storage (<code className="bg-[#f2f3ff] px-1 py-0.5 rounded text-[#3525cd]">classsarthi_gemini_api_key</code>).
               </span>
             </div>
 
@@ -850,7 +850,7 @@ Regarding your inquiry on **"${userText}"**:
                 type="button"
                 onClick={() => {
                   setTempApiKey('');
-                  localStorage.removeItem('edusync_gemini_api_key');
+                  localStorage.removeItem('classsarthi_gemini_api_key');
                   setApiKey('');
                   setKeySaveSuccess(true);
                   setTimeout(() => {

@@ -1,4 +1,4 @@
-# EduSync: Comprehensive Platform Architecture, System Engineering & Developer Reference
+# ClassSarthi: Comprehensive Platform Architecture, System Engineering & Developer Reference
 
 > **Document Version:** 3.0.0  
 > **Last Updated:** 2026-09-06  
@@ -10,11 +10,11 @@
 
 ## 1. Executive Summary & Vision
 
-**EduSync** is an institutional academic command operating system and intelligent learning acceleration engine designed specifically for higher education and senior secondary science academies (engineering, computer science, physics, chemistry, and mathematics).
+**ClassSarthi** is an institutional academic command operating system and intelligent learning acceleration engine designed specifically for higher education and senior secondary science academies (engineering, computer science, physics, chemistry, and mathematics).
 
 Traditional Learning Management Systems (LMS) such as Canvas, Blackboard, or Google Classroom function primarily as administrative repositories—handling static file drops, deadlines, and gradebook tables. They lack real-time cognitive awareness of what transpires during actual lectures and cannot scaffold individualized student comprehension.
 
-EduSync solves this disconnect by unifying:
+ClassSarthi solves this disconnect by unifying:
 1. **Institutional Academic Management**: Robust role-based access control (RBAC) across Students, Faculty, and Deans/Registrars, weighted rubric assignment grading, dynamic syllabus timelines, and institutional disaster recovery vault snapshots.
 2. **ClassSarthi & VisionNote Synchronization**: Real-time classroom board OCR capture, teacher speech transcription, video-synchronized timeline events, automated student doubt clustering, and formula extraction.
 3. **Socratic AI Cognitive Scaffolding**: Multi-modal generative AI grounded strictly in lecture timestamps, teacher quotes, chalkboard equations ($F = ma$, thermodynamics, calculus), and textbook references—refusing to solve homework directly while guiding students through step-by-step first-principles inquiry.
@@ -59,7 +59,7 @@ EduSync solves this disconnect by unifying:
 ## 3. System Architecture & Directory Topology
 
 ```
-EduSync/
+ClassSarthi/
 ├── api/                                    # Vercel Serverless Function deployment bundle
 │   ├── api_src/index.js                    # Serverless routing bridge
 │   ├── data/                               # Bundled read-only seed data for Vercel edge
@@ -70,7 +70,7 @@ EduSync/
 │   ├── student_progress.json               # Concept mastery radar & quiz score history
 │   └── users.json                          # Institutional user directory & credentials
 ├── public/                                 # Static web assets
-│   ├── favicon.ico                         # EduSync favicon
+│   ├── favicon.ico                         # ClassSarthi favicon
 │   └── logo.png                            # Institutional brand mark
 ├── src/                                    # Application Source Code
 │   ├── components/                         # Modular UI Component Layer
@@ -208,7 +208,7 @@ Synchronizes classroom video playback, speech transcripts, blackboard captures, 
 
 ```
                                     +-----------------------+
-                                    |     EduSync Auth      |
+                                    |     ClassSarthi Auth      |
                                     |   POST /api/auth/login|
                                     +-----------+-----------+
                                                 |
@@ -293,7 +293,7 @@ All API routes accept JSON payloads and return JSON responses. Protected routes 
 
 #### `POST /api/auth/login`
 Authenticates user credentials and issues a Bearer token.
-- **Body:** `{ "identifier": "student.dhruva", "password": "EduSync@260101", "role": "student" }`
+- **Body:** `{ "identifier": "student.dhruva", "password": "ClassSarthi@260101", "role": "student" }`
 - **Response (200):**
   ```json
   {
@@ -321,7 +321,7 @@ Dean/Admin exclusive endpoint to switch active audit view.
 #### `POST /api/users/bulk-import`
 Imports student roster from Google Classroom CSV or SIS export.
 - **Headers:** `Authorization: Bearer <admin_token>`
-- **Body:** `{ "csvText": "Name,Email,Roll\nAarav,aarav@edusync.edu,1101", "targetSubjectIds": ["subj-phy"] }`
+- **Body:** `{ "csvText": "Name,Email,Roll\nAarav,aarav@classsarthi.edu,1101", "targetSubjectIds": ["subj-phy"] }`
 - **Response (200):** `{ "success": true, "importedCount": 1, "users": [ ... ] }`
 
 ---
@@ -412,19 +412,19 @@ The platform is pre-seeded with complete institutional profiles across all three
 
 | Role | Display Name | Username / ID | Default Password | Enrolled / Assigned Courses |
 | :--- | :--- | :--- | :--- | :--- |
-| **Student** | Student Dhruva | `student.dhruva` | `EduSync@260101` | Physics, Calculus, EME, ESS |
+| **Student** | Student Dhruva | `student.dhruva` | `ClassSarthi@260101` | Physics, Calculus, EME, ESS |
 | **Student** | Aarav Sharma | `aarav.sharma` | `Student@2026!` | Grade 11 Physics, Chemistry, Maths |
 | **Faculty** | Dr. Sanmitra Bhattacharya | `prof.sanmitra` | `Teacher@ESS26` | Environmental & Earth Sciences |
 | **Faculty** | Dr. Rajesh Kulkarni | `prof.rajesh` | `Physics@2026!` | Senior Secondary Physics (Grades 11 & 12) |
 | **Faculty** | Prof. Vikramaditya Roy | `prof.vikram` | `Maths@2026!` | Higher Mathematics & Calculus |
-| **Dean / Admin** | Dr. Maneek Singh | `dean.maneek` | `Dean@EduSync2026!` | Dean of Academic Welfare & Registrar |
+| **Dean / Admin** | Dr. Maneek Singh | `dean.maneek` | `Dean@ClassSarthi2026!` | Dean of Academic Welfare & Registrar |
 
 ---
 
 ## 8. Verification, Testing & Deployment Guide
 
 ### 8.1 Running Automated Tests
-EduSync includes a built-in automated test suite verifying all 25 institutional features across 6 distinct test suites:
+ClassSarthi includes a built-in automated test suite verifying all 25 institutional features across 6 distinct test suites:
 
 ```bash
 # Execute master test suite
@@ -467,4 +467,4 @@ Vercel automatically bundles `api/index.js` and routes frontend traffic via `ver
 
 ---
 
-*EduSync — Designed & Engineered for Excellence in Higher Education & Applied Sciences.*
+*ClassSarthi — Designed & Engineered for Excellence in Higher Education & Applied Sciences.*

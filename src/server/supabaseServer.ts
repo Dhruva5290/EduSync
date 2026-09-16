@@ -323,7 +323,7 @@ export async function persistPersonalizedNote(notePayload: {
     }
   }
 
-  // Always mirror/persist to EduSync local disk cache
+  // Always mirror/persist to ClassSarthi local disk cache
   const localNoteId = `note-pers-${Date.now()}`;
   const existingIdx = db.notes.findIndex(
     n => n.studentId === notePayload.studentId && n.title.includes(notePayload.customTitle)

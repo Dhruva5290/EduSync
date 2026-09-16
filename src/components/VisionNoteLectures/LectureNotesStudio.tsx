@@ -50,7 +50,7 @@ const MISC_SUBJECT: Subject = {
   description: 'General study notes, aptitude, exams, lab protocols, and unassigned lectures.',
   teacherId: 'teacher-gen',
   teacherName: 'Academic General Studies',
-  teacherEmail: 'academic@edusync.edu.in',
+  teacherEmail: 'academic@classsarthi.edu.in',
   color: 'violet',
   accentBg: 'bg-purple-500/10 border-purple-500/30 text-purple-400',
   enrolledCount: 7,

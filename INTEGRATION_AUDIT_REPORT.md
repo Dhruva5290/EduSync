@@ -1,8 +1,8 @@
-# EduSync Codebase Analysis & Integration Audit (Claude & Judge Review)
+# ClassSarthi Codebase Analysis & Integration Audit (Claude & Judge Review)
 
 **Date**: September 6, 2026  
 **Auditor**: Antigravity Technical Pair Programmer  
-**System Target**: EduSync Web Platform (`classsarthi.xyz`) ↔ ClassSarthi Desktop/ESP32-CAM Pipeline  
+**System Target**: ClassSarthi Web Platform (`classsarthi.xyz`) ↔ ClassSarthi Desktop/ESP32-CAM Pipeline  
 **Repository Working Directory**: `c:\Users\APOORV SINGH\OneDrive\Desktop\Edusync`
 
 ---
@@ -11,11 +11,11 @@
 
 | Area | Status | Reality Check |
 |---|:---:|---|
-| **ClassSarthi ↔ EduSync End-to-End Pipeline** | 🟡 **PARTIAL** | Supabase Postgres schema (`public.notes`) is defined, desktop Python client exists, server realtime worker exists, and manual ingestion endpoints exist. However, live hardware ingestion on the ESP32-CAM has **not** been exercised end-to-end in automated tests; tests use synthetic seeded JSON payloads or direct REST webhook simulation. |
-| **Database & Persistence** | 🟡 **HYBRID** | Local dev runs on `data/*.json` + in-memory store (`src/server/db.ts`). Production Vercel (`classsarthi.xyz`) uses serverless functions (`api_src/index.ts` / `api/index.js`) and fetches/persists custom users to Supabase table `public.notes` via tagged title records (`__EDUSYNC_USER__:*`). |
+| **ClassSarthi ↔ ClassSarthi End-to-End Pipeline** | 🟡 **PARTIAL** | Supabase Postgres schema (`public.notes`) is defined, desktop Python client exists, server realtime worker exists, and manual ingestion endpoints exist. However, live hardware ingestion on the ESP32-CAM has **not** been exercised end-to-end in automated tests; tests use synthetic seeded JSON payloads or direct REST webhook simulation. |
+| **Database & Persistence** | 🟡 **HYBRID** | Local dev runs on `data/*.json` + in-memory store (`src/server/db.ts`). Production Vercel (`classsarthi.xyz`) uses serverless functions (`api_src/index.ts` / `api/index.js`) and fetches/persists custom users to Supabase table `public.notes` via tagged title records (`__CLASSSARTHI_USER__:*`). |
 | **AI Models (Gemini)** | ✅ **VERIFIED** | Model endpoints `gemini-3.7-flash`, `gemini-3.6-flash`, `gemini-3.5-flash`, `gemini-3.5-flash-lite`, `gemini-3.1-flash-lite`, `gemini-flash-lite-latest`, and `gemini-2.5-flash` return HTTP 200 on Google Generative Language API. Deprecated `gemini-1.5-flash` returns HTTP 404 and is caught by fallbacks. |
 | **Ollama Local LLM** | ❌ **NON-EXISTENT** | There is **0 lines of Ollama code** anywhere in the codebase. Gemini is the sole AI engine with local deterministic algorithmic fallbacks (`src/server/knowledgeBase.ts`, `src/lib/quizGenerator.ts`). |
-| **Authentication & RBAC** | ✅ **WORKING** | Multi-role authentication (Student, Faculty, Dean) works live on `classsarthi.xyz` and locally. Credentials like `student.dhruva` / `EduSync@260101` and `dean.maneek` / `Dean@EduSync2026!` are verified. |
+| **Authentication & RBAC** | ✅ **WORKING** | Multi-role authentication (Student, Faculty, Dean) works live on `classsarthi.xyz` and locally. Credentials like `student.dhruva` / `ClassSarthi@260101` and `dean.maneek` / `Dean@ClassSarthi2026!` are verified. |
 | **Automated Test Suite** | 🟡 **SYNTHETIC** | All 49/49 tests pass in 8.5s, but they run against in-memory Express endpoints and mock/fallback structures. Only the Socratic AI tests make live Gemini API requests (taking ~4,034ms). Zero tests require a running ESP32 or live physical camera. |
 
 ---
@@ -140,7 +140,7 @@ Integration is not just 5 aspirational strings; dedicated components ([LectureNo
 #### Q: In `tests/03_visionnote_classsarthi.test.ts`, what does the test actually do?
 [tests/03_visionnote_classsarthi.test.ts](file:///c:/Users/APOORV%20SINGH/OneDrive/Desktop/Edusync/tests/03_visionnote_classsarthi.test.ts) tests Express REST endpoints (`/api/lectures`, `/api/board-captures`, `/api/notes/vision-sync/status`, `/api/notes/vision-sync/simulate`, `/api/webhooks/classsarthi-ingest`) against in-memory Express db. It tests data structures and webhook contracts, **not** a live physical ESP32-CAM.
 
-#### Q: Has EduSync ever actually ingested data from ClassSarthi running live on the ESP32-CAM?
+#### Q: Has ClassSarthi ever actually ingested data from ClassSarthi running live on the ESP32-CAM?
 - **Honest answer**: Direct REST calls from Python (`desktop/supabase_client.py`) to Supabase table `public.notes` and simulation webhooks have been verified (as seen in `scripts/test_supabase_pull.ts` and seeded entries in `data/lectures.json`).
 - **However**, live over-the-air capture from an active ESP32-CAM during a physical classroom session is **not automated in CI/CD**. For SIH/investor demos, a live capture rehearsal with the physical camera hardware is required before stage presentation.
 
@@ -184,7 +184,7 @@ In [tests/05_socratic_ai_tutor.test.ts](file:///c:/Users/APOORV%20SINGH/OneDrive
 
 #### Q: Search for `ollama` in the code.
 - **Search result**: **0 occurrences found.**
-- **Reality**: EduSync does **NOT** use Ollama. If Gemini API is unreachable or `GEMINI_API_KEY` is absent, EduSync falls back to a deterministic, high-quality local algorithmic knowledge engine in [src/server/knowledgeBase.ts](file:///c:/Users/APOORV%20SINGH/OneDrive/Desktop/Edusync/src/server/knowledgeBase.ts) and [src/lib/quizGenerator.ts](file:///c:/Users/APOORV%20SINGH/OneDrive/Desktop/Edusync/src/lib/quizGenerator.ts) rather than a local Ollama daemon.
+- **Reality**: ClassSarthi does **NOT** use Ollama. If Gemini API is unreachable or `GEMINI_API_KEY` is absent, ClassSarthi falls back to a deterministic, high-quality local algorithmic knowledge engine in [src/server/knowledgeBase.ts](file:///c:/Users/APOORV%20SINGH/OneDrive/Desktop/Edusync/src/server/knowledgeBase.ts) and [src/lib/quizGenerator.ts](file:///c:/Users/APOORV%20SINGH/OneDrive/Desktop/Edusync/src/lib/quizGenerator.ts) rather than a local Ollama daemon.
 
 ---
 
@@ -211,12 +211,12 @@ There are **10 pre-loaded users**:
 In [server.ts:86-154](file:///c:/Users/APOORV%20SINGH/OneDrive/Desktop/Edusync/server.ts#L86-L154) & [api_src/index.ts:58-101](file:///c:/Users/APOORV%20SINGH/OneDrive/Desktop/Edusync/api_src/index.ts#L58-L101):
 1. Matches identifier against `username`, `email`, `institutionalId`, or `name` in `db.users`.
 2. If not found in memory (e.g. serverless cold start), queries Supabase cloud store via `findUserInCloud(loginId)`.
-3. Checks `user.password || 'EduSync@260101' === loginPass`.
+3. Checks `user.password || 'ClassSarthi@260101' === loginPass`.
 4. Issues a Base64-encoded signed session token `{ userId, role, time }`.
 
 #### Q: Are the hardcoded credentials actually valid for logging into `classsarthi.xyz` right now?
 **YES (Verified Live)**:
-We executed a live POST request to `https://classsarthi.xyz/api/auth/login` with `student.dhruva` / `EduSync@260101`. Response:
+We executed a live POST request to `https://classsarthi.xyz/api/auth/login` with `student.dhruva` / `ClassSarthi@260101`. Response:
 ```json
 {
   "success": true,
@@ -242,7 +242,7 @@ We executed a live POST request to `https://classsarthi.xyz/api/auth/login` with
 - Seed accounts are pre-populated demo/test personas with CBSE/JEE academic records.
 
 #### Q: Is there any PII exposed?
-`GET /api/auth/public-users` exposes test accounts (name, institutional test email `@edusync.edu.in`, role, department). No real student personal passwords, credit cards, or phone numbers exist. Passwords returned in the public test selector are intentional demo test account credentials.
+`GET /api/auth/public-users` exposes test accounts (name, institutional test email `@classsarthi.edu.in`, role, department). No real student personal passwords, credit cards, or phone numbers exist. Passwords returned in the public test selector are intentional demo test account credentials.
 
 ---
 

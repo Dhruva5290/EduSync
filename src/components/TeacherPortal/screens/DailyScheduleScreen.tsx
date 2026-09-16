@@ -323,7 +323,7 @@ export const DailyScheduleScreen: React.FC<DailyScheduleScreenProps> = ({
               </span>
             </div>
             <h1 className="font-['Sora'] text-2xl lg:text-[28px] font-bold text-[#131b2e] tracking-tight mt-1">
-              Good morning, Dr. Bhattacharya 👋
+              Good morning, Rajesh 👋
             </h1>
             <p className="text-[14px] text-[#464555] leading-relaxed">
               You have <strong className="text-[#131b2e] font-semibold">3 lectures and 1 lab</strong> scheduled for today{' '}

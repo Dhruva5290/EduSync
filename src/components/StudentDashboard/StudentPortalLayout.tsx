@@ -115,7 +115,7 @@ export const StudentPortalLayout: React.FC<StudentPortalLayoutProps> = ({
               </div>
               {!sidebarCollapsed && (
                 <span className="font-bold text-lg text-[#0b1c30] tracking-tight truncate">
-                  EduSync
+                  ClassSarthi
                 </span>
               )}
             </div>
@@ -351,7 +351,7 @@ export const StudentPortalLayout: React.FC<StudentPortalLayoutProps> = ({
                   <div className="w-9 h-9 rounded-xl bg-[#c2410c] text-white flex items-center justify-center font-bold text-sm shadow-sm">
                     ES
                   </div>
-                  <span className="font-extrabold text-lg text-slate-900 tracking-tight">EduSync</span>
+                  <span className="font-extrabold text-lg text-slate-900 tracking-tight">ClassSarthi</span>
                 </div>
                 <button
                   onClick={() => setMobileMenuOpen(false)}

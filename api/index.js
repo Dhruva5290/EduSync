@@ -47,9 +47,9 @@ var init_fakeData = __esm({
       {
         id: "admin-1",
         name: "Dr. Maneek Singh",
-        email: "dean.maneek@edusync.edu.in",
+        email: "dean.maneek@classsarthi.edu.in",
         username: "dean.maneek",
-        password: "Dean@EduSync2026!",
+        password: "Dean@ClassSarthi2026!",
         role: "admin",
         gender: "Male",
         institutionalId: "EDU-ADM-1001",
@@ -66,7 +66,7 @@ var init_fakeData = __esm({
       {
         id: "teacher-phy",
         name: "Dr. Rajesh Kulkarni",
-        email: "rajesh.kulkarni@edusync.edu.in",
+        email: "rajesh.kulkarni@classsarthi.edu.in",
         username: "prof.rajesh",
         password: "Physics@2026!",
         role: "teacher",
@@ -85,7 +85,7 @@ var init_fakeData = __esm({
       {
         id: "teacher-che",
         name: "Dr. Ananya Sen",
-        email: "ananya.sen@edusync.edu.in",
+        email: "ananya.sen@classsarthi.edu.in",
         username: "prof.ananya",
         password: "Chemistry@2026!",
         role: "teacher",
@@ -104,7 +104,7 @@ var init_fakeData = __esm({
       {
         id: "teacher-mat",
         name: "Prof. Vikramaditya Roy",
-        email: "vikram.roy@edusync.edu.in",
+        email: "vikram.roy@classsarthi.edu.in",
         username: "prof.vikram",
         password: "Maths@2026!",
         role: "teacher",
@@ -123,7 +123,7 @@ var init_fakeData = __esm({
       {
         id: "student-1",
         name: "Aarav Sharma",
-        email: "aarav.sharma@edusync.edu.in",
+        email: "aarav.sharma@classsarthi.edu.in",
         username: "aarav.sharma",
         password: "Student@2026!",
         role: "student",
@@ -152,7 +152,7 @@ var init_fakeData = __esm({
       {
         id: "student-2",
         name: "Diya Patel",
-        email: "diya.patel@edusync.edu.in",
+        email: "diya.patel@classsarthi.edu.in",
         username: "diya.patel",
         password: "Student@2026!",
         role: "student",
@@ -181,7 +181,7 @@ var init_fakeData = __esm({
       {
         id: "student-3",
         name: "Kabir Mehta",
-        email: "kabir.mehta@edusync.edu.in",
+        email: "kabir.mehta@classsarthi.edu.in",
         username: "kabir.mehta",
         password: "Student@2026!",
         role: "student",
@@ -212,7 +212,7 @@ var init_fakeData = __esm({
         name: "Student Dhruva",
         email: "student.dhruva@bmu.edu.in",
         username: "student.dhruva",
-        password: "EduSync@260101",
+        password: "ClassSarthi@260101",
         role: "student",
         gender: "Male",
         institutionalId: "BMU-2026-7052",
@@ -59994,9 +59994,9 @@ var init_users = __esm({
       {
         id: "admin-1",
         name: "Dr. Maneek Singh",
-        email: "dean.maneek@edusync.edu.in",
+        email: "dean.maneek@classsarthi.edu.in",
         username: "dean.maneek",
-        password: "Dean@EduSync2026!",
+        password: "Dean@ClassSarthi2026!",
         role: "admin",
         gender: "Male",
         institutionalId: "EDU-ADM-1001",
@@ -60013,7 +60013,7 @@ var init_users = __esm({
       {
         id: "teacher-phy",
         name: "Dr. Rajesh Kulkarni",
-        email: "rajesh.kulkarni@edusync.edu.in",
+        email: "rajesh.kulkarni@classsarthi.edu.in",
         username: "prof.rajesh",
         password: "Physics@2026!",
         role: "teacher",
@@ -60035,7 +60035,7 @@ var init_users = __esm({
       {
         id: "teacher-che",
         name: "Dr. Ananya Sen",
-        email: "ananya.sen@edusync.edu.in",
+        email: "ananya.sen@classsarthi.edu.in",
         username: "prof.ananya",
         password: "Chemistry@2026!",
         role: "teacher",
@@ -60057,7 +60057,7 @@ var init_users = __esm({
       {
         id: "teacher-mat",
         name: "Prof. Vikramaditya Roy",
-        email: "vikram.roy@edusync.edu.in",
+        email: "vikram.roy@classsarthi.edu.in",
         username: "prof.vikram",
         password: "Maths@2026!",
         role: "teacher",
@@ -60079,7 +60079,7 @@ var init_users = __esm({
       {
         id: "teacher-1788570692864",
         name: "Dr. Elena Rostova",
-        email: "elena.rostova.1788570692862@edusync.edu",
+        email: "elena.rostova.1788570692862@classsarthi.edu",
         username: "elena.rostova.1788570692862",
         password: "Teacher@2782",
         role: "teacher",
@@ -60098,7 +60098,7 @@ var init_users = __esm({
       {
         id: "student-1",
         name: "Aarav Sharma",
-        email: "aarav.sharma@edusync.edu.in",
+        email: "aarav.sharma@classsarthi.edu.in",
         username: "aarav.sharma",
         password: "Student@2026!",
         role: "student",
@@ -60132,7 +60132,7 @@ var init_users = __esm({
       {
         id: "student-2",
         name: "Diya Patel",
-        email: "diya.patel@edusync.edu.in",
+        email: "diya.patel@classsarthi.edu.in",
         username: "diya.patel",
         password: "Student@2026!",
         role: "student",
@@ -60166,7 +60166,7 @@ var init_users = __esm({
       {
         id: "student-3",
         name: "Kabir Mehta",
-        email: "kabir.mehta@edusync.edu.in",
+        email: "kabir.mehta@classsarthi.edu.in",
         username: "kabir.mehta",
         password: "Student@2026!",
         role: "student",
@@ -60200,7 +60200,7 @@ var init_users = __esm({
       {
         id: "student-4",
         name: "Ananya Iyer",
-        email: "ananya.iyer@edusync.edu.in",
+        email: "ananya.iyer@classsarthi.edu.in",
         username: "ananya.iyer",
         password: "Student@2026!",
         role: "student",
@@ -60237,7 +60237,7 @@ var init_users = __esm({
       {
         id: "student-5",
         name: "Rohan Gupta",
-        email: "rohan.gupta@edusync.edu.in",
+        email: "rohan.gupta@classsarthi.edu.in",
         username: "rohan.gupta",
         password: "Student@2026!",
         role: "student",
@@ -60274,7 +60274,7 @@ var init_users = __esm({
       {
         id: "student-6",
         name: "Ishaan Verma",
-        email: "ishaan.verma@edusync.edu.in",
+        email: "ishaan.verma@classsarthi.edu.in",
         username: "ishaan.verma",
         password: "Student@2026!",
         role: "student",
@@ -60313,7 +60313,7 @@ var init_users = __esm({
         name: "Student Dhruva",
         email: "student.dhruva@bmu.edu.in",
         username: "student.dhruva",
-        password: "EduSync@260101",
+        password: "ClassSarthi@260101",
         role: "student",
         gender: "Male",
         institutionalId: "BMU-2026-7052",
@@ -60501,6 +60501,34 @@ var lectures_default;
 var init_lectures = __esm({
   "data/lectures.json"() {
     lectures_default = [
+      {
+        id: "lec-1789534640093",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-16",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
       {
         id: "lec-1789481072043",
         subjectId: "subj-phy-11",
@@ -61805,6 +61833,31 @@ var notes_default;
 var init_notes = __esm({
   "data/notes.json"() {
     notes_default = [
+      {
+        id: "note-vn-sim-1789534640077",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-16T04:57:20.077Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
       {
         id: "note-vn-sim-1789481072039",
         studentId: "student-1",
@@ -63264,7 +63317,7 @@ var init_student_progress = __esm({
           completed: false,
           lastTimestamp: "05:32",
           progressPercent: 75,
-          lastViewedAt: "2026-09-15T14:04:32.057Z",
+          lastViewedAt: "2026-09-16T04:59:32.225Z",
           quizCompleted: true,
           quizScore: 1,
           quizTotal: 6,
@@ -63428,7 +63481,7 @@ var init_initialData = __esm({
         category: "productivity",
         icon: "Calendar",
         permissions: [
-          "Create and manage EduSync academic calendar",
+          "Create and manage ClassSarthi academic calendar",
           "Add reminders and invite alarms for class schedules"
         ],
         rules: [
@@ -63440,7 +63493,7 @@ var init_initialData = __esm({
             enabled: true,
             trigger: "Assignment due date added",
             action: "Create calendar event with 15m notification",
-            lastSyncDetails: "Synced 4 deadlines to EduSync Calendar"
+            lastSyncDetails: "Synced 4 deadlines to ClassSarthi Calendar"
           },
           {
             id: "rule-gc-cal-2",
@@ -63523,7 +63576,7 @@ var init_initialData = __esm({
         approvedAt: "2026-09-01T11:30:00Z",
         authorName: "Faculty Physics Team",
         mcpConfig: {
-          provider: "edusync_ai",
+          provider: "classsarthi_ai",
           authMethod: "bearer",
           capabilities: ["Answer questions", "Generate examples", "Create practice problems"],
           status: "verified"
@@ -63544,7 +63597,7 @@ var init_initialData = __esm({
         authorName: "Dean of Sciences",
         mcpConfig: {
           provider: "anthropic",
-          mcpUrl: "https://api.edusync.internal/mcp/feynman-v1",
+          mcpUrl: "https://api.classsarthi.internal/mcp/feynman-v1",
           authMethod: "bearer",
           capabilities: ["Answer questions", "Generate examples", "Derive from first principles"],
           status: "verified"
@@ -63563,7 +63616,7 @@ var init_initialData = __esm({
         approvedAt: "2026-09-05T09:45:00Z",
         authorName: "Academic Pedagogy Lab",
         mcpConfig: {
-          provider: "edusync_ai",
+          provider: "classsarthi_ai",
           authMethod: "bearer",
           capabilities: ["Answer questions", "Ask guided leading questions"],
           status: "verified"
@@ -63654,6 +63707,19 @@ function loadProgressFromDisk(seed) {
   }
   return fallbackSeed;
 }
+function loadPluginsFromDisk(seed) {
+  try {
+    if (fs3.existsSync(PLUGINS_FILE_PATH)) {
+      const content = fs3.readFileSync(PLUGINS_FILE_PATH, "utf-8");
+      const parsed = JSON.parse(content);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (err) {
+  }
+  return JSON.parse(JSON.stringify(seed));
+}
 function loadUsersFromDisk(seed) {
   const fallbackSeed = Array.isArray(users_default) && users_default.length > 0 ? users_default : seed;
   try {
@@ -63686,7 +63752,7 @@ function loadNotesFromDisk(seed) {
   }
   return fallbackSeed;
 }
-var isServerless, USERS_FILE_PATH, NOTES_FILE_PATH, LECTURES_FILE_PATH, PROGRESS_FILE_PATH, seedUsers, db;
+var isServerless, USERS_FILE_PATH, NOTES_FILE_PATH, LECTURES_FILE_PATH, PROGRESS_FILE_PATH, PLUGINS_FILE_PATH, seedUsers, db;
 var init_db = __esm({
   "src/server/db.ts"() {
     init_fakeData();
@@ -63701,14 +63767,15 @@ var init_db = __esm({
     NOTES_FILE_PATH = path2.resolve(process.cwd(), "data", "notes.json");
     LECTURES_FILE_PATH = path2.resolve(process.cwd(), "data", "lectures.json");
     PROGRESS_FILE_PATH = path2.resolve(process.cwd(), "data", "student_progress.json");
+    PLUGINS_FILE_PATH = path2.resolve(process.cwd(), "data", "plugins.json");
     seedUsers = [
       // --- ONLY DEAN ---
       {
         id: "admin-1",
         name: "Dr. Maneek Singh",
-        email: "dean.maneek@edusync.edu.in",
+        email: "dean.maneek@classsarthi.edu.in",
         username: "dean.maneek",
-        password: "Dean@EduSync2026!",
+        password: "Dean@ClassSarthi2026!",
         role: "admin",
         gender: "Male",
         institutionalId: "EDU-ADM-1001",
@@ -63726,7 +63793,7 @@ var init_db = __esm({
       {
         id: "teacher-phy",
         name: "Dr. Rajesh Kulkarni",
-        email: "rajesh.kulkarni@edusync.edu.in",
+        email: "rajesh.kulkarni@classsarthi.edu.in",
         username: "prof.rajesh",
         password: "Physics@2026!",
         role: "teacher",
@@ -63745,7 +63812,7 @@ var init_db = __esm({
       {
         id: "teacher-che",
         name: "Dr. Ananya Sen",
-        email: "ananya.sen@edusync.edu.in",
+        email: "ananya.sen@classsarthi.edu.in",
         username: "prof.ananya",
         password: "Chemistry@2026!",
         role: "teacher",
@@ -63764,7 +63831,7 @@ var init_db = __esm({
       {
         id: "teacher-mat",
         name: "Prof. Vikramaditya Roy",
-        email: "vikram.roy@edusync.edu.in",
+        email: "vikram.roy@classsarthi.edu.in",
         username: "prof.vikram",
         password: "Maths@2026!",
         role: "teacher",
@@ -63784,7 +63851,7 @@ var init_db = __esm({
       {
         id: "student-1",
         name: "Aarav Sharma",
-        email: "aarav.sharma@edusync.edu.in",
+        email: "aarav.sharma@classsarthi.edu.in",
         username: "aarav.sharma",
         password: "Student@2026!",
         role: "student",
@@ -63813,7 +63880,7 @@ var init_db = __esm({
       {
         id: "student-2",
         name: "Diya Patel",
-        email: "diya.patel@edusync.edu.in",
+        email: "diya.patel@classsarthi.edu.in",
         username: "diya.patel",
         password: "Student@2026!",
         role: "student",
@@ -63842,7 +63909,7 @@ var init_db = __esm({
       {
         id: "student-3",
         name: "Kabir Mehta",
-        email: "kabir.mehta@edusync.edu.in",
+        email: "kabir.mehta@classsarthi.edu.in",
         username: "kabir.mehta",
         password: "Student@2026!",
         role: "student",
@@ -63871,7 +63938,7 @@ var init_db = __esm({
       {
         id: "student-4",
         name: "Ananya Iyer",
-        email: "ananya.iyer@edusync.edu.in",
+        email: "ananya.iyer@classsarthi.edu.in",
         username: "ananya.iyer",
         password: "Student@2026!",
         role: "student",
@@ -63900,7 +63967,7 @@ var init_db = __esm({
       {
         id: "student-5",
         name: "Rohan Gupta",
-        email: "rohan.gupta@edusync.edu.in",
+        email: "rohan.gupta@classsarthi.edu.in",
         username: "rohan.gupta",
         password: "Student@2026!",
         role: "student",
@@ -63929,7 +63996,7 @@ var init_db = __esm({
       {
         id: "student-6",
         name: "Ishaan Verma",
-        email: "ishaan.verma@edusync.edu.in",
+        email: "ishaan.verma@classsarthi.edu.in",
         username: "ishaan.verma",
         password: "Student@2026!",
         role: "student",
@@ -63969,7 +64036,7 @@ var init_db = __esm({
           description: "Foundational Newtonian mechanics, kinematics, rotational dynamics, work-energy theorem, universal gravitation, thermodynamics, and electromagnetism.",
           teacherId: "teacher-phy",
           teacherName: "Dr. Rajesh Kulkarni",
-          teacherEmail: "rajesh.kulkarni@edusync.edu.in",
+          teacherEmail: "rajesh.kulkarni@classsarthi.edu.in",
           color: "blue",
           accentBg: "bg-blue-500/10 border-blue-500/30 text-blue-400",
           enrolledCount: 7,
@@ -63992,7 +64059,7 @@ var init_db = __esm({
           description: "Quantum atomic models, chemical bonding (VSEPR), chemical thermodynamics, electrochemistry (Nernst equation), chemical kinetics, and reaction mechanisms.",
           teacherId: "teacher-che",
           teacherName: "Dr. Ananya Sen",
-          teacherEmail: "ananya.sen@edusync.edu.in",
+          teacherEmail: "ananya.sen@classsarthi.edu.in",
           color: "emerald",
           accentBg: "bg-emerald-500/10 border-emerald-500/30 text-emerald-400",
           enrolledCount: 7,
@@ -64015,7 +64082,7 @@ var init_db = __esm({
           description: "Techniques of integration, definite integrals, vector cross products, 3D geometry of planes, limits, continuity, and differential equations.",
           teacherId: "teacher-mat",
           teacherName: "Prof. Vikramaditya Roy",
-          teacherEmail: "vikram.roy@edusync.edu.in",
+          teacherEmail: "vikram.roy@classsarthi.edu.in",
           color: "violet",
           accentBg: "bg-violet-500/10 border-violet-500/30 text-violet-400",
           enrolledCount: 7,
@@ -64038,7 +64105,7 @@ var init_db = __esm({
           description: "Central designated repository where all cross-disciplinary, general studies, electives, lab journals, and other notes are organized.",
           teacherId: "teacher-phy",
           teacherName: "Dr. Rajesh Kulkarni",
-          teacherEmail: "rajesh.kulkarni@edusync.edu.in",
+          teacherEmail: "rajesh.kulkarni@classsarthi.edu.in",
           color: "purple",
           accentBg: "bg-purple-500/10 border-purple-500/30 text-purple-400",
           enrolledCount: 7,
@@ -64063,7 +64130,7 @@ var init_db = __esm({
           description: "Foundational Newtonian mechanics, kinematics, rotational dynamics, work-energy theorem, gravitation, fluid mechanics, and thermodynamics.",
           teacherId: "teacher-phy",
           teacherName: "Dr. Rajesh Kulkarni",
-          teacherEmail: "rajesh.kulkarni@edusync.edu.in",
+          teacherEmail: "rajesh.kulkarni@classsarthi.edu.in",
           color: "blue",
           accentBg: "bg-blue-500/10 border-blue-500/30 text-blue-400",
           enrolledCount: 6,
@@ -64087,7 +64154,7 @@ var init_db = __esm({
           description: "Quantum atomic structure, periodic classification, chemical bonding, thermodynamics, equilibrium, redox reactions, and fundamental organic chemistry.",
           teacherId: "teacher-che",
           teacherName: "Dr. Ananya Sen",
-          teacherEmail: "ananya.sen@edusync.edu.in",
+          teacherEmail: "ananya.sen@classsarthi.edu.in",
           color: "emerald",
           accentBg: "bg-emerald-500/10 border-emerald-500/30 text-emerald-400",
           enrolledCount: 6,
@@ -64111,7 +64178,7 @@ var init_db = __esm({
           description: "Sets, relations and functions, trigonometric functions, permutations and combinations, binomial theorem, straight lines, conic sections, and introductory limits.",
           teacherId: "teacher-mat",
           teacherName: "Prof. Vikramaditya Roy",
-          teacherEmail: "vikram.roy@edusync.edu.in",
+          teacherEmail: "vikram.roy@classsarthi.edu.in",
           color: "violet",
           accentBg: "bg-violet-500/10 border-violet-500/30 text-violet-400",
           enrolledCount: 6,
@@ -64138,7 +64205,7 @@ var init_db = __esm({
           description: "Electrostatics, Gauss Law, current electricity, magnetic effects of current, electromagnetic induction, wave optics, photoelectric effect, and nuclear physics.",
           teacherId: "teacher-phy",
           teacherName: "Dr. Rajesh Kulkarni",
-          teacherEmail: "rajesh.kulkarni@edusync.edu.in",
+          teacherEmail: "rajesh.kulkarni@classsarthi.edu.in",
           color: "sky",
           accentBg: "bg-sky-500/10 border-sky-500/30 text-sky-400",
           enrolledCount: 6,
@@ -64162,7 +64229,7 @@ var init_db = __esm({
           description: "Solid state, solutions, electrochemistry, chemical kinetics, d & f block elements, coordination compounds, haloalkanes, aldehydes, ketones, and biomolecules.",
           teacherId: "teacher-che",
           teacherName: "Dr. Ananya Sen",
-          teacherEmail: "ananya.sen@edusync.edu.in",
+          teacherEmail: "ananya.sen@classsarthi.edu.in",
           color: "amber",
           accentBg: "bg-amber-500/10 border-amber-500/30 text-amber-400",
           enrolledCount: 6,
@@ -64186,7 +64253,7 @@ var init_db = __esm({
           description: "Inverse trigonometric functions, matrices & determinants, continuity & differentiability, applications of derivatives, integrals, differential equations, and 3D geometry.",
           teacherId: "teacher-mat",
           teacherName: "Prof. Vikramaditya Roy",
-          teacherEmail: "vikram.roy@edusync.edu.in",
+          teacherEmail: "vikram.roy@classsarthi.edu.in",
           color: "indigo",
           accentBg: "bg-indigo-500/10 border-indigo-500/30 text-indigo-400",
           enrolledCount: 6,
@@ -64213,7 +64280,7 @@ var init_db = __esm({
           description: "Automated PyTest configuration, test fixtures, suites, and runners captured live from VisionNote.",
           teacherId: "teacher-phy",
           teacherName: "Dr. Rajesh Kulkarni",
-          teacherEmail: "rajesh.kulkarni@edusync.edu.in",
+          teacherEmail: "rajesh.kulkarni@classsarthi.edu.in",
           color: "purple",
           accentBg: "bg-purple-500/10 border-purple-500/30 text-purple-400",
           enrolledCount: 6,
@@ -65643,7 +65710,7 @@ $$2I = \\int_{0}^{\\pi/2} 1 \\, dx = \\frac{\\pi}{2} \\implies I = \\frac{\\pi}{
             { week: "Week 3", avgScore: 85.2, submissionRate: 93.3, activeCount: 14 },
             { week: "Week 4", avgScore: 86.4, submissionRate: 93.3, activeCount: 15 }
           ],
-          aiExecutiveSummary: `The 1st Year B.Tech cohort across CSE, ECE, and ME is showing excellent engagement in ESS. Class average stands at 86.4% under Dr. Sanmitra Burman. Dhruva and Ashita lead in environmental audit precision.`,
+          aiExecutiveSummary: `The 1st Year B.Tech cohort across CSE, ECE, and ME is showing excellent engagement in ESS. Class average stands at 86.4% under Dr. Rajesh Burman. Dhruva and Ashita lead in environmental audit precision.`,
           keyActionItems: [
             "Conduct the campus water sampling practical session.",
             "Review Leopold EIA scoring methodology before the midterm."
@@ -65804,7 +65871,7 @@ $$2I = \\int_{0}^{\\pi/2} 1 \\, dx = \\frac{\\pi}{2} \\implies I = \\frac{\\pi}{
       lectureProgress: loadProgressFromDisk(seedStudentLectureProgress),
       masteryQuizzes: seedMasteryQuizzes,
       questionBanks: [...FAKE_QUESTION_BANKS],
-      plugins: JSON.parse(JSON.stringify(initialPlugins)),
+      plugins: loadPluginsFromDisk(initialPlugins),
       customTutors: JSON.parse(JSON.stringify(initialCustomTutors)),
       tutorApprovalRequests: JSON.parse(JSON.stringify(initialTutorApprovalRequests))
     };
@@ -65942,7 +66009,7 @@ What would you like to explore?`,
   }
   if (clean.includes("who are you") || clean.includes("what are you") || clean.includes("what can you do") || clean.includes("what is your name")) {
     return {
-      reply: `I'm your **EduSync AI Academic Tutor**! \u{1F393}
+      reply: `I'm your **ClassSarthi AI Academic Tutor**! \u{1F393}
 
 I'm designed to work just like a personal study partner and teaching assistant for **${subjectName}** (${subjectCode}). Here's how I can help:
 - \u{1F4D6} **Understand Course Topics**: Break down complex concepts, formulas, and algorithms from your syllabus.
@@ -66361,7 +66428,7 @@ void reverseString(char *str) {
 }
 
 int main() {
-    char text[] = "EduSync"; // Modifiable stack array
+    char text[] = "ClassSarthi"; // Modifiable stack array
     printf("Original: %s\\n", text);
     
     reverseString(text);
@@ -66467,7 +66534,7 @@ function synthesizeIntelligentAcademicResponse(query, subjectCode, subjectName, 
   if (isGreeting) {
     if (cleanQuery.includes("who are you") || cleanQuery.includes("what are you") || cleanQuery.includes("what can you do")) {
       return {
-        reply: `### \u{1F44B} Hi! I'm your EduSync AI Academic Tutor for **${subjectName}** (${subjectCode}).
+        reply: `### \u{1F44B} Hi! I'm your ClassSarthi AI Academic Tutor for **${subjectName}** (${subjectCode}).
 
 I'm here to help you master your coursework, prepare for exams, and solve homework problems. Here is what I can do:
 
@@ -67567,7 +67634,7 @@ ${context.subject.syllabusTopics.map((t2, i2) => `  ${i2 + 1}. ${t2}`).join("\n"
 ${context.upcomingTimelines.map((t2) => `- [${t2.type.toUpperCase()}] ${t2.title} on ${t2.date} (${t2.startTime})`).join("\n")}` : "No immediate deadlines recorded.";
   const resourcesInfo = contextResources.length > 0 ? `Teacher References & Textbooks:
 ${contextResources.map((r2) => `- ${r2.title} (${r2.category} by ${r2.author}) [URL: ${r2.url}]: ${r2.description}`).join("\n")}` : "";
-  const systemInstruction = `You are "EduSync AI Academic Tutor", an intelligent, friendly, natural, and supportive educational AI assistant (similar to ChatGPT / Gemini).
+  const systemInstruction = `You are "ClassSarthi AI Academic Tutor", an intelligent, friendly, natural, and supportive educational AI assistant (similar to ChatGPT / Gemini).
 Your role is to help students learn, solve problems, prepare for exams, and succeed in their studies.
 
 ${buildPersonaPromptInstructions(context.learnerProfile)}
@@ -67604,9 +67671,9 @@ Return your response in clean JSON format:
     let response = null;
     for (const modelName of candidateModels) {
       try {
-        response = await ai.models.generateContent({
+        response = await ai.interactions.create({
           model: modelName,
-          contents: `[STUDENT_ACADEMIC_QUERY_START]
+          input: `[STUDENT_ACADEMIC_QUERY_START]
 ${sanitizedUserMessage}
 [STUDENT_ACADEMIC_QUERY_END]
 
@@ -67614,12 +67681,10 @@ Subject: ${context.subject?.code} - ${context.subject?.name}
 Mode: ${context.requestedMode || "general"}
 
 Please research the topic thoroughly and provide a deep, step-by-step, textbook-grade pedagogical explanation tailored to the query above.`,
-          config: {
-            systemInstruction
-          }
+          system_instruction: systemInstruction
         });
-        if (response && response.text) {
-          rawText = response.text;
+        if (response && response.output_text) {
+          rawText = response.output_text;
           break;
         }
       } catch (mErr) {
@@ -67692,7 +67757,7 @@ async function researchTopicAndVideosAI(prompt, subject) {
 }
 async function summarizeNoteAI(noteContent, subjectName, learnerProfile) {
   const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
+  if (!apiKey || process.env.TEST_MODE === "true") {
     return {
       summary: "Executive summary generated from lecture notes focusing on primary engineering principles, invariants, and complexity bounds.",
       keyTakeaways: [
@@ -67705,23 +67770,24 @@ async function summarizeNoteAI(noteContent, subjectName, learnerProfile) {
   const ai = getAI();
   try {
     const personaGuidance = buildPersonaPromptInstructions(learnerProfile);
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: `Please summarize the following student study notes for ${subjectName || "the academic course"} into an executive conceptual summary and 3-5 punchy key takeaways:
+    const response = await ai.interactions.create({
+      model: "gemini-2.5-flash",
+      input: `Please summarize the following student study notes for ${subjectName || "the academic course"} into an executive conceptual summary and 3-5 punchy key takeaways:
 
 ${noteContent}`,
-      config: {
-        systemInstruction: `You are an academic synthesis engine. Return crisp, high-yield summary text and bullet takeaways tailored to the student's learning profile.
+      system_instruction: `You are an academic synthesis engine. Return crisp, high-yield summary text and bullet takeaways tailored to the student's learning profile.
 
 ${personaGuidance}`,
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
+      response_format: {
+        type: "text",
+        mime_type: "application/json",
+        schema: {
+          type: "object",
           properties: {
-            summary: { type: Type.STRING, description: "A 2-3 sentence executive synthesis of the note content" },
+            summary: { type: "string", description: "A 2-3 sentence executive synthesis of the note content" },
             keyTakeaways: {
-              type: Type.ARRAY,
-              items: { type: Type.STRING },
+              type: "array",
+              items: { type: "string" },
               description: "3 to 5 vital high-yield takeaways for exam preparation"
             }
           },
@@ -67729,7 +67795,7 @@ ${personaGuidance}`,
         }
       }
     });
-    return JSON.parse(response.text || "{}");
+    return JSON.parse(response.output_text || "{}");
   } catch (err) {
     console.error("Error in summarizeNoteAI:", err);
     return {
@@ -67745,7 +67811,7 @@ async function generateDetailedTopicNoteAI(payload) {
   const apiKey = process.env.GEMINI_API_KEY;
   const subjectName = subject?.name || "Engineering Course";
   const subjectCode = subject?.code || "CRS";
-  if (!apiKey) {
+  if (!apiKey || process.env.TEST_MODE === "true") {
     const depthTitle = depth === "cheat_sheet" ? "Quick Revision Cheat Sheet" : depth === "formula_sheet" ? "Formula & Definitions Sheet" : "Comprehensive Lecture & Exam Notes";
     const noteTitle = `${subjectCode}: ${sanitizedPrompt.slice(0, 45)} (${depthTitle})`;
     const generatedMarkdown = `# ${noteTitle}
@@ -67808,7 +67874,7 @@ void verifyStateIntegrity(const SystemState* state) {
   const ai = getAI();
   try {
     const depthInstruction = depth === "cheat_sheet" ? "Structure this as a high-density, concise Cheat Sheet with bullet points, essential formulas, and quick lookup tables." : depth === "formula_sheet" ? "Structure this as a Formula & Definitions Reference Sheet with clear variable definitions and unit specifications." : depth === "deep_dive" ? "Structure this as an in-depth Academic Treatise with full mathematical derivations, edge cases, diagrams (ASCII/Markdown), and code/algorithmic implementations." : "Structure this as Comprehensive Exam Prep Notes with theory, solved example walkthroughs, common mistakes, and memory mnemonics.";
-    const systemInstruction = `You are EduSync's elite University Curriculum & Note Generation AI.
+    const systemInstruction = `You are ClassSarthi's elite University Curriculum & Note Generation AI.
 Your objective is to generate structured, pedagogical, beautiful Markdown study notes for university engineering students based on their prompt, course syllabus, and any fed document text.
 
 ${buildPersonaPromptInstructions(payload.learnerProfile)}
@@ -67828,26 +67894,27 @@ ${sanitizedAttached ? `Attached Document / PDF Text Content (${documentName || "
 ${sanitizedAttached}` : ""}
 
 Please generate comprehensive, publication-ready academic study notes.`;
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: promptContext,
-      config: {
-        systemInstruction,
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
+    const response = await ai.interactions.create({
+      model: "gemini-3.8-flash",
+      input: promptContext,
+      system_instruction: systemInstruction,
+      response_format: {
+        type: "text",
+        mime_type: "application/json",
+        schema: {
+          type: "object",
           properties: {
-            title: { type: Type.STRING, description: "Clear academic title of the generated note" },
-            content: { type: Type.STRING, description: "Complete structured Markdown note content" },
+            title: { type: "string", description: "Clear academic title of the generated note" },
+            content: { type: "string", description: "Complete structured Markdown note content" },
             tags: {
-              type: Type.ARRAY,
-              items: { type: Type.STRING },
+              type: "array",
+              items: { type: "string" },
               description: "3-4 relevant topic and subject tags"
             },
-            summary: { type: Type.STRING, description: "Executive 2-sentence synthesis of note" },
+            summary: { type: "string", description: "Executive 2-sentence synthesis of note" },
             keyTakeaways: {
-              type: Type.ARRAY,
-              items: { type: Type.STRING },
+              type: "array",
+              items: { type: "string" },
               description: "3-5 high-yield bullet takeaways"
             }
           },
@@ -67855,7 +67922,7 @@ Please generate comprehensive, publication-ready academic study notes.`;
         }
       }
     });
-    const parsed = JSON.parse(response.text || "{}");
+    const parsed = JSON.parse(response.output_text || "{}");
     return {
       title: parsed.title || `${subjectCode}: ${sanitizedPrompt}`,
       content: parsed.content || `# ${subjectCode}: ${sanitizedPrompt}
@@ -67885,7 +67952,7 @@ Comprehensive notes covering ${sanitizedPrompt} for ${subjectName}.
 }
 async function generateFlashcardsAI(noteContent, count = 5, learnerProfile) {
   const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
+  if (!apiKey || process.env.TEST_MODE === "true") {
     return [
       { id: `fc-gen-${Date.now()}-1`, question: "What is the primary theorem discussed in the note?", answer: "The fundamental balance or invariant bound guaranteeing optimal system runtime or efficiency.", hint: "Think about asymptotic limits", topic: "Core Concept" },
       { id: `fc-gen-${Date.now()}-2`, question: "What is the operational complexity or efficiency formula?", answer: "O(log n) or thermodynamic Carnot limit depending on domain constraints.", hint: "Compare against baseline", topic: "Complexity" },
@@ -67895,32 +67962,33 @@ async function generateFlashcardsAI(noteContent, count = 5, learnerProfile) {
   const ai = getAI();
   try {
     const personaGuidance = buildPersonaPromptInstructions(learnerProfile);
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: `Extract ${count} high-yield, exam-oriented study flashcards (Q&A pairs with optional hints and topic tags) from these student notes:
+    const response = await ai.interactions.create({
+      model: "gemini-3.8-flash",
+      input: `Extract ${count} high-yield, exam-oriented study flashcards (Q&A pairs with optional hints and topic tags) from these student notes:
 
 ${noteContent}`,
-      config: {
-        systemInstruction: `You are an academic flashcard extraction engine. Adapt question depth, hints, and topics to match the student persona.
+      system_instruction: `You are an academic flashcard extraction engine. Adapt question depth, hints, and topics to match the student persona.
 
 ${personaGuidance}`,
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.ARRAY,
+      response_format: {
+        type: "text",
+        mime_type: "application/json",
+        schema: {
+          type: "array",
           items: {
-            type: Type.OBJECT,
+            type: "object",
             properties: {
-              question: { type: Type.STRING, description: "Clear, concise concept question" },
-              answer: { type: Type.STRING, description: "Accurate, complete explanation or formula" },
-              hint: { type: Type.STRING, description: "Helpful clue without giving away the full answer" },
-              topic: { type: Type.STRING, description: "Specific sub-topic label" }
+              question: { type: "string", description: "Clear, concise concept question" },
+              answer: { type: "string", description: "Accurate, complete explanation or formula" },
+              hint: { type: "string", description: "Helpful clue without giving away the full answer" },
+              topic: { type: "string", description: "Specific sub-topic label" }
             },
             required: ["question", "answer", "topic"]
           }
         }
       }
     });
-    const items = JSON.parse(response.text || "[]");
+    const items = JSON.parse(response.output_text || "[]");
     return items.map((item, idx) => ({
       id: `fc-gen-${Date.now()}-${idx}`,
       question: item.question,
@@ -67942,7 +68010,7 @@ async function generateNoteQuizAI(noteContent, title, learnerProfile, teacherQue
     id: tq.id || `q-fac-${Date.now()}-${i2}`,
     source: "teacher_question_bank"
   })) : [];
-  if (!apiKey) {
+  if (!apiKey || process.env.TEST_MODE === "true") {
     if (facultyQuestions.length > 0) {
       return {
         title: title ? `Faculty Verified Quiz: ${title}` : "Faculty Curated Assessment",
@@ -67998,37 +68066,38 @@ Options: ${q.options.join(", ")}
 Answer Index: ${q.correctIndex}
 Topic: ${q.topic}`).join("\n\n")}` : "";
     const neededAiCount = Math.max(2, 5 - Math.min(facultyQuestions.length, 3));
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: `Generate ${neededAiCount} high-yield multiple-choice practice questions based on the following notes:${teacherContext}
+    const response = await ai.interactions.create({
+      model: "gemini-3.8-flash",
+      input: `Generate ${neededAiCount} high-yield multiple-choice practice questions based on the following notes:${teacherContext}
 
 STUDENT NOTES:
 ${noteContent}`,
-      config: {
-        systemInstruction: `You are an educational quiz generation engine. Tailor the question difficulty and conceptual depth to match the student's target learning goals.
+      system_instruction: `You are an educational quiz generation engine. Tailor the question difficulty and conceptual depth to match the student's target learning goals.
 
 ${personaGuidance}`,
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
+      response_format: {
+        type: "text",
+        mime_type: "application/json",
+        schema: {
+          type: "object",
           properties: {
-            title: { type: Type.STRING, description: "Engaging title for the quiz" },
+            title: { type: "string", description: "Engaging title for the quiz" },
             questions: {
-              type: Type.ARRAY,
+              type: "array",
               items: {
-                type: Type.OBJECT,
+                type: "object",
                 properties: {
-                  id: { type: Type.STRING },
-                  question: { type: Type.STRING, description: "Challenging multiple choice question" },
+                  id: { type: "string" },
+                  question: { type: "string", description: "Challenging multiple choice question" },
                   options: {
-                    type: Type.ARRAY,
-                    items: { type: Type.STRING },
+                    type: "array",
+                    items: { type: "string" },
                     description: "Exactly 4 distinct plausible options"
                   },
-                  correctIndex: { type: Type.INTEGER, description: "0-based index of the single correct answer" },
-                  explanation: { type: Type.STRING, description: "Step-by-step conceptual rationale" },
-                  topic: { type: Type.STRING, description: "Topic category" },
-                  difficulty: { type: Type.STRING, description: "easy, moderate, or hard" }
+                  correctIndex: { type: "integer", description: "0-based index of the single correct answer" },
+                  explanation: { type: "string", description: "Step-by-step conceptual rationale" },
+                  topic: { type: "string", description: "Topic category" },
+                  difficulty: { type: "string", description: "easy, moderate, or hard" }
                 },
                 required: ["id", "question", "options", "correctIndex", "explanation", "topic"]
               }
@@ -68038,7 +68107,7 @@ ${personaGuidance}`,
         }
       }
     });
-    const parsed = JSON.parse(response.text || "{}");
+    const parsed = JSON.parse(response.output_text || "{}");
     const aiQuestions = (parsed.questions || []).map((q, i2) => ({
       id: `quiz-q-${Date.now()}-${i2}`,
       question: q.question,
@@ -68090,7 +68159,7 @@ ${personaGuidance}`,
 async function generatePromptQuizAI(prompt, subject, count = 4) {
   const apiKey = process.env.GEMINI_API_KEY;
   const subjName = subject?.name || "Engineering Curriculum";
-  if (!apiKey) {
+  if (!apiKey || process.env.TEST_MODE === "true") {
     return {
       id: `quiz-gen-${Date.now()}`,
       title: `Diagnostic Quiz: ${prompt}`,
@@ -68141,31 +68210,32 @@ async function generatePromptQuizAI(prompt, subject, count = 4) {
   }
   const ai = getAI();
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: `Create a ${count}-question multiple choice quiz for university students on the topic: "${prompt}" in the course "${subjName}" (${subject?.code || ""}).
+    const response = await ai.interactions.create({
+      model: "gemini-3.8-flash",
+      input: `Create a ${count}-question multiple choice quiz for university students on the topic: "${prompt}" in the course "${subjName}" (${subject?.code || ""}).
 Make each question rigorous with 4 distinct choices, exact 0-based correctIndex, and clear explanatory reasoning for the answer.`,
-      config: {
-        systemInstruction: "You are an elite exam author. Return JSON with title, topic, and questions array.",
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
+      system_instruction: "You are an elite exam author. Return JSON with title, topic, and questions array.",
+      response_format: {
+        type: "text",
+        mime_type: "application/json",
+        schema: {
+          type: "object",
           properties: {
-            title: { type: Type.STRING },
-            topic: { type: Type.STRING },
+            title: { type: "string" },
+            topic: { type: "string" },
             questions: {
-              type: Type.ARRAY,
+              type: "array",
               items: {
-                type: Type.OBJECT,
+                type: "object",
                 properties: {
-                  question: { type: Type.STRING },
+                  question: { type: "string" },
                   options: {
-                    type: Type.ARRAY,
-                    items: { type: Type.STRING }
+                    type: "array",
+                    items: { type: "string" }
                   },
-                  correctIndex: { type: Type.INTEGER },
-                  explanation: { type: Type.STRING },
-                  topic: { type: Type.STRING }
+                  correctIndex: { type: "integer" },
+                  explanation: { type: "string" },
+                  topic: { type: "string" }
                 },
                 required: ["question", "options", "correctIndex", "explanation", "topic"]
               }
@@ -68175,7 +68245,7 @@ Make each question rigorous with 4 distinct choices, exact 0-based correctIndex,
         }
       }
     });
-    const parsed = JSON.parse(response.text || "{}");
+    const parsed = JSON.parse(response.output_text || "{}");
     return {
       id: `quiz-gen-${Date.now()}`,
       title: parsed.title || `Assessment: ${prompt}`,
@@ -68217,7 +68287,7 @@ Make each question rigorous with 4 distinct choices, exact 0-based correctIndex,
 }
 async function generateClassDiagnosticsAI(subject, currentAnalytics) {
   const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
+  if (!apiKey || process.env.TEST_MODE === "true") {
     return {
       aiExecutiveSummary: `Class performance for ${subject.code} is currently averaging ${currentAnalytics.classAverage}% across ${currentAnalytics.totalStudents} enrolled students. Focus areas include rotation cases, thermodynamic cycle derivations, and memory layout tracking.`,
       keyActionItems: [
@@ -68230,38 +68300,39 @@ async function generateClassDiagnosticsAI(subject, currentAnalytics) {
   }
   const ai = getAI();
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: `Analyze the class academic performance for ${subject.code} (${subject.name}).
+    const response = await ai.interactions.create({
+      model: "gemini-3.8-flash",
+      input: `Analyze the class academic performance for ${subject.code} (${subject.name}).
 Current Class Average: ${currentAnalytics.classAverage}%
 Submission Rate: ${currentAnalytics.submissionRate}%
 Enrolled Students: ${currentAnalytics.totalStudents}
 At Risk Students: ${currentAnalytics.atRiskStudentsCount}
 Current Recorded Weak Topics: ${JSON.stringify(currentAnalytics.weakTopics || [])}
 Grade Distribution: ${JSON.stringify(currentAnalytics.gradeDistribution || [])}`,
-      config: {
-        systemInstruction: "You are an elite academic analytics consultant for university faculty. Generate a high-level diagnostic executive briefing, prioritized pedagogical action items, and refined weak topic remediation strategies.",
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
+      system_instruction: "You are an elite academic analytics consultant for university faculty. Generate a high-level diagnostic executive briefing, prioritized pedagogical action items, and refined weak topic remediation strategies.",
+      response_format: {
+        type: "text",
+        mime_type: "application/json",
+        schema: {
+          type: "object",
           properties: {
-            aiExecutiveSummary: { type: Type.STRING, description: "Executive summary with bolded key metrics and actionable pedagogical narrative" },
+            aiExecutiveSummary: { type: "string", description: "Executive summary with bolded key metrics and actionable pedagogical narrative" },
             keyActionItems: {
-              type: Type.ARRAY,
-              items: { type: Type.STRING },
+              type: "array",
+              items: { type: "string" },
               description: "3-4 direct, highly actionable steps the teacher can execute this week"
             },
             weakTopics: {
-              type: Type.ARRAY,
+              type: "array",
               items: {
-                type: Type.OBJECT,
+                type: "object",
                 properties: {
-                  topic: { type: Type.STRING },
-                  errorRate: { type: Type.NUMBER, description: "Estimated percent error rate (e.g. 35)" },
-                  averageScore: { type: Type.NUMBER, description: "Average score on this topic (e.g. 68)" },
-                  affectedStudents: { type: Type.NUMBER },
-                  recommendedRemediation: { type: Type.STRING },
-                  urgency: { type: Type.STRING, enum: ["high", "medium", "low"] }
+                  topic: { type: "string" },
+                  errorRate: { type: "number", description: "Estimated percent error rate (e.g. 35)" },
+                  averageScore: { type: "number", description: "Average score on this topic (e.g. 68)" },
+                  affectedStudents: { type: "number" },
+                  recommendedRemediation: { type: "string" },
+                  urgency: { type: "string", enum: ["high", "medium", "low"] }
                 },
                 required: ["topic", "errorRate", "averageScore", "affectedStudents", "recommendedRemediation", "urgency"]
               }
@@ -68271,7 +68342,7 @@ Grade Distribution: ${JSON.stringify(currentAnalytics.gradeDistribution || [])}`
         }
       }
     });
-    return JSON.parse(response.text || "{}");
+    return JSON.parse(response.output_text || "{}");
   } catch (err) {
     console.error("Error generating class diagnostics:", err);
     return {
@@ -68283,7 +68354,7 @@ Grade Distribution: ${JSON.stringify(currentAnalytics.gradeDistribution || [])}`
 }
 async function generateSyllabusTimelineAI(courseName, description, weeksCount = 6) {
   const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
+  if (!apiKey || process.env.TEST_MODE === "true") {
     return [
       { title: "Unit 1 Foundations & Mathematical Invariants", type: "lecture", weekNumber: 1, description: "Core principles, state modeling, and problem decomposition.", topicsCovered: ["Theoretical Foundations", "Recurrence Bounds"], weightagePercent: 0 },
       { title: "Diagnostic Quiz 1: Core Theorems", type: "quiz", weekNumber: 2, description: "Quick assessment of introductory concepts.", topicsCovered: ["Invariants", "Proof Techniques"], weightagePercent: 10 },
@@ -68293,34 +68364,35 @@ async function generateSyllabusTimelineAI(courseName, description, weeksCount = 
   }
   const ai = getAI();
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: `Create a structured academic timeline with ${weeksCount} milestones (lectures, quizzes, practical labs, assignments, and exams) for the course "${courseName}":
+    const response = await ai.interactions.create({
+      model: "gemini-3.8-flash",
+      input: `Create a structured academic timeline with ${weeksCount} milestones (lectures, quizzes, practical labs, assignments, and exams) for the course "${courseName}":
 Description: ${description}`,
-      config: {
-        systemInstruction: "You are an academic curriculum designer. Generate a balanced distribution of academic timeline events with realistic weightages and topic descriptions.",
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.ARRAY,
+      system_instruction: "You are an academic curriculum designer. Generate a balanced distribution of academic timeline events with realistic weightages and topic descriptions.",
+      response_format: {
+        type: "text",
+        mime_type: "application/json",
+        schema: {
+          type: "array",
           items: {
-            type: Type.OBJECT,
+            type: "object",
             properties: {
-              title: { type: Type.STRING },
-              type: { type: Type.STRING, enum: ["lecture", "quiz", "exam", "practical", "assignment"] },
-              weekNumber: { type: Type.INTEGER },
-              description: { type: Type.STRING },
+              title: { type: "string" },
+              type: { type: "string", enum: ["lecture", "quiz", "exam", "practical", "assignment"] },
+              weekNumber: { type: "integer" },
+              description: { type: "string" },
               topicsCovered: {
-                type: Type.ARRAY,
-                items: { type: Type.STRING }
+                type: "array",
+                items: { type: "string" }
               },
-              weightagePercent: { type: Type.INTEGER }
+              weightagePercent: { type: "integer" }
             },
             required: ["title", "type", "weekNumber", "description", "topicsCovered"]
           }
         }
       }
     });
-    return JSON.parse(response.text || "[]");
+    return JSON.parse(response.output_text || "[]");
   } catch (err) {
     console.error("Error generating syllabus timeline:", err);
     return [
@@ -68348,9 +68420,9 @@ async function generateMasteryQuizAI(noteContent, title, learnerProfile, count =
   const candidateModels = ["gemini-3.6-flash", "gemini-3.5-flash-lite", "gemini-3.7-flash", "gemini-3.5-flash"];
   for (const modelName of candidateModels) {
     try {
-      const response = await ai.models.generateContent({
+      const response = await ai.interactions.create({
         model: modelName,
-        contents: `Generate exactly ${targetCount} high-yield multiple-choice questions for an academic lecture mastery quiz based strictly on the following lecture notes:
+        input: `Generate exactly ${targetCount} high-yield multiple-choice questions for an academic lecture mastery quiz based strictly on the following lecture notes:
 
 TITLE: ${sanitizedTitle}
 
@@ -68360,30 +68432,31 @@ ${noteContent}
 REQUIREMENTS:
 - Include a balanced distribution of difficulties: 2 Easy (core definitions, factual benchmarks), 2-3 Moderate (application, operational rules, standard processes), 2 Hard (edge cases, tricky constraints, exceptions).
 - Each question must have exactly 4 options, a 0-based correctIndex, a conceptual explanation, a concise topic label, and a difficulty ('easy' | 'moderate' | 'hard').`,
-        config: {
-          systemInstruction: `You are an elite university exam author and tutor. Generate rigorous, diagnostic multiple-choice questions strictly from the provided lecture text to test conceptual and practical mastery rather than trivial trivia.
+        system_instruction: `You are an elite university exam author and tutor. Generate rigorous, diagnostic multiple-choice questions strictly from the provided lecture text to test conceptual and practical mastery rather than trivial trivia.
 
 ${personaGuidance}`,
-          responseMimeType: "application/json",
-          responseSchema: {
-            type: Type.OBJECT,
+        response_format: {
+          type: "text",
+          mime_type: "application/json",
+          schema: {
+            type: "object",
             properties: {
-              title: { type: Type.STRING },
+              title: { type: "string" },
               questions: {
-                type: Type.ARRAY,
+                type: "array",
                 items: {
-                  type: Type.OBJECT,
+                  type: "object",
                   properties: {
-                    id: { type: Type.STRING },
-                    question: { type: Type.STRING },
+                    id: { type: "string" },
+                    question: { type: "string" },
                     options: {
-                      type: Type.ARRAY,
-                      items: { type: Type.STRING }
+                      type: "array",
+                      items: { type: "string" }
                     },
-                    correctIndex: { type: Type.INTEGER },
-                    explanation: { type: Type.STRING },
-                    topic: { type: Type.STRING },
-                    difficulty: { type: Type.STRING, enum: ["easy", "moderate", "hard"] }
+                    correctIndex: { type: "integer" },
+                    explanation: { type: "string" },
+                    topic: { type: "string" },
+                    difficulty: { type: "string", enum: ["easy", "moderate", "hard"] }
                   },
                   required: ["id", "question", "options", "correctIndex", "explanation", "topic", "difficulty"]
                 }
@@ -68393,7 +68466,7 @@ ${personaGuidance}`,
           }
         }
       });
-      const parsed = JSON.parse(response.text || "{}");
+      const parsed = JSON.parse(response.output_text || "{}");
       if (Array.isArray(parsed.questions) && parsed.questions.length >= 3) {
         return {
           title: parsed.title || `Mastery Quiz: ${sanitizedTitle}`,
@@ -68467,15 +68540,15 @@ async function analyzeQuizPerformanceAI(quizTitle, questions, userAnswers, learn
     suggestedTutorPrompt: missedQuestions.length > 0 ? `I completed the VisionNote mastery quiz on "${quizTitle}" and scored ${totalScore}/${totalQuestions} (${percentage}%). I need Socratic guidance on: "${missedQuestions[0].question}". Please guide me from first principles without giving away the direct answer.` : `I scored 100% on the VisionNote mastery quiz for "${quizTitle}". Please challenge me with an advanced Olympiad-level Socratic problem on ${primaryMissedTopic}.`
   };
   const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey || missedQuestions.length === 0) {
+  if (!apiKey || missedQuestions.length === 0 || process.env.TEST_MODE === "true") {
     return fallbackAnalysis;
   }
   const ai = getAI();
   try {
     const personaGuidance = buildPersonaPromptInstructions(learnerProfile);
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: `Analyze this student's performance on the lecture mastery quiz "${quizTitle}":
+    const response = await ai.interactions.create({
+      model: "gemini-3.8-flash",
+      input: `Analyze this student's performance on the lecture mastery quiz "${quizTitle}":
 Score: ${totalScore}/${totalQuestions} (${percentage}%)
 Missed Questions:
 ${JSON.stringify(missedQuestions, null, 2)}
@@ -68485,28 +68558,29 @@ Provide a diagnostic breakdown:
 2. Key misconceptions (2-3 bullet items).
 3. Suggested tutor topic.
 4. Suggested Socratic tutor prompt (the exact guiding question the student should paste into the Socratic AI Tutor to overcome this hurdle).`,
-      config: {
-        systemInstruction: `You are a diagnostic learning scientist and Socratic AI coach. Write constructive, empowering academic feedback tuned to the student's cognitive persona.
+      system_instruction: `You are a diagnostic learning scientist and Socratic AI coach. Write constructive, empowering academic feedback tuned to the student's cognitive persona.
 
 ${personaGuidance}`,
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
+      response_format: {
+        type: "text",
+        mime_type: "application/json",
+        schema: {
+          type: "object",
           properties: {
-            summary: { type: Type.STRING },
-            masteryLevel: { type: Type.STRING, enum: ["Mastered", "Proficient", "Needs Review"] },
+            summary: { type: "string" },
+            masteryLevel: { type: "string", enum: ["Mastered", "Proficient", "Needs Review"] },
             keyMisconceptions: {
-              type: Type.ARRAY,
-              items: { type: Type.STRING }
+              type: "array",
+              items: { type: "string" }
             },
-            suggestedTutorTopic: { type: Type.STRING },
-            suggestedTutorPrompt: { type: Type.STRING }
+            suggestedTutorTopic: { type: "string" },
+            suggestedTutorPrompt: { type: "string" }
           },
           required: ["summary", "masteryLevel", "keyMisconceptions", "suggestedTutorTopic", "suggestedTutorPrompt"]
         }
       }
     });
-    const parsed = JSON.parse(response.text || "{}");
+    const parsed = JSON.parse(response.output_text || "{}");
     return {
       summary: parsed.summary || fallbackAnalysis.summary,
       masteryLevel: parsed.masteryLevel || masteryLevel,
@@ -68697,19 +68771,20 @@ STYLE INSTRUCTIONS:
 - If exam_focused: prioritize high-yield formulas, common traps, rubric grading checklists, and quick revision tables.
 - If socratic: include embedded self-test questions and conceptual reflection prompts.
 - Maintain complete accuracy of all LaTeX formulas ($$...$$).`,
-      config: {
-        systemInstruction: `You are an elite academic tutor. Re-structure the student's lecture notes into an ultra-clean, pedagogical, beautifully formatted Markdown document tuned precisely to their questionnaire persona.
+      system_instruction: `You are an elite academic tutor. Re-structure the student's lecture notes into an ultra-clean, pedagogical, beautifully formatted Markdown document tuned precisely to their questionnaire persona.
 
 ${personaGuidance}`,
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
+      response_format: {
+        type: "text",
+        mime_type: "application/json",
+        schema: {
+          type: "object",
           properties: {
-            content: { type: Type.STRING, description: "Complete restructured Markdown text with LaTeX" },
-            summary: { type: Type.STRING, description: "1-2 sentence executive conceptual summary" },
+            content: { type: "string", description: "Complete restructured Markdown text with LaTeX" },
+            summary: { type: "string", description: "1-2 sentence executive conceptual summary" },
             keyTakeaways: {
-              type: Type.ARRAY,
-              items: { type: Type.STRING },
+              type: "array",
+              items: { type: "string" },
               description: "3-4 punchy high-yield takeaways"
             }
           },
@@ -68717,7 +68792,7 @@ ${personaGuidance}`,
         }
       }
     });
-    const parsed = JSON.parse(response.text || "{}");
+    const parsed = JSON.parse(response.output_text || "{}");
     return {
       content: parsed.content || localRecraft.content,
       summary: parsed.summary || localRecraft.summary,
@@ -68764,24 +68839,25 @@ ${boardCapturesText}
 === GENERALIZED NOTES ===
 ${JSON.stringify(lecture.generalizedNotes, null, 2)}
 `;
-    const generatePromise = ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: prompt,
-      config: {
-        systemInstruction: `You are the "Ask My Class" AI assistant for students who attended this classroom lecture.
+    const generatePromise = ai.interactions.create({
+      model: "gemini-3.8-flash",
+      input: prompt,
+      system_instruction: `You are the "Ask My Class" AI assistant for students who attended this classroom lecture.
 CRITICAL RULES:
 1. Answer the student's question using ONLY the provided ClassSarthi lecture data (Audio transcript, timeline events, board OCR, and notes).
 2. Whenever possible, provide the exact relevant timestamp in your response (e.g. "The teacher explained this around 21:05.").
 3. Strict Grounding Guardrail: Do NOT pretend that something was said or written in class if it is not present in the lecture data. If the question asks about something not discussed in this lecture, politely state that this topic was not covered in today's class.
 4. If a formula or board diagram was drawn by the teacher, provide the exact LaTeX formula and mention the board capture.`,
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
+      response_format: {
+        type: "text",
+        mime_type: "application/json",
+        schema: {
+          type: "object",
           properties: {
-            answer: { type: Type.STRING, description: "Direct answer grounded strictly in lecture data with timestamp citation" },
-            timestamp: { type: Type.STRING, description: 'Relevant timestamp (e.g. "21:05", "12:48") if applicable' },
-            isGrounded: { type: Type.BOOLEAN, description: "True if answer was present in lecture data, false otherwise" },
-            quoteSnippet: { type: Type.STRING, description: "Exact quote or speech snippet from teacher if available" }
+            answer: { type: "string", description: "Direct answer grounded strictly in lecture data with timestamp citation" },
+            timestamp: { type: "string", description: 'Relevant timestamp (e.g. "21:05", "12:48") if applicable' },
+            isGrounded: { type: "boolean", description: "True if answer was present in lecture data, false otherwise" },
+            quoteSnippet: { type: "string", description: "Exact quote or speech snippet from teacher if available" }
           },
           required: ["answer", "isGrounded"]
         }
@@ -68791,7 +68867,7 @@ CRITICAL RULES:
       (_, reject) => setTimeout(() => reject(new Error("AI generation timeout")), 3500)
     );
     const response = await Promise.race([generatePromise, timeoutPromise]);
-    const parsed = JSON.parse(response.text || "{}");
+    const parsed = JSON.parse(response.output_text || "{}");
     let matchedEvent = lecture.timeline.find((t2) => t2.timestamp === parsed.timestamp);
     let matchedCapture = lecture.boardCaptures.find((b) => b.timestamp === parsed.timestamp);
     return {
@@ -68968,7 +69044,7 @@ async function generateSocraticResponse(payload) {
   const userMessage = payload.message || "";
   const learningStyle = payload.learnerProfile?.learningStyle || "visual";
   const styleLabel = learningStyle === "step_by_step" ? "Step-by-Step Mathematical Rigor" : learningStyle === "exam_focused" ? "High-Yield Exam Focus" : learningStyle === "socratic_dialogue" ? "Socratic & Conversational" : "Visual & Mental Models";
-  const systemInstruction = `You are the EduSync Contextual Socratic AI Tutor.
+  const systemInstruction = `You are the ClassSarthi Contextual Socratic AI Tutor.
 The student just failed ${weakTopicsStr || weakestTopicName} from today's lecture '${lectureTitle}'.
 Their learning style is ${styleLabel}.
 When they ask a question, explain the concept using their preferred learning style.
@@ -69023,14 +69099,12 @@ What is the net acceleration if the incline is frictionless?`;
   }
   try {
     const ai = getAI();
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: userMessage || `[System Trigger]: Initial Socratic conversation hook on ${weakestTopicName}`,
-      config: {
-        systemInstruction
-      }
+    const response = await ai.interactions.create({
+      model: "gemini-3.8-flash",
+      input: userMessage || `[System Trigger]: Initial Socratic conversation hook on ${weakestTopicName}`,
+      system_instruction: systemInstruction
     });
-    let rawReply = response.text || `I see you struggled with **${weakestTopicName}** from today's class on "${lectureTitle}".`;
+    let rawReply = response.output_text || `I see you struggled with **${weakestTopicName}** from today's class on "${lectureTitle}".`;
     if (matchingVideo && !rawReply.includes("youtube.com") && !rawReply.includes("Recommended Video")) {
       rawReply += `
 
@@ -76960,7 +77034,7 @@ async function persistUserToCloud(user) {
   const sb = getClient();
   if (!sb) return false;
   try {
-    const userTitle = `__EDUSYNC_USER__:${user.id}`;
+    const userTitle = `__CLASSSARTHI_USER__:${user.id}`;
     const cleanUsername = (user.username || "").toLowerCase().trim();
     const cleanEmail = (user.email || "").toLowerCase().trim();
     const cleanInstId = (user.institutionalId || "").toLowerCase().trim();
@@ -76970,7 +77044,7 @@ async function persistUserToCloud(user) {
         generalised_notes: JSON.stringify(user),
         status: "ready",
         metadata: {
-          entity_type: "edusync_user",
+          entity_type: "classsarthi_user",
           user_id: user.id,
           username: cleanUsername,
           email: cleanEmail,
@@ -76992,7 +77066,7 @@ async function persistUserToCloud(user) {
         generalised_notes: JSON.stringify(user),
         status: "ready",
         metadata: {
-          entity_type: "edusync_user",
+          entity_type: "classsarthi_user",
           user_id: user.id,
           username: cleanUsername,
           email: cleanEmail,
@@ -77017,7 +77091,7 @@ async function loadUsersFromCloud() {
   const sb = getClient();
   if (!sb) return [];
   try {
-    const { data, error } = await sb.from("notes").select("generalised_notes").contains("metadata", { entity_type: "edusync_user" });
+    const { data, error } = await sb.from("notes").select("generalised_notes").contains("metadata", { entity_type: "classsarthi_user" });
     if (error || !data) {
       return [];
     }
@@ -77063,7 +77137,7 @@ async function deleteUserFromCloud(userId) {
   const sb = getClient();
   if (!sb || !userId) return false;
   try {
-    const userTitle = `__EDUSYNC_USER__:${userId}`;
+    const userTitle = `__CLASSSARTHI_USER__:${userId}`;
     await sb.from("notes").delete().eq("title", userTitle);
     return true;
   } catch (err) {
@@ -77132,7 +77206,7 @@ async function handler(req, res) {
         });
         return;
       }
-      const expectedPass = user.password || "EduSync@260101";
+      const expectedPass = user.password || "ClassSarthi@260101";
       if (expectedPass !== loginPass) {
         res.status(401).json({
           error: "Incorrect password. Please verify your credentials and try again."
@@ -77155,7 +77229,7 @@ async function handler(req, res) {
         name: name || "New User",
         email: email || `${cleanName}@bmu.edu.in`,
         username: `${targetRole === "teacher" ? "prof" : targetRole === "admin" ? "dean" : "student"}.${cleanName}`,
-        password: password || "EduSync@260101",
+        password: password || "ClassSarthi@260101",
         role: targetRole,
         gender: gender || "Male",
         program: program || (targetRole === "student" ? "CSE" : void 0),
@@ -77250,18 +77324,19 @@ async function handler(req, res) {
       res.status(200).json(localAnalysis);
       return;
     }
-    if ((path3.includes("/api/tutor") || path3.endsWith("/tutor")) && req.method === "POST") {
+    if ((path3.includes("/api/tutor") || path3.endsWith("/tutor") || path3.includes("/api/chat") || path3.endsWith("/chat")) && req.method === "POST") {
       const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body || {};
-      const { message, history = [] } = body;
+      const message = body.message || body.prompt || body.content;
       if (!message || typeof message !== "string") {
         res.status(400).json({ error: "Message is required" });
         return;
       }
-      const DEFAULT_B64 = "QVEuQWI4Uk42SUx3Um5VRnM3a052S3dFZE9BejZOZU8zTTRsSjZuLVVVTDQxRHlCclZUdlE=";
-      const buildTimeKey = "QVEuQWI4Uk42SUx3Um5VRnM3a052S3dFZE9BejZOZU8zTTRsSjZuLVVVTDQxRHlCclZUdlE=" ? Buffer.from("QVEuQWI4Uk42SUx3Um5VRnM3a052S3dFZE9BejZOZU8zTTRsSjZuLVVVTDQxRHlCclZUdlE=", "base64").toString("utf-8") : "";
+      const DEFAULT_B64 = "QVEuQWI4Uk42SlBDTjAzMC1GeDFiU3g0XzEzejRvMkdwMW5HSlhTdHFvSW5vcWQzTXI2d3c=";
+      const buildTimeKey = "QVEuQWI4Uk42SlBDTjAzMC1GeDFiU3g0XzEzejRvMkdwMW5HSlhTdHFvSW5vcWQzTXI2d3c=" ? Buffer.from("QVEuQWI4Uk42SlBDTjAzMC1GeDFiU3g0XzEzejRvMkdwMW5HSlhTdHFvSW5vcWQzTXI2d3c=", "base64").toString("utf-8") : "";
       const fallbackKey = Buffer.from(DEFAULT_B64, "base64").toString("utf-8");
       const apiKey = body.apiKey || process.env.GEMINI_API_KEY || buildTimeKey || fallbackKey;
       try {
+        const history = body.history || [];
         const formattedHistory = (Array.isArray(history) ? history : []).slice(-10).filter((h2) => h2.text || h2.content).map((h2) => ({
           role: h2.sender === "user" || h2.role === "user" ? "user" : "model",
           parts: [{ text: String(h2.text || h2.content) }]
@@ -77269,9 +77344,18 @@ async function handler(req, res) {
         const candidateModels = [
           "gemini-3.5-flash-lite",
           "gemini-3.1-flash-lite",
-          "gemini-flash-lite-latest"
+          "gemini-flash-lite-latest",
+          "gemini-3.6-flash",
+          "gemini-3.7-flash"
         ];
         let reply = "";
+        const isCasual = Boolean(body.isCasual) || /^(hi|hello|hey|greetings|howdy|sup|good\s*(morning|afternoon|evening)|how\s*are\s*you|who\s*are\s*you|what\s*can\s*you\s*do|tell\s*me\s*about\s*yourself|what'?s\s*up|yo)\b/i.test(message.trim());
+        const baseSystemPrompt = `You are ClassSarthi AI, an intelligent, natural, helpful conversational AI assistant and academic tutor.
+CRITICAL INSTRUCTIONS:
+- If the user provides a casual greeting, conversational remark, or general non-academic question (such as "hi", "hello", "how are you", "who are you", "what can you do", etc.), respond naturally, warmly, and concisely as a friendly companion. NEVER force an unsolicited academic lecture, syllabus topic, physics formula, or Socratic quiz onto a casual prompt or greeting.
+- Only provide academic instruction, derivations, step-by-step problem solving, and LaTeX formulas ($...$ or $$...$$) when the user asks an academic, homework, or educational question.`;
+        const systemPrompt = isCasual ? baseSystemPrompt : body.customPrompt || (body.method ? `You are an expert AI tutor teaching using the ${body.method}. ` : "") + baseSystemPrompt + (body.subject ? `
+Current subject focus: ${body.subject}${body.chapter ? ` (${body.chapter})` : ""}.` : "");
         for (const model of candidateModels) {
           try {
             const apiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
@@ -77279,7 +77363,7 @@ async function handler(req, res) {
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
                 systemInstruction: {
-                  parts: [{ text: "You are an intelligent, helpful, natural AI chatbot. Answer questions clearly, thoughtfully, and directly using clean Markdown and LaTeX math ($...$ or $$...$$) where appropriate." }]
+                  parts: [{ text: systemPrompt }]
                 },
                 contents: [
                   ...formattedHistory,
@@ -77297,14 +77381,15 @@ async function handler(req, res) {
           }
         }
         if (!reply) {
-          reply = "I was unable to generate a response right now. Please try again.";
+          reply = isCasual ? "Hello! I'm your ClassSarthi AI assistant and tutor. How can I help you today? Feel free to ask about your coursework or any topic you'd like to explore!" : "I was unable to generate a response right now. Please try again.";
         }
-        res.status(200).json({ reply });
+        res.status(200).json({ reply, response: reply });
         return;
       } catch (geminiErr) {
         console.error("[Tutor Error]", geminiErr?.message || geminiErr);
         res.status(200).json({
-          reply: "I encountered an error connecting to the AI. Please try again."
+          reply: "I encountered an error connecting to the AI. Please try again.",
+          response: "I encountered an error connecting to the AI. Please try again."
         });
         return;
       }

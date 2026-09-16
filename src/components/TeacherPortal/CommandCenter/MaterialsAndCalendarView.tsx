@@ -88,8 +88,8 @@ export const MaterialsAndCalendarView: React.FC = () => {
     if (!broadcastTitle.trim() || !broadcastMessage.trim()) return;
 
     commandCenterService.publishBroadcast({
-      authorId: 'prof.sanmitra',
-      authorName: 'Dr. Sanmitra Bhattacharya',
+      authorId: 'prof.rajesh',
+      authorName: 'Dr. Rajesh Kulkarni',
       title: broadcastTitle.trim(),
       message: broadcastMessage.trim(),
       targetSections,

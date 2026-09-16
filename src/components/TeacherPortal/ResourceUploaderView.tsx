@@ -43,8 +43,8 @@ export const ResourceUploaderView: React.FC<ResourceUploaderViewProps> = ({
         subjectId,
         category,
         url: '#',
-        author: 'Dr. Sanmitra Bhattacharya (Faculty)',
-        description: description.trim() || 'Official faculty reference material published on EduSync.',
+        author: 'Dr. Rajesh Kulkarni (Faculty)',
+        description: description.trim() || 'Official faculty reference material published on ClassSarthi.',
         keyTopics: keyTopics ? keyTopics.split(',').map(t => t.trim()).filter(Boolean) : ['Course Syllabus', 'Reference']
       });
 

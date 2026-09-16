@@ -72,3 +72,38 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* AI Tutor & Academic Math Typography - Guaranteed High Contrast */
+.academic-math-content {
+  color: #0b1c30;
+}
+.academic-math-content p {
+  color: #0b1c30;
+}
+.academic-math-content strong {
+  color: #000000;
+}
+.academic-math-content li {
+  color: #0b1c30;
+}
+.academic-math-content h1,
+.academic-math-content h2,
+.academic-math-content h3 {
+  color: #0b1c30;
+}
+.academic-math-content .katex {
+  color: #0b1c30;
+}
+.dark .academic-math-content,
+.dark .academic-math-content p,
+.dark .academic-math-content li,
+.dark .academic-math-content .katex {
+  color: #f1f5f9;
+}
+.dark .academic-math-content strong,
+.dark .academic-math-content h1,
+.dark .academic-math-content h2,
+.dark .academic-math-content h3 {
+  color: #ffffff;
+}
+

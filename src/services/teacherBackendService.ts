@@ -15,17 +15,17 @@ import {
 
 // Storage keys for browser persistence
 const STORAGE_KEYS = {
-  SCHEDULE: 'edusync_teacher_schedule',
-  ATTENDANCE: 'edusync_teacher_attendance_roster',
-  ANTI_PROXY: 'edusync_teacher_antiproxy',
-  TELEMETRY: 'edusync_teacher_telemetry',
-  DOUBT_CLUSTERS: 'edusync_teacher_doubt_clusters',
-  STICKY_NOTES: 'edusync_teacher_sticky_notes',
-  TASKS: 'edusync_teacher_tasks',
-  LEAVES: 'edusync_teacher_leaves',
-  TEACHER_LOG: 'edusync_teacher_log',
-  CALENDAR: 'edusync_teacher_calendar',
-  RESOURCES: 'edusync_teacher_resources'
+  SCHEDULE: 'classsarthi_teacher_schedule',
+  ATTENDANCE: 'classsarthi_teacher_attendance_roster',
+  ANTI_PROXY: 'classsarthi_teacher_antiproxy',
+  TELEMETRY: 'classsarthi_teacher_telemetry',
+  DOUBT_CLUSTERS: 'classsarthi_teacher_doubt_clusters',
+  STICKY_NOTES: 'classsarthi_teacher_sticky_notes',
+  TASKS: 'classsarthi_teacher_tasks',
+  LEAVES: 'classsarthi_teacher_leaves',
+  TEACHER_LOG: 'classsarthi_teacher_log',
+  CALENDAR: 'classsarthi_teacher_calendar',
+  RESOURCES: 'classsarthi_teacher_resources'
 };
 
 // ========================================================
@@ -512,7 +512,7 @@ const INITIAL_STICKY_NOTES: TeacherQuickStickyNote[] = [
   {
     id: 'note-3',
     teacherId: 'teacher-ess',
-    title: 'Upload Mid-Term Problem Sheet to EduSync',
+    title: 'Upload Mid-Term Problem Sheet to ClassSarthi',
     content: 'Include 3 PYQ questions from 2024 semester paper on Carnot cycle and BOD5 dilution.',
     color: 'yellow',
     priority: 'high',
@@ -557,7 +557,7 @@ const INITIAL_LEAVE_REQUESTS: TeacherLeaveRequest[] = [
   {
     id: 'leave-1',
     teacherId: 'teacher-ess',
-    teacherName: 'Dr. Sanmitra Bhattacharya',
+    teacherName: 'Dr. Rajesh Kulkarni',
     leaveType: 'Academic Conference',
     startDate: '2026-09-24',
     endDate: '2026-09-26',
@@ -570,7 +570,7 @@ const INITIAL_LEAVE_REQUESTS: TeacherLeaveRequest[] = [
   {
     id: 'leave-2',
     teacherId: 'teacher-ess',
-    teacherName: 'Dr. Sanmitra Bhattacharya',
+    teacherName: 'Dr. Rajesh Kulkarni',
     leaveType: 'Casual Leave',
     startDate: '2026-10-03',
     endDate: '2026-10-03',
@@ -644,7 +644,7 @@ const INITIAL_TEACHER_RESOURCES: ReferenceResource[] = [
     title: 'Atmospheric Inversion & Gaussian Dispersion Master Formula Sheet',
     category: 'Lecture Notes',
     url: '#',
-    author: 'Dr. Sanmitra Bhattacharya',
+    author: 'Dr. Rajesh Kulkarni',
     description: 'Complete derivation of environmental lapse rates, stability criteria, and Pasquill-Gifford plume dispersion parameters.',
     keyTopics: ['Lapse Rates', 'Inversion', 'Dispersion Models', 'AQI Calculations'],
     dateAdded: '2026-09-10'
@@ -655,7 +655,7 @@ const INITIAL_TEACHER_RESOURCES: ReferenceResource[] = [
     title: 'Carnot Engine & Clausius Inequality Quick Revision Mindmap',
     category: 'Lecture Notes',
     url: '#',
-    author: 'Dr. Sanmitra Bhattacharya',
+    author: 'Dr. Rajesh Kulkarni',
     description: 'Visual schematic showing heat engine reservoir flows, reversible temperature scales, and entropy generation trap warnings.',
     keyTopics: ['Carnot Efficiency', 'Clausius Inequality', 'Entropy Generation'],
     dateAdded: '2026-09-08'
@@ -666,7 +666,7 @@ const INITIAL_TEACHER_RESOURCES: ReferenceResource[] = [
     title: 'Lab Protocol C-12: Winkler Titration for Dissolved Oxygen',
     category: 'Lab Manual',
     url: '#',
-    author: 'Dr. Sanmitra Bhattacharya',
+    author: 'Dr. Rajesh Kulkarni',
     description: 'Step-by-step chemical preparation protocol, reagent titration guides, and blank factor adjustment formulas.',
     keyTopics: ['Winkler Method', 'Dissolved Oxygen', 'BOD5', 'COD'],
     dateAdded: '2026-09-04'
@@ -752,10 +752,10 @@ class TeacherBackendService {
       if (leavesRes && Array.isArray(leavesRes)) this.setStorageItem(STORAGE_KEYS.LEAVES, leavesRes);
 
       this.isDbConnected = true;
-      console.info('[EduSync DB] Connected & synchronized with persistent on-disk database.');
+      console.info('[ClassSarthi DB] Connected & synchronized with persistent on-disk database.');
       return true;
     } catch (err) {
-      console.warn('[EduSync DB] Running in offline / local cache fallback mode:', err);
+      console.warn('[ClassSarthi DB] Running in offline / local cache fallback mode:', err);
       this.isDbConnected = false;
       return false;
     }

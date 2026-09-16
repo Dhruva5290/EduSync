@@ -204,7 +204,7 @@ async function callGeminiPersonalization(
   const studentStyle = metadata.learningStyle || metadata.style || "Conceptual visual-first with step-by-step logic";
   const weakTopics = Array.isArray(metadata.weakConcepts) ? metadata.weakConcepts.join(", ") : "";
 
-  const systemInstruction = `You are the lead academic AI tutor for EduSync.
+  const systemInstruction = `You are the lead academic AI tutor for ClassSarthi.
 Your mission is to take captured lecture blackboard notes and transcribe them into an elite, personalized study guide for an engineering student.
 
 STUDENT PROFILE CONTEXT:

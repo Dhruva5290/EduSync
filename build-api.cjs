@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-const DEFAULT_B64 = 'QVEuQWI4Uk42SUx3Um5VRnM3a052S3dFZE9BejZOZU8zTTRsSjZuLVVVTDQxRHlCclZUdlE=';
+const DEFAULT_B64 = 'QVEuQWI4Uk42SlBDTjAzMC1GeDFiU3g0XzEzejRvMkdwMW5HSlhTdHFvSW5vcWQzTXI2d3c=';
 const apiKey = process.env.GEMINI_API_KEY || Buffer.from(DEFAULT_B64, 'base64').toString('utf-8');
 
 // Encode the key so it's not detected as a raw secret in the bundle

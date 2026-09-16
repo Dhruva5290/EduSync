@@ -123,7 +123,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               {!collapsed && (
                 <div className="flex flex-col">
                   <span className="font-extrabold text-base text-[#0b1c30] tracking-tight leading-none">
-                    EduSync Studio
+                    ClassSarthi Studio
                   </span>
                   <span className="text-[10px] text-[#5a4138] mt-0.5 font-medium">Academic OS</span>
                 </div>
@@ -215,7 +215,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {onLogout && (
             <button
               onClick={onLogout}
-              title="Sign Out of EduSync"
+              title="Sign Out of ClassSarthi"
               className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-[#ba1a1a] hover:bg-[#fff0f0] transition-colors cursor-pointer ${
                 collapsed ? 'justify-center px-0' : ''
               }`}

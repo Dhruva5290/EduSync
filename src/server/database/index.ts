@@ -31,7 +31,7 @@ import {
 } from './seedData';
 import { TeacherAttendanceLog } from '../../types';
 
-class EduSyncDatabase {
+class ClassSarthiDatabase {
   private startTime = Date.now();
 
   // Persistent Collections
@@ -74,7 +74,7 @@ class EduSyncDatabase {
     this.studentTasks = new JsonCollection<DbStudentTask>('student_tasks', SEED_STUDENT_TASKS);
     this.studentQuizSubmissions = new JsonCollection<DbStudentQuizRecord & { id: string }>('student_quiz_submissions', []);
 
-    console.info(`[EduSync Database] Initialized and verified on-disk storage in ${path.resolve(process.cwd(), 'data', 'database')}`);
+    console.info(`[ClassSarthi Database] Initialized and verified on-disk storage in ${path.resolve(process.cwd(), 'data', 'database')}`);
   }
 
   // ==========================================
@@ -510,7 +510,7 @@ class EduSyncDatabase {
       metadata: {
         exportedAt: new Date().toISOString(),
         version: '2.0.0',
-        engine: 'EduSync Persistent File Database'
+        engine: 'ClassSarthi Persistent File Database'
       },
       classes: this.classes.getAll(),
       attendanceRoster: this.attendanceRoster.getAll(),
@@ -529,4 +529,4 @@ class EduSyncDatabase {
   }
 }
 
-export const eduSyncDb = new EduSyncDatabase();
+export const eduSyncDb = new ClassSarthiDatabase();

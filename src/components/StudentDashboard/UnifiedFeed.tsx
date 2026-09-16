@@ -237,17 +237,20 @@ export const UnifiedFeed: React.FC<UnifiedFeedProps> = ({ currentUser, onOpenPer
     setChatMessages(prev => [...prev, userMsg]);
     setIsSending(true);
 
+    const isCasual = /^(hi|hello|hey|greetings|howdy|sup|good\s*(morning|afternoon|evening)|how\s*are\s*you|who\s*are\s*you|what\s*can\s*you\s*do|tell\s*me\s*about\s*yourself|what'?s\s*up|yo)\b/i.test(userText.trim());
+
     try {
       const res = await fetch('/api/tutor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: userText,
+          isCasual,
           history: chatMessages.map(m => ({
             sender: m.sender,
             content: m.text
           })),
-          context: {
+          context: isCasual ? {} : {
             weakTopics,
             weakestTopicName: summary.weakestTopicName,
             currentLectureId: recentLecture?.id || 'lec-phy-101',
@@ -258,24 +261,26 @@ export const UnifiedFeed: React.FC<UnifiedFeedProps> = ({ currentUser, onOpenPer
 
       if (res.ok) {
         const data = await res.json();
-        const replyText = data.reply || data.response || "Let's examine how the force vectors resolve perpendicular to the incline.";
+        const replyText = data.reply || data.response || (isCasual ? "Hello! How can I help you today?" : "Let's examine the foundational concept step-by-step.");
         setChatMessages(prev => [
           ...prev,
           {
             sender: 'tutor',
             text: replyText,
-            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
           }
         ]);
       }
-    } catch (err) {
-      console.warn('Tutor communication error:', err);
+    } catch {
+      // Fallback message
       setChatMessages(prev => [
         ...prev,
         {
           sender: 'tutor',
-          text: "Think about the perpendicular axis: since there is no motion off the ramp, $\\sum F_{\\perp} = N - mg\\cos\\theta = 0$. What does this tell you about $N$?",
-          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          text: isCasual
+            ? "Hello! I'm your AI tutor. How can I help you today?"
+            : "I'm having difficulty connecting to the server. Please check your network and try again.",
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         }
       ]);
     } finally {
@@ -303,7 +308,7 @@ export const UnifiedFeed: React.FC<UnifiedFeedProps> = ({ currentUser, onOpenPer
             <div className="space-y-2">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700/60 text-[11px] font-mono font-semibold text-cyan-400">
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>EduSync One-Stop Feed</span>
+                <span>ClassSarthi One-Stop Feed</span>
               </div>
               <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
                 {getGreeting()}, {summary.name.split(' ')[0]}.
@@ -571,7 +576,7 @@ export const UnifiedFeed: React.FC<UnifiedFeedProps> = ({ currentUser, onOpenPer
                   <Bot className="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-white">EduSync Socratic AI Assistant</h4>
+                  <h4 className="text-xs font-bold text-white">ClassSarthi Socratic AI Assistant</h4>
                   <p className="text-[10px] text-slate-400 font-mono">
                     Grounded with: {summary.weakestTopicName.slice(0, 32)}...
                   </p>

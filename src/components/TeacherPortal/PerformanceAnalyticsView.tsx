@@ -199,7 +199,7 @@ export const PerformanceAnalyticsView: React.FC<PerformanceAnalyticsViewProps> =
   const handleGenerateScript = (cluster: CommonDoubtCluster) => {
     const script = `🎓 5-Minute Class Clarification Script for "${cluster.topicName}":
 
-"Good morning class. Reviewing our EduSync telemetry, ${cluster.doubtCount} students logged doubts regarding ${cluster.topicName}. Let us clarify the core misconception in 3 concrete steps:
+"Good morning class. Reviewing our ClassSarthi telemetry, ${cluster.doubtCount} students logged doubts regarding ${cluster.topicName}. Let us clarify the core misconception in 3 concrete steps:
 
 1. The Key Trap to Avoid:
 ${cluster.sampleDoubts[0] || 'Do not confuse path-dependent heat transfer with point-function entropy.'}

@@ -1,7 +1,7 @@
-export const ANTIGRAVITY_SPEC = `# Antigravity App Specification & Blueprint: EduSync Faculty Portal
+export const ANTIGRAVITY_SPEC = `# Antigravity App Specification & Blueprint: ClassSarthi Faculty Portal
 
 > **Target Agent**: Google AI Studio / Antigravity Agent  
-> **Application**: EduSync — Comprehensive University Faculty Portal & Lecture Management System  
+> **Application**: ClassSarthi — Comprehensive University Faculty Portal & Lecture Management System  
 > **Tech Stack**: React 19 / React 18, TypeScript, Tailwind CSS v4, Lucide React, Vite  
 > **Target Platform**: Responsive Web Application (Optimized for Desktop & Tablet)
 
@@ -9,7 +9,7 @@ export const ANTIGRAVITY_SPEC = `# Antigravity App Specification & Blueprint: Ed
 
 ## 1. Executive Summary & Product Vision
 
-**EduSync** is an institutional-grade faculty portal designed for university professors, department heads, and course instructors (configured by default for **Dr. Debasis Bhattacharya**, Associate Professor & Course Lead in Computer Science & Engineering, Spring 2026).
+**ClassSarthi** is an institutional-grade faculty portal designed for university professors, department heads, and course instructors (configured by default for **Dr. Debasis Bhattacharya**, Associate Professor & Course Lead in Computer Science & Engineering, Spring 2026).
 
 The platform eliminates fragmented academic workflows by consolidating:
 1. **Daily Lecture Timetables & Podium Telemetry**: Real-time class session monitoring, lecture progress bars, room hardware readiness (projector links, microphone resonance in dB, podium hotline).
@@ -58,7 +58,7 @@ The platform eliminates fragmented academic workflows by consolidating:
 
 ## 4. Antigravity Prompt (Copy-Paste Ready)
 
-You are an expert full-stack React and UI engineer. Build "EduSync", a comprehensive university faculty portal and lecture management system for Dr. Debasis Bhattacharya (Associate Professor, Spring 2026).
+You are an expert full-stack React and UI engineer. Build "ClassSarthi", a comprehensive university faculty portal and lecture management system for Dr. Debasis Bhattacharya (Associate Professor, Spring 2026).
 
 Include the 7 primary screens:
 1. "daily-schedule": Lecture cards (completed ES-101, active in-session ME-102 with progress bar, upcoming lab), Smart Podium telemetry (projector, 52 dB mic meter, hotline ext. 209), and interactive sticky notes.

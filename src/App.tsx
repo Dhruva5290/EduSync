@@ -57,15 +57,15 @@ import { TeacherMasterPortal } from './components/TeacherPortal/TeacherMasterPor
 export function App() {
   // Auth & Session State
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    return Boolean(localStorage.getItem('edusync_token'));
+    return Boolean(localStorage.getItem('classsarthi_token'));
   });
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    return (localStorage.getItem('edusync_theme') as 'light' | 'dark') || 'light';
+    return (localStorage.getItem('classsarthi_theme') as 'light' | 'dark') || 'light';
   });
   const toggleTheme = () => {
     setTheme((prev) => {
       const next = prev === 'light' ? 'dark' : 'light';
-      localStorage.setItem('edusync_theme', next);
+      localStorage.setItem('classsarthi_theme', next);
       return next;
     });
   };
@@ -74,7 +74,7 @@ export function App() {
   const [users, setUsers] = useState<User[]>(initialUsers);
   const [currentUser, setCurrentUser] = useState<User>(() => {
     try {
-      const saved = localStorage.getItem('edusync_user');
+      const saved = localStorage.getItem('classsarthi_user');
       if (saved) return JSON.parse(saved);
     } catch {}
     return initialUsers[0];
@@ -116,9 +116,9 @@ export function App() {
   const handleLoginSuccess = (user: User, token: string) => {
     setCurrentUser(user);
     setIsAuthenticated(true);
-    localStorage.setItem('edusync_token', token);
-    localStorage.setItem('edusync_user_id', user.id);
-    try { localStorage.setItem('edusync_user', JSON.stringify(user)); } catch {}
+    localStorage.setItem('classsarthi_token', token);
+    localStorage.setItem('classsarthi_user_id', user.id);
+    try { localStorage.setItem('classsarthi_user', JSON.stringify(user)); } catch {}
 
     if (user.role === 'teacher') {
       setCurrentRoute('faculty-analytics');
@@ -131,9 +131,9 @@ export function App() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('edusync_token');
-    localStorage.removeItem('edusync_user_id');
-    localStorage.removeItem('edusync_user');
+    localStorage.removeItem('classsarthi_token');
+    localStorage.removeItem('classsarthi_user_id');
+    localStorage.removeItem('classsarthi_user');
     setIsAuthenticated(false);
     showToast('You have been signed out.');
   };
@@ -148,7 +148,7 @@ export function App() {
     const selected = users.find((u) => u.id === userId);
     if (!selected) return;
     setCurrentUser(selected);
-    try { localStorage.setItem('edusync_user', JSON.stringify(selected)); } catch {}
+    try { localStorage.setItem('classsarthi_user', JSON.stringify(selected)); } catch {}
 
     // Auto navigate to home for role
     if (selected.role === 'teacher') {

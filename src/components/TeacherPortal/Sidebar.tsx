@@ -101,13 +101,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <div className="flex items-center gap-2.5">
               <img
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKpbeIO4zZKGIEHVWXA9NLjZcNgDJOBVHRCx-7dVgjYESPWMvsgWFeQVuQGlVGNCCIY87Irb2eMk6ifzO4O1lBMOrBw1hge2RbZNfg1KNgetj7AsdO8-9IeURvV04vaB5BvFmSqlFELM83491LRpO9tcGWCo3suQQSMboK1RNk33viFjbz21T09CsodTEbyC0BcQCzjxUNGxwuw3w-3Oy6wM8iuuUJ-BQXjUknFDRrZ8aE0Alfnrn5"
-                alt="EduSync Portal Logo"
+                alt="ClassSarthi Portal Logo"
                 className="h-8 w-auto object-contain"
               />
               <div className="flex flex-col">
                 <div className="flex items-center gap-1.5">
                   <span className="font-['Sora'] font-semibold text-[17px] text-[#3525cd] tracking-tight leading-none">
-                    EduSync
+                    ClassSarthi
                   </span>
                   <span className="font-['JetBrains_Mono'] text-[10px] font-bold bg-[#e2dfff] text-[#0f0069] px-1.5 py-0.5 rounded tracking-wide">
                     FACULTY

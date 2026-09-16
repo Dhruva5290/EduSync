@@ -15,7 +15,7 @@ import { runPluginsSystemTests } from './07_plugins_system.test';
 
 async function main() {
   console.log('\n\x1b[1m\x1b[36m===============================================================\x1b[0m');
-  console.log('\x1b[1m\x1b[36m  EduSync Comprehensive Feature Validation & Bug Hunter Suite  \x1b[0m');
+  console.log('\x1b[1m\x1b[36m  ClassSarthi Comprehensive Feature Validation & Bug Hunter Suite  \x1b[0m');
   console.log('\x1b[1m\x1b[36m===============================================================\x1b[0m\n');
 
   const runner = new TestRunner();
@@ -88,7 +88,7 @@ function generateMarkdownReport(results: TestResult[], bugs: any[]): string {
   const passedCount = results.filter(r => r.passed).length;
   const failedCount = results.filter(r => !r.passed).length;
 
-  let md = `# EduSync: Feature Directory & Automated Bug Hunter Report
+  let md = `# ClassSarthi: Feature Directory & Automated Bug Hunter Report
 
 > **Execution Timestamp:** ${timestamp}  
 > **Total Test Suites:** 6  
@@ -100,7 +100,7 @@ function generateMarkdownReport(results: TestResult[], bugs: any[]): string {
 
 ## 1. Complete System Features Catalog
 
-Below is the complete inventory of all EduSync features verified during this test execution:
+Below is the complete inventory of all ClassSarthi features verified during this test execution:
 
 `;
 

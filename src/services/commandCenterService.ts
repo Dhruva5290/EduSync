@@ -15,15 +15,15 @@ import {
 } from '../types';
 
 const STORAGE_KEYS = {
-  SCHEDULE: 'edusync_cc_schedule_slots',
-  MATERIALS: 'edusync_cc_materials',
-  BROADCASTS: 'edusync_cc_broadcasts',
-  CALENDAR: 'edusync_cc_calendar',
-  CHECKLIST: 'edusync_cc_checklist',
-  LEAVES: 'edusync_cc_leaves',
-  GATE_SCAN: 'edusync_cc_gate_scan',
-  DOUBT_LOGS: 'edusync_cc_doubt_logs',
-  TELEMETRY: 'edusync_cc_telemetry'
+  SCHEDULE: 'classsarthi_cc_schedule_slots',
+  MATERIALS: 'classsarthi_cc_materials',
+  BROADCASTS: 'classsarthi_cc_broadcasts',
+  CALENDAR: 'classsarthi_cc_calendar',
+  CHECKLIST: 'classsarthi_cc_checklist',
+  LEAVES: 'classsarthi_cc_leaves',
+  GATE_SCAN: 'classsarthi_cc_gate_scan',
+  DOUBT_LOGS: 'classsarthi_cc_doubt_logs',
+  TELEMETRY: 'classsarthi_cc_telemetry'
 };
 
 // ========================================================
@@ -179,8 +179,8 @@ const INITIAL_MATERIALS: TeacherMaterialItem[] = [
 const INITIAL_BROADCASTS: TeacherBroadcastMessage[] = [
   {
     id: 'bcast-1',
-    authorId: 'prof.sanmitra',
-    authorName: 'Dr. Sanmitra Bhattacharya',
+    authorId: 'prof.rajesh',
+    authorName: 'Dr. Rajesh Kulkarni',
     title: 'Lab Observation Sheet Mandatory for ES-101L on Wednesday',
     message: 'Please bring your printed graph paper and observation notebooks. Unsigned lab sheets will not receive viva marks.',
     targetSections: ['Sec A', 'Sec B'],
@@ -189,8 +189,8 @@ const INITIAL_BROADCASTS: TeacherBroadcastMessage[] = [
   },
   {
     id: 'bcast-2',
-    authorId: 'prof.sanmitra',
-    authorName: 'Dr. Sanmitra Bhattacharya',
+    authorId: 'prof.rajesh',
+    authorName: 'Dr. Rajesh Kulkarni',
     title: 'Remedial Problem Session for Carnot Numerical Drills',
     message: 'An optional doubt-clearing session for ME-102 will be held Thursday 04:30 PM in Room 201.',
     targetSections: ['Sec B'],
@@ -817,7 +817,7 @@ export const commandCenterService = {
       if (intent === 'mark_leave') {
         const date = proposal.parsedParameters.date || new Date().toISOString().split('T')[0];
         const reason = proposal.parsedParameters.reason || 'Medical / Personal Leave';
-        this.submitLeave('prof.sanmitra', 'Dr. Sanmitra Bhattacharya', date, reason);
+        this.submitLeave('prof.rajesh', 'Dr. Rajesh Kulkarni', date, reason);
         results.push(`Submitted leave request for ${date} ("${reason}")`);
       }
 
@@ -839,7 +839,7 @@ export const commandCenterService = {
         const title = proposal.parsedParameters.title || 'Class Notice';
         const message = proposal.parsedParameters.message || 'Please review today\'s posted materials.';
         const sections = proposal.parsedParameters.sections || ['Sec A', 'Sec B'];
-        this.publishBroadcast({ authorId: 'prof.sanmitra', authorName: 'Dr. Sanmitra Bhattacharya', title, message, targetSections: sections });
+        this.publishBroadcast({ authorId: 'prof.rajesh', authorName: 'Dr. Rajesh Kulkarni', title, message, targetSections: sections });
         results.push(`Published announcement to ${sections.join(', ')}: "${title}"`);
       }
 

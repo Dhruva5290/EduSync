@@ -240,7 +240,7 @@ export const TeacherWorkspaceView: React.FC<TeacherWorkspaceViewProps> = ({
 
     onSubmitLeave({
       teacherId: 'teacher-ess',
-      teacherName: 'Dr. Sanmitra Bhattacharya',
+      teacherName: 'Dr. Rajesh Kulkarni',
       leaveType,
       startDate: sDate,
       endDate: eDate,

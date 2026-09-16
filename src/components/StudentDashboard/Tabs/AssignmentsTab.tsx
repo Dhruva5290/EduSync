@@ -20,7 +20,7 @@ export const AssignmentsTab: React.FC = () => {
       {/* Top Breadcrumb & Metadata Strip */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
         <div className="flex items-center gap-1.5 text-slate-500 font-bold text-xs">
-          <span>EduSync</span>
+          <span>ClassSarthi</span>
           <span>&gt;</span>
           <span className="text-[#0b1c30]">Assignments</span>
         </div>

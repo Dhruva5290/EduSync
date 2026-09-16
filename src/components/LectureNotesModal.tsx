@@ -59,7 +59,11 @@ export const LectureNotesModal: React.FC<LectureNotesModalProps> = ({
 }) => {
   // Selected subject/topic in notes (defaulting to Chemistry - Bonds to match screenshot)
   const [selectedTopic, setSelectedTopic] = useState<'chemistry' | 'physics' | 'math'>(
-    item?.title?.toLowerCase().includes('chem') ? 'chemistry' : 'chemistry'
+    item?.title?.toLowerCase().includes('phys') || (item as any)?.categoryBadge?.toLowerCase().includes('phys')
+      ? 'physics'
+      : item?.title?.toLowerCase().includes('math') || item?.title?.toLowerCase().includes('calc') || (item as any)?.categoryBadge?.toLowerCase().includes('math')
+      ? 'math'
+      : 'chemistry'
   );
 
   // Table state (matching exact screenshot: Material, Bond type, Hardness)
@@ -257,7 +261,7 @@ export const LectureNotesModal: React.FC<LectureNotesModalProps> = ({
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-[#10b981]" />
             <span className="text-xs font-semibold text-gray-500 font-mono">
-              EduSync Text Notes Reader
+              ClassSarthi Text Notes Reader
             </span>
           </div>
 
@@ -286,10 +290,10 @@ export const LectureNotesModal: React.FC<LectureNotesModalProps> = ({
         {/* Document Body (Replicating exact image layout, spacing, and typography) */}
         <div className="p-6 sm:p-10 lg:p-12 overflow-y-auto flex-1 font-sans text-[#111827] bg-white selection:bg-blue-100 relative">
           <div className="max-w-3xl mx-auto flex flex-col gap-6">
-            {/* Note Title Header (Matches "Chemistry - Bonds") */}
+            {/* Note Title Header */}
             <div>
-              <h1 className="text-3xl sm:text-4xl font-extrabold text-[#0b1c30] tracking-tight">
-                Chemistry - Bonds
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0b1c30] tracking-tight">
+                {selectedTopic === 'physics' ? 'Physics - Rotational Mechanics' : selectedTopic === 'math' ? 'Mathematics - Calculus' : 'Chemistry - Bonds'}
               </h1>
 
               {/* Three Header Badges (Exact match to screenshot) */}
@@ -315,7 +319,9 @@ export const LectureNotesModal: React.FC<LectureNotesModalProps> = ({
             </div>
 
             {/* Note Section 1: Ionic & Covalent Bonds */}
-            <div className="flex flex-col gap-2 pt-2">
+            {selectedTopic === 'chemistry' && (
+              <>
+                <div className="flex flex-col gap-2 pt-2">
               <div className="flex items-center gap-2">
                 <span className="text-base font-bold text-gray-800">•</span>
                 <h2 className="text-lg sm:text-xl font-bold text-[#0b1c30]">
@@ -730,6 +736,127 @@ export const LectureNotesModal: React.FC<LectureNotesModalProps> = ({
                 </div>
               </div>
             </div>
+            </>
+            )}
+
+            {selectedTopic === 'physics' && (
+              <div className="flex flex-col gap-6 pt-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-base font-bold text-gray-800">•</span>
+                  <h2 className="text-xl sm:text-2xl font-bold text-[#0b1c30]">
+                    Rotational Mechanics & Kinetics
+                  </h2>
+                </div>
+                
+                <div className="pl-5 flex flex-col gap-5 text-sm sm:text-[15px] text-gray-800 leading-relaxed">
+                  <div>
+                    <h3 className="font-bold text-lg text-gray-900 mb-2">1. Torque (τ)</h3>
+                    <p>Torque is the rotational equivalent of linear force. Just as a linear force causes an object to accelerate, a torque causes an object to acquire angular acceleration. It measures how much a force acting on an object causes that object to rotate.</p>
+                    <div className="mt-2 p-4 bg-gray-50 border border-gray-200 rounded-lg font-mono text-sm text-gray-700">
+                      τ = r × F = r * F * sin(θ)
+                    </div>
+                    <p className="mt-2 text-gray-600">Where <em>r</em> is the distance from the pivot point to the point where the force is applied, <em>F</em> is the magnitude of the force, and <em>θ</em> is the angle between the force vector and the lever arm.</p>
+                  </div>
+
+                  <hr className="border-gray-200" />
+
+                  <div>
+                    <h3 className="font-bold text-lg text-gray-900 mb-2">2. Moment of Inertia (I)</h3>
+                    <p>The moment of inertia is the rotational equivalent of mass. It determines the torque needed for a desired angular acceleration about a rotational axis. It depends not just on the mass of the object, but on how that mass is distributed relative to the axis of rotation.</p>
+                    <div className="mt-2 p-4 bg-gray-50 border border-gray-200 rounded-lg font-mono text-sm text-gray-700">
+                      I = Σ(m_i * r_i²)
+                    </div>
+                    <ul className="list-disc pl-5 mt-2 space-y-1 text-gray-700">
+                      <li><strong>Solid Cylinder:</strong> I = (1/2)MR²</li>
+                      <li><strong>Solid Sphere:</strong> I = (2/5)MR²</li>
+                      <li><strong>Thin Hoop:</strong> I = MR²</li>
+                    </ul>
+                  </div>
+
+                  <hr className="border-gray-200" />
+
+                  <div>
+                    <h3 className="font-bold text-lg text-gray-900 mb-2">3. Newton's Second Law for Rotation</h3>
+                    <p>The net torque acting on a rigid body is proportional to its angular acceleration.</p>
+                    <div className="mt-2 p-4 bg-gray-50 border border-gray-200 rounded-lg font-mono text-sm text-gray-700 text-center text-lg font-bold">
+                      Στ = I * α
+                    </div>
+                  </div>
+
+                  <hr className="border-gray-200" />
+
+                  <div>
+                    <h3 className="font-bold text-lg text-gray-900 mb-2">4. Angular Momentum (L)</h3>
+                    <p>Angular momentum remains constant unless acted upon by an external torque. This is why a figure skater spins faster when they pull their arms in (decreasing I, which must increase ω to keep L constant).</p>
+                    <div className="mt-2 p-4 bg-gray-50 border border-gray-200 rounded-lg font-mono text-sm text-gray-700">
+                      L = I * ω<br />
+                      dL/dt = Στ
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {selectedTopic === 'math' && (
+              <div className="flex flex-col gap-6 pt-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-base font-bold text-gray-800">•</span>
+                  <h2 className="text-xl sm:text-2xl font-bold text-[#0b1c30]">
+                    Calculus: Limits & Continuity
+                  </h2>
+                </div>
+                
+                <div className="pl-5 flex flex-col gap-5 text-sm sm:text-[15px] text-gray-800 leading-relaxed">
+                  <div>
+                    <h3 className="font-bold text-lg text-gray-900 mb-2">1. The Epsilon-Delta (ε-δ) Definition</h3>
+                    <p>The formal, rigorous definition of a limit, which serves as the foundation for all of differential and integral calculus. It proves exactly what it means for a function to approach a specific value.</p>
+                    <div className="mt-3 p-5 bg-blue-50/50 border border-blue-100 rounded-xl text-sm text-blue-900 italic font-medium leading-relaxed shadow-sm">
+                      "Let f be a function defined on an open interval containing c (except possibly at c itself), and let L be a real number. We say that the limit of f(x) as x approaches c is L, if for every ε &gt; 0, there exists a δ &gt; 0 such that if 0 &lt; |x - c| &lt; δ, then |f(x) - L| &lt; ε."
+                    </div>
+                  </div>
+
+                  <hr className="border-gray-200" />
+
+                  <div>
+                    <h3 className="font-bold text-lg text-gray-900 mb-2">2. Evaluating Limits & Indeterminate Forms</h3>
+                    <p>When evaluating limits by direct substitution yields an indeterminate form like <span className="font-mono bg-gray-100 px-1 rounded">0/0</span> or <span className="font-mono bg-gray-100 px-1 rounded">∞/∞</span>, we must use algebraic manipulation or calculus theorems to find the true limit.</p>
+                    <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="p-3 border border-gray-200 rounded-lg">
+                        <strong className="text-gray-900">Factoring</strong>
+                        <p className="text-sm mt-1 text-gray-600">Factor the numerator and denominator, then cancel common terms before substituting.</p>
+                      </div>
+                      <div className="p-3 border border-gray-200 rounded-lg">
+                        <strong className="text-gray-900">Rationalizing</strong>
+                        <p className="text-sm mt-1 text-gray-600">Multiply the numerator and denominator by the conjugate to eliminate square roots.</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <hr className="border-gray-200" />
+
+                  <div>
+                    <h3 className="font-bold text-lg text-gray-900 mb-2">3. L'Hôpital's Rule</h3>
+                    <p>Suppose f(x) and g(x) are differentiable and g'(x) ≠ 0 on an open interval containing c. If the limit of f(x)/g(x) as x approaches c results in an indeterminate form (0/0 or ∞/∞), then:</p>
+                    <div className="mt-3 p-4 bg-gray-50 border border-gray-200 rounded-lg font-mono text-sm text-gray-800 text-center font-bold">
+                      lim (x→c) [f(x) / g(x)] = lim (x→c) [f'(x) / g'(x)]
+                    </div>
+                    <p className="mt-2 text-sm text-red-600 italic">* Note: You can apply this rule repeatedly as long as the conditions continue to hold.</p>
+                  </div>
+                  
+                  <hr className="border-gray-200" />
+                  
+                  <div>
+                    <h3 className="font-bold text-lg text-gray-900 mb-2">4. Continuity</h3>
+                    <p>A function f(x) is continuous at a point x = c if and only if three conditions are met:</p>
+                    <ol className="list-decimal pl-5 mt-2 space-y-1 text-gray-700">
+                      <li>f(c) is defined.</li>
+                      <li>lim (x→c) f(x) exists.</li>
+                      <li>lim (x→c) f(x) = f(c).</li>
+                    </ol>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

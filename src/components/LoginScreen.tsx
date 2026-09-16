@@ -34,7 +34,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
 }) => {
   const [selectedRole, setSelectedRole] = useState<'student' | 'teacher' | 'admin'>('student');
   const [identifier, setIdentifier] = useState('student.dhruva');
-  const [password, setPassword] = useState('EduSync@260101');
+  const [password, setPassword] = useState('ClassSarthi@260101');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -46,7 +46,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
   const [registeredUsers, setRegisteredUsers] = useState<User[]>(() => {
     let base = initialUsers && initialUsers.length > 0 ? [...initialUsers] : [...FAKE_USERS];
     try {
-      const saved = JSON.parse(localStorage.getItem('edusync_users') || '[]');
+      const saved = JSON.parse(localStorage.getItem('classsarthi_users') || '[]');
       if (Array.isArray(saved)) {
         for (const s of saved) {
           if (!base.some((b) => b.id === s.id)) base.push(s);
@@ -122,13 +122,13 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
     setErrorMessage(null);
     if (role === 'student') {
       setIdentifier('student.dhruva');
-      setPassword('EduSync@260101');
+      setPassword('ClassSarthi@260101');
     } else if (role === 'teacher') {
       setIdentifier('prof.rajesh');
       setPassword('Physics@2026!');
     } else {
       setIdentifier('dean.maneek');
-      setPassword('Dean@EduSync2026!');
+      setPassword('Dean@ClassSarthi2026!');
     }
   };
 
@@ -139,7 +139,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
 
     let candidates = [...safeUsers];
     try {
-      const savedUsers = JSON.parse(localStorage.getItem('edusync_users') || '[]');
+      const savedUsers = JSON.parse(localStorage.getItem('classsarthi_users') || '[]');
       if (Array.isArray(savedUsers)) {
         for (const s of savedUsers) {
           if (!candidates.some((c) => c.id === s.id)) candidates.push(s);
@@ -173,18 +173,18 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
       return false;
     }
 
-    const expectedPassword = matched.password || 'EduSync@260101';
+    const expectedPassword = matched.password || 'ClassSarthi@260101';
     if (expectedPassword !== loginPass) {
       setErrorMessage('Incorrect password. Please verify your credentials and try again.');
       return false;
     }
 
-    const fallbackToken = `edusync_session_${Date.now()}`;
+    const fallbackToken = `classsarthi_session_${Date.now()}`;
     if (rememberMe) {
-      localStorage.setItem('edusync_token', fallbackToken);
-      localStorage.setItem('edusync_user_id', matched.id);
+      localStorage.setItem('classsarthi_token', fallbackToken);
+      localStorage.setItem('classsarthi_user_id', matched.id);
       try {
-        localStorage.setItem('edusync_user', JSON.stringify(matched));
+        localStorage.setItem('classsarthi_user', JSON.stringify(matched));
       } catch (e) {}
     }
     onLoginSuccess(matched, fallbackToken);
@@ -232,10 +232,10 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
 
         if (data.token && data.user) {
           if (rememberMe) {
-            localStorage.setItem('edusync_token', data.token);
-            localStorage.setItem('edusync_user_id', data.user.id);
+            localStorage.setItem('classsarthi_token', data.token);
+            localStorage.setItem('classsarthi_user_id', data.user.id);
             try {
-              localStorage.setItem('edusync_user', JSON.stringify(data.user));
+              localStorage.setItem('classsarthi_user', JSON.stringify(data.user));
             } catch (e) {}
           }
           onLoginSuccess(data.user, data.token);
@@ -263,7 +263,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
           </div>
           <div>
             <span className="text-xl font-bold text-[#1A3A52] tracking-tight block leading-tight">
-              EduSync
+              ClassSarthi
             </span>
             <span className="text-xs text-[#666666] font-medium block">
               Your Personal Learning Partner
@@ -299,7 +299,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                 Welcome Back!
               </h1>
               <p className="text-sm sm:text-base text-gray-300 leading-relaxed max-w-lg">
-                Continue your learning journey with EduSync. Master topics, get guided by AI, and achieve your academic goals with synchronized classroom intelligence.
+                Continue your learning journey with ClassSarthi. Master topics, get guided by AI, and achieve your academic goals with synchronized classroom intelligence.
               </p>
             </div>
 
@@ -624,7 +624,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                 className="space-y-4"
               >
                 <p className="text-xs text-[#666666] leading-relaxed">
-                  Enter the email address or username associated with your EduSync account to receive reset instructions.
+                  Enter the email address or username associated with your ClassSarthi account to receive reset instructions.
                 </p>
                 <div>
                   <label className="block text-[11px] font-bold text-[#666666] uppercase mb-1">

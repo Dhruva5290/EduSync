@@ -1,4 +1,4 @@
-# EduSync: Comprehensive Project State, Health & Production Readiness Report
+# ClassSarthi: Comprehensive Project State, Health & Production Readiness Report
 
 > **Document Version:** 3.0.0  
 > **Timestamp:** 2026-09-06T01:08:00+05:30  
@@ -84,12 +84,12 @@
 
 | Role | Username | Password | Notes |
 | :--- | :--- | :--- | :--- |
-| **Student** | `student.dhruva` | `EduSync@260101` | First-year B.Tech Student Profile |
+| **Student** | `student.dhruva` | `ClassSarthi@260101` | First-year B.Tech Student Profile |
 | **Student** | `aarav.sharma` | `Student@2026!` | Grade 11 Science Student Profile |
 | **Faculty** | `prof.sanmitra` | `Teacher@ESS26` | Environmental Science Instructor |
 | **Faculty** | `prof.rajesh` | `Physics@2026!` | Senior Physics Instructor |
 | **Faculty** | `prof.vikram` | `Maths@2026!` | Calculus & Mathematics Professor |
-| **Dean / Admin** | `dean.maneek` | `Dean@EduSync2026!` | Dean of Academic Welfare |
+| **Dean / Admin** | `dean.maneek` | `Dean@ClassSarthi2026!` | Dean of Academic Welfare |
 
 ---
 
@@ -109,4 +109,4 @@ npm run build
 npm run dev
 ```
 
-*EduSync is fully tested, hardened, and ready for deployment.*
+*ClassSarthi is fully tested, hardened, and ready for deployment.*

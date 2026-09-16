@@ -2,9 +2,9 @@
   {
     "id": "admin-1",
     "name": "Dr. Maneek Singh",
-    "email": "dean.maneek@edusync.edu.in",
+    "email": "dean.maneek@classsarthi.edu.in",
     "username": "dean.maneek",
-    "password": "Dean@EduSync2026!",
+    "password": "Dean@ClassSarthi2026!",
     "role": "admin",
     "gender": "Male",
     "institutionalId": "EDU-ADM-1001",
@@ -21,7 +21,7 @@
   {
     "id": "teacher-phy",
     "name": "Dr. Rajesh Kulkarni",
-    "email": "rajesh.kulkarni@edusync.edu.in",
+    "email": "rajesh.kulkarni@classsarthi.edu.in",
     "username": "prof.rajesh",
     "password": "Physics@2026!",
     "role": "teacher",
@@ -43,7 +43,7 @@
   {
     "id": "teacher-che",
     "name": "Dr. Ananya Sen",
-    "email": "ananya.sen@edusync.edu.in",
+    "email": "ananya.sen@classsarthi.edu.in",
     "username": "prof.ananya",
     "password": "Chemistry@2026!",
     "role": "teacher",
@@ -65,7 +65,7 @@
   {
     "id": "teacher-mat",
     "name": "Prof. Vikramaditya Roy",
-    "email": "vikram.roy@edusync.edu.in",
+    "email": "vikram.roy@classsarthi.edu.in",
     "username": "prof.vikram",
     "password": "Maths@2026!",
     "role": "teacher",
@@ -87,7 +87,7 @@
   {
     "id": "teacher-1788570692864",
     "name": "Dr. Elena Rostova",
-    "email": "elena.rostova.1788570692862@edusync.edu",
+    "email": "elena.rostova.1788570692862@classsarthi.edu",
     "username": "elena.rostova.1788570692862",
     "password": "Teacher@2782",
     "role": "teacher",
@@ -106,7 +106,7 @@
   {
     "id": "student-1",
     "name": "Aarav Sharma",
-    "email": "aarav.sharma@edusync.edu.in",
+    "email": "aarav.sharma@classsarthi.edu.in",
     "username": "aarav.sharma",
     "password": "Student@2026!",
     "role": "student",
@@ -140,7 +140,7 @@
   {
     "id": "student-2",
     "name": "Diya Patel",
-    "email": "diya.patel@edusync.edu.in",
+    "email": "diya.patel@classsarthi.edu.in",
     "username": "diya.patel",
     "password": "Student@2026!",
     "role": "student",
@@ -174,7 +174,7 @@
   {
     "id": "student-3",
     "name": "Kabir Mehta",
-    "email": "kabir.mehta@edusync.edu.in",
+    "email": "kabir.mehta@classsarthi.edu.in",
     "username": "kabir.mehta",
     "password": "Student@2026!",
     "role": "student",
@@ -208,7 +208,7 @@
   {
     "id": "student-4",
     "name": "Ananya Iyer",
-    "email": "ananya.iyer@edusync.edu.in",
+    "email": "ananya.iyer@classsarthi.edu.in",
     "username": "ananya.iyer",
     "password": "Student@2026!",
     "role": "student",
@@ -245,7 +245,7 @@
   {
     "id": "student-5",
     "name": "Rohan Gupta",
-    "email": "rohan.gupta@edusync.edu.in",
+    "email": "rohan.gupta@classsarthi.edu.in",
     "username": "rohan.gupta",
     "password": "Student@2026!",
     "role": "student",
@@ -282,7 +282,7 @@
   {
     "id": "student-6",
     "name": "Ishaan Verma",
-    "email": "ishaan.verma@edusync.edu.in",
+    "email": "ishaan.verma@classsarthi.edu.in",
     "username": "ishaan.verma",
     "password": "Student@2026!",
     "role": "student",
@@ -321,7 +321,7 @@
     "name": "Student Dhruva",
     "email": "student.dhruva@bmu.edu.in",
     "username": "student.dhruva",
-    "password": "EduSync@260101",
+    "password": "ClassSarthi@260101",
     "role": "student",
     "gender": "Male",
     "institutionalId": "BMU-2026-7052",

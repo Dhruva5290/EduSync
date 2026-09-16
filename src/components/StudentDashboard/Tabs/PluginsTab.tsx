@@ -13,7 +13,7 @@ export const PluginsTab: React.FC = () => {
 
   const [customTutors, setCustomTutors] = useState<Array<{ id: string; name: string; tagline: string; prompt: string }>>(() => {
     try {
-      const saved = localStorage.getItem('edusync_custom_tutors');
+      const saved = localStorage.getItem('classsarthi_custom_tutors');
       if (saved) return JSON.parse(saved);
     } catch {}
     return [
@@ -32,7 +32,7 @@ export const PluginsTab: React.FC = () => {
   const [savedSuccess, setSavedSuccess] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem('edusync_custom_tutors', JSON.stringify(customTutors));
+    localStorage.setItem('classsarthi_custom_tutors', JSON.stringify(customTutors));
   }, [customTutors]);
 
   const handleAddTutor = () => {

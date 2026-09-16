@@ -195,8 +195,8 @@ export const StudentAttendanceScreen: React.FC<StudentAttendanceScreenProps> = (
   };
 
   // 2. DIRECT ONBOARDING LINK HANDLERS
-  const directJoinLink = `https://edusync.bmu.edu.in/join?batch=${encodeURIComponent(selectedBatch)}&session=2026-S1`;
-  const whatsappInviteText = `Dear Students of ${selectedBatch}, please join the EduSync classroom portal using this direct registration link: ${directJoinLink}. You will be automatically added to the attendance roster and course resources.`;
+  const directJoinLink = `https://classsarthi.bmu.edu.in/join?batch=${encodeURIComponent(selectedBatch)}&session=2026-S1`;
+  const whatsappInviteText = `Dear Students of ${selectedBatch}, please join the ClassSarthi classroom portal using this direct registration link: ${directJoinLink}. You will be automatically added to the attendance roster and course resources.`;
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(directJoinLink);
@@ -541,11 +541,6 @@ export const StudentAttendanceScreen: React.FC<StudentAttendanceScreenProps> = (
           </div>
           <div className="h-8 w-px bg-[#eaedff]" />
           <div>
-            <span className="text-[11px] uppercase font-semibold text-[#6b38d4]">Late (+15m)</span>
-            <div className="font-['Sora'] text-2xl font-bold text-[#6b38d4]">{lateCount}</div>
-          </div>
-          <div className="h-8 w-px bg-[#eaedff]" />
-          <div>
             <span className="text-[11px] uppercase font-semibold text-[#ba1a1a]">Absent</span>
             <div className="font-['Sora'] text-2xl font-bold text-[#ba1a1a]">{absentCount}</div>
           </div>
@@ -590,7 +585,7 @@ export const StudentAttendanceScreen: React.FC<StudentAttendanceScreenProps> = (
 
             {/* Filter pills */}
             <div className="flex bg-[#f2f3ff] p-1 rounded-lg border border-[#e2e7ff] text-[12px]">
-              {['all', 'present', 'late', 'absent', 'at-risk'].map((status) => (
+              {['all', 'present', 'absent', 'at-risk'].map((status) => (
                 <button
                   key={status}
                   onClick={() => setFilterStatus(status)}
@@ -710,16 +705,6 @@ export const StudentAttendanceScreen: React.FC<StudentAttendanceScreenProps> = (
                         Present
                       </button>
                       <button
-                        onClick={() => onUpdateStudentStatus(s.id, 'late')}
-                        className={`px-2 py-0.5 rounded text-[11px] font-bold cursor-pointer transition-all ${
-                          s.status === 'late'
-                            ? 'bg-[#b45309] text-white shadow-xs'
-                            : 'text-[#92400e] hover:bg-white'
-                        }`}
-                      >
-                        Late
-                      </button>
-                      <button
                         onClick={() => onUpdateStudentStatus(s.id, 'absent')}
                         className={`px-2 py-0.5 rounded text-[11px] font-bold cursor-pointer transition-all ${
                           s.status === 'absent'
@@ -761,7 +746,7 @@ export const StudentAttendanceScreen: React.FC<StudentAttendanceScreenProps> = (
 
             <div className="space-y-4 text-[13px]">
               <p className="text-[#464555]">
-                Share this direct onboarding link with new or incoming students for <strong>{selectedBatch}</strong>. Students who click this link will open EduSync Student Portal and be automatically added to the batch roster.
+                Share this direct onboarding link with new or incoming students for <strong>{selectedBatch}</strong>. Students who click this link will open ClassSarthi Student Portal and be automatically added to the batch roster.
               </p>
 
               {/* Direct Link Box */}
@@ -789,7 +774,7 @@ export const StudentAttendanceScreen: React.FC<StudentAttendanceScreenProps> = (
               {/* QR Code Simulation */}
               <div className="bg-[#faf8ff] p-4 rounded-xl border border-[#eaedff] flex items-center gap-4">
                 <div className="w-24 h-24 bg-white p-2 rounded-xl border border-[#eaedff] flex flex-col items-center justify-center shadow-xs">
-                  <QrCode className="w-16 h-16 text-[#3525cd]" />
+                  <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=ClassSarthi-Class-Attendance" alt="Class QR" className="w-16 h-16 object-cover" />
                   <span className="text-[9px] font-bold text-[#3525cd] mt-0.5">SCAN ME</span>
                 </div>
                 <div className="space-y-1">
@@ -853,7 +838,7 @@ export const StudentAttendanceScreen: React.FC<StudentAttendanceScreenProps> = (
             {/* Dynamic QR Check-in Banner */}
             <div className="mb-4 p-3 bg-[#e2dfff]/40 border border-[#d0cbff] rounded-xl flex items-center gap-3">
               <div className="w-14 h-14 bg-white p-1 rounded-lg border border-[#eaedff] flex items-center justify-center shrink-0">
-                <QrCode className="w-12 h-12 text-[#3525cd]" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=ClassSarthi-Class-Attendance" alt="Class QR" className="w-12 h-12 object-cover" />
               </div>
               <div className="text-[12px]">
                 <span className="font-bold text-[#0f0069] block">Student can scan to auto-punch</span>
@@ -913,8 +898,8 @@ export const StudentAttendanceScreen: React.FC<StudentAttendanceScreenProps> = (
                     onChange={(e) => setLateStudentStatus(e.target.value as any)}
                     className="w-full px-3 py-2 rounded-lg bg-[#f2f3ff] text-[13px] border border-[#eaedff] font-semibold"
                   >
-                    <option value="late">Late (+15m)</option>
-                    <option value="present">Present (Excused)</option>
+                    <option value="present">Present (In-Class)</option>
+                    <option value="absent">Absent</option>
                   </select>
                 </div>
               </div>

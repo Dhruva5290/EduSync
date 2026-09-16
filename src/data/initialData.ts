@@ -56,7 +56,7 @@ export const initialUsers: User[] = [
   {
     id: 'student-2',
     name: 'Aarav Sharma',
-    email: 'aarav.sharma@edusync.edu.in',
+    email: 'aarav.sharma@classsarthi.edu.in',
     username: 'aarav.sharma',
     role: 'student',
     institutionalId: 'EDU-2026-1102',
@@ -77,7 +77,7 @@ export const initialUsers: User[] = [
   {
     id: 'teacher-1',
     name: 'Dr. Rajesh Kulkarni',
-    email: 'prof.rajesh@edusync.edu.in',
+    email: 'prof.rajesh@classsarthi.edu.in',
     username: 'prof.rajesh',
     role: 'teacher',
     institutionalId: 'FAC-PHY-401',
@@ -89,7 +89,7 @@ export const initialUsers: User[] = [
   {
     id: 'teacher-2',
     name: 'Prof. Vikramaditya Roy',
-    email: 'prof.vikram@edusync.edu.in',
+    email: 'prof.vikram@classsarthi.edu.in',
     username: 'prof.vikram',
     role: 'teacher',
     institutionalId: 'FAC-MTH-402',
@@ -100,9 +100,9 @@ export const initialUsers: User[] = [
   },
   {
     id: 'teacher-3',
-    name: 'Dr. Sanmitra Bhattacharya',
-    email: 'prof.sanmitra@edusync.edu.in',
-    username: 'prof.sanmitra',
+    name: 'Dr. Rajesh Kulkarni',
+    email: 'prof.rajesh@classsarthi.edu.in',
+    username: 'prof.rajesh',
     role: 'teacher',
     institutionalId: 'FAC-ESS-403',
     department: 'Earth & Environmental Sciences',
@@ -113,7 +113,7 @@ export const initialUsers: User[] = [
   {
     id: 'admin-1',
     name: 'Dr. Maneek Singh',
-    email: 'dean.maneek@edusync.edu.in',
+    email: 'dean.maneek@classsarthi.edu.in',
     username: 'dean.maneek',
     role: 'admin',
     institutionalId: 'ADM-DEAN-001',
@@ -186,7 +186,7 @@ export const initialSubjects: Subject[] = [
     name: 'Environmental & Earth Systems',
     description: 'Biogeochemical cycles, resource dynamics, climate modeling, and ecological resilience.',
     teacherId: 'teacher-3',
-    teacherName: 'Dr. Sanmitra Bhattacharya',
+    teacherName: 'Dr. Rajesh Kulkarni',
     credits: 3,
     department: 'Earth & Environmental Sciences',
     syllabusTopics: [
@@ -415,7 +415,7 @@ Verified dimensional consistency [L T^-2].`,
     subjectName: 'Physics 11',
     studentId: 'student-2',
     studentName: 'Aarav Sharma',
-    studentEmail: 'aarav.sharma@edusync.edu.in',
+    studentEmail: 'aarav.sharma@classsarthi.edu.in',
     studentAvatar: 'AS',
     submittedAt: '2026-09-11 18:05 IST',
     solutionText: `Vector balance on 30 deg ramp:
@@ -758,7 +758,7 @@ export const initialAssignments: AssignmentItem[] = [
     id: 'asg-4',
     title: 'Term Project: Campus Carbon Footprint & Energy Audit',
     subject: 'Environmental Science',
-    instructor: 'Dr. Sanmitra Bhattacharya',
+    instructor: 'Dr. Rajesh Kulkarni',
     points: 100,
     dueDate: 'Submitted Yesterday at 18:30',
     dueStatus: 'submitted',
@@ -931,7 +931,7 @@ export const initialPlugins: PluginConnection[] = [
     category: 'productivity',
     icon: 'Calendar',
     permissions: [
-      'Create and manage EduSync academic calendar',
+      'Create and manage ClassSarthi academic calendar',
       'Add reminders and invite alarms for class schedules',
     ],
     rules: [
@@ -943,7 +943,7 @@ export const initialPlugins: PluginConnection[] = [
         enabled: true,
         trigger: 'Assignment due date added',
         action: 'Create calendar event with 15m notification',
-        lastSyncDetails: 'Synced 4 deadlines to EduSync Calendar',
+        lastSyncDetails: 'Synced 4 deadlines to ClassSarthi Calendar',
       },
       {
         id: 'rule-gc-cal-2',
@@ -1027,7 +1027,7 @@ export const initialCustomTutors: CustomTutorPersona[] = [
     approvedAt: '2026-09-01T11:30:00Z',
     authorName: 'Faculty Physics Team',
     mcpConfig: {
-      provider: 'edusync_ai',
+      provider: 'classsarthi_ai',
       authMethod: 'bearer',
       capabilities: ['Answer questions', 'Generate examples', 'Create practice problems'],
       status: 'verified',
@@ -1048,7 +1048,7 @@ export const initialCustomTutors: CustomTutorPersona[] = [
     authorName: 'Dean of Sciences',
     mcpConfig: {
       provider: 'anthropic',
-      mcpUrl: 'https://api.edusync.internal/mcp/feynman-v1',
+      mcpUrl: 'https://api.classsarthi.internal/mcp/feynman-v1',
       authMethod: 'bearer',
       capabilities: ['Answer questions', 'Generate examples', 'Derive from first principles'],
       status: 'verified',
@@ -1067,7 +1067,7 @@ export const initialCustomTutors: CustomTutorPersona[] = [
     approvedAt: '2026-09-05T09:45:00Z',
     authorName: 'Academic Pedagogy Lab',
     mcpConfig: {
-      provider: 'edusync_ai',
+      provider: 'classsarthi_ai',
       authMethod: 'bearer',
       capabilities: ['Answer questions', 'Ask guided leading questions'],
       status: 'verified',
@@ -1131,7 +1131,7 @@ export const initialChatMessages: ChatMessage[] = [
     method: 'Socratic Method',
     videoClip: {
       title: "Newton's Laws & Incline Forces Visualized",
-      source: 'EduSync Concept Studio',
+      source: 'ClassSarthi Concept Studio',
       duration: '4:20 min',
     },
   },

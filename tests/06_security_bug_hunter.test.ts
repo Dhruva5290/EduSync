@@ -128,7 +128,7 @@ export async function runSecurityAndBugHunterTests(ctx: TestContext, runner: Tes
       body: {
         name: 'Dr. Elena Rostova',
         username: `elena.rostova.${dynamicId}`,
-        email: `elena.rostova.${dynamicId}@edusync.edu`,
+        email: `elena.rostova.${dynamicId}@classsarthi.edu`,
         role: 'teacher',
         department: 'Quantum Physics'
       }

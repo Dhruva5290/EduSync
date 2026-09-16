@@ -61,7 +61,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
       {/* Breadcrumb & Header */}
       <div className="flex flex-col gap-3">
         <div className="flex items-center gap-2 text-xs font-semibold text-[#5a4138]">
-          <span>EduSync</span>
+          <span>ClassSarthi</span>
           <span>&gt;</span>
           <span className="text-[#0b1c30]">Assignments</span>
           <span className="ml-auto flex items-center gap-2 text-[11px]">

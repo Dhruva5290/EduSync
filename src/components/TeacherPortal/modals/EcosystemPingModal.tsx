@@ -91,7 +91,7 @@ export const EcosystemPingModal: React.FC<EcosystemPingModalProps> = ({
       id: 'log-2',
       time: '09:48 AM',
       service: 'Google Mail',
-      detail: 'Pulled 2 student doubt emails from B.Tech Section A into EduSync AI Assistant',
+      detail: 'Pulled 2 student doubt emails from B.Tech Section A into ClassSarthi AI Assistant',
       status: 'success',
     },
     {
@@ -188,7 +188,7 @@ export const EcosystemPingModal: React.FC<EcosystemPingModalProps> = ({
     }));
   };
 
-  const appleWebcalUrl = `webcal://edusync.bmu.edu.in/faculty/ical/feed?auth=${encodeURIComponent(teacherEmail)}&token=esy_89f1a0`;
+  const appleWebcalUrl = `webcal://classsarthi.bmu.edu.in/faculty/ical/feed?auth=${encodeURIComponent(teacherEmail)}&token=esy_89f1a0`;
 
   return (
     <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-3 sm:p-4 backdrop-blur-xs animate-in fade-in">
@@ -210,7 +210,7 @@ export const EcosystemPingModal: React.FC<EcosystemPingModalProps> = ({
                 </span>
               </div>
               <p className="text-[13px] text-[#777587]">
-                Connect EduSync with your Google Mail, Calendar, and Apple iOS device to automatically access schedules & basic details.
+                Connect ClassSarthi with your Google Mail, Calendar, and Apple iOS device to automatically access schedules & basic details.
               </p>
             </div>
           </div>
@@ -536,7 +536,7 @@ export const EcosystemPingModal: React.FC<EcosystemPingModalProps> = ({
                         Auto-Forward Student Doubts to Gmail
                       </div>
                       <div className="text-[12px] text-[#777587]">
-                        Instantly receive an alert when a student flags an urgent doubt in EduSync.
+                        Instantly receive an alert when a student flags an urgent doubt in ClassSarthi.
                       </div>
                     </div>
                     <input
@@ -670,7 +670,7 @@ export const EcosystemPingModal: React.FC<EcosystemPingModalProps> = ({
                       Apple iOS System & Apple Watch Connection
                     </h4>
                     <p className="text-[13px] text-[#777587]">
-                      Subscribe directly to the encrypted EduSync iCalendar feed on your iPhone, iPad, Mac, or Apple Watch.
+                      Subscribe directly to the encrypted ClassSarthi iCalendar feed on your iPhone, iPad, Mac, or Apple Watch.
                     </p>
                   </div>
                 </div>

@@ -137,7 +137,7 @@ export function startSupabaseRealtimeWorker() {
 
   // 2. Subscribe to Realtime INSERT and UPDATE events
   const channel = sb
-    .channel('edusync_notes_realtime_worker')
+    .channel('classsarthi_notes_realtime_worker')
     .on(
       'postgres_changes',
       { event: 'INSERT', schema: 'public', table: 'notes' },

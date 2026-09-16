@@ -2,7 +2,11 @@ import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
 import fs from 'fs';
 import dotenv from 'dotenv';
-import { db, saveUsersToDisk, saveNotesToDisk, saveLecturesToDisk, saveProgressToDisk } from './src/server/db';
+import { OAuth2Client } from 'google-auth-library';
+import { google } from 'googleapis';
+import { db, saveUsersToDisk, saveNotesToDisk, saveLecturesToDisk, saveProgressToDisk, savePluginsToDisk } from './src/server/db';
+import { serverSupabase } from './src/server/supabaseServer';
+import { syncService } from './src/server/syncService';
 import { databaseRouter } from './src/server/databaseRouter';
 import {
   generateStudyAssistantReply,
@@ -55,6 +59,17 @@ import { persistUserToCloud, findUserInCloud, loadUsersFromCloud, deleteUserFrom
 
 dotenv.config();
 
+// Initialize Google OAuth2 Client
+const googleClientId = process.env.GOOGLE_CLIENT_ID;
+const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
+const googleRedirectUri = process.env.GOOGLE_REDIRECT_URI || 'http://localhost:3000/api/auth/google/callback';
+
+export const googleOAuthClient = new OAuth2Client(
+  googleClientId,
+  googleClientSecret,
+  googleRedirectUri
+);
+
 export const app = express();
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
@@ -80,6 +95,33 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
   app.get('/api/security/audit', (_req, res) => {
     const report = runSecuritySelfAudit();
     res.json(report);
+  });
+
+  // ==========================================
+  // GLOBAL SETTINGS ENDPOINT
+  // ==========================================
+  app.post('/api/settings/api-key', (req, res) => {
+    const { apiKey } = req.body;
+    if (apiKey !== undefined) {
+      process.env.GEMINI_API_KEY = apiKey;
+      try {
+        let envContent = '';
+        if (fs.existsSync('.env')) {
+          envContent = fs.readFileSync('.env', 'utf8');
+        }
+        if (envContent.includes('GEMINI_API_KEY=')) {
+          envContent = envContent.replace(/GEMINI_API_KEY=.*/g, `GEMINI_API_KEY="${apiKey}"`);
+        } else {
+          envContent += `\nGEMINI_API_KEY="${apiKey}"`;
+        }
+        fs.writeFileSync('.env', envContent);
+        res.json({ success: true, message: 'API key saved.' });
+      } catch (e) {
+        res.status(500).json({ error: 'Failed to write to .env file' });
+      }
+    } else {
+      res.status(400).json({ error: 'apiKey is required' });
+    }
   });
 
   // ==========================================
@@ -139,7 +181,7 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
     }
 
     // Verify Password strictly!
-    const expectedPassword = user.password || 'EduSync@260101';
+    const expectedPassword = user.password || 'ClassSarthi@260101';
     if (expectedPassword !== loginPass) {
       res.status(401).json({
         error: 'Incorrect password. Please verify your credentials and try again.'
@@ -393,7 +435,7 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
     const cleanName = name.trim().toLowerCase().split(' ')[0];
     const generatedUsername = req.body.username || (role === 'teacher' ? `prof.${cleanName}` : role === 'admin' ? `dean.${cleanName}` : `student.${cleanName}`);
-    const generatedPassword = req.body.password || (role === 'teacher' ? `Teacher@${finalInstId.slice(-4)}` : role === 'admin' ? `Dean@${finalInstId.slice(-4)}!` : `EduSync@${finalInstId}`);
+    const generatedPassword = req.body.password || (role === 'teacher' ? `Teacher@${finalInstId.slice(-4)}` : role === 'admin' ? `Dean@${finalInstId.slice(-4)}!` : `ClassSarthi@${finalInstId}`);
 
     const newUser: User = {
       id: `${role}-${Date.now()}`,
@@ -599,7 +641,7 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
         student = {
           id: studentId,
           name: (req.body.studentName || 'Student').trim(),
-          email: (req.body.studentEmail || `${studentId}@edusync.edu.in`).trim(),
+          email: (req.body.studentEmail || `${studentId}@classsarthi.edu.in`).trim(),
           role: 'student',
           department: 'Computer Science & Engineering',
           academicYear: '2026-27'
@@ -788,7 +830,7 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
         } else {
           const usernamePrefix = cleanEmail.split('@')[0].toLowerCase().replace(/[^a-z0-9._-]/g, '');
           const cleanUsername = rawUser.username || (role === 'teacher' ? `prof.${usernamePrefix}` : `student.${usernamePrefix}`);
-          const defaultPassword = rawUser.password || (role === 'teacher' ? `Teacher@${finalRoll.slice(-4)}` : `EduSync@${finalRoll}`);
+          const defaultPassword = rawUser.password || (role === 'teacher' ? `Teacher@${finalRoll.slice(-4)}` : `ClassSarthi@${finalRoll}`);
 
           const newUser: User = {
             id: `${role}-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
@@ -1313,12 +1355,12 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
   // STUDENT NOTES PLAYGROUND
   // ==========================================
 
-  const handleGetNotes = (req: express.Request, res: express.Response) => {
+  const handleGetNotes = async (req: express.Request, res: express.Response) => {
     const user = getCurrentUser(req);
     const subjectId = req.params.subjectId || (req.query.subjectId as string);
     const requestedStudentId = (req.query.studentId as string) || user.id;
 
-    // Filter notes for the student (allow full access across students to study shared curriculum notes)
+    // Filter local notes
     let userNotes = db.notes.filter(n =>
       !n.studentId ||
       n.source === 'visionnote' ||
@@ -1329,6 +1371,39 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
       user.role === 'teacher' ||
       user.role === 'student'
     );
+
+    // Merge notes from Supabase Cloud if configured
+    if (serverSupabase) {
+      try {
+        const { data, error } = await serverSupabase.from('notes').select('*');
+        if (!error && data) {
+          const cloudNotes = data.map(n => ({
+            id: n.id,
+            studentId: n.student_id,
+            lectureId: n.lecture_id,
+            subjectId: n.subject_id || 'subj-misc',
+            title: n.title || 'Generated Note',
+            content: n.tailored_explanation_markdown || n.content || '',
+            source: 'visionnote' as const,
+            tags: n.tags || [],
+            isPinned: false,
+            createdAt: n.created_at,
+            lastModified: n.updated_at || n.created_at,
+            summary: n.summary || '',
+            keyTakeaways: [],
+            flashcards: [],
+            quiz: undefined
+          }));
+          const cloudIds = new Set(cloudNotes.map(n => n.id));
+          userNotes = [
+            ...cloudNotes,
+            ...userNotes.filter(n => !cloudIds.has(n.id))
+          ];
+        }
+      } catch (err) {
+        console.warn("[handleGetNotes] Failed to fetch from Supabase:", err);
+      }
+    }
 
     if (subjectId && subjectId !== 'all') {
       if (subjectId === 'others' || subjectId === 'subj-others' || subjectId === 'subj-misc' || subjectId === 'misc') {
@@ -1423,7 +1498,7 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
   app.post('/api/webhooks/ocr-ingest', async (req, res) => {
     try {
       const ocrSecret = req.headers['x-ocr-api-key'] || req.headers['x-ocr-secret'];
-      const expectedSecret = process.env.OCR_WEBHOOK_SECRET || 'edusync_ocr_secret_2026';
+      const expectedSecret = process.env.OCR_WEBHOOK_SECRET || 'classsarthi_ocr_secret_2026';
 
       // 1. Verify Shared Secret Key
       if (ocrSecret !== expectedSecret) {
@@ -1469,7 +1544,7 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
           name: fallbackName,
           email: fallbackEmail,
           username: fallbackEmail.split('@')[0],
-          password: `EduSync@${Date.now().toString().slice(-4)}`,
+          password: `ClassSarthi@${Date.now().toString().slice(-4)}`,
           role: 'student',
           gender: 'Not Specified',
           institutionalId: studentId || `260${Math.floor(100 + Math.random() * 899)}`,
@@ -1520,7 +1595,7 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
       res.status(201).json({
         success: true,
-        message: 'OCR note successfully received, ingested, and processed by EduSync.',
+        message: 'OCR note successfully received, ingested, and processed by ClassSarthi.',
         note: newNote,
         student: {
           id: targetStudent.id,
@@ -1538,7 +1613,7 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
   // VISIONNOTE (VN) CENTRAL SYNC & INGESTION HUB
   // ==========================================
 
-  // Helper to map grade and subject name to EduSync subjectId
+  // Helper to map grade and subject name to ClassSarthi subjectId
   function resolveVisionNoteSubjectId(grade?: string, subjectName?: string, explicitSubjectId?: string): string {
     if (explicitSubjectId && db.subjects.some(s => s.id === explicitSubjectId)) {
       return explicitSubjectId;
@@ -1671,7 +1746,7 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
       status: 'active',
       autoSyncEnabled: true,
       lastSyncTimestamp: vnNotes[0]?.lastModified || new Date().toISOString(),
-      totalNotesInEduSync: db.notes.length,
+      totalNotesInClassSarthi: db.notes.length,
       totalVisionNotesSynced: vnNotes.length,
       grade11Count: grade11Notes.length,
       grade12Count: grade12Notes.length,
@@ -2774,7 +2849,7 @@ If $d = 0 \\implies$ Lines are coplanar and intersect.`,
   const handleAIChat = async (req: express.Request, res: express.Response) => {
     try {
       const { message, history, apiKey: clientKey } = req.body || {};
-      const DEFAULT_B64 = 'QVEuQWI4Uk42SUx3Um5VRnM3a052S3dFZE9BejZOZU8zTTRsSjZuLVVVTDQxRHlCclZUdlE=';
+      const DEFAULT_B64 = 'QVEuQWI4Uk42SlBDTjAzMC1GeDFiU3g0XzEzejRvMkdwMW5HSlhTdHFvSW5vcWQzTXI2d3c=';
       const fallbackKey = Buffer.from(DEFAULT_B64, 'base64').toString('utf-8');
       const apiKey = clientKey || process.env.GEMINI_API_KEY || fallbackKey;
 
@@ -2870,13 +2945,17 @@ If $d = 0 \\implies$ Lines are coplanar and intersect.`,
         ? 'Socratic & Conversational'
         : 'Visual / Step-by-Step & Mental Models';
 
-      let systemInstruction = `You are the EduSync Contextual Socratic AI Tutor.
-The student just failed ${weakTopicsStr || weakestTopicName || "Newton's Second Law & Incline Dynamics"} from today's lecture '${lectureTitle}'.
-Their learning style is ${styleLabel}.
-When they ask a question, explain the concept using their preferred learning style.
-If applicable, suggest a specific YouTube video, a mental model, or a step-by-step trick to remember it.
-Do NOT just give textbook definitions—give them a hook based on their persona.
-Format all math in LaTeX ($...$ or $$...$$).`;
+      const isCasual = Boolean(req.body.isCasual) || /^(hi|hello|hey|greetings|howdy|sup|good\s*(morning|afternoon|evening)|how\s*are\s*you|who\s*are\s*you|what\s*can\s*you\s*do|tell\s*me\s*about\s*yourself|what'?s\s*up|yo)\b/i.test(message.trim());
+
+      let systemInstruction = `You are the ClassSarthi AI Assistant and Academic Tutor.
+CRITICAL INSTRUCTIONS:
+- If the user provides a casual greeting, conversational remark, or general non-academic question (such as "hi", "hello", "how are you", "who are you", etc.), respond naturally, warmly, and concisely like standard ChatGPT/Gemini. NEVER force an unsolicited academic lecture, syllabus topic, physics formula, or Socratic homework quiz onto a casual prompt.
+- Socratic Guidance: When a student asks for homework answers or direct solutions (e.g. "Give me the exact final numerical answer to question 4 on the homework"), do not provide naked numbers. Guide them by asking: "What concept or equation is involved? Let us work through it step-by-step!"
+- Only provide academic analysis, derivations, Socratic questioning, and LaTeX formulas ($...$ or $$...$$) when the user asks an academic, homework, or educational question.`;
+
+      if (!isCasual && (weakTopicsStr || weakestTopicName)) {
+        systemInstruction += `\nWhen the user asks for academic help, their current focus area is: ${weakTopicsStr || weakestTopicName}${activeContext.lastLectureTitle ? ` related to '${activeContext.lastLectureTitle}'` : ''}. Preferred learning style: ${styleLabel}.`;
+      }
 
       // Format conversation history for multi-turn conversational memory
       const formattedHistory = (Array.isArray(history) ? history : [])
@@ -2892,7 +2971,7 @@ Format all math in LaTeX ($...$ or $$...$$).`;
         ? `[Conversation History]\n${formattedHistory}\n\nUser: ${message}`
         : message;
 
-      const DEFAULT_B64 = 'QVEuQWI4Uk42SUx3Um5VRnM3a052S3dFZE9BejZOZU8zTTRsSjZuLVVVTDQxRHlCclZUdlE=';
+      const DEFAULT_B64 = 'QVEuQWI4Uk42SlBDTjAzMC1GeDFiU3g0XzEzejRvMkdwMW5HSlhTdHFvSW5vcWQzTXI2d3c=';
       const fallbackKey = Buffer.from(DEFAULT_B64, 'base64').toString('utf-8');
       const apiKey = clientApiKey || process.env.GEMINI_API_KEY || fallbackKey;
 
@@ -2931,15 +3010,19 @@ Format all math in LaTeX ($...$ or $$...$$).`;
         return res.json({ reply: tutorReply, response: tutorReply });
       }
 
-      // Resilient fallback contextual response with persona tailoring
-      let fallbackGreeting = `I see you struggled with **${weakestTopicName || "Newton's Second Law & Incline Dynamics"}** from today's class on "${lectureTitle}".\n\n`;
-      if (learningStyle === 'visual') {
-        fallbackGreeting += `💡 **Visual Mental Model**: Picture a block on a ramp. Gravity always pulls straight down ($mg$), but the surface only pushes back perpendicular to the ramp ($N = mg\\cos\\theta$). As the ramp gets steeper toward vertical ($90^\\circ$), $\\cos(90^\\circ) = 0$, and normal force disappears!\n\nWhat happens to the sliding acceleration as the angle $\\theta$ increases?`;
-      } else {
-        fallbackGreeting += `📐 **Step-by-Step Derivation**: Resolving forces along the ramp coordinate system:\n$$\\Sigma F_\\parallel = mg\\sin\\theta - f_k = m \\cdot a$$\n$$\\Sigma F_\\perp = N - mg\\cos\\theta = 0 \\implies N = mg\\cos\\theta$$\n\nWhat is the acceleration if friction $\\mu_k = 0$?`;
+      if (isCasual) {
+        return res.json({
+          reply: "Hello! I'm your ClassSarthi AI tutor. How can I help you today? Feel free to ask any question or dive into your coursework!",
+          response: "Hello! I'm your ClassSarthi AI tutor. How can I help you today? Feel free to ask any question or dive into your coursework!"
+        });
       }
 
-      fallbackGreeting += `\n\n📺 **Recommended Video Breakdown**:\n[Watch: Incline Forces Visualized (3Blue1Brown Style)](https://www.youtube.com/watch?v=kKKM8Y-u7ds)`;
+      // Resilient fallback contextual response with persona tailoring
+      let fallbackGreeting = `Let's work through your question: "${message}".\n\n`;
+      if (weakestTopicName) {
+        fallbackGreeting += `Regarding **${weakestTopicName}**:\n`;
+      }
+      fallbackGreeting += `To solve this systematically, let's think about the governing principles step-by-step. What fundamental relationship or formula connects these variables?`;
 
       return res.json({
         reply: fallbackGreeting,
@@ -3354,9 +3437,103 @@ Format all math in LaTeX ($...$ or $$...$$).`;
   // PLUGINS & INTEGRATIONS SYSTEM ENDPOINTS
   // ==========================================
 
+  // Google OAuth URL Generation
+  app.get('/api/auth/google/url', (req, res) => {
+    const { pluginId } = req.query;
+    if (!pluginId || typeof pluginId !== 'string') {
+      res.status(400).json({ error: 'pluginId query param is required' });
+      return;
+    }
+    
+    // Determine required scopes based on plugin type
+    let scopes = ['https://www.googleapis.com/auth/userinfo.email'];
+    if (pluginId.includes('classroom')) {
+      scopes.push('https://www.googleapis.com/auth/classroom.courses.readonly', 'https://www.googleapis.com/auth/classroom.coursework.me.readonly');
+    } else if (pluginId.includes('calendar')) {
+      scopes.push('https://www.googleapis.com/auth/calendar.readonly');
+    } else if (pluginId.includes('gmail')) {
+      scopes.push('https://www.googleapis.com/auth/gmail.readonly');
+    } else if (pluginId.includes('drive')) {
+      scopes.push('https://www.googleapis.com/auth/drive.readonly');
+    }
+    
+    try {
+      const url = googleOAuthClient.generateAuthUrl({
+        access_type: 'offline',
+        scope: scopes,
+        state: pluginId, // pass pluginId via state to know which plugin is being connected
+        prompt: 'consent'
+      });
+      res.json({ success: true, url });
+    } catch (e) {
+      console.error('Failed to generate Google OAuth URL:', e);
+      res.status(500).json({ error: 'Failed to generate OAuth URL. Check server configuration.' });
+    }
+  });
+
+  // Google OAuth Callback
+  app.get('/api/auth/google/callback', async (req, res) => {
+    const { code, state, error } = req.query;
+    
+    if (error) {
+      res.redirect(`/#/student?tab=plugins&error=${encodeURIComponent(error as string)}`);
+      return;
+    }
+    
+    if (!code || typeof code !== 'string') {
+      res.redirect(`/#/student?tab=plugins&error=invalid_code`);
+      return;
+    }
+    
+    const pluginId = state as string;
+    
+    try {
+      const { tokens } = await googleOAuthClient.getToken(code);
+      googleOAuthClient.setCredentials(tokens);
+      
+      // Fetch user profile to get email
+      const oauth2 = google.oauth2({ version: 'v2', auth: googleOAuthClient as any });
+      const userInfo = await oauth2.userinfo.get();
+      const email = userInfo.data.email;
+      
+      // Save tokens into DB
+      const plugin = (db.plugins || []).find(p => p.pluginId === pluginId || p.id === pluginId);
+      if (plugin) {
+        plugin.status = 'connected';
+        plugin.accountEmail = email || 'Unknown';
+        plugin.lastSync = 'Just now';
+        plugin.accessToken = tokens.access_token || undefined;
+        plugin.refreshToken = tokens.refresh_token || undefined;
+        plugin.tokenExpiry = tokens.expiry_date || undefined;
+        
+        const historyItem: any = {
+          id: `hist-${Date.now()}`,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ', Today',
+          status: 'success',
+          summary: `OAuth2 connection established securely for ${plugin.name} (${email}).`,
+          itemsSynced: 0,
+        };
+        plugin.syncHistory = [historyItem, ...(plugin.syncHistory || [])];
+        
+        savePluginsToDisk(db.plugins);
+      }
+      
+      // Redirect back to plugins UI with a success param
+      res.redirect(`/#/student?tab=plugins&success=${encodeURIComponent(pluginId)}`);
+    } catch (e: any) {
+      console.error('OAuth Callback Error:', e);
+      res.redirect(`/#/student?tab=plugins&error=${encodeURIComponent('oauth_exchange_failed')}`);
+    }
+  });
+
   // 1. Get all plugins
   app.get('/api/plugins', (_req, res) => {
-    res.json({ success: true, plugins: db.plugins || [] });
+    // Strip sensitive tokens before sending to frontend
+    const safePlugins = (db.plugins || []).map(p => {
+      const { accessToken, refreshToken, tokenExpiry, syncToken, ...safe } = p;
+      return safe;
+    });
+    res.json({ success: true, plugins: safePlugins });
   });
 
   // 2. Connect a plugin
@@ -3430,7 +3607,7 @@ Format all math in LaTeX ($...$ or $$...$$).`;
   });
 
   // 5. Force sync now
-  app.post('/api/plugins/:id/sync', (req, res) => {
+  app.post('/api/plugins/:id/sync', async (req, res) => {
     const pluginId = req.params.id;
     const plugin = (db.plugins || []).find(p => p.id === pluginId || p.pluginId === pluginId);
     if (!plugin) {
@@ -3438,23 +3615,18 @@ Format all math in LaTeX ($...$ or $$...$$).`;
       return;
     }
 
-    plugin.lastSync = 'Just now';
-    const newItemsCount = Math.floor(1 + Math.random() * 4);
-    const syncItem: any = {
-      id: `sync-${Date.now()}`,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ', Today',
-      status: 'success',
-      summary: `Manual sync completed: ${newItemsCount} items updated across EduSync workspace.`,
-      itemsSynced: newItemsCount,
-    };
-    plugin.syncHistory = [syncItem, ...(plugin.syncHistory || [])].slice(0, 20);
-
-    res.json({
-      success: true,
-      message: `Synchronized ${plugin.name} successfully.`,
-      itemsSynced: newItemsCount,
-      plugin,
-    });
+    try {
+      const newItemsCount = await syncService.syncPlugin(plugin);
+      // The service automatically updates sync history and saves to disk
+      res.json({
+        success: true,
+        message: `Synchronized ${plugin.name} successfully.`,
+        itemsSynced: newItemsCount,
+        plugin,
+      });
+    } catch (e: any) {
+      res.status(500).json({ error: e.message || 'Sync failed' });
+    }
   });
 
   // 6. Test plugin connection
@@ -3531,7 +3703,7 @@ Format all math in LaTeX ($...$ or $$...$$).`;
       authorId: authorId || 'student-1',
       authorName: authorName || 'Student Dhruva',
       mcpConfig: mcpConfig || {
-        provider: 'edusync_ai',
+        provider: 'classsarthi_ai',
         authMethod: 'bearer',
         capabilities: ['Answer questions', 'Generate examples'],
         status: 'verified',
@@ -3575,7 +3747,7 @@ Format all math in LaTeX ($...$ or $$...$$).`;
       success: true,
       status: 'verified',
       latencyMs: latency,
-      message: `MCP Server handshake successful via ${provider || 'EduSync AI'}. Supported capabilities: ${(capabilities || []).join(', ') || 'Standard Prompting'}.`,
+      message: `MCP Server handshake successful via ${provider || 'ClassSarthi AI'}. Supported capabilities: ${(capabilities || []).join(', ') || 'Standard Prompting'}.`,
     });
   });
 
@@ -3629,7 +3801,7 @@ Format all math in LaTeX ($...$ or $$...$$).`;
 
     res.json({
       success: true,
-      message: `Tutor "${tutor?.name || 'Custom Tutor'}" approved and activated across EduSync.`,
+      message: `Tutor "${tutor?.name || 'Custom Tutor'}" approved and activated across ClassSarthi.`,
       tutor,
       request,
     });
@@ -3745,17 +3917,18 @@ Format all math in LaTeX ($...$ or $$...$$).`;
     const isProduction = process.env.NODE_ENV === 'production';
 
     if (isProduction && hasDist) {
-      console.log(`EduSync serving production static build from: ${distPath}`);
+      console.log(`ClassSarthi serving production static build from: ${distPath}`);
       app.use(express.static(distPath));
       app.get('*', (req, res) => {
         res.sendFile(distIndexHtml);
       });
       app.listen(PORT, '0.0.0.0', () => {
-        console.log(`EduSync Server running on http://0.0.0.0:${PORT}`);
+        console.log(`ClassSarthi Server running on http://0.0.0.0:${PORT}`);
         startSupabaseRealtimeWorker();
+        startBackgroundSync();
       });
     } else {
-      console.log('EduSync running in Development mode with Vite HMR.');
+      console.log('ClassSarthi running in Development mode with Vite HMR.');
       const { createServer: createViteServer } = await import('vite');
       const vite = await createViteServer({
         server: { middlewareMode: true },
@@ -3763,10 +3936,26 @@ Format all math in LaTeX ($...$ or $$...$$).`;
       });
       app.use(vite.middlewares);
       app.listen(PORT, '0.0.0.0', () => {
-        console.log(`EduSync Server running on http://0.0.0.0:${PORT}`);
+        console.log(`ClassSarthi Server running on http://0.0.0.0:${PORT}`);
         startSupabaseRealtimeWorker();
+        startBackgroundSync();
       });
     }
+  }
+
+  function startBackgroundSync() {
+    console.log('Starting automated Google Plugins synchronization service...');
+    // Run every 10 minutes
+    setInterval(async () => {
+      const activePlugins = (db.plugins || []).filter(p => p.status === 'connected');
+      for (const plugin of activePlugins) {
+        try {
+          await syncService.syncPlugin(plugin);
+        } catch (e) {
+          console.error(`Background sync failed for ${plugin.pluginId}:`, e);
+        }
+      }
+    }, 10 * 60 * 1000);
   }
 
   startServer();

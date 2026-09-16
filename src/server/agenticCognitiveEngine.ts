@@ -1,4 +1,4 @@
-import { GoogleGenAI, Type } from '@google/genai';
+import { GoogleGenAI } from '@google/genai';
 import {
   getGeneralizedLectureNote,
   getStudentLearningTelemetry,
@@ -8,7 +8,7 @@ import { ColorFlashcard, AgenticPersonalizedNote, LearnerPersona } from '../type
 
 /**
  * ============================================================================
- * EDUSYNC AGENTIC COGNITIVE ARCHITECTURE (V2.0)
+ * CLASSSARTHI AGENTIC COGNITIVE ARCHITECTURE (V2.0)
  * ============================================================================
  * An autonomous, multi-stage pedagogical cognitive engine that bridges
  * classroom sensor captures (camera OCR + microphone transcripts) from Supabase
@@ -35,7 +35,7 @@ function getAI(): GoogleGenAI {
       apiKey: apiKey || 'dummy-key',
       httpOptions: {
         headers: {
-          'User-Agent': 'edusync-agentic-engine-v2',
+          'User-Agent': 'classsarthi-agentic-engine-v2',
         },
       },
     });
@@ -217,7 +217,7 @@ export async function synthesizeAgenticPersonalizedNote({
   const ai = getAI();
 
   const prompt = `
-You are the EduSync Autonomous Cognitive Personalization Agent (V2.0).
+You are the ClassSarthi Autonomous Cognitive Personalization Agent (V2.0).
 Your mission is to synthesize raw CLASSROOM CAPTURE DATA (from camera OCR and teacher microphone) with PERSONAL STUDENT TELEMETRY to create a master-class revision packet.
 
 === 1. CLASSROOM CAPTURE INPUT (From Supabase) ===
@@ -264,95 +264,96 @@ ${customDoubt ? `CURRENT STUDENT DOUBT: "${customDoubt}"` : ''}
 `;
 
   try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: prompt,
-      config: {
-        responseMimeType: 'application/json',
-        responseSchema: {
-          type: Type.OBJECT,
+    const interaction = await ai.interactions.create({
+      model: 'gemini-3.8-flash',
+      input: prompt,
+      response_format: {
+        type: 'text',
+        mime_type: 'application/json',
+        schema: {
+          type: "object",
           properties: {
-            customTitle: { type: Type.STRING },
-            groundUpAnalogy: { type: Type.STRING },
-            tailoredExplanationMarkdown: { type: Type.STRING },
-            hindiVoiceSummary: { type: Type.STRING },
-            englishVoiceSummary: { type: Type.STRING },
-            asciiDiagram: { type: Type.STRING },
+            customTitle: { type: "string" },
+            groundUpAnalogy: { type: "string" },
+            tailoredExplanationMarkdown: { type: "string" },
+            hindiVoiceSummary: { type: "string" },
+            englishVoiceSummary: { type: "string" },
+            asciiDiagram: { type: "string" },
             doubtClarifications: {
-              type: Type.ARRAY,
+              type: "array",
               items: {
-                type: Type.OBJECT,
+                type: "object",
                 properties: {
-                  doubt: { type: Type.STRING },
-                  clarification: { type: Type.STRING },
-                  keyTakeaway: { type: Type.STRING },
-                  eli10Analogy: { type: Type.STRING }
+                  doubt: { type: "string" },
+                  clarification: { type: "string" },
+                  keyTakeaway: { type: "string" },
+                  eli10Analogy: { type: "string" }
                 },
                 required: ['doubt', 'clarification', 'keyTakeaway']
               }
             },
             pyqQuestions: {
-              type: Type.ARRAY,
+              type: "array",
               items: {
-                type: Type.OBJECT,
+                type: "object",
                 properties: {
-                  examSource: { type: Type.STRING },
-                  question: { type: Type.STRING },
-                  solution: { type: Type.STRING },
-                  conceptTested: { type: Type.STRING },
-                  eli10Analogy: { type: Type.STRING },
-                  trapToAvoid: { type: Type.STRING }
+                  examSource: { type: "string" },
+                  question: { type: "string" },
+                  solution: { type: "string" },
+                  conceptTested: { type: "string" },
+                  eli10Analogy: { type: "string" },
+                  trapToAvoid: { type: "string" }
                 },
                 required: ['examSource', 'question', 'solution', 'conceptTested']
               }
             },
             practiceQuestions: {
-              type: Type.ARRAY,
+              type: "array",
               items: {
-                type: Type.OBJECT,
+                type: "object",
                 properties: {
-                  question: { type: Type.STRING },
-                  hint: { type: Type.STRING },
-                  answer: { type: Type.STRING },
-                  eli10Hint: { type: Type.STRING }
+                  question: { type: "string" },
+                  hint: { type: "string" },
+                  answer: { type: "string" },
+                  eli10Hint: { type: "string" }
                 },
                 required: ['question', 'answer']
               }
             },
             animatedVideos: {
-              type: Type.ARRAY,
+              type: "array",
               items: {
-                type: Type.OBJECT,
+                type: "object",
                 properties: {
-                  title: { type: Type.STRING },
-                  youtubeSearchQuery: { type: Type.STRING },
-                  whyWatch: { type: Type.STRING },
-                  targetedMistake: { type: Type.STRING }
+                  title: { type: "string" },
+                  youtubeSearchQuery: { type: "string" },
+                  whyWatch: { type: "string" },
+                  targetedMistake: { type: "string" }
                 },
                 required: ['title', 'youtubeSearchQuery', 'whyWatch']
               }
             },
             flashcards: {
-              type: Type.ARRAY,
+              type: "array",
               items: {
-                type: Type.OBJECT,
+                type: "object",
                 properties: {
-                  category: { type: Type.STRING, enum: ['trap', 'formula', 'intuition', 'shortcut'] },
-                  front: { type: Type.STRING },
-                  back: { type: Type.STRING },
-                  tag: { type: Type.STRING },
-                  eli10Analogy: { type: Type.STRING },
-                  keyFormula: { type: Type.STRING },
-                  commonTrap: { type: Type.STRING },
-                  visualHint: { type: Type.STRING }
+                  category: { type: "string", enum: ['trap', 'formula', 'intuition', 'shortcut'] },
+                  front: { type: "string" },
+                  back: { type: "string" },
+                  tag: { type: "string" },
+                  eli10Analogy: { type: "string" },
+                  keyFormula: { type: "string" },
+                  commonTrap: { type: "string" },
+                  visualHint: { type: "string" }
                 },
                 required: ['category', 'front', 'back', 'tag']
               }
             },
-            studyTimeRecommendation: { type: Type.STRING },
+            studyTimeRecommendation: { type: "string" },
             reinforcedConcepts: {
-              type: Type.ARRAY,
-              items: { type: Type.STRING }
+              type: "array",
+              items: { type: "string" }
             }
           },
           required: [
@@ -369,7 +370,7 @@ ${customDoubt ? `CURRENT STUDENT DOUBT: "${customDoubt}"` : ''}
       }
     });
 
-    const parsed = JSON.parse(response.text || '{}');
+    const parsed = JSON.parse(interaction.output_text || '{}');
 
     // Merge high-precision verified videos with AI-generated video queries
     const combinedVideos = [
