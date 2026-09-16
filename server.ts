@@ -2849,7 +2849,7 @@ If $d = 0 \\implies$ Lines are coplanar and intersect.`,
   const handleAIChat = async (req: express.Request, res: express.Response) => {
     try {
       const { message, history, apiKey: clientKey } = req.body || {};
-      const DEFAULT_B64 = 'QVEuQWI4Uk42SUx3Um5VRnM3a052S3dFZE9BejZOZU8zTTRsSjZuLVVVTDQxRHlCclZUdlE=';
+      const DEFAULT_B64 = 'QVEuQWI4Uk42SlBDTjAzMC1GeDFiU3g0XzEzejRvMkdwMW5HSlhTdHFvSW5vcWQzTXI2d3c=';
       const fallbackKey = Buffer.from(DEFAULT_B64, 'base64').toString('utf-8');
       const apiKey = clientKey || process.env.GEMINI_API_KEY || fallbackKey;
 
@@ -2945,13 +2945,15 @@ If $d = 0 \\implies$ Lines are coplanar and intersect.`,
         ? 'Socratic & Conversational'
         : 'Visual / Step-by-Step & Mental Models';
 
-      let systemInstruction = `You are the ClassSarthi Contextual Socratic AI Tutor.
-The student just failed ${weakTopicsStr || weakestTopicName || "Newton's Second Law & Incline Dynamics"} from today's lecture '${lectureTitle}'.
-Their learning style is ${styleLabel}.
-When they ask a question, explain the concept using their preferred learning style.
-If applicable, suggest a specific YouTube video, a mental model, or a step-by-step trick to remember it.
-Do NOT just give textbook definitions—give them a hook based on their persona.
-Format all math in LaTeX ($...$ or $$...$$).`;
+      let systemInstruction = `You are the ClassSarthi Contextual Socratic AI Tutor and comprehensive academic assistant.`;
+      if (weakTopicsStr || weakestTopicName) {
+        systemInstruction += `\nThe student is currently reviewing weak areas: ${weakTopicsStr || weakestTopicName}${activeContext.lastLectureTitle ? ` related to '${activeContext.lastLectureTitle}'` : ''}.`;
+      }
+      systemInstruction += `
+Their preferred learning style is ${styleLabel}.
+When they ask a question, answer thoroughly, helpfully, and dynamically using clean Markdown and LaTeX math ($...$ or $$...$$).
+Explain step-by-step, providing intuitive physical or mathematical insights.
+Answer the user's exact question thoughtfully without rigid canned templates.`;
 
       // Format conversation history for multi-turn conversational memory
       const formattedHistory = (Array.isArray(history) ? history : [])
@@ -2967,7 +2969,7 @@ Format all math in LaTeX ($...$ or $$...$$).`;
         ? `[Conversation History]\n${formattedHistory}\n\nUser: ${message}`
         : message;
 
-      const DEFAULT_B64 = 'QVEuQWI4Uk42SUx3Um5VRnM3a052S3dFZE9BejZOZU8zTTRsSjZuLVVVTDQxRHlCclZUdlE=';
+      const DEFAULT_B64 = 'QVEuQWI4Uk42SlBDTjAzMC1GeDFiU3g0XzEzejRvMkdwMW5HSlhTdHFvSW5vcWQzTXI2d3c=';
       const fallbackKey = Buffer.from(DEFAULT_B64, 'base64').toString('utf-8');
       const apiKey = clientApiKey || process.env.GEMINI_API_KEY || fallbackKey;
 
@@ -3007,14 +3009,11 @@ Format all math in LaTeX ($...$ or $$...$$).`;
       }
 
       // Resilient fallback contextual response with persona tailoring
-      let fallbackGreeting = `I see you struggled with **${weakestTopicName || "Newton's Second Law & Incline Dynamics"}** from today's class on "${lectureTitle}".\n\n`;
-      if (learningStyle === 'visual') {
-        fallbackGreeting += `💡 **Visual Mental Model**: Picture a block on a ramp. Gravity always pulls straight down ($mg$), but the surface only pushes back perpendicular to the ramp ($N = mg\\cos\\theta$). As the ramp gets steeper toward vertical ($90^\\circ$), $\\cos(90^\\circ) = 0$, and normal force disappears!\n\nWhat happens to the sliding acceleration as the angle $\\theta$ increases?`;
-      } else {
-        fallbackGreeting += `📐 **Step-by-Step Derivation**: Resolving forces along the ramp coordinate system:\n$$\\Sigma F_\\parallel = mg\\sin\\theta - f_k = m \\cdot a$$\n$$\\Sigma F_\\perp = N - mg\\cos\\theta = 0 \\implies N = mg\\cos\\theta$$\n\nWhat is the acceleration if friction $\\mu_k = 0$?`;
+      let fallbackGreeting = `Let's work through your question: "${message}".\n\n`;
+      if (weakestTopicName) {
+        fallbackGreeting += `Regarding **${weakestTopicName}**:\n`;
       }
-
-      fallbackGreeting += `\n\n📺 **Recommended Video Breakdown**:\n[Watch: Incline Forces Visualized (3Blue1Brown Style)](https://www.youtube.com/watch?v=kKKM8Y-u7ds)`;
+      fallbackGreeting += `To solve this systematically, let's think about the governing principles step-by-step. What fundamental relationship or formula connects these variables?`;
 
       return res.json({
         reply: fallbackGreeting,

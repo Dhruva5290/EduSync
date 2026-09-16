@@ -138,17 +138,36 @@ export const AITutorTab: React.FC<AITutorTabProps> = ({
         throw new Error('API request failed');
       }
     } catch {
-      setTimeout(() => {
-        setMessages(prev => [
-          ...prev,
-          {
-            id: `tut-fb-${Date.now()}`,
-            sender: 'tutor',
-            text: `Think about the direction gravity acts compared to the surface of the incline. Gravity acts strictly vertically downward ($mg$). Since the block can only press directly *into* the ramp perpendicularly, what component of that downward vector is aligned perpendicular to the incline?\n\nWhat equation balances normal force?`,
-            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-          }
-        ]);
-      }, 700);
+      // Direct client fallback to Gemini
+      const apiKey = localStorage.getItem('edusync_gemini_api_key') || (typeof atob !== 'undefined' ? atob('QVEuQWI4Uk42SlBDTjAzMC1GeDFiU3g0XzEzejRvMkdwMW5HSlhTdHFvSW5vcWQzTXI2d3c=') : '');
+      let fallbackText = '';
+      try {
+        const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${apiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ role: 'user', parts: [{ text: `${q}\n(Subject: ${selectedSubject}, Chapter: ${selectedChapter})` }] }]
+          })
+        });
+        if (geminiRes.ok) {
+          const geminiData = await geminiRes.json();
+          fallbackText = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
+        }
+      } catch {}
+
+      if (!fallbackText) {
+        fallbackText = `I'm having trouble connecting to the AI service right now. Please check your internet connection and try again.`;
+      }
+
+      setMessages(prev => [
+        ...prev,
+        {
+          id: `tut-fb-${Date.now()}`,
+          sender: 'tutor',
+          text: fallbackText,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        }
+      ]);
     } finally {
       setIsThinking(false);
     }

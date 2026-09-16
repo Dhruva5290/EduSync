@@ -77324,18 +77324,19 @@ async function handler(req, res) {
       res.status(200).json(localAnalysis);
       return;
     }
-    if ((path3.includes("/api/tutor") || path3.endsWith("/tutor")) && req.method === "POST") {
+    if ((path3.includes("/api/tutor") || path3.endsWith("/tutor") || path3.includes("/api/chat") || path3.endsWith("/chat")) && req.method === "POST") {
       const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body || {};
-      const { message, history = [] } = body;
+      const message = body.message || body.prompt || body.content;
       if (!message || typeof message !== "string") {
         res.status(400).json({ error: "Message is required" });
         return;
       }
-      const DEFAULT_B64 = "QVEuQWI4Uk42SUx3Um5VRnM3a052S3dFZE9BejZOZU8zTTRsSjZuLVVVTDQxRHlCclZUdlE=";
+      const DEFAULT_B64 = "QVEuQWI4Uk42SlBDTjAzMC1GeDFiU3g0XzEzejRvMkdwMW5HSlhTdHFvSW5vcWQzTXI2d3c=";
       const buildTimeKey = "QVEuQWI4Uk42SlBDTjAzMC1GeDFiU3g0XzEzejRvMkdwMW5HSlhTdHFvSW5vcWQzTXI2d3c=" ? Buffer.from("QVEuQWI4Uk42SlBDTjAzMC1GeDFiU3g0XzEzejRvMkdwMW5HSlhTdHFvSW5vcWQzTXI2d3c=", "base64").toString("utf-8") : "";
       const fallbackKey = Buffer.from(DEFAULT_B64, "base64").toString("utf-8");
       const apiKey = body.apiKey || process.env.GEMINI_API_KEY || buildTimeKey || fallbackKey;
       try {
+        const history = body.history || [];
         const formattedHistory = (Array.isArray(history) ? history : []).slice(-10).filter((h2) => h2.text || h2.content).map((h2) => ({
           role: h2.sender === "user" || h2.role === "user" ? "user" : "model",
           parts: [{ text: String(h2.text || h2.content) }]
@@ -77343,9 +77344,12 @@ async function handler(req, res) {
         const candidateModels = [
           "gemini-3.5-flash-lite",
           "gemini-3.1-flash-lite",
-          "gemini-flash-lite-latest"
+          "gemini-flash-lite-latest",
+          "gemini-3.6-flash",
+          "gemini-3.7-flash"
         ];
         let reply = "";
+        const systemPrompt = body.customPrompt || (body.method ? `You are an expert AI tutor teaching using the ${body.method}. ` : "") + `You are an intelligent, natural, helpful academic AI tutor and study companion. Answer questions clearly, thoughtfully, and directly using clean Markdown and LaTeX math ($...$ or $$...$$) where appropriate. Explain concepts step-by-step and provide intuitive examples when helpful.`;
         for (const model of candidateModels) {
           try {
             const apiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
@@ -77353,7 +77357,7 @@ async function handler(req, res) {
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
                 systemInstruction: {
-                  parts: [{ text: "You are an intelligent, helpful, natural AI chatbot. Answer questions clearly, thoughtfully, and directly using clean Markdown and LaTeX math ($...$ or $$...$$) where appropriate." }]
+                  parts: [{ text: systemPrompt }]
                 },
                 contents: [
                   ...formattedHistory,
@@ -77373,12 +77377,13 @@ async function handler(req, res) {
         if (!reply) {
           reply = "I was unable to generate a response right now. Please try again.";
         }
-        res.status(200).json({ reply });
+        res.status(200).json({ reply, response: reply });
         return;
       } catch (geminiErr) {
         console.error("[Tutor Error]", geminiErr?.message || geminiErr);
         res.status(200).json({
-          reply: "I encountered an error connecting to the AI. Please try again."
+          reply: "I encountered an error connecting to the AI. Please try again.",
+          response: "I encountered an error connecting to the AI. Please try again."
         });
         return;
       }

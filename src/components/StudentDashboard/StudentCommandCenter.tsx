@@ -333,10 +333,30 @@ export const StudentCommandCenter: React.FC<StudentCommandCenterProps> = ({
         throw new Error('API failed');
       }
     } catch {
+      const apiKey = localStorage.getItem('edusync_gemini_api_key') || (typeof atob !== 'undefined' ? atob('QVEuQWI4Uk42SlBDTjAzMC1GeDFiU3g0XzEzejRvMkdwMW5HSlhTdHFvSW5vcWQzTXI2d3c=') : '');
+      let fallbackText = '';
+      try {
+        const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${apiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ role: 'user', parts: [{ text: query }] }]
+          })
+        });
+        if (geminiRes.ok) {
+          const geminiData = await geminiRes.json();
+          fallbackText = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
+        }
+      } catch {}
+
+      if (!fallbackText) {
+        fallbackText = `I'm having trouble connecting to the AI right now. Please check your network connection and try again.`;
+      }
+
       const fallbackMsg: ChatMessage = {
         id: `tut-${Date.now()}`,
         sender: 'tutor',
-        text: `Regarding **${weakPoints[0] || 'your question'}**: On an incline of angle $\\theta$, remember that gravity breaks down into $mg\\cos\\theta$ perpendicular and $mg\\sin\\theta$ parallel to the plane.\n\n$$F_{\\text{net}} = mg\\sin\\theta - f_k$$\n\nWhat happens to the acceleration if the friction coefficient becomes zero ($\\mu_k = 0$)?`,
+        text: fallbackText,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
       setMessages(prev => [...prev, fallbackMsg]);
