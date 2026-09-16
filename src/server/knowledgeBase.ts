@@ -677,7 +677,7 @@ export function synthesizeIntelligentAcademicResponse(
   if (isGreeting) {
     if (cleanQuery.includes('who are you') || cleanQuery.includes('what are you') || cleanQuery.includes('what can you do')) {
       return {
-        reply: `### 👋 Hi! I'm your EduSync AI Academic Tutor for **${subjectName}** (${subjectCode}).
+        reply: `### 👋 Hi! I'm your ClassSarthi AI Academic Tutor for **${subjectName}** (${subjectCode}).
 
 I'm here to help you master your coursework, prepare for exams, and solve homework problems. Here is what I can do:
 

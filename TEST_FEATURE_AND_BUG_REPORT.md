@@ -1,16 +1,16 @@
-# EduSync: Feature Directory & Automated Bug Hunter Report
+# ClassSarthi: Feature Directory & Automated Bug Hunter Report
 
-> **Execution Timestamp:** 2026-09-05T00:50:53.870Z  
+> **Execution Timestamp:** 2026-09-16T05:02:04.409Z  
 > **Total Test Suites:** 6  
-> **Total Test Cases:** 49  
-> **Passing:** 49 (100.0%)  
+> **Total Test Cases:** 60  
+> **Passing:** 60 (100.0%)  
 > **Identified Bugs / Edge Issues:** 0  
 
 ---
 
 ## 1. Complete System Features Catalog
 
-Below is the complete inventory of all EduSync features verified during this test execution:
+Below is the complete inventory of all ClassSarthi features verified during this test execution:
 
 ### 1. Multi-Role Authentication & RBAC Engine (Security & Access Control)
 - **Status:** 🟢 All Tests Passing
@@ -200,55 +200,66 @@ Below is the complete inventory of all EduSync features verified during this tes
 
 | Suite | Feature Area | Test Name | Result | Duration |
 | :--- | :--- | :--- | :--- | :--- |
-| Authentication & RBAC | `auth_rbac` | Student Login with Valid Credentials | 🟢 PASS | 50ms |
+| Authentication & RBAC | `auth_rbac` | Student Login with Valid Credentials | 🟢 PASS | 71ms |
 | Authentication & RBAC | `auth_rbac` | Teacher / Faculty Login with Valid Credentials | 🟢 PASS | 6ms |
-| Authentication & RBAC | `auth_rbac` | Admin / Dean Login with Valid Credentials | 🟢 PASS | 3ms |
-| Authentication & RBAC | `auth_rbac` | Login Rejection when Identifier is Missing | 🟢 PASS | 20ms |
-| Authentication & RBAC | `auth_rbac` | Session Profile Retrieval (/api/auth/me) | 🟢 PASS | 18ms |
-| Authentication & RBAC | `auth_rbac` | Public Users Directory for Quick Persona Switching | 🟢 PASS | 423ms |
-| Authentication & RBAC | `auth_rbac` | Persona Switch Endpoint (/api/auth/switch) | 🟢 PASS | 7ms |
-| Authentication & RBAC | `auth_rbac` | RBAC Protection: Student Denied Admin Vault Endpoints | 🟢 PASS | 17ms |
-| Authentication & RBAC | `auth_rbac` | RBAC Protection: Admin Authorized for Admin Vault Endpoints | 🟢 PASS | 18ms |
-| Academic Operations & Assessment | `academic_core` | Fetch Subjects Directory | 🟢 PASS | 7ms |
-| Academic Operations & Assessment | `academic_core` | Fetch Single Subject Details | 🟢 PASS | 15ms |
-| Academic Operations & Assessment | `academic_core` | Student Course Enrollment Workflow | 🟢 PASS | 11ms |
-| Academic Operations & Assessment | `academic_core` | Fetch Syllabus Timeline Milestones | 🟢 PASS | 16ms |
-| Academic Operations & Assessment | `academic_core` | Create Syllabus Timeline Milestone | 🟢 PASS | 10ms |
-| Academic Operations & Assessment | `academic_core` | Delete Syllabus Timeline Milestone | 🟢 PASS | 14ms |
-| Academic Operations & Assessment | `academic_core` | Fetch Reference Courseware Resources | 🟢 PASS | 8ms |
-| Academic Operations & Assessment | `academic_core` | Create Faculty Assignment with Weighted Rubrics | 🟢 PASS | 17ms |
-| Academic Operations & Assessment | `academic_core` | Student Assignment Submission Workflow | 🟢 PASS | 7ms |
-| Academic Operations & Assessment | `academic_core` | Faculty Rubric Grading & Feedback Workflow | 🟢 PASS | 25ms |
-| ClassSarthi & VisionNote Integration | `classsarthi_studio` | List Synchronized ClassSarthi Lectures | 🟢 PASS | 7ms |
-| ClassSarthi & VisionNote Integration | `classsarthi_studio` | Fetch Lecture Studio Details with Timestamp Grounding | 🟢 PASS | 15ms |
-| ClassSarthi & VisionNote Integration | `classsarthi_studio` | Fetch VisionNote Board Visuals & OCR Captures | 🟢 PASS | 16ms |
-| ClassSarthi & VisionNote Integration | `classsarthi_studio` | VisionNote Realtime Cloud Sync Status Check | 🟢 PASS | 13ms |
-| ClassSarthi & VisionNote Integration | `classsarthi_studio` | Simulate Realtime Classroom Camera Note Ingest | 🟢 PASS | 18ms |
-| ClassSarthi & VisionNote Integration | `classsarthi_studio` | ClassSarthi Ingestion Webhook for External Camera Devices | 🟢 PASS | 15ms |
-| Smart Notes & Mastery Quizzes | `smart_notes_ai` | Fetch Student Smart Notes Collection | 🟢 PASS | 6ms |
-| Smart Notes & Mastery Quizzes | `smart_notes_ai` | Create Rich Markdown Note with KaTeX Math | 🟢 PASS | 11ms |
-| Smart Notes & Mastery Quizzes | `smart_notes_ai` | AI Summarizer & Key Takeaway Extractor | 🟢 PASS | 8190ms |
-| Smart Notes & Mastery Quizzes | `smart_notes_ai` | AI Interactive 3D Flashcard Deck Generator | 🟢 PASS | 334ms |
-| Smart Notes & Mastery Quizzes | `smart_notes_ai` | AI Multiple-Choice Quiz Runner Generator | 🟢 PASS | 309ms |
-| Mastery Diagnostics & Analytics | `mastery_quizzes` | Fetch ClassSarthi Post-Lecture Mastery Quiz | 🟢 PASS | 14ms |
+| Authentication & RBAC | `auth_rbac` | Admin / Dean Login with Valid Credentials | 🟢 PASS | 6ms |
+| Authentication & RBAC | `auth_rbac` | Login Rejection when Identifier is Missing | 🟢 PASS | 13ms |
+| Authentication & RBAC | `auth_rbac` | Session Profile Retrieval (/api/auth/me) | 🟢 PASS | 9ms |
+| Authentication & RBAC | `auth_rbac` | Public Users Directory for Quick Persona Switching | 🟢 PASS | 6783ms |
+| Authentication & RBAC | `auth_rbac` | Persona Switch Endpoint (/api/auth/switch) | 🟢 PASS | 3ms |
+| Authentication & RBAC | `auth_rbac` | RBAC Protection: Student Denied Admin Vault Endpoints | 🟢 PASS | 11ms |
+| Authentication & RBAC | `auth_rbac` | RBAC Protection: Admin Authorized for Admin Vault Endpoints | 🟢 PASS | 28ms |
+| Academic Operations & Assessment | `academic_core` | Fetch Subjects Directory | 🟢 PASS | 16ms |
+| Academic Operations & Assessment | `academic_core` | Fetch Single Subject Details | 🟢 PASS | 7ms |
+| Academic Operations & Assessment | `academic_core` | Student Course Enrollment Workflow | 🟢 PASS | 9ms |
+| Academic Operations & Assessment | `academic_core` | Fetch Syllabus Timeline Milestones | 🟢 PASS | 7ms |
+| Academic Operations & Assessment | `academic_core` | Create Syllabus Timeline Milestone | 🟢 PASS | 3ms |
+| Academic Operations & Assessment | `academic_core` | Delete Syllabus Timeline Milestone | 🟢 PASS | 12ms |
+| Academic Operations & Assessment | `academic_core` | Fetch Reference Courseware Resources | 🟢 PASS | 12ms |
+| Academic Operations & Assessment | `academic_core` | Create Faculty Assignment with Weighted Rubrics | 🟢 PASS | 9ms |
+| Academic Operations & Assessment | `academic_core` | Student Assignment Submission Workflow | 🟢 PASS | 4ms |
+| Academic Operations & Assessment | `academic_core` | Faculty Rubric Grading & Feedback Workflow | 🟢 PASS | 4ms |
+| ClassSarthi & VisionNote Integration | `classsarthi_studio` | List Synchronized ClassSarthi Lectures | 🟢 PASS | 4ms |
+| ClassSarthi & VisionNote Integration | `classsarthi_studio` | Fetch Lecture Studio Details with Timestamp Grounding | 🟢 PASS | 4ms |
+| ClassSarthi & VisionNote Integration | `classsarthi_studio` | Fetch VisionNote Board Visuals & OCR Captures | 🟢 PASS | 10ms |
+| ClassSarthi & VisionNote Integration | `classsarthi_studio` | VisionNote Realtime Cloud Sync Status Check | 🟢 PASS | 2ms |
+| ClassSarthi & VisionNote Integration | `classsarthi_studio` | Simulate Realtime Classroom Camera Note Ingest | 🟢 PASS | 7ms |
+| ClassSarthi & VisionNote Integration | `classsarthi_studio` | ClassSarthi Ingestion Webhook for External Camera Devices | 🟢 PASS | 13ms |
+| Smart Notes & Mastery Quizzes | `smart_notes_ai` | Fetch Student Smart Notes Collection | 🟢 PASS | 19ms |
+| Smart Notes & Mastery Quizzes | `smart_notes_ai` | Create Rich Markdown Note with KaTeX Math | 🟢 PASS | 14ms |
+| Smart Notes & Mastery Quizzes | `smart_notes_ai` | AI Summarizer & Key Takeaway Extractor | 🟢 PASS | 10989ms |
+| Smart Notes & Mastery Quizzes | `smart_notes_ai` | AI Interactive 3D Flashcard Deck Generator | 🟢 PASS | 67727ms |
+| Smart Notes & Mastery Quizzes | `smart_notes_ai` | AI Multiple-Choice Quiz Runner Generator | 🟢 PASS | 53360ms |
+| Mastery Diagnostics & Analytics | `mastery_quizzes` | Fetch ClassSarthi Post-Lecture Mastery Quiz | 🟢 PASS | 6ms |
 | Mastery Diagnostics & Analytics | `mastery_quizzes` | ClassSarthi Quiz Evaluation & Dynamic Concept Mastery Update | 🟢 PASS | 18ms |
-| Mastery Diagnostics & Analytics | `mastery_quizzes` | Student Cognitive Dashboard Summary & Weak Concept Radar | 🟢 PASS | 13ms |
-| Mastery Diagnostics & Analytics | `mastery_quizzes` | Clean up Created Smart Note | 🟢 PASS | 11ms |
-| Socratic AI Tutor & Intelligence | `socratic_ai_tutor` | Socratic AI Tutor Interactive Reasoning & KaTeX Formatting | 🟢 PASS | 2795ms |
-| Socratic AI Tutor & Intelligence | `socratic_ai_tutor` | Socratic Pedagogical Guardrail Verification | 🟢 PASS | 882ms |
-| Socratic AI Tutor & Intelligence | `socratic_ai_tutor` | Study Assistant Conversational AI Chat | 🟢 PASS | 2779ms |
-| Socratic AI Tutor & Intelligence | `socratic_ai_tutor` | AI Topic Research & Video References Grounding | 🟢 PASS | 4958ms |
-| Faculty Command Center | `faculty_command` | AI Classroom Diagnostic & Weak Topic Clustering Report | 🟢 PASS | 304ms |
-| Faculty Command Center | `faculty_command` | AI Syllabus Milestone Generator | 🟢 PASS | 307ms |
-| Security & Bug Hunter Edge Cases | `dean_admin_os` | Security Self-Audit Diagnostic Endpoint (/api/security/audit) | 🟢 PASS | 11ms |
-| Security & Bug Hunter Edge Cases | `dean_admin_os` | OWASP Top 10 Security Response Headers | 🟢 PASS | 15ms |
-| Security & Bug Hunter Edge Cases | `dean_admin_os` | Security: Prototype Pollution Injection Guard | 🟢 PASS | 22ms |
-| Security & Bug Hunter Edge Cases | `dean_admin_os` | Security: XSS Script Injection Sanitization | 🟢 PASS | 6ms |
-| Security & Bug Hunter Edge Cases | `dean_admin_os` | Bug Hunter: Graceful 404 on Non-Existent Subject ID | 🟢 PASS | 2ms |
-| Security & Bug Hunter Edge Cases | `dean_admin_os` | Bug Hunter: Graceful 404 on Non-Existent Lecture ID | 🟢 PASS | 24ms |
-| Security & Bug Hunter Edge Cases | `dean_admin_os` | Admin / Dean OS: Institutional KPI Overview Metrics | 🟢 PASS | 17ms |
-| Security & Bug Hunter Edge Cases | `dean_admin_os` | Admin / Dean OS: User Provisioning & Management CRUD | 🟢 PASS | 31ms |
-| Security & Bug Hunter Edge Cases | `dean_admin_os` | Admin Vault Disaster Recovery Snapshot Integrity | 🟢 PASS | 9ms |
+| Mastery Diagnostics & Analytics | `mastery_quizzes` | Student Cognitive Dashboard Summary & Weak Concept Radar | 🟢 PASS | 14ms |
+| Mastery Diagnostics & Analytics | `mastery_quizzes` | Clean up Created Smart Note | 🟢 PASS | 15ms |
+| Socratic AI Tutor & Intelligence | `socratic_ai_tutor` | Socratic AI Tutor Interactive Reasoning & KaTeX Formatting | 🟢 PASS | 13296ms |
+| Socratic AI Tutor & Intelligence | `socratic_ai_tutor` | Socratic Pedagogical Guardrail Verification | 🟢 PASS | 3363ms |
+| Socratic AI Tutor & Intelligence | `socratic_ai_tutor` | Study Assistant Conversational AI Chat | 🟢 PASS | 9784ms |
+| Socratic AI Tutor & Intelligence | `socratic_ai_tutor` | AI Topic Research & Video References Grounding | 🟢 PASS | 15996ms |
+| Faculty Command Center | `faculty_command` | AI Classroom Diagnostic & Weak Topic Clustering Report | 🟢 PASS | 89966ms |
+| Faculty Command Center | `faculty_command` | AI Syllabus Milestone Generator | 🟢 PASS | 16081ms |
+| Security & Bug Hunter Edge Cases | `dean_admin_os` | Security Self-Audit Diagnostic Endpoint (/api/security/audit) | 🟢 PASS | 2ms |
+| Security & Bug Hunter Edge Cases | `dean_admin_os` | OWASP Top 10 Security Response Headers | 🟢 PASS | 10ms |
+| Security & Bug Hunter Edge Cases | `dean_admin_os` | Security: Prototype Pollution Injection Guard | 🟢 PASS | 30ms |
+| Security & Bug Hunter Edge Cases | `dean_admin_os` | Security: XSS Script Injection Sanitization | 🟢 PASS | 33ms |
+| Security & Bug Hunter Edge Cases | `dean_admin_os` | Bug Hunter: Graceful 404 on Non-Existent Subject ID | 🟢 PASS | 12ms |
+| Security & Bug Hunter Edge Cases | `dean_admin_os` | Bug Hunter: Graceful 404 on Non-Existent Lecture ID | 🟢 PASS | 8ms |
+| Security & Bug Hunter Edge Cases | `dean_admin_os` | Admin / Dean OS: Institutional KPI Overview Metrics | 🟢 PASS | 16ms |
+| Security & Bug Hunter Edge Cases | `dean_admin_os` | Admin / Dean OS: User Provisioning & Management CRUD | 🟢 PASS | 30ms |
+| Security & Bug Hunter Edge Cases | `dean_admin_os` | Admin Vault Disaster Recovery Snapshot Integrity | 🟢 PASS | 4ms |
+| Plugins & MCP Automation Hub | `plugins_mcp` | Fetch all pre-built plugins (GET /api/plugins) | 🟢 PASS | 1ms |
+| Plugins & MCP Automation Hub | `plugins_mcp` | Connect external plugin (POST /api/plugins/connect) | 🟢 PASS | 37ms |
+| Plugins & MCP Automation Hub | `plugins_mcp` | Toggle plugin automation rule (POST /api/plugins/:id/rules/toggle) | 🟢 PASS | 12ms |
+| Plugins & MCP Automation Hub | `plugins_mcp` | Trigger manual plugin synchronization (POST /api/plugins/:id/sync) | 🟢 PASS | 3398ms |
+| Plugins & MCP Automation Hub | `plugins_mcp` | Test plugin connection diagnostics (POST /api/plugins/:id/test) | 🟢 PASS | 3ms |
+| Plugins & MCP Automation Hub | `plugins_mcp` | Fetch custom tutors (GET /api/tutors) | 🟢 PASS | 2ms |
+| Plugins & MCP Automation Hub | `plugins_mcp` | Create custom tutor persona with MCP (POST /api/tutors/create) | 🟢 PASS | 17ms |
+| Plugins & MCP Automation Hub | `plugins_mcp` | Live MCP Connection Test (POST /api/tutors/test-mcp) | 🟢 PASS | 3ms |
+| Plugins & MCP Automation Hub | `plugins_mcp` | Get pending tutor approvals (GET /api/admin/tutors/pending) | 🟢 PASS | 12ms |
+| Plugins & MCP Automation Hub | `plugins_mcp` | Run sample test query against custom tutor (POST /api/admin/tutors/:id/test-sample) | 🟢 PASS | 17ms |
+| Plugins & MCP Automation Hub | `plugins_mcp` | Authorize & Approve tutor request (POST /api/admin/tutors/:id/approve) | 🟢 PASS | 16ms |
 
 ---
 

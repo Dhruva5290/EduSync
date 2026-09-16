@@ -1,0 +1,60 @@
+[
+  {
+    "id": "cluster-1",
+    "subjectId": "subj-eme",
+    "topicName": "Second Law Clausius Inequality & Entropy Generation Calculation",
+    "doubtCount": 14,
+    "affectedStudentNames": [
+      "Rohan Verma",
+      "Priya Sharma",
+      "Aarav Patel",
+      "Simran Kaur",
+      "Vikas Kumar"
+    ],
+    "sampleDoubts": [
+      "Why is Clausius integral dQ/T <= 0 for irreversible cycle, but dS >= 0 for isolated system?",
+      "How to calculate entropy generation in an uninsulated turbine with heat loss?",
+      "Difference between entropy transferred by heat vs entropy generated internally."
+    ],
+    "aiRemediationSuggestion": "68% of student doubts originate from confusing heat transfer path dependence with state variable entropy. Recommended: Spend 5 minutes on the \"Water Reservoir + Friction Waterfall\" analogy before solving numerical problems.",
+    "urgency": "high"
+  },
+  {
+    "id": "cluster-2",
+    "subjectId": "subj-ess",
+    "topicName": "Biochemical Oxygen Demand (BOD5) Dilution Method & Seeding Factors",
+    "doubtCount": 10,
+    "affectedStudentNames": [
+      "Priya Sharma",
+      "Simran Kaur",
+      "Ananya Roy",
+      "Tanishq Iyer",
+      "Ishaan Gupta"
+    ],
+    "sampleDoubts": [
+      "When do we use seed correction factor in BOD calculation equation?",
+      "Why do we incubate at 20 degrees Celsius specifically for 5 days?",
+      "What happens if initial DO is below 7 mg/L?"
+    ],
+    "aiRemediationSuggestion": "Distribute a 1-page visual formula cheat sheet outlining Step 1 (DO initial), Step 2 (DO final 5-day), and Step 3 (Dilution factor P). High exam probability.",
+    "urgency": "medium"
+  },
+  {
+    "id": "cluster-3",
+    "subjectId": "subj-ess",
+    "topicName": "Atmospheric Thermal Inversion & Gaussian Plume Dispersion Model",
+    "doubtCount": 7,
+    "affectedStudentNames": [
+      "Aarav Patel",
+      "Ishaan Gupta",
+      "Rohan Verma",
+      "Ananya Roy"
+    ],
+    "sampleDoubts": [
+      "How does negative environmental lapse rate trap pollutants near ground level?",
+      "Distinction between radiation inversion at night vs subsidence inversion aloft."
+    ],
+    "aiRemediationSuggestion": "Display a cross-sectional altitude-temperature diagram comparing normal cooling vs inversion ceiling lid.",
+    "urgency": "low"
+  }
+]

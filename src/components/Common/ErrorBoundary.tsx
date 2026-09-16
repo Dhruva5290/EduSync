@@ -22,7 +22,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('EduSync Uncaught UI Error caught by boundary:', error, errorInfo);
+    console.error('ClassSarthi Uncaught UI Error caught by boundary:', error, errorInfo);
   }
 
   private handleReset = () => {
@@ -46,7 +46,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 {this.props.fallbackTitle || 'Component Recovered Safely'}
               </h3>
               <p className="text-xs text-slate-400">
-                EduSync self-healed and prevented a screen crash. You can continue interacting or restore the view.
+                ClassSarthi self-healed and prevented a screen crash. You can continue interacting or restore the view.
               </p>
             </div>
             {this.state.error && (

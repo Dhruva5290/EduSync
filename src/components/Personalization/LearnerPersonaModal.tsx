@@ -56,11 +56,15 @@ export const LearnerPersonaModal: React.FC<LearnerPersonaModalProps> = ({
   const [preferredPace, setPreferredPace] = useState<LearnerPersona['preferredPace']>(
     currentProfile?.preferredPace || 'steady'
   );
-  const [strengthsAndInterests, setStrengthsAndInterests] = useState(
-    currentProfile?.strengthsAndInterests || ''
+  const [strengthsAndInterests, setStrengthsAndInterests] = useState<string>(
+    Array.isArray(currentProfile?.strengthsAndInterests)
+      ? currentProfile.strengthsAndInterests.join(', ')
+      : (currentProfile?.strengthsAndInterests || '')
   );
-  const [painPoints, setPainPoints] = useState(
-    currentProfile?.painPoints || ''
+  const [painPoints, setPainPoints] = useState<string>(
+    Array.isArray(currentProfile?.painPoints)
+      ? currentProfile.painPoints.join(', ')
+      : (currentProfile?.painPoints || '')
   );
   const [isSaving, setIsSaving] = useState(false);
 
@@ -231,7 +235,7 @@ export const LearnerPersonaModal: React.FC<LearnerPersonaModalProps> = ({
                   How do you absorb complex engineering & academic topics best?
                 </h3>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  EduSync will tailor diagram density, mental models, and derivation style in all generated study notes.
+                  ClassSarthi will tailor diagram density, mental models, and derivation style in all generated study notes.
                 </p>
               </div>
 
@@ -478,7 +482,7 @@ export const LearnerPersonaModal: React.FC<LearnerPersonaModalProps> = ({
                   What are your key strengths and topics needing extra help?
                 </h3>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  EduSync will automatically provide extra scaffolding on your pain points and build upon your strengths.
+                  ClassSarthi will automatically provide extra scaffolding on your pain points and build upon your strengths.
                 </p>
               </div>
 

@@ -1,0 +1,70 @@
+[
+  {
+    "id": "note-1",
+    "teacherId": "teacher-ess",
+    "title": "Print Exam Hall Tickets for Section B",
+    "content": "Ensure all students with <60% attendance (Rohan, Aarav, Vikas, Ishaan) have their conditional debarment notices counter-signed by Academic Dean.",
+    "color": "rose",
+    "priority": "high",
+    "reminderTime": "Today at 04:30 PM",
+    "isCompleted": false,
+    "createdAt": "2026-09-12"
+  },
+  {
+    "id": "note-2",
+    "teacherId": "teacher-ess",
+    "title": "Prepare Lab Chemical Reagents for ES-101L",
+    "content": "Check Winkler titration reagent bottles (Manganous Sulfate, Alkali-Iodide-Azide, and Sodium Thiosulfate 0.025N).",
+    "color": "emerald",
+    "priority": "medium",
+    "reminderTime": "Today at 02:45 PM",
+    "isCompleted": true,
+    "createdAt": "2026-09-12"
+  },
+  {
+    "id": "note-3",
+    "teacherId": "teacher-ess",
+    "title": "Upload Mid-Term Problem Sheet to ClassSarthi",
+    "content": "Include 3 PYQ questions from 2024 semester paper on Carnot cycle and BOD5 dilution.",
+    "color": "yellow",
+    "priority": "high",
+    "reminderTime": "Tomorrow at 10:00 AM",
+    "isCompleted": false,
+    "createdAt": "2026-09-11"
+  },
+  {
+    "teacherId": "teacher-ess",
+    "title": "Real Database Test Note",
+    "content": "Verifying persistent storage write to disk and audit logging.",
+    "color": "emerald",
+    "priority": "high",
+    "isCompleted": false,
+    "id": "note-1789312864449",
+    "createdAt": "2026-09-13T15:21:04.449Z",
+    "updatedAt": "2026-09-13T15:21:04.450Z"
+  },
+  {
+    "teacherId": "teacher-1789217463680",
+    "title": "URGENT • EXAM",
+    "content": "very safe",
+    "color": "yellow",
+    "priority": "medium",
+    "reminderTime": "Today",
+    "isCompleted": false,
+    "id": "note-1789322456349",
+    "createdAt": "2026-09-13T18:00:56.349Z",
+    "updatedAt": "2026-09-13T18:00:56.349Z"
+  },
+  {
+    "teacherId": "teacher-1789217463680",
+    "title": "AI GENERATED",
+    "content": "Lesson Plan: # ME-102: Curriculum Lesson Plan\n## Topic: Carnot Cycle Reversibility & 2nd Law of Thermodynamics (50 Mins)\n\n#...",
+    "color": "yellow",
+    "priority": "medium",
+    "reminderTime": "Today",
+    "isCompleted": false,
+    "id": "note-1789323462690",
+    "createdAt": "2026-09-13T18:17:42.690Z",
+    "updatedAt": "2026-09-13T18:17:42.690Z"
+  }
+]

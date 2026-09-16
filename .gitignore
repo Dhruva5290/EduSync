@@ -10,3 +10,7 @@ coverage/
 data/secure_vault/
 data/archives/
 scratch/
+
+data/plugins.json
+
+data/*.json

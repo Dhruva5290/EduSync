@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: edusync-app
+    name: classsarthi-app
     env: node
     plan: free
     buildCommand: npm install && npm run build

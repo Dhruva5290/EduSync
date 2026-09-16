@@ -1,0 +1,30 @@
+[
+  {
+    "id": "proxy-1",
+    "studentId": "stud-101",
+    "studentName": "Rohan Verma",
+    "rollNo": "BMU-2026-7012",
+    "date": "2026-09-12",
+    "earlySlotTime": "09:00 AM (ES-101)",
+    "earlySlotSubject": "Environmental Studies",
+    "subsequentSlotTime": "10:15 AM (ME-102)",
+    "subsequentSlotSubject": "Engineering Thermodynamics",
+    "flagReason": "Marked Present in morning slot, but absent in consecutive slot without approved medical leave slip. Suspected proxy bunk.",
+    "status": "unresolved"
+  },
+  {
+    "id": "proxy-2",
+    "studentId": "stud-109",
+    "studentName": "Vikas Kumar",
+    "rollNo": "BMU-2026-7102",
+    "date": "2026-09-12",
+    "earlySlotTime": "09:00 AM (ES-101)",
+    "earlySlotSubject": "Environmental Studies",
+    "subsequentSlotTime": "10:15 AM (ME-102)",
+    "subsequentSlotSubject": "Engineering Thermodynamics",
+    "flagReason": "Device Wi-Fi biometric fingerprint mismatch logged between consecutive lecture halls.",
+    "status": "reported_to_dean",
+    "teacherNote": "Notice dispatched to Proctor Office.",
+    "updatedAt": "2026-09-13T16:55:59.491Z"
+  }
+]

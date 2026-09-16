@@ -87,7 +87,7 @@ export default async function handler(req: any, res: any) {
         return;
       }
 
-      const expectedPass = user.password || 'EduSync@260101';
+      const expectedPass = user.password || 'ClassSarthi@260101';
       if (expectedPass !== loginPass) {
         res.status(401).json({
           error: 'Incorrect password. Please verify your credentials and try again.'
@@ -114,7 +114,7 @@ export default async function handler(req: any, res: any) {
         name: name || 'New User',
         email: email || `${cleanName}@bmu.edu.in`,
         username: `${targetRole === 'teacher' ? 'prof' : targetRole === 'admin' ? 'dean' : 'student'}.${cleanName}`,
-        password: password || 'EduSync@260101',
+        password: password || 'ClassSarthi@260101',
         role: targetRole,
         gender: gender || 'Male',
         program: program || (targetRole === 'student' ? 'CSE' : undefined),

@@ -1,6 +1,6 @@
-import { GoogleGenAI, Type } from '@google/genai';
+import { GoogleGenAI } from '@google/genai';
 import { sanitizePromptInput } from './security';
-import { synthesizeIntelligentAcademicResponse } from './knowledgeBase';
+import { synthesizeIntelligentAcademicResponse, SUBJECT_KNOWLEDGE_BASE } from './knowledgeBase';
 import {
   Subject,
   TimelineItem,
@@ -572,7 +572,7 @@ ${context.subject.syllabusTopics.map((t, i) => `  ${i + 1}. ${t}`).join('\n')}`
     ? `Teacher References & Textbooks:\n${contextResources.map(r => `- ${r.title} (${r.category} by ${r.author}) [URL: ${r.url}]: ${r.description}`).join('\n')}`
     : '';
 
-  const systemInstruction = `You are "EduSync AI Academic Tutor", an intelligent, friendly, natural, and supportive educational AI assistant (similar to ChatGPT / Gemini).
+  const systemInstruction = `You are "ClassSarthi AI Academic Tutor", an intelligent, friendly, natural, and supportive educational AI assistant (similar to ChatGPT / Gemini).
 Your role is to help students learn, solve problems, prepare for exams, and succeed in their studies.
 
 ${buildPersonaPromptInstructions(context.learnerProfile)}
@@ -602,11 +602,10 @@ Return your response in clean JSON format:
   try {
     const candidateModels = [
       'gemini-3.5-flash-lite',
-      'gemini-3.1-flash-lite',
-      'gemini-flash-lite-latest',
-      'gemma-4-26b-a4b-it',
+      'gemini-3.6-flash',
+      'gemini-3.7-flash',
       'gemini-3.5-flash',
-      'gemini-3.6-flash'
+      'gemini-flash-lite-latest'
     ];
 
     let rawText = '';
@@ -614,15 +613,15 @@ Return your response in clean JSON format:
 
     for (const modelName of candidateModels) {
       try {
-        response = await ai.models.generateContent({
+        response = await ai.interactions.create({
           model: modelName,
-          contents: `[STUDENT_ACADEMIC_QUERY_START]\n${sanitizedUserMessage}\n[STUDENT_ACADEMIC_QUERY_END]\n\nSubject: ${context.subject?.code} - ${context.subject?.name}\nMode: ${context.requestedMode || 'general'}\n\nPlease research the topic thoroughly and provide a deep, step-by-step, textbook-grade pedagogical explanation tailored to the query above.`,
-          config: {
-            systemInstruction
-          }
+          input: `[STUDENT_ACADEMIC_QUERY_START]\n${sanitizedUserMessage}\n[STUDENT_ACADEMIC_QUERY_END]\n\nSubject: ${context.subject?.code} - ${context.subject?.name}\nMode: ${context.requestedMode || 'general'}\n\nPlease research the topic thoroughly and provide a deep, step-by-step, textbook-grade pedagogical explanation tailored to the query above.`,
+          
+            system_instruction: systemInstruction
+
         });
-        if (response && response.text) {
-          rawText = response.text;
+        if (response && response.output_text) {
+          rawText = response.output_text;
           break;
         }
       } catch (mErr: any) {
@@ -730,19 +729,21 @@ export async function summarizeNoteAI(noteContent: string, subjectName?: string,
   const ai = getAI();
   try {
     const personaGuidance = buildPersonaPromptInstructions(learnerProfile);
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.6-flash',
-      contents: `Please summarize the following student study notes for ${subjectName || 'the academic course'} into an executive conceptual summary and 3-5 punchy key takeaways:\n\n${noteContent}`,
-      config: {
-        systemInstruction: `You are an academic synthesis engine. Return crisp, high-yield summary text and bullet takeaways tailored to the student's learning profile.\n\n${personaGuidance}`,
-        responseMimeType: 'application/json',
-        responseSchema: {
-          type: Type.OBJECT,
+    const response = await ai.interactions.create({
+      model: 'gemini-3.8-flash',
+      input: `Please summarize the following student study notes for ${subjectName || 'the academic course'} into an executive conceptual summary and 3-5 punchy key takeaways:\n\n${noteContent}`,
+      
+        system_instruction: `You are an academic synthesis engine. Return crisp, high-yield summary text and bullet takeaways tailored to the student's learning profile.\n\n${personaGuidance}`,
+        response_format: {
+        type: 'text',
+        mime_type: 'application/json',
+        schema: {
+          type: "object",
           properties: {
-            summary: { type: Type.STRING, description: 'A 2-3 sentence executive synthesis of the note content' },
+            summary: { type: "string", description: 'A 2-3 sentence executive synthesis of the note content' },
             keyTakeaways: {
-              type: Type.ARRAY,
-              items: { type: Type.STRING },
+              type: "array",
+              items: { type: "string" },
               description: '3 to 5 vital high-yield takeaways for exam preparation'
             }
           },
@@ -751,7 +752,7 @@ export async function summarizeNoteAI(noteContent: string, subjectName?: string,
       }
     });
 
-    return JSON.parse(response.text || '{}');
+    return JSON.parse(response.output_text || '{}');
   } catch (err) {
     console.error('Error in summarizeNoteAI:', err);
     return {
@@ -859,7 +860,7 @@ void verifyStateIntegrity(const SystemState* state) {
       ? 'Structure this as an in-depth Academic Treatise with full mathematical derivations, edge cases, diagrams (ASCII/Markdown), and code/algorithmic implementations.'
       : 'Structure this as Comprehensive Exam Prep Notes with theory, solved example walkthroughs, common mistakes, and memory mnemonics.';
 
-    const systemInstruction = `You are EduSync's elite University Curriculum & Note Generation AI.
+    const systemInstruction = `You are ClassSarthi's elite University Curriculum & Note Generation AI.
 Your objective is to generate structured, pedagogical, beautiful Markdown study notes for university engineering students based on their prompt, course syllabus, and any fed document text.
 
 ${buildPersonaPromptInstructions(payload.learnerProfile)}
@@ -880,26 +881,28 @@ ${sanitizedAttached ? `Attached Document / PDF Text Content (${documentName || '
 
 Please generate comprehensive, publication-ready academic study notes.`;
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.6-flash',
-      contents: promptContext,
-      config: {
-        systemInstruction,
-        responseMimeType: 'application/json',
-        responseSchema: {
-          type: Type.OBJECT,
+    const response = await ai.interactions.create({
+      model: 'gemini-3.8-flash',
+      input: promptContext,
+      
+        system_instruction: systemInstruction,
+        response_format: {
+        type: 'text',
+        mime_type: 'application/json',
+        schema: {
+          type: "object",
           properties: {
-            title: { type: Type.STRING, description: 'Clear academic title of the generated note' },
-            content: { type: Type.STRING, description: 'Complete structured Markdown note content' },
+            title: { type: "string", description: 'Clear academic title of the generated note' },
+            content: { type: "string", description: 'Complete structured Markdown note content' },
             tags: {
-              type: Type.ARRAY,
-              items: { type: Type.STRING },
+              type: "array",
+              items: { type: "string" },
               description: '3-4 relevant topic and subject tags'
             },
-            summary: { type: Type.STRING, description: 'Executive 2-sentence synthesis of note' },
+            summary: { type: "string", description: 'Executive 2-sentence synthesis of note' },
             keyTakeaways: {
-              type: Type.ARRAY,
-              items: { type: Type.STRING },
+              type: "array",
+              items: { type: "string" },
               description: '3-5 high-yield bullet takeaways'
             }
           },
@@ -908,7 +911,7 @@ Please generate comprehensive, publication-ready academic study notes.`;
       }
     });
 
-    const parsed = JSON.parse(response.text || '{}') as GeneratedNoteResult;
+    const parsed = JSON.parse(response.output_text || '{}') as GeneratedNoteResult;
     return {
       title: parsed.title || `${subjectCode}: ${sanitizedPrompt}`,
       content: parsed.content || `# ${subjectCode}: ${sanitizedPrompt}\n\nGenerated notes...`,
@@ -944,21 +947,23 @@ export async function generateFlashcardsAI(noteContent: string, count: number = 
   const ai = getAI();
   try {
     const personaGuidance = buildPersonaPromptInstructions(learnerProfile);
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.6-flash',
-      contents: `Extract ${count} high-yield, exam-oriented study flashcards (Q&A pairs with optional hints and topic tags) from these student notes:\n\n${noteContent}`,
-      config: {
-        systemInstruction: `You are an academic flashcard extraction engine. Adapt question depth, hints, and topics to match the student persona.\n\n${personaGuidance}`,
-        responseMimeType: 'application/json',
-        responseSchema: {
-          type: Type.ARRAY,
+    const response = await ai.interactions.create({
+      model: 'gemini-3.8-flash',
+      input: `Extract ${count} high-yield, exam-oriented study flashcards (Q&A pairs with optional hints and topic tags) from these student notes:\n\n${noteContent}`,
+      
+        system_instruction: `You are an academic flashcard extraction engine. Adapt question depth, hints, and topics to match the student persona.\n\n${personaGuidance}`,
+        response_format: {
+        type: 'text',
+        mime_type: 'application/json',
+        schema: {
+          type: "array",
           items: {
-            type: Type.OBJECT,
+            type: "object",
             properties: {
-              question: { type: Type.STRING, description: 'Clear, concise concept question' },
-              answer: { type: Type.STRING, description: 'Accurate, complete explanation or formula' },
-              hint: { type: Type.STRING, description: 'Helpful clue without giving away the full answer' },
-              topic: { type: Type.STRING, description: 'Specific sub-topic label' }
+              question: { type: "string", description: 'Clear, concise concept question' },
+              answer: { type: "string", description: 'Accurate, complete explanation or formula' },
+              hint: { type: "string", description: 'Helpful clue without giving away the full answer' },
+              topic: { type: "string", description: 'Specific sub-topic label' }
             },
             required: ['question', 'answer', 'topic']
           }
@@ -966,7 +971,7 @@ export async function generateFlashcardsAI(noteContent: string, count: number = 
       }
     });
 
-    const items = JSON.parse(response.text || '[]') as Array<{ question: string; answer: string; hint?: string; topic?: string }>;
+    const items = JSON.parse(response.output_text || '[]') as Array<{ question: string; answer: string; hint?: string; topic?: string }>;
     return items.map((item, idx) => ({
       id: `fc-gen-${Date.now()}-${idx}`,
       question: item.question,
@@ -1054,32 +1059,34 @@ export async function generateNoteQuizAI(
       : '';
 
     const neededAiCount = Math.max(2, 5 - Math.min(facultyQuestions.length, 3));
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.6-flash',
-      contents: `Generate ${neededAiCount} high-yield multiple-choice practice questions based on the following notes:${teacherContext}\n\nSTUDENT NOTES:\n${noteContent}`,
-      config: {
-        systemInstruction: `You are an educational quiz generation engine. Tailor the question difficulty and conceptual depth to match the student's target learning goals.\n\n${personaGuidance}`,
-        responseMimeType: 'application/json',
-        responseSchema: {
-          type: Type.OBJECT,
+    const response = await ai.interactions.create({
+      model: 'gemini-3.8-flash',
+      input: `Generate ${neededAiCount} high-yield multiple-choice practice questions based on the following notes:${teacherContext}\n\nSTUDENT NOTES:\n${noteContent}`,
+      
+        system_instruction: `You are an educational quiz generation engine. Tailor the question difficulty and conceptual depth to match the student's target learning goals.\n\n${personaGuidance}`,
+        response_format: {
+        type: 'text',
+        mime_type: 'application/json',
+        schema: {
+          type: "object",
           properties: {
-            title: { type: Type.STRING, description: 'Engaging title for the quiz' },
+            title: { type: "string", description: 'Engaging title for the quiz' },
             questions: {
-              type: Type.ARRAY,
+              type: "array",
               items: {
-                type: Type.OBJECT,
+                type: "object",
                 properties: {
-                  id: { type: Type.STRING },
-                  question: { type: Type.STRING, description: 'Challenging multiple choice question' },
+                  id: { type: "string" },
+                  question: { type: "string", description: 'Challenging multiple choice question' },
                   options: {
-                    type: Type.ARRAY,
-                    items: { type: Type.STRING },
+                    type: "array",
+                    items: { type: "string" },
                     description: 'Exactly 4 distinct plausible options'
                   },
-                  correctIndex: { type: Type.INTEGER, description: '0-based index of the single correct answer' },
-                  explanation: { type: Type.STRING, description: 'Step-by-step conceptual rationale' },
-                  topic: { type: Type.STRING, description: 'Topic category' },
-                  difficulty: { type: Type.STRING, description: 'easy, moderate, or hard' }
+                  correctIndex: { type: "integer", description: '0-based index of the single correct answer' },
+                  explanation: { type: "string", description: 'Step-by-step conceptual rationale' },
+                  topic: { type: "string", description: 'Topic category' },
+                  difficulty: { type: "string", description: 'easy, moderate, or hard' }
                 },
                 required: ['id', 'question', 'options', 'correctIndex', 'explanation', 'topic']
               }
@@ -1090,7 +1097,7 @@ export async function generateNoteQuizAI(
       }
     });
 
-    const parsed = JSON.parse(response.text || '{}') as { title: string; questions: any[] };
+    const parsed = JSON.parse(response.output_text || '{}') as { title: string; questions: any[] };
     const aiQuestions: QuizQuestion[] = (parsed.questions || []).map((q: any, i: number) => ({
       id: `quiz-q-${Date.now()}-${i}`,
       question: q.question,
@@ -1202,31 +1209,33 @@ export async function generatePromptQuizAI(prompt: string, subject?: Subject, co
 
   const ai = getAI();
   try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.6-flash',
-      contents: `Create a ${count}-question multiple choice quiz for university students on the topic: "${prompt}" in the course "${subjName}" (${subject?.code || ''}).
+    const response = await ai.interactions.create({
+      model: 'gemini-3.8-flash',
+      input: `Create a ${count}-question multiple choice quiz for university students on the topic: "${prompt}" in the course "${subjName}" (${subject?.code || ''}).
 Make each question rigorous with 4 distinct choices, exact 0-based correctIndex, and clear explanatory reasoning for the answer.`,
-      config: {
-        systemInstruction: 'You are an elite exam author. Return JSON with title, topic, and questions array.',
-        responseMimeType: 'application/json',
-        responseSchema: {
-          type: Type.OBJECT,
+      
+        system_instruction: 'You are an elite exam author. Return JSON with title, topic, and questions array.',
+        response_format: {
+        type: 'text',
+        mime_type: 'application/json',
+        schema: {
+          type: "object",
           properties: {
-            title: { type: Type.STRING },
-            topic: { type: Type.STRING },
+            title: { type: "string" },
+            topic: { type: "string" },
             questions: {
-              type: Type.ARRAY,
+              type: "array",
               items: {
-                type: Type.OBJECT,
+                type: "object",
                 properties: {
-                  question: { type: Type.STRING },
+                  question: { type: "string" },
                   options: {
-                    type: Type.ARRAY,
-                    items: { type: Type.STRING }
+                    type: "array",
+                    items: { type: "string" }
                   },
-                  correctIndex: { type: Type.INTEGER },
-                  explanation: { type: Type.STRING },
-                  topic: { type: Type.STRING }
+                  correctIndex: { type: "integer" },
+                  explanation: { type: "string" },
+                  topic: { type: "string" }
                 },
                 required: ['question', 'options', 'correctIndex', 'explanation', 'topic']
               }
@@ -1237,7 +1246,7 @@ Make each question rigorous with 4 distinct choices, exact 0-based correctIndex,
       }
     });
 
-    const parsed = JSON.parse(response.text || '{}');
+    const parsed = JSON.parse(response.output_text || '{}');
     return {
       id: `quiz-gen-${Date.now()}`,
       title: parsed.title || `Assessment: ${prompt}`,
@@ -1301,38 +1310,40 @@ export async function generateClassDiagnosticsAI(subject: Subject, currentAnalyt
 
   const ai = getAI();
   try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.6-flash',
-      contents: `Analyze the class academic performance for ${subject.code} (${subject.name}).
+    const response = await ai.interactions.create({
+      model: 'gemini-3.8-flash',
+      input: `Analyze the class academic performance for ${subject.code} (${subject.name}).
 Current Class Average: ${currentAnalytics.classAverage}%
 Submission Rate: ${currentAnalytics.submissionRate}%
 Enrolled Students: ${currentAnalytics.totalStudents}
 At Risk Students: ${currentAnalytics.atRiskStudentsCount}
 Current Recorded Weak Topics: ${JSON.stringify(currentAnalytics.weakTopics || [])}
 Grade Distribution: ${JSON.stringify(currentAnalytics.gradeDistribution || [])}`,
-      config: {
-        systemInstruction: 'You are an elite academic analytics consultant for university faculty. Generate a high-level diagnostic executive briefing, prioritized pedagogical action items, and refined weak topic remediation strategies.',
-        responseMimeType: 'application/json',
-        responseSchema: {
-          type: Type.OBJECT,
+      
+        system_instruction: 'You are an elite academic analytics consultant for university faculty. Generate a high-level diagnostic executive briefing, prioritized pedagogical action items, and refined weak topic remediation strategies.',
+        response_format: {
+        type: 'text',
+        mime_type: 'application/json',
+        schema: {
+          type: "object",
           properties: {
-            aiExecutiveSummary: { type: Type.STRING, description: 'Executive summary with bolded key metrics and actionable pedagogical narrative' },
+            aiExecutiveSummary: { type: "string", description: 'Executive summary with bolded key metrics and actionable pedagogical narrative' },
             keyActionItems: {
-              type: Type.ARRAY,
-              items: { type: Type.STRING },
+              type: "array",
+              items: { type: "string" },
               description: '3-4 direct, highly actionable steps the teacher can execute this week'
             },
             weakTopics: {
-              type: Type.ARRAY,
+              type: "array",
               items: {
-                type: Type.OBJECT,
+                type: "object",
                 properties: {
-                  topic: { type: Type.STRING },
-                  errorRate: { type: Type.NUMBER, description: 'Estimated percent error rate (e.g. 35)' },
-                  averageScore: { type: Type.NUMBER, description: 'Average score on this topic (e.g. 68)' },
-                  affectedStudents: { type: Type.NUMBER },
-                  recommendedRemediation: { type: Type.STRING },
-                  urgency: { type: Type.STRING, enum: ['high', 'medium', 'low'] }
+                  topic: { type: "string" },
+                  errorRate: { type: "number", description: 'Estimated percent error rate (e.g. 35)' },
+                  averageScore: { type: "number", description: 'Average score on this topic (e.g. 68)' },
+                  affectedStudents: { type: "number" },
+                  recommendedRemediation: { type: "string" },
+                  urgency: { type: "string", enum: ['high', 'medium', 'low'] }
                 },
                 required: ['topic', 'errorRate', 'averageScore', 'affectedStudents', 'recommendedRemediation', 'urgency']
               }
@@ -1343,7 +1354,7 @@ Grade Distribution: ${JSON.stringify(currentAnalytics.gradeDistribution || [])}`
       }
     });
 
-    return JSON.parse(response.text || '{}');
+    return JSON.parse(response.output_text || '{}');
   } catch (err) {
     console.error('Error generating class diagnostics:', err);
     return {
@@ -1377,26 +1388,28 @@ export async function generateSyllabusTimelineAI(courseName: string, description
 
   const ai = getAI();
   try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.6-flash',
-      contents: `Create a structured academic timeline with ${weeksCount} milestones (lectures, quizzes, practical labs, assignments, and exams) for the course "${courseName}":\nDescription: ${description}`,
-      config: {
-        systemInstruction: 'You are an academic curriculum designer. Generate a balanced distribution of academic timeline events with realistic weightages and topic descriptions.',
-        responseMimeType: 'application/json',
-        responseSchema: {
-          type: Type.ARRAY,
+    const response = await ai.interactions.create({
+      model: 'gemini-3.8-flash',
+      input: `Create a structured academic timeline with ${weeksCount} milestones (lectures, quizzes, practical labs, assignments, and exams) for the course "${courseName}":\nDescription: ${description}`,
+      
+        system_instruction: 'You are an academic curriculum designer. Generate a balanced distribution of academic timeline events with realistic weightages and topic descriptions.',
+        response_format: {
+        type: 'text',
+        mime_type: 'application/json',
+        schema: {
+          type: "array",
           items: {
-            type: Type.OBJECT,
+            type: "object",
             properties: {
-              title: { type: Type.STRING },
-              type: { type: Type.STRING, enum: ['lecture', 'quiz', 'exam', 'practical', 'assignment'] },
-              weekNumber: { type: Type.INTEGER },
-              description: { type: Type.STRING },
+              title: { type: "string" },
+              type: { type: "string", enum: ['lecture', 'quiz', 'exam', 'practical', 'assignment'] },
+              weekNumber: { type: "integer" },
+              description: { type: "string" },
               topicsCovered: {
-                type: Type.ARRAY,
-                items: { type: Type.STRING }
+                type: "array",
+                items: { type: "string" }
               },
-              weightagePercent: { type: Type.INTEGER }
+              weightagePercent: { type: "integer" }
             },
             required: ['title', 'type', 'weekNumber', 'description', 'topicsCovered']
           }
@@ -1404,7 +1417,7 @@ export async function generateSyllabusTimelineAI(courseName: string, description
       }
     });
 
-    return JSON.parse(response.text || '[]');
+    return JSON.parse(response.output_text || '[]');
   } catch (err) {
     console.error('Error generating syllabus timeline:', err);
     return [
@@ -1441,37 +1454,39 @@ export async function generateMasteryQuizAI(
   const personaGuidance = buildPersonaPromptInstructions(learnerProfile);
 
   // Try candidate models in order: gemini-3.6-flash is primary, followed by fallbacks
-  const candidateModels = ['gemini-3.6-flash', 'gemini-2.5-flash', 'gemini-1.5-flash'];
+  const candidateModels = ['gemini-3.6-flash', 'gemini-3.5-flash-lite', 'gemini-3.7-flash', 'gemini-3.5-flash'];
 
   for (const modelName of candidateModels) {
     try {
-      const response = await ai.models.generateContent({
+      const response = await ai.interactions.create({
         model: modelName,
-        contents: `Generate exactly ${targetCount} high-yield multiple-choice questions for an academic lecture mastery quiz based strictly on the following lecture notes:\n\nTITLE: ${sanitizedTitle}\n\nCONTENT:\n${noteContent}\n\nREQUIREMENTS:
+        input: `Generate exactly ${targetCount} high-yield multiple-choice questions for an academic lecture mastery quiz based strictly on the following lecture notes:\n\nTITLE: ${sanitizedTitle}\n\nCONTENT:\n${noteContent}\n\nREQUIREMENTS:
 - Include a balanced distribution of difficulties: 2 Easy (core definitions, factual benchmarks), 2-3 Moderate (application, operational rules, standard processes), 2 Hard (edge cases, tricky constraints, exceptions).
 - Each question must have exactly 4 options, a 0-based correctIndex, a conceptual explanation, a concise topic label, and a difficulty ('easy' | 'moderate' | 'hard').`,
-        config: {
-          systemInstruction: `You are an elite university exam author and tutor. Generate rigorous, diagnostic multiple-choice questions strictly from the provided lecture text to test conceptual and practical mastery rather than trivial trivia.\n\n${personaGuidance}`,
-          responseMimeType: 'application/json',
-          responseSchema: {
-            type: Type.OBJECT,
+        
+          system_instruction: `You are an elite university exam author and tutor. Generate rigorous, diagnostic multiple-choice questions strictly from the provided lecture text to test conceptual and practical mastery rather than trivial trivia.\n\n${personaGuidance}`,
+          response_format: {
+        type: 'text',
+        mime_type: 'application/json',
+          schema: {
+            type: "object",
             properties: {
-              title: { type: Type.STRING },
+              title: { type: "string" },
               questions: {
-                type: Type.ARRAY,
+                type: "array",
                 items: {
-                  type: Type.OBJECT,
+                  type: "object",
                   properties: {
-                    id: { type: Type.STRING },
-                    question: { type: Type.STRING },
+                    id: { type: "string" },
+                    question: { type: "string" },
                     options: {
-                      type: Type.ARRAY,
-                      items: { type: Type.STRING }
+                      type: "array",
+                      items: { type: "string" }
                     },
-                    correctIndex: { type: Type.INTEGER },
-                    explanation: { type: Type.STRING },
-                    topic: { type: Type.STRING },
-                    difficulty: { type: Type.STRING, enum: ['easy', 'moderate', 'hard'] }
+                    correctIndex: { type: "integer" },
+                    explanation: { type: "string" },
+                    topic: { type: "string" },
+                    difficulty: { type: "string", enum: ['easy', 'moderate', 'hard'] }
                   },
                   required: ['id', 'question', 'options', 'correctIndex', 'explanation', 'topic', 'difficulty']
                 }
@@ -1482,7 +1497,7 @@ export async function generateMasteryQuizAI(
         }
       });
 
-      const parsed = JSON.parse(response.text || '{}');
+      const parsed = JSON.parse(response.output_text || '{}');
       if (Array.isArray(parsed.questions) && parsed.questions.length >= 3) {
         return {
           title: parsed.title || `Mastery Quiz: ${sanitizedTitle}`,
@@ -1590,9 +1605,9 @@ export async function analyzeQuizPerformanceAI(
   const ai = getAI();
   try {
     const personaGuidance = buildPersonaPromptInstructions(learnerProfile);
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.6-flash',
-      contents: `Analyze this student's performance on the lecture mastery quiz "${quizTitle}":
+    const response = await ai.interactions.create({
+      model: 'gemini-3.8-flash',
+      input: `Analyze this student's performance on the lecture mastery quiz "${quizTitle}":
 Score: ${totalScore}/${totalQuestions} (${percentage}%)
 Missed Questions:
 ${JSON.stringify(missedQuestions, null, 2)}
@@ -1602,27 +1617,29 @@ Provide a diagnostic breakdown:
 2. Key misconceptions (2-3 bullet items).
 3. Suggested tutor topic.
 4. Suggested Socratic tutor prompt (the exact guiding question the student should paste into the Socratic AI Tutor to overcome this hurdle).`,
-      config: {
-        systemInstruction: `You are a diagnostic learning scientist and Socratic AI coach. Write constructive, empowering academic feedback tuned to the student's cognitive persona.\n\n${personaGuidance}`,
-        responseMimeType: 'application/json',
-        responseSchema: {
-          type: Type.OBJECT,
+      
+        system_instruction: `You are a diagnostic learning scientist and Socratic AI coach. Write constructive, empowering academic feedback tuned to the student's cognitive persona.\n\n${personaGuidance}`,
+        response_format: {
+        type: 'text',
+        mime_type: 'application/json',
+        schema: {
+          type: "object",
           properties: {
-            summary: { type: Type.STRING },
-            masteryLevel: { type: Type.STRING, enum: ['Mastered', 'Proficient', 'Needs Review'] },
+            summary: { type: "string" },
+            masteryLevel: { type: "string", enum: ['Mastered', 'Proficient', 'Needs Review'] },
             keyMisconceptions: {
-              type: Type.ARRAY,
-              items: { type: Type.STRING }
+              type: "array",
+              items: { type: "string" }
             },
-            suggestedTutorTopic: { type: Type.STRING },
-            suggestedTutorPrompt: { type: Type.STRING }
+            suggestedTutorTopic: { type: "string" },
+            suggestedTutorPrompt: { type: "string" }
           },
           required: ['summary', 'masteryLevel', 'keyMisconceptions', 'suggestedTutorTopic', 'suggestedTutorPrompt']
         }
       }
     });
 
-    const parsed = JSON.parse(response.text || '{}');
+    const parsed = JSON.parse(response.output_text || '{}');
     return {
       summary: parsed.summary || fallbackAnalysis.summary,
       masteryLevel: (parsed.masteryLevel as any) || masteryLevel,
@@ -1840,25 +1857,27 @@ export async function personalizeNoteAI(
   const ai = getAI();
   try {
     const personaGuidance = buildPersonaPromptInstructions(learnerProfile);
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.7-flash',
-      contents: `Please re-frame and personalize the following lecture notes to match the student's cognitive learning profile:\n\nTITLE: ${sanitizedTitle}\n\nORIGINAL CONTENT:\n${noteContent}\n\nSTYLE INSTRUCTIONS:
+    const response = await ai.interactions.create({
+      model: 'gemini-3.8-flash',
+      input: `Please re-frame and personalize the following lecture notes to match the student's cognitive learning profile:\n\nTITLE: ${sanitizedTitle}\n\nORIGINAL CONTENT:\n${noteContent}\n\nSTYLE INSTRUCTIONS:
 - If visual: emphasize ASCII schematics, real-world analogies, and geometric interpretations.
 - If step_by_step: provide thorough step-by-step mathematical derivations with no skipped algebra.
 - If exam_focused: prioritize high-yield formulas, common traps, rubric grading checklists, and quick revision tables.
 - If socratic: include embedded self-test questions and conceptual reflection prompts.
 - Maintain complete accuracy of all LaTeX formulas ($$...$$).`,
-      config: {
-        systemInstruction: `You are an elite academic tutor. Re-structure the student's lecture notes into an ultra-clean, pedagogical, beautifully formatted Markdown document tuned precisely to their questionnaire persona.\n\n${personaGuidance}`,
-        responseMimeType: 'application/json',
-        responseSchema: {
-          type: Type.OBJECT,
+      
+        system_instruction: `You are an elite academic tutor. Re-structure the student's lecture notes into an ultra-clean, pedagogical, beautifully formatted Markdown document tuned precisely to their questionnaire persona.\n\n${personaGuidance}`,
+        response_format: {
+        type: 'text',
+        mime_type: 'application/json',
+        schema: {
+          type: "object",
           properties: {
-            content: { type: Type.STRING, description: 'Complete restructured Markdown text with LaTeX' },
-            summary: { type: Type.STRING, description: '1-2 sentence executive conceptual summary' },
+            content: { type: "string", description: 'Complete restructured Markdown text with LaTeX' },
+            summary: { type: "string", description: '1-2 sentence executive conceptual summary' },
             keyTakeaways: {
-              type: Type.ARRAY,
-              items: { type: Type.STRING },
+              type: "array",
+              items: { type: "string" },
               description: '3-4 punchy high-yield takeaways'
             }
           },
@@ -1867,7 +1886,7 @@ export async function personalizeNoteAI(
       }
     });
 
-    const parsed = JSON.parse(response.text || '{}');
+    const parsed = JSON.parse(response.output_text || '{}');
     return {
       content: parsed.content || localRecraft.content,
       summary: parsed.summary || localRecraft.summary,
@@ -1946,24 +1965,26 @@ ${boardCapturesText}
 ${JSON.stringify(lecture.generalizedNotes, null, 2)}
 `;
 
-    const generatePromise = ai.models.generateContent({
-      model: 'gemini-3.6-flash',
-      contents: prompt,
-      config: {
-        systemInstruction: `You are the "Ask My Class" AI assistant for students who attended this classroom lecture.
+    const generatePromise = ai.interactions.create({
+      model: 'gemini-3.8-flash',
+      input: prompt,
+      
+        system_instruction: `You are the "Ask My Class" AI assistant for students who attended this classroom lecture.
 CRITICAL RULES:
 1. Answer the student's question using ONLY the provided ClassSarthi lecture data (Audio transcript, timeline events, board OCR, and notes).
 2. Whenever possible, provide the exact relevant timestamp in your response (e.g. "The teacher explained this around 21:05.").
 3. Strict Grounding Guardrail: Do NOT pretend that something was said or written in class if it is not present in the lecture data. If the question asks about something not discussed in this lecture, politely state that this topic was not covered in today's class.
 4. If a formula or board diagram was drawn by the teacher, provide the exact LaTeX formula and mention the board capture.`,
-        responseMimeType: 'application/json',
-        responseSchema: {
-          type: Type.OBJECT,
+        response_format: {
+        type: 'text',
+        mime_type: 'application/json',
+        schema: {
+          type: "object",
           properties: {
-            answer: { type: Type.STRING, description: 'Direct answer grounded strictly in lecture data with timestamp citation' },
-            timestamp: { type: Type.STRING, description: 'Relevant timestamp (e.g. "21:05", "12:48") if applicable' },
-            isGrounded: { type: Type.BOOLEAN, description: 'True if answer was present in lecture data, false otherwise' },
-            quoteSnippet: { type: Type.STRING, description: 'Exact quote or speech snippet from teacher if available' }
+            answer: { type: "string", description: 'Direct answer grounded strictly in lecture data with timestamp citation' },
+            timestamp: { type: "string", description: 'Relevant timestamp (e.g. "21:05", "12:48") if applicable' },
+            isGrounded: { type: "boolean", description: 'True if answer was present in lecture data, false otherwise' },
+            quoteSnippet: { type: "string", description: 'Exact quote or speech snippet from teacher if available' }
           },
           required: ['answer', 'isGrounded']
         }
@@ -1977,7 +1998,7 @@ CRITICAL RULES:
     const response: any = await Promise.race([generatePromise, timeoutPromise]);
 
 
-    const parsed = JSON.parse(response.text || '{}');
+    const parsed = JSON.parse(response.output_text || '{}');
     let matchedEvent = lecture.timeline.find(t => t.timestamp === parsed.timestamp);
     let matchedCapture = lecture.boardCaptures.find(b => b.timestamp === parsed.timestamp);
 
@@ -2164,4 +2185,133 @@ $$\\sum F_{\\perp} = N - mg\\cos\\theta = 0 \\implies N = mg\\cos\\theta$$\n\n`;
     reinforcedConcepts: weakConcepts
   };
 }
+
+// =========================================================================
+// 14. CONTEXTUAL SOCRATIC TUTOR ENGINE
+// =========================================================================
+
+export interface SocraticContextPayload {
+  message?: string;
+  history?: Array<{ sender?: string; role?: string; content?: string; text?: string }>;
+  context?: {
+    weakTopics?: Array<{ topic?: string; concept?: string } | string> | string;
+    weakestTopicName?: string;
+    currentLectureId?: string;
+    lastLectureTitle?: string;
+    recentQuizAnswers?: Record<string, any>;
+  };
+  learnerProfile?: LearnerPersona;
+}
+
+export async function generateSocraticResponse(payload: SocraticContextPayload): Promise<{ reply: string; videoRecommendation?: YouTubeVideoRecommendation | null }> {
+  const context = payload.context || {};
+  let weakTopicsStr = '';
+  let weakestTopicName = context.weakestTopicName || '';
+
+  if (Array.isArray(context.weakTopics) && context.weakTopics.length > 0) {
+    weakTopicsStr = context.weakTopics
+      .map(t => typeof t === 'string' ? t : (t.topic || t.concept || ''))
+      .filter(Boolean)
+      .join(', ');
+    if (!weakestTopicName) {
+      const first = context.weakTopics[0];
+      weakestTopicName = typeof first === 'string' ? first : (first.topic || first.concept || '');
+    }
+  } else if (typeof context.weakTopics === 'string') {
+    weakTopicsStr = context.weakTopics;
+    if (!weakestTopicName) weakestTopicName = context.weakTopics;
+  }
+
+  if (!weakestTopicName) {
+    weakestTopicName = "Newton's Second Law & Acceleration Distinction";
+  }
+
+  const lectureTitle = context.lastLectureTitle || "Newton's Laws of Motion & Free Body Diagrams";
+  const userMessage = payload.message || '';
+  const learningStyle = payload.learnerProfile?.learningStyle || 'visual';
+  const styleLabel = learningStyle === 'step_by_step'
+    ? 'Step-by-Step Mathematical Rigor'
+    : learningStyle === 'exam_focused'
+    ? 'High-Yield Exam Focus'
+    : learningStyle === 'socratic_dialogue'
+    ? 'Socratic & Conversational'
+    : 'Visual & Mental Models';
+
+  const systemInstruction = `You are the ClassSarthi Contextual Socratic AI Tutor.
+The student just failed ${weakTopicsStr || weakestTopicName} from today's lecture '${lectureTitle}'.
+Their learning style is ${styleLabel}.
+When they ask a question, explain the concept using their preferred learning style.
+If applicable, suggest a specific YouTube video, a mental model, or a step-by-step trick to remember it.
+Do NOT just give textbook definitions—give them a hook based on their persona.
+Format all math in LaTeX ($...$ or $$...$$).`;
+
+  // Check knowledge base for fallback video recommendations
+  let matchingVideo: YouTubeVideoRecommendation | null = null;
+  const lowerTopic = (weakestTopicName + ' ' + (weakTopicsStr || '')).toLowerCase();
+  for (const list of Object.values(SUBJECT_KNOWLEDGE_BASE)) {
+    for (const item of list) {
+      const isMatch = item.topicMatchKeywords.some(kw => lowerTopic.includes(kw.toLowerCase()) || kw.toLowerCase().includes('newton') || kw.toLowerCase().includes('incline'));
+      if (isMatch && item.videos && item.videos.length > 0) {
+        matchingVideo = item.videos[0];
+        break;
+      }
+    }
+    if (matchingVideo) break;
+  }
+
+  if (!matchingVideo) {
+    matchingVideo = {
+      title: "Newton's Laws of Motion & Incline Forces Visualized (3Blue1Brown Style)",
+      url: "https://www.youtube.com/watch?v=kKKM8Y-u7ds",
+      searchQuery: "Newton's laws of motion incline forces",
+      channelOrTopic: "Physics Visualized",
+      duration: "11:42",
+      thumbnail: "https://images.unsplash.com/photo-1636466497217-26a8cbeaf0aa?auto=format&fit=crop&w=400&q=80"
+    };
+  }
+
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    let reply = `I see you struggled with **${weakestTopicName}** from today's class on "${lectureTitle}".\n\n`;
+    if (learningStyle === 'visual') {
+      reply += `💡 **Visual Mental Model**: Picture the block on the ramp. Gravity pulls straight down, but the ramp only pushes back *perpendicular* to its surface. That's why the normal force is $N = mg\\cos\\theta$, scaling to zero when the ramp becomes vertical!\n\nTo test this: What happens to the sliding acceleration when you tilt the ramp steeper toward $90^\\circ$?`;
+    } else {
+      reply += `📐 **Step-by-Step Derivation**: Along the incline coordinate system:\n$$\\Sigma F_\\parallel = mg\\sin\\theta - f_k = m \\cdot a$$\n$$\\Sigma F_\\perp = N - mg\\cos\\theta = 0 \\implies N = mg\\cos\\theta$$\n\nWhat is the net acceleration if the incline is frictionless?`;
+    }
+
+    if (matchingVideo) {
+      reply += `\n\n📺 **Recommended Video Breakdown**:\n[Watch: ${matchingVideo.title}](${matchingVideo.url}) — *${matchingVideo.channelOrTopic} (${matchingVideo.duration})*`;
+    }
+
+    return { reply, videoRecommendation: matchingVideo };
+  }
+
+  try {
+    const ai = getAI();
+    const response = await ai.interactions.create({
+      model: 'gemini-3.8-flash',
+      input: userMessage || `[System Trigger]: Initial Socratic conversation hook on ${weakestTopicName}`,
+      
+        system_instruction: systemInstruction
+
+    });
+
+    let rawReply = response.output_text || `I see you struggled with **${weakestTopicName}** from today's class on "${lectureTitle}".`;
+    if (matchingVideo && !rawReply.includes('youtube.com') && !rawReply.includes('Recommended Video')) {
+      rawReply += `\n\n📺 **Recommended Video Breakdown**:\n[Watch: ${matchingVideo.title}](${matchingVideo.url}) — *${matchingVideo.channelOrTopic} (${matchingVideo.duration})*`;
+    }
+
+    return {
+      reply: rawReply,
+      videoRecommendation: matchingVideo
+    };
+  } catch (err) {
+    console.warn('Error in generateSocraticResponse:', err);
+    return {
+      reply: `I see you struggled with **${weakestTopicName}** from today's lecture on "${lectureTitle}".\n\nLet's break it down using your preferred ${styleLabel} approach: what is the net force along the direction of motion?\n\n📺 **Recommended Video Breakdown**:\n[Watch: ${matchingVideo.title}](${matchingVideo.url})`,
+      videoRecommendation: matchingVideo
+    };
+  }
+}
+
 

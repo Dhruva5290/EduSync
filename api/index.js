@@ -47,9 +47,9 @@ var init_fakeData = __esm({
       {
         id: "admin-1",
         name: "Dr. Maneek Singh",
-        email: "dean.maneek@edusync.edu.in",
+        email: "dean.maneek@classsarthi.edu.in",
         username: "dean.maneek",
-        password: "Dean@EduSync2026!",
+        password: "Dean@ClassSarthi2026!",
         role: "admin",
         gender: "Male",
         institutionalId: "EDU-ADM-1001",
@@ -66,7 +66,7 @@ var init_fakeData = __esm({
       {
         id: "teacher-phy",
         name: "Dr. Rajesh Kulkarni",
-        email: "rajesh.kulkarni@edusync.edu.in",
+        email: "rajesh.kulkarni@classsarthi.edu.in",
         username: "prof.rajesh",
         password: "Physics@2026!",
         role: "teacher",
@@ -85,7 +85,7 @@ var init_fakeData = __esm({
       {
         id: "teacher-che",
         name: "Dr. Ananya Sen",
-        email: "ananya.sen@edusync.edu.in",
+        email: "ananya.sen@classsarthi.edu.in",
         username: "prof.ananya",
         password: "Chemistry@2026!",
         role: "teacher",
@@ -104,7 +104,7 @@ var init_fakeData = __esm({
       {
         id: "teacher-mat",
         name: "Prof. Vikramaditya Roy",
-        email: "vikram.roy@edusync.edu.in",
+        email: "vikram.roy@classsarthi.edu.in",
         username: "prof.vikram",
         password: "Maths@2026!",
         role: "teacher",
@@ -123,7 +123,7 @@ var init_fakeData = __esm({
       {
         id: "student-1",
         name: "Aarav Sharma",
-        email: "aarav.sharma@edusync.edu.in",
+        email: "aarav.sharma@classsarthi.edu.in",
         username: "aarav.sharma",
         password: "Student@2026!",
         role: "student",
@@ -152,7 +152,7 @@ var init_fakeData = __esm({
       {
         id: "student-2",
         name: "Diya Patel",
-        email: "diya.patel@edusync.edu.in",
+        email: "diya.patel@classsarthi.edu.in",
         username: "diya.patel",
         password: "Student@2026!",
         role: "student",
@@ -181,7 +181,7 @@ var init_fakeData = __esm({
       {
         id: "student-3",
         name: "Kabir Mehta",
-        email: "kabir.mehta@edusync.edu.in",
+        email: "kabir.mehta@classsarthi.edu.in",
         username: "kabir.mehta",
         password: "Student@2026!",
         role: "student",
@@ -212,7 +212,7 @@ var init_fakeData = __esm({
         name: "Student Dhruva",
         email: "student.dhruva@bmu.edu.in",
         username: "student.dhruva",
-        password: "EduSync@260101",
+        password: "ClassSarthi@260101",
         role: "student",
         gender: "Male",
         institutionalId: "BMU-2026-7052",
@@ -14477,11 +14477,15 @@ function evaluateQuizPerformance(quizTitle, questions, userAnswers, persona) {
     summary = `Diagnostic review needed for "${quizTitle}" (${pct}%). Foundational benchmarks and marking criteria require reinforcement before attempting timed mock exams.`;
   }
   const suggestedTutorPrompt = missedTopics.length > 0 ? `I took the mastery checkpoint for "${quizTitle}" and struggled with ${missedTopics[0]}. Can you guide me through this ${styleHint} without giving away direct answers?` : `I completed the mastery checkpoint on "${quizTitle}" with ${pct}%. Can you challenge me with an advanced application problem ${styleHint}?`;
+  const masteryLevel = pct >= 80 ? "Mastered" : pct >= 50 ? "Proficient" : "Needs Review";
+  const suggestedTutorTopic = missedTopics[0] || quizTitle;
   return {
     score: totalCorrect,
     totalQuestions: total,
     percentage: pct,
     summary,
+    masteryLevel,
+    suggestedTutorTopic,
     keyMisconceptions: Array.from(new Set(missedTopics)).slice(0, 3).map((t2) => `Misconception or uncertain recall in: ${t2}`),
     suggestedTutorPrompt,
     difficultyBreakdown: {
@@ -59990,9 +59994,9 @@ var init_users = __esm({
       {
         id: "admin-1",
         name: "Dr. Maneek Singh",
-        email: "dean.maneek@edusync.edu.in",
+        email: "dean.maneek@classsarthi.edu.in",
         username: "dean.maneek",
-        password: "Dean@EduSync2026!",
+        password: "Dean@ClassSarthi2026!",
         role: "admin",
         gender: "Male",
         institutionalId: "EDU-ADM-1001",
@@ -60009,7 +60013,7 @@ var init_users = __esm({
       {
         id: "teacher-phy",
         name: "Dr. Rajesh Kulkarni",
-        email: "rajesh.kulkarni@edusync.edu.in",
+        email: "rajesh.kulkarni@classsarthi.edu.in",
         username: "prof.rajesh",
         password: "Physics@2026!",
         role: "teacher",
@@ -60031,7 +60035,7 @@ var init_users = __esm({
       {
         id: "teacher-che",
         name: "Dr. Ananya Sen",
-        email: "ananya.sen@edusync.edu.in",
+        email: "ananya.sen@classsarthi.edu.in",
         username: "prof.ananya",
         password: "Chemistry@2026!",
         role: "teacher",
@@ -60053,7 +60057,7 @@ var init_users = __esm({
       {
         id: "teacher-mat",
         name: "Prof. Vikramaditya Roy",
-        email: "vikram.roy@edusync.edu.in",
+        email: "vikram.roy@classsarthi.edu.in",
         username: "prof.vikram",
         password: "Maths@2026!",
         role: "teacher",
@@ -60073,31 +60077,28 @@ var init_users = __esm({
         phone: "+91 98110 54333"
       },
       {
-        id: "teacher-elena-rostova",
+        id: "teacher-1788570692864",
         name: "Dr. Elena Rostova",
-        email: "elena.rostova@edusync.edu.in",
-        username: "elena.rostova",
-        password: "Elena@EduSync2026!",
+        email: "elena.rostova.1788570692862@classsarthi.edu",
+        username: "elena.rostova.1788570692862",
+        password: "Teacher@2782",
         role: "teacher",
-        gender: "Female",
-        institutionalId: "EDU-FAC-204",
-        department: "Department of Computer Science & AI",
-        designation: "Associate Professor of AI & Robotics",
-        enrolledSubjectIds: [],
-        teachingSubjectIds: [
-          "subj-phy",
-          "subj-mat"
-        ],
-        officeLocation: "Turing Tower - Room 502",
-        officeHours: "Tue & Thu 02:00 PM - 04:00 PM",
+        gender: "Male",
+        institutionalId: "BMU-FAC-2782",
+        department: "Theoretical High Energy Physics",
+        designation: "Assistant Professor",
+        officeLocation: "Academic Block A",
+        officeHours: "Mon/Wed 11:00 AM - 01:00 PM",
+        phone: "+91 98391 37297",
         status: "active",
-        joinedDate: "2021-08-15",
-        phone: "+91 98110 54334"
+        joinedDate: "2026-09-05",
+        enrolledSubjectIds: [],
+        teachingSubjectIds: []
       },
       {
         id: "student-1",
         name: "Aarav Sharma",
-        email: "aarav.sharma@edusync.edu.in",
+        email: "aarav.sharma@classsarthi.edu.in",
         username: "aarav.sharma",
         password: "Student@2026!",
         role: "student",
@@ -60131,7 +60132,7 @@ var init_users = __esm({
       {
         id: "student-2",
         name: "Diya Patel",
-        email: "diya.patel@edusync.edu.in",
+        email: "diya.patel@classsarthi.edu.in",
         username: "diya.patel",
         password: "Student@2026!",
         role: "student",
@@ -60165,7 +60166,7 @@ var init_users = __esm({
       {
         id: "student-3",
         name: "Kabir Mehta",
-        email: "kabir.mehta@edusync.edu.in",
+        email: "kabir.mehta@classsarthi.edu.in",
         username: "kabir.mehta",
         password: "Student@2026!",
         role: "student",
@@ -60199,7 +60200,7 @@ var init_users = __esm({
       {
         id: "student-4",
         name: "Ananya Iyer",
-        email: "ananya.iyer@edusync.edu.in",
+        email: "ananya.iyer@classsarthi.edu.in",
         username: "ananya.iyer",
         password: "Student@2026!",
         role: "student",
@@ -60236,7 +60237,7 @@ var init_users = __esm({
       {
         id: "student-5",
         name: "Rohan Gupta",
-        email: "rohan.gupta@edusync.edu.in",
+        email: "rohan.gupta@classsarthi.edu.in",
         username: "rohan.gupta",
         password: "Student@2026!",
         role: "student",
@@ -60273,7 +60274,7 @@ var init_users = __esm({
       {
         id: "student-6",
         name: "Ishaan Verma",
-        email: "ishaan.verma@edusync.edu.in",
+        email: "ishaan.verma@classsarthi.edu.in",
         username: "ishaan.verma",
         password: "Student@2026!",
         role: "student",
@@ -60312,7 +60313,7 @@ var init_users = __esm({
         name: "Student Dhruva",
         email: "student.dhruva@bmu.edu.in",
         username: "student.dhruva",
-        password: "EduSync@260101",
+        password: "ClassSarthi@260101",
         role: "student",
         gender: "Male",
         institutionalId: "BMU-2026-7052",
@@ -60330,12 +60331,12 @@ var init_users = __esm({
         learningProfile: {
           learningStyle: "visual",
           targetGrade: "A+",
-          explanationTone: "encouraging_mentor",
+          explanationTone: "practical_engineer",
           preferredPace: "steady",
           strengthsAndInterests: "Interactive coding, mathematical graphs, physical models",
           painPoints: "Complex integration, multi-variable calculus",
           questionnaireCompleted: true,
-          completedAt: "2026-09-04T12:00:00.000Z"
+          completedAt: "2026-09-08T10:16:49.639Z"
         }
       },
       {
@@ -60490,27 +60491,6 @@ var init_users = __esm({
           "subj-mat"
         ],
         teachingSubjectIds: []
-      },
-      {
-        id: "teacher-elena-rostova",
-        name: "Dr. Elena Rostova",
-        email: "elena.rostova@edusync.edu",
-        username: "elena.rostova",
-        password: "Teacher@2026!",
-        role: "teacher",
-        gender: "Female",
-        institutionalId: "BMU-FAC-2062",
-        department: "Theoretical High Energy Physics",
-        designation: "Assistant Professor",
-        officeLocation: "Academic Block A",
-        officeHours: "Mon/Wed 11:00 AM - 01:00 PM",
-        phone: "+91 98525 29743",
-        status: "active",
-        joinedDate: "2026-09-04",
-        enrolledSubjectIds: [],
-        teachingSubjectIds: [
-          "subj-phy"
-        ]
       }
     ];
   }
@@ -60521,6 +60501,706 @@ var lectures_default;
 var init_lectures = __esm({
   "data/lectures.json"() {
     lectures_default = [
+      {
+        id: "lec-1789534640093",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-16",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1789481072043",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-15",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1789480886509",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-15",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1789387363072",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-14",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1789331331251",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-13",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1789330346831",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-13",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1789330100076",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-13",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1789328328301",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-13",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1789312973740",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-13",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1789236655391",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-12",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1789236059643",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-12",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1789234896021",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-12",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1789234003336",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-12",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1789232803441",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-12",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1788862341430",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-08",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1788647054707",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-05",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1788646893815",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-05",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1788646643708",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-05",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1788645909000",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-05",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1788645602237",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-05",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1788645587292",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-05",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1788640262322",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-05",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1788640149153",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-05",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1788638103048",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-05",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
+      {
+        id: "lec-1788633607023",
+        subjectId: "subj-phy-11",
+        subjectCode: "PHY-11",
+        subjectName: "Physics 11",
+        title: "ClassSarthi Live Camera Session: Rotational Mechanics",
+        teacherName: "Faculty Instructor",
+        teacherId: "teacher-phy",
+        date: "2026-09-05",
+        duration: "45 mins",
+        summary: "ClassSarthi captured lecture.",
+        topics: [
+          "General Discussion"
+        ],
+        timeline: [],
+        boardCaptures: [],
+        audioTranscript: [],
+        generalizedNotes: {
+          explanation: "",
+          importantConcepts: [],
+          formulas: [],
+          examples: [],
+          keyPoints: [],
+          diagrams: [],
+          homeworkMentioned: []
+        },
+        smartNotesMarkdown: "# ClassSarthi Live Camera Session: Rotational Mechanics\n\nundefined"
+      },
       {
         id: "lec-1788566901878",
         subjectId: "subj-phy-11",
@@ -61154,7 +61834,7 @@ var init_notes = __esm({
   "data/notes.json"() {
     notes_default = [
       {
-        id: "note-vn-sim-1788566901866",
+        id: "note-vn-sim-1789534640077",
         studentId: "student-1",
         subjectId: "subj-phy",
         title: "Work-Energy Theorem & Conservation of Mechanical Energy",
@@ -61169,7 +61849,7 @@ var init_notes = __esm({
           "How does the work-energy theorem apply when non-conservative frictional forces are present?",
           "Why is potential energy defined only for conservative forces and not for friction?"
         ],
-        lastModified: "2026-09-05T00:08:21.866Z",
+        lastModified: "2026-09-16T04:57:20.077Z",
         isPinned: true,
         source: "visionnote",
         summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
@@ -61177,13 +61857,662 @@ var init_notes = __esm({
           "Formulas verified and formatted in LaTeX.",
           "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
         ]
+      },
+      {
+        id: "note-vn-sim-1789481072039",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-15T14:04:32.039Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
+      {
+        id: "note-vn-sim-1789480886506",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-15T14:01:26.506Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
+      {
+        id: "note-vn-sim-1789387363062",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-14T12:02:43.062Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
+      {
+        id: "note-vn-sim-1789331331246",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-13T20:28:51.246Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
+      {
+        id: "note-vn-sim-1789330346823",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-13T20:12:26.823Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
+      {
+        id: "note-vn-sim-1789330100066",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-13T20:08:20.066Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
+      {
+        id: "note-vn-sim-1789328328295",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-13T19:38:48.295Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
+      {
+        id: "note-vn-sim-1789312973736",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-13T15:22:53.736Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
+      {
+        id: "note-vn-sim-1789236655380",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-12T18:10:55.380Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
+      {
+        id: "note-vn-sim-1789236059632",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-12T18:00:59.632Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
+      {
+        id: "note-vn-sim-1789234896011",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-12T17:41:36.011Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
+      {
+        id: "note-vn-sim-1789234003327",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-12T17:26:43.327Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
+      {
+        id: "note-vn-sim-1789232803433",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-12T17:06:43.433Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        keyTakeaways: [
+          "Formulas verified and formatted in LaTeX.",
+          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
+        ]
+      },
+      {
+        id: "note-vn-sim-1788862341423",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-08T10:16:49.644Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
+        keyTakeaways: [
+          "Visualized dynamic flux equilibrium across the conceptual topology map.",
+          "Connected boundary constraints to spatial and geometric symmetries.",
+          "Calibrated for visual spatial memory targeting Grade A+."
+        ],
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
+      },
+      {
+        id: "note-vn-sim-1788647054698",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-08T10:16:49.644Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
+        keyTakeaways: [
+          "Visualized dynamic flux equilibrium across the conceptual topology map.",
+          "Connected boundary constraints to spatial and geometric symmetries.",
+          "Calibrated for visual spatial memory targeting Grade A+."
+        ],
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
+      },
+      {
+        id: "note-vn-sim-1788646893806",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-08T10:16:49.644Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
+        keyTakeaways: [
+          "Visualized dynamic flux equilibrium across the conceptual topology map.",
+          "Connected boundary constraints to spatial and geometric symmetries.",
+          "Calibrated for visual spatial memory targeting Grade A+."
+        ],
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
+      },
+      {
+        id: "note-vn-sim-1788646643701",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-08T10:16:49.644Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
+        keyTakeaways: [
+          "Visualized dynamic flux equilibrium across the conceptual topology map.",
+          "Connected boundary constraints to spatial and geometric symmetries.",
+          "Calibrated for visual spatial memory targeting Grade A+."
+        ],
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
+      },
+      {
+        id: "note-vn-sim-1788645908990",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-08T10:16:49.644Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
+        keyTakeaways: [
+          "Visualized dynamic flux equilibrium across the conceptual topology map.",
+          "Connected boundary constraints to spatial and geometric symmetries.",
+          "Calibrated for visual spatial memory targeting Grade A+."
+        ],
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
+      },
+      {
+        id: "note-vn-sim-1788645602232",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-08T10:16:49.644Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
+        keyTakeaways: [
+          "Visualized dynamic flux equilibrium across the conceptual topology map.",
+          "Connected boundary constraints to spatial and geometric symmetries.",
+          "Calibrated for visual spatial memory targeting Grade A+."
+        ],
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
+      },
+      {
+        id: "note-vn-sim-1788645587285",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-08T10:16:49.644Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
+        keyTakeaways: [
+          "Visualized dynamic flux equilibrium across the conceptual topology map.",
+          "Connected boundary constraints to spatial and geometric symmetries.",
+          "Calibrated for visual spatial memory targeting Grade A+."
+        ],
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
+      },
+      {
+        id: "note-vn-sim-1788640262314",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-08T10:16:49.644Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
+        keyTakeaways: [
+          "Visualized dynamic flux equilibrium across the conceptual topology map.",
+          "Connected boundary constraints to spatial and geometric symmetries.",
+          "Calibrated for visual spatial memory targeting Grade A+."
+        ],
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
+      },
+      {
+        id: "note-vn-sim-1788640149147",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-08T10:16:49.644Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
+        keyTakeaways: [
+          "Visualized dynamic flux equilibrium across the conceptual topology map.",
+          "Connected boundary constraints to spatial and geometric symmetries.",
+          "Calibrated for visual spatial memory targeting Grade A+."
+        ],
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
+      },
+      {
+        id: "note-vn-sim-1788638103042",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-08T10:16:49.644Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
+        keyTakeaways: [
+          "Visualized dynamic flux equilibrium across the conceptual topology map.",
+          "Connected boundary constraints to spatial and geometric symmetries.",
+          "Calibrated for visual spatial memory targeting Grade A+."
+        ],
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
+      },
+      {
+        id: "note-vn-sim-1788633607020",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-08T10:16:49.645Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
+        keyTakeaways: [
+          "Visualized dynamic flux equilibrium across the conceptual topology map.",
+          "Connected boundary constraints to spatial and geometric symmetries.",
+          "Calibrated for visual spatial memory targeting Grade A+."
+        ],
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
+      },
+      {
+        id: "note-vn-sim-1788566901866",
+        studentId: "student-1",
+        subjectId: "subj-phy",
+        title: "Work-Energy Theorem & Conservation of Mechanical Energy",
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
+        tags: [
+          "Physics 11",
+          "Work Energy Theorem",
+          "VisionNote Camera"
+        ],
+        cameraSnapshotUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
+        doubtsDetected: [
+          "How does the work-energy theorem apply when non-conservative frictional forces are present?",
+          "Why is potential energy defined only for conservative forces and not for friction?"
+        ],
+        lastModified: "2026-09-08T10:16:49.645Z",
+        isPinned: true,
+        source: "visionnote",
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
+        keyTakeaways: [
+          "Visualized dynamic flux equilibrium across the conceptual topology map.",
+          "Connected boundary constraints to spatial and geometric symmetries.",
+          "Calibrated for visual spatial memory targeting Grade A+."
+        ],
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
       },
       {
         id: "note-vn-sim-1788554775873",
         studentId: "student-1",
         subjectId: "subj-phy",
         title: "Work-Energy Theorem & Conservation of Mechanical Energy",
-        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
         tags: [
           "Physics 11",
           "Work Energy Theorem",
@@ -61194,21 +62523,23 @@ var init_notes = __esm({
           "How does the work-energy theorem apply when non-conservative frictional forces are present?",
           "Why is potential energy defined only for conservative forces and not for friction?"
         ],
-        lastModified: "2026-09-04T20:46:15.873Z",
+        lastModified: "2026-09-08T10:16:49.645Z",
         isPinned: true,
         source: "visionnote",
-        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
         keyTakeaways: [
-          "Formulas verified and formatted in LaTeX.",
-          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
-        ]
+          "Visualized dynamic flux equilibrium across the conceptual topology map.",
+          "Connected boundary constraints to spatial and geometric symmetries.",
+          "Calibrated for visual spatial memory targeting Grade A+."
+        ],
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
       },
       {
         id: "note-vn-sim-1788554677084",
         studentId: "student-1",
         subjectId: "subj-phy",
         title: "Work-Energy Theorem & Conservation of Mechanical Energy",
-        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
         tags: [
           "Physics 11",
           "Work Energy Theorem",
@@ -61219,21 +62550,23 @@ var init_notes = __esm({
           "How does the work-energy theorem apply when non-conservative frictional forces are present?",
           "Why is potential energy defined only for conservative forces and not for friction?"
         ],
-        lastModified: "2026-09-04T20:44:37.084Z",
+        lastModified: "2026-09-08T10:16:49.645Z",
         isPinned: true,
         source: "visionnote",
-        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
         keyTakeaways: [
-          "Formulas verified and formatted in LaTeX.",
-          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
-        ]
+          "Visualized dynamic flux equilibrium across the conceptual topology map.",
+          "Connected boundary constraints to spatial and geometric symmetries.",
+          "Calibrated for visual spatial memory targeting Grade A+."
+        ],
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
       },
       {
         id: "note-vn-sim-1788554649169",
         studentId: "student-1",
         subjectId: "subj-phy",
         title: "Work-Energy Theorem & Conservation of Mechanical Energy",
-        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
         tags: [
           "Physics 11",
           "Work Energy Theorem",
@@ -61244,21 +62577,23 @@ var init_notes = __esm({
           "How does the work-energy theorem apply when non-conservative frictional forces are present?",
           "Why is potential energy defined only for conservative forces and not for friction?"
         ],
-        lastModified: "2026-09-04T20:44:09.169Z",
+        lastModified: "2026-09-08T10:16:49.645Z",
         isPinned: true,
         source: "visionnote",
-        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
         keyTakeaways: [
-          "Formulas verified and formatted in LaTeX.",
-          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
-        ]
+          "Visualized dynamic flux equilibrium across the conceptual topology map.",
+          "Connected boundary constraints to spatial and geometric symmetries.",
+          "Calibrated for visual spatial memory targeting Grade A+."
+        ],
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
       },
       {
         id: "note-vn-sim-1788554599161",
         studentId: "student-1",
         subjectId: "subj-phy",
         title: "Work-Energy Theorem & Conservation of Mechanical Energy",
-        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
         tags: [
           "Physics 11",
           "Work Energy Theorem",
@@ -61269,21 +62604,23 @@ var init_notes = __esm({
           "How does the work-energy theorem apply when non-conservative frictional forces are present?",
           "Why is potential energy defined only for conservative forces and not for friction?"
         ],
-        lastModified: "2026-09-04T20:43:19.161Z",
+        lastModified: "2026-09-08T10:16:49.645Z",
         isPinned: true,
         source: "visionnote",
-        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
         keyTakeaways: [
-          "Formulas verified and formatted in LaTeX.",
-          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
-        ]
+          "Visualized dynamic flux equilibrium across the conceptual topology map.",
+          "Connected boundary constraints to spatial and geometric symmetries.",
+          "Calibrated for visual spatial memory targeting Grade A+."
+        ],
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
       },
       {
         id: "note-vn-sim-1788554490327",
         studentId: "student-1",
         subjectId: "subj-phy",
         title: "Work-Energy Theorem & Conservation of Mechanical Energy",
-        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
         tags: [
           "Physics 11",
           "Work Energy Theorem",
@@ -61294,21 +62631,23 @@ var init_notes = __esm({
           "How does the work-energy theorem apply when non-conservative frictional forces are present?",
           "Why is potential energy defined only for conservative forces and not for friction?"
         ],
-        lastModified: "2026-09-04T20:41:30.327Z",
+        lastModified: "2026-09-08T10:16:49.645Z",
         isPinned: true,
         source: "visionnote",
-        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
         keyTakeaways: [
-          "Formulas verified and formatted in LaTeX.",
-          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
-        ]
+          "Visualized dynamic flux equilibrium across the conceptual topology map.",
+          "Connected boundary constraints to spatial and geometric symmetries.",
+          "Calibrated for visual spatial memory targeting Grade A+."
+        ],
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
       },
       {
         id: "note-vn-sim-1788554455510",
         studentId: "student-1",
         subjectId: "subj-phy",
         title: "Work-Energy Theorem & Conservation of Mechanical Energy",
-        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
         tags: [
           "Physics 11",
           "Work Energy Theorem",
@@ -61319,21 +62658,23 @@ var init_notes = __esm({
           "How does the work-energy theorem apply when non-conservative frictional forces are present?",
           "Why is potential energy defined only for conservative forces and not for friction?"
         ],
-        lastModified: "2026-09-04T20:40:55.510Z",
+        lastModified: "2026-09-08T10:16:49.645Z",
         isPinned: true,
         source: "visionnote",
-        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
         keyTakeaways: [
-          "Formulas verified and formatted in LaTeX.",
-          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
-        ]
+          "Visualized dynamic flux equilibrium across the conceptual topology map.",
+          "Connected boundary constraints to spatial and geometric symmetries.",
+          "Calibrated for visual spatial memory targeting Grade A+."
+        ],
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
       },
       {
         id: "note-vn-sim-1788554433025",
         studentId: "student-1",
         subjectId: "subj-phy",
         title: "Work-Energy Theorem & Conservation of Mechanical Energy",
-        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
         tags: [
           "Physics 11",
           "Work Energy Theorem",
@@ -61344,21 +62685,23 @@ var init_notes = __esm({
           "How does the work-energy theorem apply when non-conservative frictional forces are present?",
           "Why is potential energy defined only for conservative forces and not for friction?"
         ],
-        lastModified: "2026-09-04T20:40:33.025Z",
+        lastModified: "2026-09-08T10:16:49.645Z",
         isPinned: true,
         source: "visionnote",
-        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
         keyTakeaways: [
-          "Formulas verified and formatted in LaTeX.",
-          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
-        ]
+          "Visualized dynamic flux equilibrium across the conceptual topology map.",
+          "Connected boundary constraints to spatial and geometric symmetries.",
+          "Calibrated for visual spatial memory targeting Grade A+."
+        ],
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
       },
       {
         id: "note-vn-sim-1788554345890",
         studentId: "student-1",
         subjectId: "subj-phy",
         title: "Work-Energy Theorem & Conservation of Mechanical Energy",
-        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
         tags: [
           "Physics 11",
           "Work Energy Theorem",
@@ -61369,59 +62712,82 @@ var init_notes = __esm({
           "How does the work-energy theorem apply when non-conservative frictional forces are present?",
           "Why is potential energy defined only for conservative forces and not for friction?"
         ],
-        lastModified: "2026-09-04T20:39:05.890Z",
+        lastModified: "2026-09-08T10:16:49.645Z",
         isPinned: true,
         source: "visionnote",
-        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
         keyTakeaways: [
-          "Formulas verified and formatted in LaTeX.",
-          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
-        ]
+          "Visualized dynamic flux equilibrium across the conceptual topology map.",
+          "Connected boundary constraints to spatial and geometric symmetries.",
+          "Calibrated for visual spatial memory targeting Grade A+."
+        ],
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
       },
       {
         id: "note-1788554228358",
         studentId: "student-1",
         subjectId: "sub_cs101",
         title: "Secure Note Title",
-        content: "<img src=x >Exploit Payload",
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Secure Note Title\n\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Secure Note Title\n\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Secure Note Title\n\n<img src=x >Exploit Payload\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
         tags: [
           "Study"
         ],
-        lastModified: "2026-09-04T20:37:08.358Z",
-        isPinned: false
+        lastModified: "2026-09-08T10:16:49.645Z",
+        isPinned: false,
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Secure Note Title\n\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Secure Note Title\n\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Secure Note Title\n\n<img src=x >Exploit Payload\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
+        keyTakeaways: [
+          "Visualized dynamic flux equilibrium across the conceptual topology map.",
+          "Connected boundary constraints to spatial and geometric symmetries.",
+          "Calibrated for visual spatial memory targeting Grade A+."
+        ]
       },
       {
         id: "note-1788554228343",
         studentId: "student-1",
         subjectId: "sub_cs101",
         title: "Prototype Pollution Test Note",
-        content: "Normal note content",
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Prototype Pollution Test Note\n\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Prototype Pollution Test Note\n\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Prototype Pollution Test Note\n\nNormal note content\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
         tags: [
           "Study"
         ],
-        lastModified: "2026-09-04T20:37:08.343Z",
-        isPinned: false
+        lastModified: "2026-09-08T10:16:49.645Z",
+        isPinned: false,
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Prototype Pollution Test Note\n\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Prototype Pollution Test Note\n\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Prototype Pollution Test Note\n\nNormal note content\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
+        keyTakeaways: [
+          "Visualized dynamic flux equilibrium across the conceptual topology map.",
+          "Connected boundary constraints to spatial and geometric symmetries.",
+          "Calibrated for visual spatial memory targeting Grade A+."
+        ]
       },
       {
         id: "note-1788554218032",
         studentId: "student-1",
         subjectId: "sub_phys101",
         title: "Work-Energy Theorem & Conservation Laws",
-        content: "# Work-Energy Principle\n\nThe net work done on an object equals the change in kinetic energy:\n$$W_{net} = \\Delta K = \\frac{1}{2}mv_f^2 - \\frac{1}{2}mv_i^2$$\n\nFor conservative forces:\n$$E_{total} = K + U = \\text{constant}$$",
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation Laws\n\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation Laws\n\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Principle\n\nThe net work done on an object equals the change in kinetic energy:\n$$W_{net} = \\Delta K = \\frac{1}{2}mv_f^2 - \\frac{1}{2}mv_i^2$$\n\nFor conservative forces:\n$$E_{total} = K + U = \\text{constant}$$\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
         tags: [
           "physics",
           "mechanics",
           "work-energy"
         ],
-        lastModified: "2026-09-04T20:36:58.032Z",
-        isPinned: false
+        lastModified: "2026-09-08T10:16:49.645Z",
+        isPinned: false,
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation Laws\n\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation Laws\n\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Principle\n\nThe net work done on an object equals the change in kinetic energy:\n$$W_{net} = \\Delta K = \\frac{1}{2}mv_f^2 - \\frac{1}{2}mv_i^2$$\n\nFor conservative forces:\n$$E_{total} = K + U = \\text{constant}$$\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
+        keyTakeaways: [
+          "Visualized dynamic flux equilibrium across the conceptual topology map.",
+          "Connected boundary constraints to spatial and geometric symmetries.",
+          "Calibrated for visual spatial memory targeting Grade A+."
+        ]
       },
       {
         id: "note-vn-sim-1788554217976",
         studentId: "student-1",
         subjectId: "subj-phy",
         title: "Work-Energy Theorem & Conservation of Mechanical Energy",
-        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
         tags: [
           "Physics 11",
           "Work Energy Theorem",
@@ -61432,59 +62798,82 @@ var init_notes = __esm({
           "How does the work-energy theorem apply when non-conservative frictional forces are present?",
           "Why is potential energy defined only for conservative forces and not for friction?"
         ],
-        lastModified: "2026-09-04T20:36:57.976Z",
+        lastModified: "2026-09-08T10:16:49.646Z",
         isPinned: true,
         source: "visionnote",
-        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
         keyTakeaways: [
-          "Formulas verified and formatted in LaTeX.",
-          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
-        ]
+          "Visualized dynamic flux equilibrium across the conceptual topology map.",
+          "Connected boundary constraints to spatial and geometric symmetries.",
+          "Calibrated for visual spatial memory targeting Grade A+."
+        ],
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
       },
       {
         id: "note-1788554123384",
         studentId: "student-1",
         subjectId: "sub_cs101",
         title: "Secure Note Title",
-        content: "<img src=x >Exploit Payload",
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Secure Note Title\n\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Secure Note Title\n\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Secure Note Title\n\n<img src=x >Exploit Payload\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
         tags: [
           "Study"
         ],
-        lastModified: "2026-09-04T20:35:23.384Z",
-        isPinned: false
+        lastModified: "2026-09-08T10:16:49.646Z",
+        isPinned: false,
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Secure Note Title\n\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Secure Note Title\n\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Secure Note Title\n\n<img src=x >Exploit Payload\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
+        keyTakeaways: [
+          "Visualized dynamic flux equilibrium across the conceptual topology map.",
+          "Connected boundary constraints to spatial and geometric symmetries.",
+          "Calibrated for visual spatial memory targeting Grade A+."
+        ]
       },
       {
         id: "note-1788554123379",
         studentId: "student-1",
         subjectId: "sub_cs101",
         title: "Prototype Pollution Test Note",
-        content: "Normal note content",
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Prototype Pollution Test Note\n\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Prototype Pollution Test Note\n\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Prototype Pollution Test Note\n\nNormal note content\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
         tags: [
           "Study"
         ],
-        lastModified: "2026-09-04T20:35:23.379Z",
-        isPinned: false
+        lastModified: "2026-09-08T10:16:49.646Z",
+        isPinned: false,
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Prototype Pollution Test Note\n\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Prototype Pollution Test Note\n\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Prototype Pollution Test Note\n\nNormal note content\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
+        keyTakeaways: [
+          "Visualized dynamic flux equilibrium across the conceptual topology map.",
+          "Connected boundary constraints to spatial and geometric symmetries.",
+          "Calibrated for visual spatial memory targeting Grade A+."
+        ]
       },
       {
         id: "note-1788554112393",
         studentId: "student-1",
         subjectId: "sub_phys101",
         title: "Work-Energy Theorem & Conservation Laws",
-        content: "# Work-Energy Principle\n\nThe net work done on an object equals the change in kinetic energy:\n$$W_{net} = \\Delta K = \\frac{1}{2}mv_f^2 - \\frac{1}{2}mv_i^2$$\n\nFor conservative forces:\n$$E_{total} = K + U = \\text{constant}$$",
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation Laws\n\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation Laws\n\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Principle\n\nThe net work done on an object equals the change in kinetic energy:\n$$W_{net} = \\Delta K = \\frac{1}{2}mv_f^2 - \\frac{1}{2}mv_i^2$$\n\nFor conservative forces:\n$$E_{total} = K + U = \\text{constant}$$\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
         tags: [
           "physics",
           "mechanics",
           "work-energy"
         ],
-        lastModified: "2026-09-04T20:35:12.393Z",
-        isPinned: false
+        lastModified: "2026-09-08T10:16:49.646Z",
+        isPinned: false,
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation Laws\n\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation Laws\n\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Principle\n\nThe net work done on an object equals the change in kinetic energy:\n$$W_{net} = \\Delta K = \\frac{1}{2}mv_f^2 - \\frac{1}{2}mv_i^2$$\n\nFor conservative forces:\n$$E_{total} = K + U = \\text{constant}$$\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
+        keyTakeaways: [
+          "Visualized dynamic flux equilibrium across the conceptual topology map.",
+          "Connected boundary constraints to spatial and geometric symmetries.",
+          "Calibrated for visual spatial memory targeting Grade A+."
+        ]
       },
       {
         id: "note-vn-sim-1788554112359",
         studentId: "student-1",
         subjectId: "subj-phy",
         title: "Work-Energy Theorem & Conservation of Mechanical Energy",
-        content: "# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$",
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
         tags: [
           "Physics 11",
           "Work Energy Theorem",
@@ -61495,23 +62884,25 @@ var init_notes = __esm({
           "How does the work-energy theorem apply when non-conservative frictional forces are present?",
           "Why is potential energy defined only for conservative forces and not for friction?"
         ],
-        lastModified: "2026-09-04T20:35:12.359Z",
+        lastModified: "2026-09-08T10:16:49.646Z",
         isPinned: true,
         source: "visionnote",
-        summary: "Auto-extracted notes on Work-Energy Theorem & Conservation of Mechanical Energy with complete mathematical derivations and detected student doubts.",
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
         keyTakeaways: [
-          "Formulas verified and formatted in LaTeX.",
-          "Doubt extraction engine flagged critical first-principles questions for the Socratic AI Tutor."
-        ]
+          "Visualized dynamic flux equilibrium across the conceptual topology map.",
+          "Connected boundary constraints to spatial and geometric symmetries.",
+          "Calibrated for visual spatial memory targeting Grade A+."
+        ],
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem & Conservation of Mechanical Energy\n\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Work-Energy Theorem in Variable Force Fields\n*(Simulated Live Camera Snapshot \u2022 Lecture Board OCR)*\n\n## 1. Work Done by Variable Force $F(x)$:\n$$W = \\int_{x_i}^{x_f} F(x) \\, dx$$\n\n## 2. Work-Energy Theorem Proof:\nSince $F = m \\frac{dv}{dt} = m v \\frac{dv}{dx}$:\n$$W = \\int_{x_i}^{x_f} m v \\frac{dv}{dx} \\, dx = \\int_{v_i}^{v_f} m v \\, dv = \\frac{1}{2} m v_f^2 - \\frac{1}{2} m v_i^2 = \\Delta K$$\n\n## 3. Potential Energy Gradient:\nFor conservative force fields:\n$$F = -\\frac{dU}{dx} \\implies U(x) = -\\int F \\, dx$$\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
       },
       {
         id: "note-phy-01",
         studentId: "student-1",
         subjectId: "subj-phy",
         title: "Newton's Laws of Motion & Friction Mechanics on Inclined Planes",
-        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Newton\'s Laws of Motion & Friction Mechanics on Inclined Planes\n\n## Summary: Newton\'s Laws & Friction\nAnalysis of force components on an inclined plane with static and kinetic friction thresholds.\n\nKey Equations:\n1. N = mg cos(theta)\n2. F_net = mg sin(theta) - f_k\n3. a = g(sin(theta) - mu_k cos(theta))\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Newton\'s Laws of Motion & Friction Mechanics on Inclined Planes\n\n## Summary: Newton\'s Laws & Friction\nAnalysis of force components on an inclined plane with static and kinetic friction thresholds.\n\nKey Equations:\n1. N = mg cos(theta)\n2. F_net = mg sin(theta) - f_k\n3. a = g(sin(theta) - mu_k cos(theta))\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
         generalisedNotes: "## Summary: Newton's Laws & Friction\nAnalysis of force components on an inclined plane with static and kinetic friction thresholds.\n\nKey Equations:\n1. N = mg cos(theta)\n2. F_net = mg sin(theta) - f_k\n3. a = g(sin(theta) - mu_k cos(theta))",
-        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Newton\'s Laws of Motion & Friction Mechanics on Inclined Planes\n\n## Summary: Newton\'s Laws & Friction\nAnalysis of force components on an inclined plane with static and kinetic friction thresholds.\n\nKey Equations:\n1. N = mg cos(theta)\n2. F_net = mg sin(theta) - f_k\n3. a = g(sin(theta) - mu_k cos(theta))\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Newton\'s Laws of Motion & Friction Mechanics on Inclined Planes\n\n## Summary: Newton\'s Laws & Friction\nAnalysis of force components on an inclined plane with static and kinetic friction thresholds.\n\nKey Equations:\n1. N = mg cos(theta)\n2. F_net = mg sin(theta) - f_k\n3. a = g(sin(theta) - mu_k cos(theta))\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
         tags: [
           "Physics",
           "Mechanics",
@@ -61519,14 +62910,14 @@ var init_notes = __esm({
           "Friction",
           "Incline"
         ],
-        lastModified: "2026-09-04T10:54:05.050Z",
+        lastModified: "2026-09-08T10:16:49.646Z",
         isPinned: true,
         source: "visionnote",
         doubtsDetected: [
           "Why is normal force mg cos(theta) and not mg / cos(theta)?",
           "Does static friction perform work when a cylinder rolls without slipping?"
         ],
-        summary: "Note calibrated for visual learning style (encouraging mentor) targeting Grade A+ with adaptive cognitive scaffolding.",
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
         keyTakeaways: [
           "Visualized dynamic flux equilibrium across the conceptual topology map.",
           "Connected boundary constraints to spatial and geometric symmetries.",
@@ -61554,7 +62945,7 @@ var init_notes = __esm({
         studentId: "student-5",
         subjectId: "subj-phy",
         title: "Electromagnetic Induction & Faraday-Lenz Law",
-        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Electromagnetic Induction & Faraday-Lenz Law\n\n## Summary: Faraday-Lenz Law\nFormulation of magnetic flux and induced electromotive force with energy conservation proofs.\n\nEquations:\n1. Phi = B * A * cos(theta)\n2. EMF = -N dPhi/dt\n3. Motional EMF = B * v * L\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Electromagnetic Induction & Faraday-Lenz Law\n\n## Summary: Faraday-Lenz Law\nFormulation of magnetic flux and induced electromotive force with energy conservation proofs.\n\nEquations:\n1. Phi = B * A * cos(theta)\n2. EMF = -N dPhi/dt\n3. Motional EMF = B * v * L\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
         generalisedNotes: "## Summary: Faraday-Lenz Law\nFormulation of magnetic flux and induced electromotive force with energy conservation proofs.\n\nEquations:\n1. Phi = B * A * cos(theta)\n2. EMF = -N dPhi/dt\n3. Motional EMF = B * v * L",
         tags: [
           "Physics",
@@ -61563,27 +62954,27 @@ var init_notes = __esm({
           "Induction",
           "MotionalEMF"
         ],
-        lastModified: "2026-09-04T10:54:05.050Z",
+        lastModified: "2026-09-08T10:16:49.646Z",
         isPinned: true,
         source: "visionnote",
         doubtsDetected: [
           "Why does Lenz's law require a negative sign in Faraday's equation?",
           "How do eddy currents produce magnetic braking in high-speed trains?"
         ],
-        summary: "Note calibrated for visual learning style (encouraging mentor) targeting Grade A+ with adaptive cognitive scaffolding.",
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
         keyTakeaways: [
           "Visualized dynamic flux equilibrium across the conceptual topology map.",
           "Connected boundary constraints to spatial and geometric symmetries.",
           "Calibrated for visual spatial memory targeting Grade A+."
         ],
-        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Electromagnetic Induction & Faraday-Lenz Law\n\n## Summary: Faraday-Lenz Law\nFormulation of magnetic flux and induced electromotive force with energy conservation proofs.\n\nEquations:\n1. Phi = B * A * cos(theta)\n2. EMF = -N dPhi/dt\n3. Motional EMF = B * v * L\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Electromagnetic Induction & Faraday-Lenz Law\n\n## Summary: Faraday-Lenz Law\nFormulation of magnetic flux and induced electromotive force with energy conservation proofs.\n\nEquations:\n1. Phi = B * A * cos(theta)\n2. EMF = -N dPhi/dt\n3. Motional EMF = B * v * L\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
       },
       {
         id: "note-phy-03",
         studentId: "student-2",
         subjectId: "subj-phy",
         title: "Thermodynamics & Carnot Heat Engine Cycle",
-        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Thermodynamics & Carnot Heat Engine Cycle\n\n## Summary: Carnot Engine\nThermodynamic cycles, reversible heat engines, and maximum theoretical efficiency limits.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Thermodynamics & Carnot Heat Engine Cycle\n\n## Summary: Carnot Engine\nThermodynamic cycles, reversible heat engines, and maximum theoretical efficiency limits.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
         generalisedNotes: "## Summary: Carnot Engine\nThermodynamic cycles, reversible heat engines, and maximum theoretical efficiency limits.",
         tags: [
           "Physics",
@@ -61592,23 +62983,23 @@ var init_notes = __esm({
           "HeatEngine",
           "Entropy"
         ],
-        lastModified: "2026-09-04T10:54:05.050Z",
+        lastModified: "2026-09-08T10:16:49.646Z",
         isPinned: false,
         source: "visionnote",
-        summary: "Note calibrated for visual learning style (encouraging mentor) targeting Grade A+ with adaptive cognitive scaffolding.",
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
         keyTakeaways: [
           "Visualized dynamic flux equilibrium across the conceptual topology map.",
           "Connected boundary constraints to spatial and geometric symmetries.",
           "Calibrated for visual spatial memory targeting Grade A+."
         ],
-        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Thermodynamics & Carnot Heat Engine Cycle\n\n## Summary: Carnot Engine\nThermodynamic cycles, reversible heat engines, and maximum theoretical efficiency limits.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Thermodynamics & Carnot Heat Engine Cycle\n\n## Summary: Carnot Engine\nThermodynamic cycles, reversible heat engines, and maximum theoretical efficiency limits.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
       },
       {
         id: "note-che-01",
         studentId: "student-4",
         subjectId: "subj-che",
         title: "Electrochemistry & Nernst Equation Calculations",
-        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Electrochemistry & Nernst Equation Calculations\n\n## Summary: Electrochemistry & Nernst Equation\nRedox equilibrium, cell emf, and concentration effects on electrochemical potential.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Electrochemistry & Nernst Equation Calculations\n\n## Summary: Electrochemistry & Nernst Equation\nRedox equilibrium, cell emf, and concentration effects on electrochemical potential.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
         generalisedNotes: "## Summary: Electrochemistry & Nernst Equation\nRedox equilibrium, cell emf, and concentration effects on electrochemical potential.",
         tags: [
           "Chemistry",
@@ -61617,27 +63008,27 @@ var init_notes = __esm({
           "Redox",
           "PhysicalChemistry"
         ],
-        lastModified: "2026-09-04T10:54:05.050Z",
+        lastModified: "2026-09-08T10:16:49.646Z",
         isPinned: true,
         source: "visionnote",
         doubtsDetected: [
           "Why do pure solids and pure liquids have activity equal to 1 in the Nernst reaction quotient?",
           "How does pH change the electrode potential of the standard hydrogen electrode?"
         ],
-        summary: "Note calibrated for visual learning style (encouraging mentor) targeting Grade A+ with adaptive cognitive scaffolding.",
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
         keyTakeaways: [
           "Visualized dynamic flux equilibrium across the conceptual topology map.",
           "Connected boundary constraints to spatial and geometric symmetries.",
           "Calibrated for visual spatial memory targeting Grade A+."
         ],
-        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Electrochemistry & Nernst Equation Calculations\n\n## Summary: Electrochemistry & Nernst Equation\nRedox equilibrium, cell emf, and concentration effects on electrochemical potential.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Electrochemistry & Nernst Equation Calculations\n\n## Summary: Electrochemistry & Nernst Equation\nRedox equilibrium, cell emf, and concentration effects on electrochemical potential.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
       },
       {
         id: "note-che-02",
         studentId: "student-6",
         subjectId: "subj-che",
         title: "VSEPR Theory & Molecular Geometry Hybridization",
-        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# VSEPR Theory & Molecular Geometry Hybridization\n\n## Summary: VSEPR & Hybridization\nSteric numbers, orbital overlap, and geometrical distortions caused by non-bonding electron pairs.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# VSEPR Theory & Molecular Geometry Hybridization\n\n## Summary: VSEPR & Hybridization\nSteric numbers, orbital overlap, and geometrical distortions caused by non-bonding electron pairs.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
         generalisedNotes: "## Summary: VSEPR & Hybridization\nSteric numbers, orbital overlap, and geometrical distortions caused by non-bonding electron pairs.",
         tags: [
           "Chemistry",
@@ -61646,23 +63037,23 @@ var init_notes = __esm({
           "Hybridization",
           "InorganicChemistry"
         ],
-        lastModified: "2026-09-04T10:54:05.050Z",
+        lastModified: "2026-09-08T10:16:49.646Z",
         isPinned: true,
         source: "visionnote",
-        summary: "Note calibrated for visual learning style (encouraging mentor) targeting Grade A+ with adaptive cognitive scaffolding.",
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
         keyTakeaways: [
           "Visualized dynamic flux equilibrium across the conceptual topology map.",
           "Connected boundary constraints to spatial and geometric symmetries.",
           "Calibrated for visual spatial memory targeting Grade A+."
         ],
-        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# VSEPR Theory & Molecular Geometry Hybridization\n\n## Summary: VSEPR & Hybridization\nSteric numbers, orbital overlap, and geometrical distortions caused by non-bonding electron pairs.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# VSEPR Theory & Molecular Geometry Hybridization\n\n## Summary: VSEPR & Hybridization\nSteric numbers, orbital overlap, and geometrical distortions caused by non-bonding electron pairs.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
       },
       {
         id: "note-che-03",
         studentId: "student-3",
         subjectId: "subj-che",
         title: "Chemical Kinetics & Reaction Rate Laws",
-        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Chemical Kinetics & Reaction Rate Laws\n\n## Summary: Chemical Kinetics\nOrder of reactions, differential and integrated rate laws, and Arrhenius temperature activation.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Chemical Kinetics & Reaction Rate Laws\n\n## Summary: Chemical Kinetics\nOrder of reactions, differential and integrated rate laws, and Arrhenius temperature activation.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
         generalisedNotes: "## Summary: Chemical Kinetics\nOrder of reactions, differential and integrated rate laws, and Arrhenius temperature activation.",
         tags: [
           "Chemistry",
@@ -61671,23 +63062,23 @@ var init_notes = __esm({
           "RateLaws",
           "Arrhenius"
         ],
-        lastModified: "2026-09-04T10:54:05.050Z",
+        lastModified: "2026-09-08T10:16:49.646Z",
         isPinned: false,
         source: "visionnote",
-        summary: "Note calibrated for visual learning style (encouraging mentor) targeting Grade A+ with adaptive cognitive scaffolding.",
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
         keyTakeaways: [
           "Visualized dynamic flux equilibrium across the conceptual topology map.",
           "Connected boundary constraints to spatial and geometric symmetries.",
           "Calibrated for visual spatial memory targeting Grade A+."
         ],
-        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Chemical Kinetics & Reaction Rate Laws\n\n## Summary: Chemical Kinetics\nOrder of reactions, differential and integrated rate laws, and Arrhenius temperature activation.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Chemical Kinetics & Reaction Rate Laws\n\n## Summary: Chemical Kinetics\nOrder of reactions, differential and integrated rate laws, and Arrhenius temperature activation.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
       },
       {
         id: "note-mat-01",
         studentId: "student-2",
         subjectId: "subj-mat",
         title: "Techniques of Integration: Integration by Parts & Partial Fractions",
-        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Techniques of Integration: Integration by Parts & Partial Fractions\n\n## Summary: Advanced Integration Methods\nIntegration by parts, LIATE prioritization, King\'s reflection property, and partial fraction decomposition.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Techniques of Integration: Integration by Parts & Partial Fractions\n\n## Summary: Advanced Integration Methods\nIntegration by parts, LIATE prioritization, King\'s reflection property, and partial fraction decomposition.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
         generalisedNotes: "## Summary: Advanced Integration Methods\nIntegration by parts, LIATE prioritization, King's reflection property, and partial fraction decomposition.",
         tags: [
           "Mathematics",
@@ -61696,23 +63087,23 @@ var init_notes = __esm({
           "DefiniteIntegrals",
           "LIATE"
         ],
-        lastModified: "2026-09-04T10:54:05.050Z",
+        lastModified: "2026-09-08T10:16:49.646Z",
         isPinned: true,
         source: "visionnote",
-        summary: "Note calibrated for visual learning style (encouraging mentor) targeting Grade A+ with adaptive cognitive scaffolding.",
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
         keyTakeaways: [
           "Visualized dynamic flux equilibrium across the conceptual topology map.",
           "Connected boundary constraints to spatial and geometric symmetries.",
           "Calibrated for visual spatial memory targeting Grade A+."
         ],
-        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Techniques of Integration: Integration by Parts & Partial Fractions\n\n## Summary: Advanced Integration Methods\nIntegration by parts, LIATE prioritization, King\'s reflection property, and partial fraction decomposition.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Techniques of Integration: Integration by Parts & Partial Fractions\n\n## Summary: Advanced Integration Methods\nIntegration by parts, LIATE prioritization, King\'s reflection property, and partial fraction decomposition.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
       },
       {
         id: "note-mat-02",
         studentId: "student-5",
         subjectId: "subj-mat",
         title: "Vector Cross Product & 3D Geometry of Planes",
-        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Vector Cross Product & 3D Geometry of Planes\n\n## Summary: Vectors & 3D Planes\nDeterminant vector cross products, geometrical area interpretations, and 3D plane equations.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Vector Cross Product & 3D Geometry of Planes\n\n## Summary: Vectors & 3D Planes\nDeterminant vector cross products, geometrical area interpretations, and 3D plane equations.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
         generalisedNotes: "## Summary: Vectors & 3D Planes\nDeterminant vector cross products, geometrical area interpretations, and 3D plane equations.",
         tags: [
           "Mathematics",
@@ -61721,23 +63112,23 @@ var init_notes = __esm({
           "Planes",
           "LinearAlgebra"
         ],
-        lastModified: "2026-09-04T10:54:05.050Z",
+        lastModified: "2026-09-08T10:16:49.646Z",
         isPinned: true,
         source: "visionnote",
-        summary: "Note calibrated for visual learning style (encouraging mentor) targeting Grade A+ with adaptive cognitive scaffolding.",
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
         keyTakeaways: [
           "Visualized dynamic flux equilibrium across the conceptual topology map.",
           "Connected boundary constraints to spatial and geometric symmetries.",
           "Calibrated for visual spatial memory targeting Grade A+."
         ],
-        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Vector Cross Product & 3D Geometry of Planes\n\n## Summary: Vectors & 3D Planes\nDeterminant vector cross products, geometrical area interpretations, and 3D plane equations.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Vector Cross Product & 3D Geometry of Planes\n\n## Summary: Vectors & 3D Planes\nDeterminant vector cross products, geometrical area interpretations, and 3D plane equations.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
       },
       {
         id: "note-mat-03",
         studentId: "student-1",
         subjectId: "subj-mat",
         title: "Fundamental Limits, Continuity & Squeeze Theorem",
-        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Fundamental Limits, Continuity & Squeeze Theorem\n\n## Summary: Limits & Continuity\nFundamental trigonometric limits, geometric Squeeze Theorem proof, and L\'H\xF4pital\'s differentiation rule.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Fundamental Limits, Continuity & Squeeze Theorem\n\n## Summary: Limits & Continuity\nFundamental trigonometric limits, geometric Squeeze Theorem proof, and L\'H\xF4pital\'s differentiation rule.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
         generalisedNotes: "## Summary: Limits & Continuity\nFundamental trigonometric limits, geometric Squeeze Theorem proof, and L'H\xF4pital's differentiation rule.",
         tags: [
           "Mathematics",
@@ -61746,23 +63137,23 @@ var init_notes = __esm({
           "SqueezeTheorem",
           "LHopital"
         ],
-        lastModified: "2026-09-04T10:54:05.050Z",
+        lastModified: "2026-09-08T10:16:49.646Z",
         isPinned: false,
         source: "visionnote",
-        summary: "Note calibrated for visual learning style (encouraging mentor) targeting Grade A+ with adaptive cognitive scaffolding.",
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
         keyTakeaways: [
           "Visualized dynamic flux equilibrium across the conceptual topology map.",
           "Connected boundary constraints to spatial and geometric symmetries.",
           "Calibrated for visual spatial memory targeting Grade A+."
         ],
-        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Fundamental Limits, Continuity & Squeeze Theorem\n\n## Summary: Limits & Continuity\nFundamental trigonometric limits, geometric Squeeze Theorem proof, and L\'H\xF4pital\'s differentiation rule.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Fundamental Limits, Continuity & Squeeze Theorem\n\n## Summary: Limits & Continuity\nFundamental trigonometric limits, geometric Squeeze Theorem proof, and L\'H\xF4pital\'s differentiation rule.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
       },
       {
         id: "note-misc-01",
         studentId: "student-3",
         subjectId: "subj-misc",
         title: "Scientific Research Methodology & Experimental Error Analysis",
-        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Scientific Research Methodology & Experimental Error Analysis\n\n## Summary: Scientific Methodology\nError analysis, calculus of error propagation, and experimental notebook standards.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Scientific Research Methodology & Experimental Error Analysis\n\n## Summary: Scientific Methodology\nError analysis, calculus of error propagation, and experimental notebook standards.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
         generalisedNotes: "## Summary: Scientific Methodology\nError analysis, calculus of error propagation, and experimental notebook standards.",
         tags: [
           "GeneralNotes",
@@ -61771,23 +63162,23 @@ var init_notes = __esm({
           "Statistics",
           "LabPractice"
         ],
-        lastModified: "2026-09-04T10:54:05.050Z",
+        lastModified: "2026-09-08T10:16:49.646Z",
         isPinned: true,
         source: "visionnote",
-        summary: "Note calibrated for visual learning style (encouraging mentor) targeting Grade A+ with adaptive cognitive scaffolding.",
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
         keyTakeaways: [
           "Visualized dynamic flux equilibrium across the conceptual topology map.",
           "Connected boundary constraints to spatial and geometric symmetries.",
           "Calibrated for visual spatial memory targeting Grade A+."
         ],
-        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Scientific Research Methodology & Experimental Error Analysis\n\n## Summary: Scientific Methodology\nError analysis, calculus of error propagation, and experimental notebook standards.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Scientific Research Methodology & Experimental Error Analysis\n\n## Summary: Scientific Methodology\nError analysis, calculus of error propagation, and experimental notebook standards.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
       },
       {
         id: "note-misc-02",
         studentId: "student-6",
         subjectId: "subj-misc",
         title: "Scientific Computing with Python, NumPy & Visualizations",
-        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Scientific Computing with Python, NumPy & Visualizations\n\n## Summary: Scientific Python\nNumPy array broadcasting, SciPy numerical differential equation integration, and Matplotlib plotting.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
+        content: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Scientific Computing with Python, NumPy & Visualizations\n\n## Summary: Scientific Python\nNumPy array broadcasting, SciPy numerical differential equation integration, and Matplotlib plotting.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.',
         generalisedNotes: "## Summary: Scientific Python\nNumPy array broadcasting, SciPy numerical differential equation integration, and Matplotlib plotting.",
         tags: [
           "GeneralNotes",
@@ -61796,16 +63187,16 @@ var init_notes = __esm({
           "NumPy",
           "Simulation"
         ],
-        lastModified: "2026-09-04T10:54:05.050Z",
+        lastModified: "2026-09-08T10:16:49.647Z",
         isPinned: false,
         source: "visionnote",
-        summary: "Note calibrated for visual learning style (encouraging mentor) targeting Grade A+ with adaptive cognitive scaffolding.",
+        summary: "Note calibrated for visual learning style (practical engineer) targeting Grade A+ with adaptive cognitive scaffolding.",
         keyTakeaways: [
           "Visualized dynamic flux equilibrium across the conceptual topology map.",
           "Connected boundary constraints to spatial and geometric symmetries.",
           "Calibrated for visual spatial memory targeting Grade A+."
         ],
-        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F331} **Mentor Encouragement**: "Deep mathematical intuition takes patience and practice. Trust your conceptual reasoning, build from first principles, and celebrate each breakthrough!"\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Scientific Computing with Python, NumPy & Visualizations\n\n## Summary: Scientific Python\nNumPy array broadcasting, SciPy numerical differential equation integration, and Matplotlib plotting.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
+        personalisedNotes: '> \u{1F3AF} **Cognitive Calibration: VISUAL \u2022 Benchmark: Grade A+ (Top 1% Analytical Mastery)**\n> \u{1F6E0}\uFE0F **Systems Engineer Perspective**: "Theoretical formulas must be grounded in physical reality. Consider tolerances, thermal drift, sensor noise, and boundary constraints in real-world implementations."\n> \u{1F4A1} **Strength Bridge**: *Leveraging your strength in "Interactive coding, mathematical graphs, physical models"\u2014notice how identical symmetry principles unify this topic with your domain expertise.*\n> \u{1F6E1}\uFE0F **Scaffolding for Growth**: *Targeting your focus area on "Complex integration, multi-variable calculus"\u2014we have unpacked intermediate steps with extra intuitive anchors below.*\n\n# Scientific Computing with Python, NumPy & Visualizations\n\n## Summary: Scientific Python\nNumPy array broadcasting, SciPy numerical differential equation integration, and Matplotlib plotting.\n\n\n## \u{1F3A8} Visual Intuition & Spatial Flowchart\n\n```\n+-----------------------------------------------------------------------+\n|                    CORE PHYSICAL INVARIANT / STATE                    |\n|                (Initial Potential / Boundary Geometry)                |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                      FLUX & GRADIENT DYNAMICS                         |\n|             (Equilibrium Force Vector / Conservation Rule)            |\n+-----------------------------------------------------------------------+\n                                   |\n                                   v\n+-----------------------------------------------------------------------+\n|                     SYSTEM EVOLUTION & SOLUTION                       |\n|               (Steady-State / Trajectory / Output Phase)              |\n+-----------------------------------------------------------------------+\n```\n\n### \u{1F50D} Spatial Mental Model & Geometry\nThink of this relationship as a geometric balance across orthogonal coordinates. Whenever the gradient steepens, the restorative flux increases proportionately to restore equilibrium.\n\n\n## \u2728 Personalized Cognitive Takeaways\n- Visualized dynamic flux equilibrium across the conceptual topology map.\n- Connected boundary constraints to spatial and geometric symmetries.\n- Calibrated for visual spatial memory targeting Grade A+.'
       }
     ];
   }
@@ -61874,23 +63265,24 @@ var init_student_progress = __esm({
           completed: false,
           lastTimestamp: "05:32",
           progressPercent: 75,
-          lastViewedAt: "2026-09-04T10:50:51.205Z",
+          lastViewedAt: "2026-09-05T22:03:46.275Z",
           quizCompleted: true,
-          quizScore: 3,
+          quizScore: 1,
           quizTotal: 6,
           understoodConcepts: [
-            "Inertia",
-            "Newton's Second Law"
+            "Force vs acceleration"
           ],
           weakConcepts: [
             "Newton's First Law",
+            "Inertia",
             "Free Body Diagram",
-            "Force vs acceleration"
+            "Newton's Second Law"
           ],
           recommendations: [
             `Revise concept: "Newton's First Law". Launch AI Tutor to understand boundary conditions and physical reasoning.`,
+            'Revise concept: "Inertia". Launch AI Tutor to understand boundary conditions and physical reasoning.',
             'Revise concept: "Free Body Diagram". Launch AI Tutor to understand boundary conditions and physical reasoning.',
-            'Revise concept: "Force vs acceleration". Launch AI Tutor to understand boundary conditions and physical reasoning.'
+            `Revise concept: "Newton's Second Law". Launch AI Tutor to understand boundary conditions and physical reasoning.`
           ]
         }
       },
@@ -61925,7 +63317,7 @@ var init_student_progress = __esm({
           completed: false,
           lastTimestamp: "05:32",
           progressPercent: 75,
-          lastViewedAt: "2026-09-05T00:08:23.619Z",
+          lastViewedAt: "2026-09-16T04:59:32.225Z",
           quizCompleted: true,
           quizScore: 1,
           quizTotal: 6,
@@ -61947,6 +63339,336 @@ var init_student_progress = __esm({
         }
       }
     };
+  }
+});
+
+// src/data/initialData.ts
+var initialPlugins, initialCustomTutors, initialTutorApprovalRequests;
+var init_initialData = __esm({
+  "src/data/initialData.ts"() {
+    initialPlugins = [
+      {
+        id: "plugin-gc",
+        pluginId: "google_classroom",
+        name: "Google Classroom Sync",
+        description: "Auto-sync coursework, lecture materials, and assignment gradebooks directly from your enrolled university classes.",
+        status: "connected",
+        accountEmail: "student.dhruva@bmu.edu.in",
+        lastSync: "12 mins ago",
+        syncFrequency: "realtime",
+        category: "classroom",
+        icon: "GraduationCap",
+        permissions: [
+          "View classroom courses and rosters",
+          "Access course materials, syllabus, and announcements",
+          "Read assignment submissions and grade updates"
+        ],
+        rules: [
+          {
+            id: "rule-gc-1",
+            pluginId: "google_classroom",
+            ruleName: "Auto-sync assignments to To-Do List",
+            description: "Pulls newly published homework assignments straight into your personalized study tasks.",
+            enabled: true,
+            trigger: "New assignment published in Classroom",
+            action: "Add high-priority task to To-Do feed",
+            lastSyncDetails: "3 assignments imported (PHY-1101, MAT-1101, CHE-1101)"
+          },
+          {
+            id: "rule-gc-2",
+            pluginId: "google_classroom",
+            ruleName: "Sync deadlines to Calendar",
+            description: "Adds submission deadlines with automated 15-minute exam and quiz alerts.",
+            enabled: true,
+            trigger: "Assignment due date set",
+            action: "Push event to synced calendar with 15-min reminder",
+            lastSyncDetails: "2 deadlines scheduled for Friday"
+          },
+          {
+            id: "rule-gc-3",
+            pluginId: "google_classroom",
+            ruleName: "Auto-pull lecture notes & attachments",
+            description: "Synchronizes blackboard snapshots, attached PDFs, and lecture handouts into Student Notes.",
+            enabled: true,
+            trigger: "Teacher attaches study material",
+            action: "Parse text and append to Smart Notes archive",
+            lastSyncDetails: "1 lecture slide deck imported"
+          }
+        ],
+        syncHistory: [
+          {
+            id: "hist-1",
+            timestamp: "Today, 01:40 AM",
+            status: "success",
+            summary: "Classroom sync completed: 3 assignments imported, 2 deadlines scheduled.",
+            itemsSynced: 5
+          },
+          {
+            id: "hist-2",
+            timestamp: "Yesterday, 06:15 PM",
+            status: "success",
+            summary: "Synchronized Physics 11 Chapter 3 lecture materials.",
+            itemsSynced: 2
+          }
+        ]
+      },
+      {
+        id: "plugin-gmail",
+        pluginId: "gmail",
+        name: "Gmail Integration",
+        description: "Receive morning study digests, real-time assignment notifications, and grade updates straight to your inbox.",
+        status: "connected",
+        accountEmail: "student.dhruva@gmail.com",
+        lastSync: "1 hour ago",
+        syncFrequency: "daily",
+        category: "communication",
+        icon: "Mail",
+        permissions: [
+          "Send automated study recap emails on your behalf",
+          "Read official university notifications regarding test schedules"
+        ],
+        rules: [
+          {
+            id: "rule-gm-1",
+            pluginId: "gmail",
+            ruleName: "Daily Morning Study Digest",
+            description: "Dispatches a 7:00 AM summary of pending tasks, streak milestones, and upcoming lectures.",
+            enabled: true,
+            trigger: "Daily at 07:00 AM IST",
+            action: "Send rich HTML digest to student.dhruva@gmail.com",
+            lastSyncDetails: "Dispatched morning digest (3 pending tasks, 5-day streak)"
+          },
+          {
+            id: "rule-gm-2",
+            pluginId: "gmail",
+            ruleName: "Assignment Alerts",
+            description: "Sends an instant email notification whenever faculty posts new coursework.",
+            enabled: true,
+            trigger: "New assignment posted",
+            action: "Send urgent reminder to student email",
+            lastSyncDetails: "Alert sent for PHY-1101 Incline Plane problem"
+          },
+          {
+            id: "rule-gm-3",
+            pluginId: "gmail",
+            ruleName: "Grade & Feedback Notifications",
+            description: "Sends email breakdown when rubric scores and AI feedback are finalized.",
+            enabled: false,
+            trigger: "Submission graded by faculty",
+            action: "Send grade breakdown email",
+            lastSyncDetails: "Disabled by student"
+          }
+        ],
+        syncHistory: [
+          {
+            id: "hist-gm-1",
+            timestamp: "Today, 07:00 AM",
+            status: "success",
+            summary: "Daily study digest email sent successfully.",
+            itemsSynced: 1
+          }
+        ]
+      },
+      {
+        id: "plugin-gcal",
+        pluginId: "google_calendar",
+        name: "Google Calendar Sync",
+        description: "Keep your academic timetable, lab slots, revision checkpoints, and assignment deadlines in perfect harmony.",
+        status: "connected",
+        accountEmail: "student.dhruva@bmu.edu.in",
+        lastSync: "45 mins ago",
+        syncFrequency: "hourly",
+        category: "productivity",
+        icon: "Calendar",
+        permissions: [
+          "Create and manage ClassSarthi academic calendar",
+          "Add reminders and invite alarms for class schedules"
+        ],
+        rules: [
+          {
+            id: "rule-gc-cal-1",
+            pluginId: "google_calendar",
+            ruleName: "Sync assignment deadlines",
+            description: "Adds coursework deadlines with 15-minute popup and push alarms.",
+            enabled: true,
+            trigger: "Assignment due date added",
+            action: "Create calendar event with 15m notification",
+            lastSyncDetails: "Synced 4 deadlines to ClassSarthi Calendar"
+          },
+          {
+            id: "rule-gc-cal-2",
+            pluginId: "google_calendar",
+            ruleName: "Sync live class schedule",
+            description: "Populates daily lecture slots, lab timings, and classroom room numbers.",
+            enabled: true,
+            trigger: "Weekly timetable published",
+            action: "Create recurring lecture calendar blocks",
+            lastSyncDetails: "5 lecture blocks scheduled for tomorrow"
+          },
+          {
+            id: "rule-gc-cal-3",
+            pluginId: "google_calendar",
+            ruleName: "Sync spaced repetition review reminders",
+            description: "Schedules smart revision sessions 24 hours and 7 days after lectures.",
+            enabled: true,
+            trigger: "Lecture completed in ClassSarthi",
+            action: "Schedule 20-min AI review slot",
+            lastSyncDetails: "Revision checkpoint added for Physics Ch 3"
+          }
+        ],
+        syncHistory: [
+          {
+            id: "hist-cal-1",
+            timestamp: "Today, 01:05 AM",
+            status: "success",
+            summary: "Calendar sync completed: 5 lecture blocks & 2 deadline reminders updated.",
+            itemsSynced: 7
+          }
+        ]
+      },
+      {
+        id: "plugin-notion",
+        pluginId: "notion",
+        name: "Notion Workspace Export",
+        description: "Export AI study summaries, formulas, and assignment logs into your personal Notion workspace databases.",
+        status: "disconnected",
+        syncFrequency: "manual",
+        category: "notes",
+        icon: "FileText",
+        permissions: [
+          "Create pages in selected Notion workspace",
+          "Insert databases for assignments and notes"
+        ],
+        rules: [
+          {
+            id: "rule-notion-1",
+            pluginId: "notion",
+            ruleName: "Export Smart Notes to Notion page",
+            description: "Automatically backs up generated study notes and formulas to your Notion database.",
+            enabled: false,
+            trigger: "Note created or edited",
+            action: "Sync page to Notion workspace"
+          },
+          {
+            id: "rule-notion-2",
+            pluginId: "notion",
+            ruleName: "Sync Assignment Tracker Database",
+            description: "Maintains a live Notion table of all pending and graded assignments.",
+            enabled: false,
+            trigger: "Assignment status change",
+            action: "Update Notion database row"
+          }
+        ],
+        syncHistory: []
+      }
+    ];
+    initialCustomTutors = [
+      {
+        id: "tutor-1",
+        name: "Prof. Walter Lewin",
+        specialty: "Intuitive Demonstrations & High School Physics",
+        prompt: "Always begin with a real-world demonstration, show why common misconceptions fail, and derive equations from first principles. Maintain an enthusiastic, inspiring tone.",
+        initials: "WL",
+        bio: "MIT Physics Professor renowned for dramatic lecture demonstrations and intuitive mechanics pedagogy.",
+        method: "visual",
+        status: "approved",
+        submittedAt: "2026-09-01T10:00:00Z",
+        approvedAt: "2026-09-01T11:30:00Z",
+        authorName: "Faculty Physics Team",
+        mcpConfig: {
+          provider: "classsarthi_ai",
+          authMethod: "bearer",
+          capabilities: ["Answer questions", "Generate examples", "Create practice problems"],
+          status: "verified"
+        },
+        isDefault: true
+      },
+      {
+        id: "tutor-2",
+        name: "Dr. Richard Feynman",
+        specialty: "First Principles & Intuitive Analogy",
+        prompt: "Explain concepts using the Feynman Technique: assume the student is an intelligent 12-year-old, avoid jargon, use physical analogies, and identify the exact gap in understanding.",
+        initials: "RF",
+        bio: "Nobel laureate physicist master of simplicity, first principles derivation, and intuitive mental models.",
+        method: "feynman",
+        status: "approved",
+        submittedAt: "2026-09-03T14:20:00Z",
+        approvedAt: "2026-09-03T16:00:00Z",
+        authorName: "Dean of Sciences",
+        mcpConfig: {
+          provider: "anthropic",
+          mcpUrl: "https://api.classsarthi.internal/mcp/feynman-v1",
+          authMethod: "bearer",
+          capabilities: ["Answer questions", "Generate examples", "Derive from first principles"],
+          status: "verified"
+        }
+      },
+      {
+        id: "tutor-3",
+        name: "Socrates of Athens",
+        specialty: "Dialectical Socratic Inquiry",
+        prompt: "Never give the direct answer immediately. Ask probing questions, lead the student to uncover contradictions in their premise, and guide them to reason through the solution themselves.",
+        initials: "SO",
+        bio: "Classical philosopher guiding learners via relentless dialectic inquiry and structured questioning.",
+        method: "socratic",
+        status: "approved",
+        submittedAt: "2026-09-05T09:00:00Z",
+        approvedAt: "2026-09-05T09:45:00Z",
+        authorName: "Academic Pedagogy Lab",
+        mcpConfig: {
+          provider: "classsarthi_ai",
+          authMethod: "bearer",
+          capabilities: ["Answer questions", "Ask guided leading questions"],
+          status: "verified"
+        }
+      }
+    ];
+    initialTutorApprovalRequests = [
+      {
+        id: "req-101",
+        tutorId: "tutor-pending-1",
+        tutorName: "Prof. Maryam Mirzakhani",
+        authorId: "student-1",
+        authorName: "Student Dhruva",
+        specialty: "Hyperbolic Geometry & Visual Topology",
+        method: "visual",
+        prompt: "Approach mathematical problems visually by drawing geometric surfaces, billiard trajectories on Riemann surfaces, and breaking down proofs into intuitive spatial steps.",
+        mcpConfig: {
+          provider: "custom",
+          mcpUrl: "https://mcp.geometry-lab.org/v1",
+          apiKey: "mcp_live_geom_983147823",
+          authMethod: "bearer",
+          capabilities: ["Answer questions", "Generate examples", "Create practice problems"],
+          status: "verified",
+          lastTested: "10 mins ago"
+        },
+        submittedAt: "2026-09-13T22:15:00 IST",
+        status: "pending",
+        adminNotes: "Awaiting faculty reviewer test with calculus sample."
+      },
+      {
+        id: "req-102",
+        tutorId: "tutor-pending-2",
+        tutorName: "Dr. Gilbert Strang",
+        authorId: "student-2",
+        authorName: "Aarav Sharma",
+        specialty: "Linear Algebra & Column Space Intuition",
+        method: "direct",
+        prompt: "Emphasize the 4 fundamental subspaces: Row space, Column space, Nullspace, and Left Nullspace. Use matrix factorizations (LU, QR, SVD) and geometric vectors rather than formulaic rote memorization.",
+        mcpConfig: {
+          provider: "openai",
+          mcpUrl: "https://api.linalg.internal/mcp",
+          apiKey: "sk-linalg-demo-mcp-99012",
+          authMethod: "bearer",
+          capabilities: ["Answer questions", "Generate examples", "Matrix derivations"],
+          status: "verified",
+          lastTested: "1 hour ago"
+        },
+        submittedAt: "2026-09-13T23:30:00 IST",
+        status: "pending",
+        adminNotes: "Ready for admin sample validation."
+      }
+    ];
   }
 });
 
@@ -61985,6 +63707,19 @@ function loadProgressFromDisk(seed) {
   }
   return fallbackSeed;
 }
+function loadPluginsFromDisk(seed) {
+  try {
+    if (fs3.existsSync(PLUGINS_FILE_PATH)) {
+      const content = fs3.readFileSync(PLUGINS_FILE_PATH, "utf-8");
+      const parsed = JSON.parse(content);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (err) {
+  }
+  return JSON.parse(JSON.stringify(seed));
+}
 function loadUsersFromDisk(seed) {
   const fallbackSeed = Array.isArray(users_default) && users_default.length > 0 ? users_default : seed;
   try {
@@ -62017,7 +63752,7 @@ function loadNotesFromDisk(seed) {
   }
   return fallbackSeed;
 }
-var isServerless, USERS_FILE_PATH, NOTES_FILE_PATH, LECTURES_FILE_PATH, PROGRESS_FILE_PATH, seedUsers, db;
+var isServerless, USERS_FILE_PATH, NOTES_FILE_PATH, LECTURES_FILE_PATH, PROGRESS_FILE_PATH, PLUGINS_FILE_PATH, seedUsers, db;
 var init_db = __esm({
   "src/server/db.ts"() {
     init_fakeData();
@@ -62026,19 +63761,21 @@ var init_db = __esm({
     init_lectures();
     init_notes();
     init_student_progress();
+    init_initialData();
     isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
     USERS_FILE_PATH = path2.resolve(process.cwd(), "data", "users.json");
     NOTES_FILE_PATH = path2.resolve(process.cwd(), "data", "notes.json");
     LECTURES_FILE_PATH = path2.resolve(process.cwd(), "data", "lectures.json");
     PROGRESS_FILE_PATH = path2.resolve(process.cwd(), "data", "student_progress.json");
+    PLUGINS_FILE_PATH = path2.resolve(process.cwd(), "data", "plugins.json");
     seedUsers = [
       // --- ONLY DEAN ---
       {
         id: "admin-1",
         name: "Dr. Maneek Singh",
-        email: "dean.maneek@edusync.edu.in",
+        email: "dean.maneek@classsarthi.edu.in",
         username: "dean.maneek",
-        password: "Dean@EduSync2026!",
+        password: "Dean@ClassSarthi2026!",
         role: "admin",
         gender: "Male",
         institutionalId: "EDU-ADM-1001",
@@ -62056,7 +63793,7 @@ var init_db = __esm({
       {
         id: "teacher-phy",
         name: "Dr. Rajesh Kulkarni",
-        email: "rajesh.kulkarni@edusync.edu.in",
+        email: "rajesh.kulkarni@classsarthi.edu.in",
         username: "prof.rajesh",
         password: "Physics@2026!",
         role: "teacher",
@@ -62075,7 +63812,7 @@ var init_db = __esm({
       {
         id: "teacher-che",
         name: "Dr. Ananya Sen",
-        email: "ananya.sen@edusync.edu.in",
+        email: "ananya.sen@classsarthi.edu.in",
         username: "prof.ananya",
         password: "Chemistry@2026!",
         role: "teacher",
@@ -62094,7 +63831,7 @@ var init_db = __esm({
       {
         id: "teacher-mat",
         name: "Prof. Vikramaditya Roy",
-        email: "vikram.roy@edusync.edu.in",
+        email: "vikram.roy@classsarthi.edu.in",
         username: "prof.vikram",
         password: "Maths@2026!",
         role: "teacher",
@@ -62114,7 +63851,7 @@ var init_db = __esm({
       {
         id: "student-1",
         name: "Aarav Sharma",
-        email: "aarav.sharma@edusync.edu.in",
+        email: "aarav.sharma@classsarthi.edu.in",
         username: "aarav.sharma",
         password: "Student@2026!",
         role: "student",
@@ -62143,7 +63880,7 @@ var init_db = __esm({
       {
         id: "student-2",
         name: "Diya Patel",
-        email: "diya.patel@edusync.edu.in",
+        email: "diya.patel@classsarthi.edu.in",
         username: "diya.patel",
         password: "Student@2026!",
         role: "student",
@@ -62172,7 +63909,7 @@ var init_db = __esm({
       {
         id: "student-3",
         name: "Kabir Mehta",
-        email: "kabir.mehta@edusync.edu.in",
+        email: "kabir.mehta@classsarthi.edu.in",
         username: "kabir.mehta",
         password: "Student@2026!",
         role: "student",
@@ -62201,7 +63938,7 @@ var init_db = __esm({
       {
         id: "student-4",
         name: "Ananya Iyer",
-        email: "ananya.iyer@edusync.edu.in",
+        email: "ananya.iyer@classsarthi.edu.in",
         username: "ananya.iyer",
         password: "Student@2026!",
         role: "student",
@@ -62230,7 +63967,7 @@ var init_db = __esm({
       {
         id: "student-5",
         name: "Rohan Gupta",
-        email: "rohan.gupta@edusync.edu.in",
+        email: "rohan.gupta@classsarthi.edu.in",
         username: "rohan.gupta",
         password: "Student@2026!",
         role: "student",
@@ -62259,7 +63996,7 @@ var init_db = __esm({
       {
         id: "student-6",
         name: "Ishaan Verma",
-        email: "ishaan.verma@edusync.edu.in",
+        email: "ishaan.verma@classsarthi.edu.in",
         username: "ishaan.verma",
         password: "Student@2026!",
         role: "student",
@@ -62299,7 +64036,7 @@ var init_db = __esm({
           description: "Foundational Newtonian mechanics, kinematics, rotational dynamics, work-energy theorem, universal gravitation, thermodynamics, and electromagnetism.",
           teacherId: "teacher-phy",
           teacherName: "Dr. Rajesh Kulkarni",
-          teacherEmail: "rajesh.kulkarni@edusync.edu.in",
+          teacherEmail: "rajesh.kulkarni@classsarthi.edu.in",
           color: "blue",
           accentBg: "bg-blue-500/10 border-blue-500/30 text-blue-400",
           enrolledCount: 7,
@@ -62322,7 +64059,7 @@ var init_db = __esm({
           description: "Quantum atomic models, chemical bonding (VSEPR), chemical thermodynamics, electrochemistry (Nernst equation), chemical kinetics, and reaction mechanisms.",
           teacherId: "teacher-che",
           teacherName: "Dr. Ananya Sen",
-          teacherEmail: "ananya.sen@edusync.edu.in",
+          teacherEmail: "ananya.sen@classsarthi.edu.in",
           color: "emerald",
           accentBg: "bg-emerald-500/10 border-emerald-500/30 text-emerald-400",
           enrolledCount: 7,
@@ -62345,7 +64082,7 @@ var init_db = __esm({
           description: "Techniques of integration, definite integrals, vector cross products, 3D geometry of planes, limits, continuity, and differential equations.",
           teacherId: "teacher-mat",
           teacherName: "Prof. Vikramaditya Roy",
-          teacherEmail: "vikram.roy@edusync.edu.in",
+          teacherEmail: "vikram.roy@classsarthi.edu.in",
           color: "violet",
           accentBg: "bg-violet-500/10 border-violet-500/30 text-violet-400",
           enrolledCount: 7,
@@ -62368,7 +64105,7 @@ var init_db = __esm({
           description: "Central designated repository where all cross-disciplinary, general studies, electives, lab journals, and other notes are organized.",
           teacherId: "teacher-phy",
           teacherName: "Dr. Rajesh Kulkarni",
-          teacherEmail: "rajesh.kulkarni@edusync.edu.in",
+          teacherEmail: "rajesh.kulkarni@classsarthi.edu.in",
           color: "purple",
           accentBg: "bg-purple-500/10 border-purple-500/30 text-purple-400",
           enrolledCount: 7,
@@ -62393,7 +64130,7 @@ var init_db = __esm({
           description: "Foundational Newtonian mechanics, kinematics, rotational dynamics, work-energy theorem, gravitation, fluid mechanics, and thermodynamics.",
           teacherId: "teacher-phy",
           teacherName: "Dr. Rajesh Kulkarni",
-          teacherEmail: "rajesh.kulkarni@edusync.edu.in",
+          teacherEmail: "rajesh.kulkarni@classsarthi.edu.in",
           color: "blue",
           accentBg: "bg-blue-500/10 border-blue-500/30 text-blue-400",
           enrolledCount: 6,
@@ -62417,7 +64154,7 @@ var init_db = __esm({
           description: "Quantum atomic structure, periodic classification, chemical bonding, thermodynamics, equilibrium, redox reactions, and fundamental organic chemistry.",
           teacherId: "teacher-che",
           teacherName: "Dr. Ananya Sen",
-          teacherEmail: "ananya.sen@edusync.edu.in",
+          teacherEmail: "ananya.sen@classsarthi.edu.in",
           color: "emerald",
           accentBg: "bg-emerald-500/10 border-emerald-500/30 text-emerald-400",
           enrolledCount: 6,
@@ -62441,7 +64178,7 @@ var init_db = __esm({
           description: "Sets, relations and functions, trigonometric functions, permutations and combinations, binomial theorem, straight lines, conic sections, and introductory limits.",
           teacherId: "teacher-mat",
           teacherName: "Prof. Vikramaditya Roy",
-          teacherEmail: "vikram.roy@edusync.edu.in",
+          teacherEmail: "vikram.roy@classsarthi.edu.in",
           color: "violet",
           accentBg: "bg-violet-500/10 border-violet-500/30 text-violet-400",
           enrolledCount: 6,
@@ -62468,7 +64205,7 @@ var init_db = __esm({
           description: "Electrostatics, Gauss Law, current electricity, magnetic effects of current, electromagnetic induction, wave optics, photoelectric effect, and nuclear physics.",
           teacherId: "teacher-phy",
           teacherName: "Dr. Rajesh Kulkarni",
-          teacherEmail: "rajesh.kulkarni@edusync.edu.in",
+          teacherEmail: "rajesh.kulkarni@classsarthi.edu.in",
           color: "sky",
           accentBg: "bg-sky-500/10 border-sky-500/30 text-sky-400",
           enrolledCount: 6,
@@ -62492,7 +64229,7 @@ var init_db = __esm({
           description: "Solid state, solutions, electrochemistry, chemical kinetics, d & f block elements, coordination compounds, haloalkanes, aldehydes, ketones, and biomolecules.",
           teacherId: "teacher-che",
           teacherName: "Dr. Ananya Sen",
-          teacherEmail: "ananya.sen@edusync.edu.in",
+          teacherEmail: "ananya.sen@classsarthi.edu.in",
           color: "amber",
           accentBg: "bg-amber-500/10 border-amber-500/30 text-amber-400",
           enrolledCount: 6,
@@ -62516,7 +64253,7 @@ var init_db = __esm({
           description: "Inverse trigonometric functions, matrices & determinants, continuity & differentiability, applications of derivatives, integrals, differential equations, and 3D geometry.",
           teacherId: "teacher-mat",
           teacherName: "Prof. Vikramaditya Roy",
-          teacherEmail: "vikram.roy@edusync.edu.in",
+          teacherEmail: "vikram.roy@classsarthi.edu.in",
           color: "indigo",
           accentBg: "bg-indigo-500/10 border-indigo-500/30 text-indigo-400",
           enrolledCount: 6,
@@ -62543,7 +64280,7 @@ var init_db = __esm({
           description: "Automated PyTest configuration, test fixtures, suites, and runners captured live from VisionNote.",
           teacherId: "teacher-phy",
           teacherName: "Dr. Rajesh Kulkarni",
-          teacherEmail: "rajesh.kulkarni@edusync.edu.in",
+          teacherEmail: "rajesh.kulkarni@classsarthi.edu.in",
           color: "purple",
           accentBg: "bg-purple-500/10 border-purple-500/30 text-purple-400",
           enrolledCount: 6,
@@ -63973,7 +65710,7 @@ $$2I = \\int_{0}^{\\pi/2} 1 \\, dx = \\frac{\\pi}{2} \\implies I = \\frac{\\pi}{
             { week: "Week 3", avgScore: 85.2, submissionRate: 93.3, activeCount: 14 },
             { week: "Week 4", avgScore: 86.4, submissionRate: 93.3, activeCount: 15 }
           ],
-          aiExecutiveSummary: `The 1st Year B.Tech cohort across CSE, ECE, and ME is showing excellent engagement in ESS. Class average stands at 86.4% under Dr. Sanmitra Burman. Dhruva and Ashita lead in environmental audit precision.`,
+          aiExecutiveSummary: `The 1st Year B.Tech cohort across CSE, ECE, and ME is showing excellent engagement in ESS. Class average stands at 86.4% under Dr. Rajesh Burman. Dhruva and Ashita lead in environmental audit precision.`,
           keyActionItems: [
             "Conduct the campus water sampling practical session.",
             "Review Leopold EIA scoring methodology before the midterm."
@@ -64133,7 +65870,10 @@ $$2I = \\int_{0}^{\\pi/2} 1 \\, dx = \\frac{\\pi}{2} \\implies I = \\frac{\\pi}{
       conceptMastery: seedConceptMastery,
       lectureProgress: loadProgressFromDisk(seedStudentLectureProgress),
       masteryQuizzes: seedMasteryQuizzes,
-      questionBanks: [...FAKE_QUESTION_BANKS]
+      questionBanks: [...FAKE_QUESTION_BANKS],
+      plugins: loadPluginsFromDisk(initialPlugins),
+      customTutors: JSON.parse(JSON.stringify(initialCustomTutors)),
+      tutorApprovalRequests: JSON.parse(JSON.stringify(initialTutorApprovalRequests))
     };
   }
 });
@@ -64269,7 +66009,7 @@ What would you like to explore?`,
   }
   if (clean.includes("who are you") || clean.includes("what are you") || clean.includes("what can you do") || clean.includes("what is your name")) {
     return {
-      reply: `I'm your **EduSync AI Academic Tutor**! \u{1F393}
+      reply: `I'm your **ClassSarthi AI Academic Tutor**! \u{1F393}
 
 I'm designed to work just like a personal study partner and teaching assistant for **${subjectName}** (${subjectCode}). Here's how I can help:
 - \u{1F4D6} **Understand Course Topics**: Break down complex concepts, formulas, and algorithms from your syllabus.
@@ -64688,7 +66428,7 @@ void reverseString(char *str) {
 }
 
 int main() {
-    char text[] = "EduSync"; // Modifiable stack array
+    char text[] = "ClassSarthi"; // Modifiable stack array
     printf("Original: %s\\n", text);
     
     reverseString(text);
@@ -64794,7 +66534,7 @@ function synthesizeIntelligentAcademicResponse(query, subjectCode, subjectName, 
   if (isGreeting) {
     if (cleanQuery.includes("who are you") || cleanQuery.includes("what are you") || cleanQuery.includes("what can you do")) {
       return {
-        reply: `### \u{1F44B} Hi! I'm your EduSync AI Academic Tutor for **${subjectName}** (${subjectCode}).
+        reply: `### \u{1F44B} Hi! I'm your ClassSarthi AI Academic Tutor for **${subjectName}** (${subjectCode}).
 
 I'm here to help you master your coursework, prepare for exams, and solve homework problems. Here is what I can do:
 
@@ -65525,6 +67265,7 @@ __export(gemini_exports, {
   generateMasteryQuizAI: () => generateMasteryQuizAI,
   generateNoteQuizAI: () => generateNoteQuizAI,
   generatePromptQuizAI: () => generatePromptQuizAI,
+  generateSocraticResponse: () => generateSocraticResponse,
   generateStudyAssistantReply: () => generateStudyAssistantReply,
   generateSyllabusTimelineAI: () => generateSyllabusTimelineAI,
   personalizeLectureNotesFromClassSarthi: () => personalizeLectureNotesFromClassSarthi,
@@ -65893,7 +67634,7 @@ ${context.subject.syllabusTopics.map((t2, i2) => `  ${i2 + 1}. ${t2}`).join("\n"
 ${context.upcomingTimelines.map((t2) => `- [${t2.type.toUpperCase()}] ${t2.title} on ${t2.date} (${t2.startTime})`).join("\n")}` : "No immediate deadlines recorded.";
   const resourcesInfo = contextResources.length > 0 ? `Teacher References & Textbooks:
 ${contextResources.map((r2) => `- ${r2.title} (${r2.category} by ${r2.author}) [URL: ${r2.url}]: ${r2.description}`).join("\n")}` : "";
-  const systemInstruction = `You are "EduSync AI Academic Tutor", an intelligent, friendly, natural, and supportive educational AI assistant (similar to ChatGPT / Gemini).
+  const systemInstruction = `You are "ClassSarthi AI Academic Tutor", an intelligent, friendly, natural, and supportive educational AI assistant (similar to ChatGPT / Gemini).
 Your role is to help students learn, solve problems, prepare for exams, and succeed in their studies.
 
 ${buildPersonaPromptInstructions(context.learnerProfile)}
@@ -65921,19 +67662,18 @@ Return your response in clean JSON format:
   try {
     const candidateModels = [
       "gemini-3.5-flash-lite",
-      "gemini-3.1-flash-lite",
-      "gemini-flash-lite-latest",
-      "gemma-4-26b-a4b-it",
+      "gemini-3.6-flash",
+      "gemini-3.7-flash",
       "gemini-3.5-flash",
-      "gemini-3.6-flash"
+      "gemini-flash-lite-latest"
     ];
     let rawText = "";
     let response = null;
     for (const modelName of candidateModels) {
       try {
-        response = await ai.models.generateContent({
+        response = await ai.interactions.create({
           model: modelName,
-          contents: `[STUDENT_ACADEMIC_QUERY_START]
+          input: `[STUDENT_ACADEMIC_QUERY_START]
 ${sanitizedUserMessage}
 [STUDENT_ACADEMIC_QUERY_END]
 
@@ -65941,12 +67681,10 @@ Subject: ${context.subject?.code} - ${context.subject?.name}
 Mode: ${context.requestedMode || "general"}
 
 Please research the topic thoroughly and provide a deep, step-by-step, textbook-grade pedagogical explanation tailored to the query above.`,
-          config: {
-            systemInstruction
-          }
+          system_instruction: systemInstruction
         });
-        if (response && response.text) {
-          rawText = response.text;
+        if (response && response.output_text) {
+          rawText = response.output_text;
           break;
         }
       } catch (mErr) {
@@ -66032,23 +67770,24 @@ async function summarizeNoteAI(noteContent, subjectName, learnerProfile) {
   const ai = getAI();
   try {
     const personaGuidance = buildPersonaPromptInstructions(learnerProfile);
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: `Please summarize the following student study notes for ${subjectName || "the academic course"} into an executive conceptual summary and 3-5 punchy key takeaways:
+    const response = await ai.interactions.create({
+      model: "gemini-3.8-flash",
+      input: `Please summarize the following student study notes for ${subjectName || "the academic course"} into an executive conceptual summary and 3-5 punchy key takeaways:
 
 ${noteContent}`,
-      config: {
-        systemInstruction: `You are an academic synthesis engine. Return crisp, high-yield summary text and bullet takeaways tailored to the student's learning profile.
+      system_instruction: `You are an academic synthesis engine. Return crisp, high-yield summary text and bullet takeaways tailored to the student's learning profile.
 
 ${personaGuidance}`,
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
+      response_format: {
+        type: "text",
+        mime_type: "application/json",
+        schema: {
+          type: "object",
           properties: {
-            summary: { type: Type.STRING, description: "A 2-3 sentence executive synthesis of the note content" },
+            summary: { type: "string", description: "A 2-3 sentence executive synthesis of the note content" },
             keyTakeaways: {
-              type: Type.ARRAY,
-              items: { type: Type.STRING },
+              type: "array",
+              items: { type: "string" },
               description: "3 to 5 vital high-yield takeaways for exam preparation"
             }
           },
@@ -66056,7 +67795,7 @@ ${personaGuidance}`,
         }
       }
     });
-    return JSON.parse(response.text || "{}");
+    return JSON.parse(response.output_text || "{}");
   } catch (err) {
     console.error("Error in summarizeNoteAI:", err);
     return {
@@ -66135,7 +67874,7 @@ void verifyStateIntegrity(const SystemState* state) {
   const ai = getAI();
   try {
     const depthInstruction = depth === "cheat_sheet" ? "Structure this as a high-density, concise Cheat Sheet with bullet points, essential formulas, and quick lookup tables." : depth === "formula_sheet" ? "Structure this as a Formula & Definitions Reference Sheet with clear variable definitions and unit specifications." : depth === "deep_dive" ? "Structure this as an in-depth Academic Treatise with full mathematical derivations, edge cases, diagrams (ASCII/Markdown), and code/algorithmic implementations." : "Structure this as Comprehensive Exam Prep Notes with theory, solved example walkthroughs, common mistakes, and memory mnemonics.";
-    const systemInstruction = `You are EduSync's elite University Curriculum & Note Generation AI.
+    const systemInstruction = `You are ClassSarthi's elite University Curriculum & Note Generation AI.
 Your objective is to generate structured, pedagogical, beautiful Markdown study notes for university engineering students based on their prompt, course syllabus, and any fed document text.
 
 ${buildPersonaPromptInstructions(payload.learnerProfile)}
@@ -66155,26 +67894,27 @@ ${sanitizedAttached ? `Attached Document / PDF Text Content (${documentName || "
 ${sanitizedAttached}` : ""}
 
 Please generate comprehensive, publication-ready academic study notes.`;
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: promptContext,
-      config: {
-        systemInstruction,
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
+    const response = await ai.interactions.create({
+      model: "gemini-3.8-flash",
+      input: promptContext,
+      system_instruction: systemInstruction,
+      response_format: {
+        type: "text",
+        mime_type: "application/json",
+        schema: {
+          type: "object",
           properties: {
-            title: { type: Type.STRING, description: "Clear academic title of the generated note" },
-            content: { type: Type.STRING, description: "Complete structured Markdown note content" },
+            title: { type: "string", description: "Clear academic title of the generated note" },
+            content: { type: "string", description: "Complete structured Markdown note content" },
             tags: {
-              type: Type.ARRAY,
-              items: { type: Type.STRING },
+              type: "array",
+              items: { type: "string" },
               description: "3-4 relevant topic and subject tags"
             },
-            summary: { type: Type.STRING, description: "Executive 2-sentence synthesis of note" },
+            summary: { type: "string", description: "Executive 2-sentence synthesis of note" },
             keyTakeaways: {
-              type: Type.ARRAY,
-              items: { type: Type.STRING },
+              type: "array",
+              items: { type: "string" },
               description: "3-5 high-yield bullet takeaways"
             }
           },
@@ -66182,7 +67922,7 @@ Please generate comprehensive, publication-ready academic study notes.`;
         }
       }
     });
-    const parsed = JSON.parse(response.text || "{}");
+    const parsed = JSON.parse(response.output_text || "{}");
     return {
       title: parsed.title || `${subjectCode}: ${sanitizedPrompt}`,
       content: parsed.content || `# ${subjectCode}: ${sanitizedPrompt}
@@ -66222,32 +67962,33 @@ async function generateFlashcardsAI(noteContent, count = 5, learnerProfile) {
   const ai = getAI();
   try {
     const personaGuidance = buildPersonaPromptInstructions(learnerProfile);
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: `Extract ${count} high-yield, exam-oriented study flashcards (Q&A pairs with optional hints and topic tags) from these student notes:
+    const response = await ai.interactions.create({
+      model: "gemini-3.8-flash",
+      input: `Extract ${count} high-yield, exam-oriented study flashcards (Q&A pairs with optional hints and topic tags) from these student notes:
 
 ${noteContent}`,
-      config: {
-        systemInstruction: `You are an academic flashcard extraction engine. Adapt question depth, hints, and topics to match the student persona.
+      system_instruction: `You are an academic flashcard extraction engine. Adapt question depth, hints, and topics to match the student persona.
 
 ${personaGuidance}`,
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.ARRAY,
+      response_format: {
+        type: "text",
+        mime_type: "application/json",
+        schema: {
+          type: "array",
           items: {
-            type: Type.OBJECT,
+            type: "object",
             properties: {
-              question: { type: Type.STRING, description: "Clear, concise concept question" },
-              answer: { type: Type.STRING, description: "Accurate, complete explanation or formula" },
-              hint: { type: Type.STRING, description: "Helpful clue without giving away the full answer" },
-              topic: { type: Type.STRING, description: "Specific sub-topic label" }
+              question: { type: "string", description: "Clear, concise concept question" },
+              answer: { type: "string", description: "Accurate, complete explanation or formula" },
+              hint: { type: "string", description: "Helpful clue without giving away the full answer" },
+              topic: { type: "string", description: "Specific sub-topic label" }
             },
             required: ["question", "answer", "topic"]
           }
         }
       }
     });
-    const items = JSON.parse(response.text || "[]");
+    const items = JSON.parse(response.output_text || "[]");
     return items.map((item, idx) => ({
       id: `fc-gen-${Date.now()}-${idx}`,
       question: item.question,
@@ -66325,37 +68066,38 @@ Options: ${q.options.join(", ")}
 Answer Index: ${q.correctIndex}
 Topic: ${q.topic}`).join("\n\n")}` : "";
     const neededAiCount = Math.max(2, 5 - Math.min(facultyQuestions.length, 3));
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: `Generate ${neededAiCount} high-yield multiple-choice practice questions based on the following notes:${teacherContext}
+    const response = await ai.interactions.create({
+      model: "gemini-3.8-flash",
+      input: `Generate ${neededAiCount} high-yield multiple-choice practice questions based on the following notes:${teacherContext}
 
 STUDENT NOTES:
 ${noteContent}`,
-      config: {
-        systemInstruction: `You are an educational quiz generation engine. Tailor the question difficulty and conceptual depth to match the student's target learning goals.
+      system_instruction: `You are an educational quiz generation engine. Tailor the question difficulty and conceptual depth to match the student's target learning goals.
 
 ${personaGuidance}`,
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
+      response_format: {
+        type: "text",
+        mime_type: "application/json",
+        schema: {
+          type: "object",
           properties: {
-            title: { type: Type.STRING, description: "Engaging title for the quiz" },
+            title: { type: "string", description: "Engaging title for the quiz" },
             questions: {
-              type: Type.ARRAY,
+              type: "array",
               items: {
-                type: Type.OBJECT,
+                type: "object",
                 properties: {
-                  id: { type: Type.STRING },
-                  question: { type: Type.STRING, description: "Challenging multiple choice question" },
+                  id: { type: "string" },
+                  question: { type: "string", description: "Challenging multiple choice question" },
                   options: {
-                    type: Type.ARRAY,
-                    items: { type: Type.STRING },
+                    type: "array",
+                    items: { type: "string" },
                     description: "Exactly 4 distinct plausible options"
                   },
-                  correctIndex: { type: Type.INTEGER, description: "0-based index of the single correct answer" },
-                  explanation: { type: Type.STRING, description: "Step-by-step conceptual rationale" },
-                  topic: { type: Type.STRING, description: "Topic category" },
-                  difficulty: { type: Type.STRING, description: "easy, moderate, or hard" }
+                  correctIndex: { type: "integer", description: "0-based index of the single correct answer" },
+                  explanation: { type: "string", description: "Step-by-step conceptual rationale" },
+                  topic: { type: "string", description: "Topic category" },
+                  difficulty: { type: "string", description: "easy, moderate, or hard" }
                 },
                 required: ["id", "question", "options", "correctIndex", "explanation", "topic"]
               }
@@ -66365,7 +68107,7 @@ ${personaGuidance}`,
         }
       }
     });
-    const parsed = JSON.parse(response.text || "{}");
+    const parsed = JSON.parse(response.output_text || "{}");
     const aiQuestions = (parsed.questions || []).map((q, i2) => ({
       id: `quiz-q-${Date.now()}-${i2}`,
       question: q.question,
@@ -66468,31 +68210,32 @@ async function generatePromptQuizAI(prompt, subject, count = 4) {
   }
   const ai = getAI();
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: `Create a ${count}-question multiple choice quiz for university students on the topic: "${prompt}" in the course "${subjName}" (${subject?.code || ""}).
+    const response = await ai.interactions.create({
+      model: "gemini-3.8-flash",
+      input: `Create a ${count}-question multiple choice quiz for university students on the topic: "${prompt}" in the course "${subjName}" (${subject?.code || ""}).
 Make each question rigorous with 4 distinct choices, exact 0-based correctIndex, and clear explanatory reasoning for the answer.`,
-      config: {
-        systemInstruction: "You are an elite exam author. Return JSON with title, topic, and questions array.",
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
+      system_instruction: "You are an elite exam author. Return JSON with title, topic, and questions array.",
+      response_format: {
+        type: "text",
+        mime_type: "application/json",
+        schema: {
+          type: "object",
           properties: {
-            title: { type: Type.STRING },
-            topic: { type: Type.STRING },
+            title: { type: "string" },
+            topic: { type: "string" },
             questions: {
-              type: Type.ARRAY,
+              type: "array",
               items: {
-                type: Type.OBJECT,
+                type: "object",
                 properties: {
-                  question: { type: Type.STRING },
+                  question: { type: "string" },
                   options: {
-                    type: Type.ARRAY,
-                    items: { type: Type.STRING }
+                    type: "array",
+                    items: { type: "string" }
                   },
-                  correctIndex: { type: Type.INTEGER },
-                  explanation: { type: Type.STRING },
-                  topic: { type: Type.STRING }
+                  correctIndex: { type: "integer" },
+                  explanation: { type: "string" },
+                  topic: { type: "string" }
                 },
                 required: ["question", "options", "correctIndex", "explanation", "topic"]
               }
@@ -66502,7 +68245,7 @@ Make each question rigorous with 4 distinct choices, exact 0-based correctIndex,
         }
       }
     });
-    const parsed = JSON.parse(response.text || "{}");
+    const parsed = JSON.parse(response.output_text || "{}");
     return {
       id: `quiz-gen-${Date.now()}`,
       title: parsed.title || `Assessment: ${prompt}`,
@@ -66557,38 +68300,39 @@ async function generateClassDiagnosticsAI(subject, currentAnalytics) {
   }
   const ai = getAI();
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: `Analyze the class academic performance for ${subject.code} (${subject.name}).
+    const response = await ai.interactions.create({
+      model: "gemini-3.8-flash",
+      input: `Analyze the class academic performance for ${subject.code} (${subject.name}).
 Current Class Average: ${currentAnalytics.classAverage}%
 Submission Rate: ${currentAnalytics.submissionRate}%
 Enrolled Students: ${currentAnalytics.totalStudents}
 At Risk Students: ${currentAnalytics.atRiskStudentsCount}
 Current Recorded Weak Topics: ${JSON.stringify(currentAnalytics.weakTopics || [])}
 Grade Distribution: ${JSON.stringify(currentAnalytics.gradeDistribution || [])}`,
-      config: {
-        systemInstruction: "You are an elite academic analytics consultant for university faculty. Generate a high-level diagnostic executive briefing, prioritized pedagogical action items, and refined weak topic remediation strategies.",
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
+      system_instruction: "You are an elite academic analytics consultant for university faculty. Generate a high-level diagnostic executive briefing, prioritized pedagogical action items, and refined weak topic remediation strategies.",
+      response_format: {
+        type: "text",
+        mime_type: "application/json",
+        schema: {
+          type: "object",
           properties: {
-            aiExecutiveSummary: { type: Type.STRING, description: "Executive summary with bolded key metrics and actionable pedagogical narrative" },
+            aiExecutiveSummary: { type: "string", description: "Executive summary with bolded key metrics and actionable pedagogical narrative" },
             keyActionItems: {
-              type: Type.ARRAY,
-              items: { type: Type.STRING },
+              type: "array",
+              items: { type: "string" },
               description: "3-4 direct, highly actionable steps the teacher can execute this week"
             },
             weakTopics: {
-              type: Type.ARRAY,
+              type: "array",
               items: {
-                type: Type.OBJECT,
+                type: "object",
                 properties: {
-                  topic: { type: Type.STRING },
-                  errorRate: { type: Type.NUMBER, description: "Estimated percent error rate (e.g. 35)" },
-                  averageScore: { type: Type.NUMBER, description: "Average score on this topic (e.g. 68)" },
-                  affectedStudents: { type: Type.NUMBER },
-                  recommendedRemediation: { type: Type.STRING },
-                  urgency: { type: Type.STRING, enum: ["high", "medium", "low"] }
+                  topic: { type: "string" },
+                  errorRate: { type: "number", description: "Estimated percent error rate (e.g. 35)" },
+                  averageScore: { type: "number", description: "Average score on this topic (e.g. 68)" },
+                  affectedStudents: { type: "number" },
+                  recommendedRemediation: { type: "string" },
+                  urgency: { type: "string", enum: ["high", "medium", "low"] }
                 },
                 required: ["topic", "errorRate", "averageScore", "affectedStudents", "recommendedRemediation", "urgency"]
               }
@@ -66598,7 +68342,7 @@ Grade Distribution: ${JSON.stringify(currentAnalytics.gradeDistribution || [])}`
         }
       }
     });
-    return JSON.parse(response.text || "{}");
+    return JSON.parse(response.output_text || "{}");
   } catch (err) {
     console.error("Error generating class diagnostics:", err);
     return {
@@ -66620,34 +68364,35 @@ async function generateSyllabusTimelineAI(courseName, description, weeksCount = 
   }
   const ai = getAI();
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: `Create a structured academic timeline with ${weeksCount} milestones (lectures, quizzes, practical labs, assignments, and exams) for the course "${courseName}":
+    const response = await ai.interactions.create({
+      model: "gemini-3.8-flash",
+      input: `Create a structured academic timeline with ${weeksCount} milestones (lectures, quizzes, practical labs, assignments, and exams) for the course "${courseName}":
 Description: ${description}`,
-      config: {
-        systemInstruction: "You are an academic curriculum designer. Generate a balanced distribution of academic timeline events with realistic weightages and topic descriptions.",
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.ARRAY,
+      system_instruction: "You are an academic curriculum designer. Generate a balanced distribution of academic timeline events with realistic weightages and topic descriptions.",
+      response_format: {
+        type: "text",
+        mime_type: "application/json",
+        schema: {
+          type: "array",
           items: {
-            type: Type.OBJECT,
+            type: "object",
             properties: {
-              title: { type: Type.STRING },
-              type: { type: Type.STRING, enum: ["lecture", "quiz", "exam", "practical", "assignment"] },
-              weekNumber: { type: Type.INTEGER },
-              description: { type: Type.STRING },
+              title: { type: "string" },
+              type: { type: "string", enum: ["lecture", "quiz", "exam", "practical", "assignment"] },
+              weekNumber: { type: "integer" },
+              description: { type: "string" },
               topicsCovered: {
-                type: Type.ARRAY,
-                items: { type: Type.STRING }
+                type: "array",
+                items: { type: "string" }
               },
-              weightagePercent: { type: Type.INTEGER }
+              weightagePercent: { type: "integer" }
             },
             required: ["title", "type", "weekNumber", "description", "topicsCovered"]
           }
         }
       }
     });
-    return JSON.parse(response.text || "[]");
+    return JSON.parse(response.output_text || "[]");
   } catch (err) {
     console.error("Error generating syllabus timeline:", err);
     return [
@@ -66672,12 +68417,12 @@ async function generateMasteryQuizAI(noteContent, title, learnerProfile, count =
   }
   const ai = getAI();
   const personaGuidance = buildPersonaPromptInstructions(learnerProfile);
-  const candidateModels = ["gemini-3.6-flash", "gemini-2.5-flash", "gemini-1.5-flash"];
+  const candidateModels = ["gemini-3.6-flash", "gemini-3.5-flash-lite", "gemini-3.7-flash", "gemini-3.5-flash"];
   for (const modelName of candidateModels) {
     try {
-      const response = await ai.models.generateContent({
+      const response = await ai.interactions.create({
         model: modelName,
-        contents: `Generate exactly ${targetCount} high-yield multiple-choice questions for an academic lecture mastery quiz based strictly on the following lecture notes:
+        input: `Generate exactly ${targetCount} high-yield multiple-choice questions for an academic lecture mastery quiz based strictly on the following lecture notes:
 
 TITLE: ${sanitizedTitle}
 
@@ -66687,30 +68432,31 @@ ${noteContent}
 REQUIREMENTS:
 - Include a balanced distribution of difficulties: 2 Easy (core definitions, factual benchmarks), 2-3 Moderate (application, operational rules, standard processes), 2 Hard (edge cases, tricky constraints, exceptions).
 - Each question must have exactly 4 options, a 0-based correctIndex, a conceptual explanation, a concise topic label, and a difficulty ('easy' | 'moderate' | 'hard').`,
-        config: {
-          systemInstruction: `You are an elite university exam author and tutor. Generate rigorous, diagnostic multiple-choice questions strictly from the provided lecture text to test conceptual and practical mastery rather than trivial trivia.
+        system_instruction: `You are an elite university exam author and tutor. Generate rigorous, diagnostic multiple-choice questions strictly from the provided lecture text to test conceptual and practical mastery rather than trivial trivia.
 
 ${personaGuidance}`,
-          responseMimeType: "application/json",
-          responseSchema: {
-            type: Type.OBJECT,
+        response_format: {
+          type: "text",
+          mime_type: "application/json",
+          schema: {
+            type: "object",
             properties: {
-              title: { type: Type.STRING },
+              title: { type: "string" },
               questions: {
-                type: Type.ARRAY,
+                type: "array",
                 items: {
-                  type: Type.OBJECT,
+                  type: "object",
                   properties: {
-                    id: { type: Type.STRING },
-                    question: { type: Type.STRING },
+                    id: { type: "string" },
+                    question: { type: "string" },
                     options: {
-                      type: Type.ARRAY,
-                      items: { type: Type.STRING }
+                      type: "array",
+                      items: { type: "string" }
                     },
-                    correctIndex: { type: Type.INTEGER },
-                    explanation: { type: Type.STRING },
-                    topic: { type: Type.STRING },
-                    difficulty: { type: Type.STRING, enum: ["easy", "moderate", "hard"] }
+                    correctIndex: { type: "integer" },
+                    explanation: { type: "string" },
+                    topic: { type: "string" },
+                    difficulty: { type: "string", enum: ["easy", "moderate", "hard"] }
                   },
                   required: ["id", "question", "options", "correctIndex", "explanation", "topic", "difficulty"]
                 }
@@ -66720,7 +68466,7 @@ ${personaGuidance}`,
           }
         }
       });
-      const parsed = JSON.parse(response.text || "{}");
+      const parsed = JSON.parse(response.output_text || "{}");
       if (Array.isArray(parsed.questions) && parsed.questions.length >= 3) {
         return {
           title: parsed.title || `Mastery Quiz: ${sanitizedTitle}`,
@@ -66800,9 +68546,9 @@ async function analyzeQuizPerformanceAI(quizTitle, questions, userAnswers, learn
   const ai = getAI();
   try {
     const personaGuidance = buildPersonaPromptInstructions(learnerProfile);
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: `Analyze this student's performance on the lecture mastery quiz "${quizTitle}":
+    const response = await ai.interactions.create({
+      model: "gemini-3.8-flash",
+      input: `Analyze this student's performance on the lecture mastery quiz "${quizTitle}":
 Score: ${totalScore}/${totalQuestions} (${percentage}%)
 Missed Questions:
 ${JSON.stringify(missedQuestions, null, 2)}
@@ -66812,28 +68558,29 @@ Provide a diagnostic breakdown:
 2. Key misconceptions (2-3 bullet items).
 3. Suggested tutor topic.
 4. Suggested Socratic tutor prompt (the exact guiding question the student should paste into the Socratic AI Tutor to overcome this hurdle).`,
-      config: {
-        systemInstruction: `You are a diagnostic learning scientist and Socratic AI coach. Write constructive, empowering academic feedback tuned to the student's cognitive persona.
+      system_instruction: `You are a diagnostic learning scientist and Socratic AI coach. Write constructive, empowering academic feedback tuned to the student's cognitive persona.
 
 ${personaGuidance}`,
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
+      response_format: {
+        type: "text",
+        mime_type: "application/json",
+        schema: {
+          type: "object",
           properties: {
-            summary: { type: Type.STRING },
-            masteryLevel: { type: Type.STRING, enum: ["Mastered", "Proficient", "Needs Review"] },
+            summary: { type: "string" },
+            masteryLevel: { type: "string", enum: ["Mastered", "Proficient", "Needs Review"] },
             keyMisconceptions: {
-              type: Type.ARRAY,
-              items: { type: Type.STRING }
+              type: "array",
+              items: { type: "string" }
             },
-            suggestedTutorTopic: { type: Type.STRING },
-            suggestedTutorPrompt: { type: Type.STRING }
+            suggestedTutorTopic: { type: "string" },
+            suggestedTutorPrompt: { type: "string" }
           },
           required: ["summary", "masteryLevel", "keyMisconceptions", "suggestedTutorTopic", "suggestedTutorPrompt"]
         }
       }
     });
-    const parsed = JSON.parse(response.text || "{}");
+    const parsed = JSON.parse(response.output_text || "{}");
     return {
       summary: parsed.summary || fallbackAnalysis.summary,
       masteryLevel: parsed.masteryLevel || masteryLevel,
@@ -67009,9 +68756,9 @@ async function personalizeNoteAI(noteContent, title, learnerProfile) {
   const ai = getAI();
   try {
     const personaGuidance = buildPersonaPromptInstructions(learnerProfile);
-    const response = await ai.models.generateContent({
-      model: "gemini-3.7-flash",
-      contents: `Please re-frame and personalize the following lecture notes to match the student's cognitive learning profile:
+    const response = await ai.interactions.create({
+      model: "gemini-3.8-flash",
+      input: `Please re-frame and personalize the following lecture notes to match the student's cognitive learning profile:
 
 TITLE: ${sanitizedTitle}
 
@@ -67024,19 +68771,20 @@ STYLE INSTRUCTIONS:
 - If exam_focused: prioritize high-yield formulas, common traps, rubric grading checklists, and quick revision tables.
 - If socratic: include embedded self-test questions and conceptual reflection prompts.
 - Maintain complete accuracy of all LaTeX formulas ($$...$$).`,
-      config: {
-        systemInstruction: `You are an elite academic tutor. Re-structure the student's lecture notes into an ultra-clean, pedagogical, beautifully formatted Markdown document tuned precisely to their questionnaire persona.
+      system_instruction: `You are an elite academic tutor. Re-structure the student's lecture notes into an ultra-clean, pedagogical, beautifully formatted Markdown document tuned precisely to their questionnaire persona.
 
 ${personaGuidance}`,
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
+      response_format: {
+        type: "text",
+        mime_type: "application/json",
+        schema: {
+          type: "object",
           properties: {
-            content: { type: Type.STRING, description: "Complete restructured Markdown text with LaTeX" },
-            summary: { type: Type.STRING, description: "1-2 sentence executive conceptual summary" },
+            content: { type: "string", description: "Complete restructured Markdown text with LaTeX" },
+            summary: { type: "string", description: "1-2 sentence executive conceptual summary" },
             keyTakeaways: {
-              type: Type.ARRAY,
-              items: { type: Type.STRING },
+              type: "array",
+              items: { type: "string" },
               description: "3-4 punchy high-yield takeaways"
             }
           },
@@ -67044,7 +68792,7 @@ ${personaGuidance}`,
         }
       }
     });
-    const parsed = JSON.parse(response.text || "{}");
+    const parsed = JSON.parse(response.output_text || "{}");
     return {
       content: parsed.content || localRecraft.content,
       summary: parsed.summary || localRecraft.summary,
@@ -67091,24 +68839,25 @@ ${boardCapturesText}
 === GENERALIZED NOTES ===
 ${JSON.stringify(lecture.generalizedNotes, null, 2)}
 `;
-    const generatePromise = ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: prompt,
-      config: {
-        systemInstruction: `You are the "Ask My Class" AI assistant for students who attended this classroom lecture.
+    const generatePromise = ai.interactions.create({
+      model: "gemini-3.8-flash",
+      input: prompt,
+      system_instruction: `You are the "Ask My Class" AI assistant for students who attended this classroom lecture.
 CRITICAL RULES:
 1. Answer the student's question using ONLY the provided ClassSarthi lecture data (Audio transcript, timeline events, board OCR, and notes).
 2. Whenever possible, provide the exact relevant timestamp in your response (e.g. "The teacher explained this around 21:05.").
 3. Strict Grounding Guardrail: Do NOT pretend that something was said or written in class if it is not present in the lecture data. If the question asks about something not discussed in this lecture, politely state that this topic was not covered in today's class.
 4. If a formula or board diagram was drawn by the teacher, provide the exact LaTeX formula and mention the board capture.`,
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
+      response_format: {
+        type: "text",
+        mime_type: "application/json",
+        schema: {
+          type: "object",
           properties: {
-            answer: { type: Type.STRING, description: "Direct answer grounded strictly in lecture data with timestamp citation" },
-            timestamp: { type: Type.STRING, description: 'Relevant timestamp (e.g. "21:05", "12:48") if applicable' },
-            isGrounded: { type: Type.BOOLEAN, description: "True if answer was present in lecture data, false otherwise" },
-            quoteSnippet: { type: Type.STRING, description: "Exact quote or speech snippet from teacher if available" }
+            answer: { type: "string", description: "Direct answer grounded strictly in lecture data with timestamp citation" },
+            timestamp: { type: "string", description: 'Relevant timestamp (e.g. "21:05", "12:48") if applicable' },
+            isGrounded: { type: "boolean", description: "True if answer was present in lecture data, false otherwise" },
+            quoteSnippet: { type: "string", description: "Exact quote or speech snippet from teacher if available" }
           },
           required: ["answer", "isGrounded"]
         }
@@ -67118,7 +68867,7 @@ CRITICAL RULES:
       (_, reject) => setTimeout(() => reject(new Error("AI generation timeout")), 3500)
     );
     const response = await Promise.race([generatePromise, timeoutPromise]);
-    const parsed = JSON.parse(response.text || "{}");
+    const parsed = JSON.parse(response.output_text || "{}");
     let matchedEvent = lecture.timeline.find((t2) => t2.timestamp === parsed.timestamp);
     let matchedCapture = lecture.boardCaptures.find((b) => b.timestamp === parsed.timestamp);
     return {
@@ -67273,6 +69022,111 @@ ${reinforcementSection}`;
     personalizedNotes: enrichedNotes,
     reinforcedConcepts: weakConcepts
   };
+}
+async function generateSocraticResponse(payload) {
+  const context = payload.context || {};
+  let weakTopicsStr = "";
+  let weakestTopicName = context.weakestTopicName || "";
+  if (Array.isArray(context.weakTopics) && context.weakTopics.length > 0) {
+    weakTopicsStr = context.weakTopics.map((t2) => typeof t2 === "string" ? t2 : t2.topic || t2.concept || "").filter(Boolean).join(", ");
+    if (!weakestTopicName) {
+      const first = context.weakTopics[0];
+      weakestTopicName = typeof first === "string" ? first : first.topic || first.concept || "";
+    }
+  } else if (typeof context.weakTopics === "string") {
+    weakTopicsStr = context.weakTopics;
+    if (!weakestTopicName) weakestTopicName = context.weakTopics;
+  }
+  if (!weakestTopicName) {
+    weakestTopicName = "Newton's Second Law & Acceleration Distinction";
+  }
+  const lectureTitle = context.lastLectureTitle || "Newton's Laws of Motion & Free Body Diagrams";
+  const userMessage = payload.message || "";
+  const learningStyle = payload.learnerProfile?.learningStyle || "visual";
+  const styleLabel = learningStyle === "step_by_step" ? "Step-by-Step Mathematical Rigor" : learningStyle === "exam_focused" ? "High-Yield Exam Focus" : learningStyle === "socratic_dialogue" ? "Socratic & Conversational" : "Visual & Mental Models";
+  const systemInstruction = `You are the ClassSarthi Contextual Socratic AI Tutor.
+The student just failed ${weakTopicsStr || weakestTopicName} from today's lecture '${lectureTitle}'.
+Their learning style is ${styleLabel}.
+When they ask a question, explain the concept using their preferred learning style.
+If applicable, suggest a specific YouTube video, a mental model, or a step-by-step trick to remember it.
+Do NOT just give textbook definitions\u2014give them a hook based on their persona.
+Format all math in LaTeX ($...$ or $$...$$).`;
+  let matchingVideo = null;
+  const lowerTopic = (weakestTopicName + " " + (weakTopicsStr || "")).toLowerCase();
+  for (const list of Object.values(SUBJECT_KNOWLEDGE_BASE)) {
+    for (const item of list) {
+      const isMatch = item.topicMatchKeywords.some((kw) => lowerTopic.includes(kw.toLowerCase()) || kw.toLowerCase().includes("newton") || kw.toLowerCase().includes("incline"));
+      if (isMatch && item.videos && item.videos.length > 0) {
+        matchingVideo = item.videos[0];
+        break;
+      }
+    }
+    if (matchingVideo) break;
+  }
+  if (!matchingVideo) {
+    matchingVideo = {
+      title: "Newton's Laws of Motion & Incline Forces Visualized (3Blue1Brown Style)",
+      url: "https://www.youtube.com/watch?v=kKKM8Y-u7ds",
+      searchQuery: "Newton's laws of motion incline forces",
+      channelOrTopic: "Physics Visualized",
+      duration: "11:42",
+      thumbnail: "https://images.unsplash.com/photo-1636466497217-26a8cbeaf0aa?auto=format&fit=crop&w=400&q=80"
+    };
+  }
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    let reply = `I see you struggled with **${weakestTopicName}** from today's class on "${lectureTitle}".
+
+`;
+    if (learningStyle === "visual") {
+      reply += `\u{1F4A1} **Visual Mental Model**: Picture the block on the ramp. Gravity pulls straight down, but the ramp only pushes back *perpendicular* to its surface. That's why the normal force is $N = mg\\cos\\theta$, scaling to zero when the ramp becomes vertical!
+
+To test this: What happens to the sliding acceleration when you tilt the ramp steeper toward $90^\\circ$?`;
+    } else {
+      reply += `\u{1F4D0} **Step-by-Step Derivation**: Along the incline coordinate system:
+$$\\Sigma F_\\parallel = mg\\sin\\theta - f_k = m \\cdot a$$
+$$\\Sigma F_\\perp = N - mg\\cos\\theta = 0 \\implies N = mg\\cos\\theta$$
+
+What is the net acceleration if the incline is frictionless?`;
+    }
+    if (matchingVideo) {
+      reply += `
+
+\u{1F4FA} **Recommended Video Breakdown**:
+[Watch: ${matchingVideo.title}](${matchingVideo.url}) \u2014 *${matchingVideo.channelOrTopic} (${matchingVideo.duration})*`;
+    }
+    return { reply, videoRecommendation: matchingVideo };
+  }
+  try {
+    const ai = getAI();
+    const response = await ai.interactions.create({
+      model: "gemini-3.8-flash",
+      input: userMessage || `[System Trigger]: Initial Socratic conversation hook on ${weakestTopicName}`,
+      system_instruction: systemInstruction
+    });
+    let rawReply = response.output_text || `I see you struggled with **${weakestTopicName}** from today's class on "${lectureTitle}".`;
+    if (matchingVideo && !rawReply.includes("youtube.com") && !rawReply.includes("Recommended Video")) {
+      rawReply += `
+
+\u{1F4FA} **Recommended Video Breakdown**:
+[Watch: ${matchingVideo.title}](${matchingVideo.url}) \u2014 *${matchingVideo.channelOrTopic} (${matchingVideo.duration})*`;
+    }
+    return {
+      reply: rawReply,
+      videoRecommendation: matchingVideo
+    };
+  } catch (err) {
+    console.warn("Error in generateSocraticResponse:", err);
+    return {
+      reply: `I see you struggled with **${weakestTopicName}** from today's lecture on "${lectureTitle}".
+
+Let's break it down using your preferred ${styleLabel} approach: what is the net force along the direction of motion?
+
+\u{1F4FA} **Recommended Video Breakdown**:
+[Watch: ${matchingVideo.title}](${matchingVideo.url})`,
+      videoRecommendation: matchingVideo
+    };
+  }
 }
 var aiInstance;
 var init_gemini = __esm({
@@ -75180,7 +77034,7 @@ async function persistUserToCloud(user) {
   const sb = getClient();
   if (!sb) return false;
   try {
-    const userTitle = `__EDUSYNC_USER__:${user.id}`;
+    const userTitle = `__CLASSSARTHI_USER__:${user.id}`;
     const cleanUsername = (user.username || "").toLowerCase().trim();
     const cleanEmail = (user.email || "").toLowerCase().trim();
     const cleanInstId = (user.institutionalId || "").toLowerCase().trim();
@@ -75190,7 +77044,7 @@ async function persistUserToCloud(user) {
         generalised_notes: JSON.stringify(user),
         status: "ready",
         metadata: {
-          entity_type: "edusync_user",
+          entity_type: "classsarthi_user",
           user_id: user.id,
           username: cleanUsername,
           email: cleanEmail,
@@ -75212,7 +77066,7 @@ async function persistUserToCloud(user) {
         generalised_notes: JSON.stringify(user),
         status: "ready",
         metadata: {
-          entity_type: "edusync_user",
+          entity_type: "classsarthi_user",
           user_id: user.id,
           username: cleanUsername,
           email: cleanEmail,
@@ -75237,7 +77091,7 @@ async function loadUsersFromCloud() {
   const sb = getClient();
   if (!sb) return [];
   try {
-    const { data, error } = await sb.from("notes").select("generalised_notes").contains("metadata", { entity_type: "edusync_user" });
+    const { data, error } = await sb.from("notes").select("generalised_notes").contains("metadata", { entity_type: "classsarthi_user" });
     if (error || !data) {
       return [];
     }
@@ -75283,7 +77137,7 @@ async function deleteUserFromCloud(userId) {
   const sb = getClient();
   if (!sb || !userId) return false;
   try {
-    const userTitle = `__EDUSYNC_USER__:${userId}`;
+    const userTitle = `__CLASSSARTHI_USER__:${userId}`;
     await sb.from("notes").delete().eq("title", userTitle);
     return true;
   } catch (err) {
@@ -75352,7 +77206,7 @@ async function handler(req, res) {
         });
         return;
       }
-      const expectedPass = user.password || "EduSync@260101";
+      const expectedPass = user.password || "ClassSarthi@260101";
       if (expectedPass !== loginPass) {
         res.status(401).json({
           error: "Incorrect password. Please verify your credentials and try again."
@@ -75375,7 +77229,7 @@ async function handler(req, res) {
         name: name || "New User",
         email: email || `${cleanName}@bmu.edu.in`,
         username: `${targetRole === "teacher" ? "prof" : targetRole === "admin" ? "dean" : "student"}.${cleanName}`,
-        password: password || "EduSync@260101",
+        password: password || "ClassSarthi@260101",
         role: targetRole,
         gender: gender || "Male",
         program: program || (targetRole === "student" ? "CSE" : void 0),
@@ -75478,7 +77332,7 @@ async function handler(req, res) {
         return;
       }
       const DEFAULT_B64 = "QVEuQWI4Uk42SUx3Um5VRnM3a052S3dFZE9BejZOZU8zTTRsSjZuLVVVTDQxRHlCclZUdlE=";
-      const buildTimeKey = "QVEuQWI4Uk42SUx3Um5VRnM3a052S3dFZE9BejZOZU8zTTRsSjZuLVVVTDQxRHlCclZUdlE=" ? Buffer.from("QVEuQWI4Uk42SUx3Um5VRnM3a052S3dFZE9BejZOZU8zTTRsSjZuLVVVTDQxRHlCclZUdlE=", "base64").toString("utf-8") : "";
+      const buildTimeKey = "QVEuQWI4Uk42SlBDTjAzMC1GeDFiU3g0XzEzejRvMkdwMW5HSlhTdHFvSW5vcWQzTXI2d3c=" ? Buffer.from("QVEuQWI4Uk42SlBDTjAzMC1GeDFiU3g0XzEzejRvMkdwMW5HSlhTdHFvSW5vcWQzTXI2d3c=", "base64").toString("utf-8") : "";
       const fallbackKey = Buffer.from(DEFAULT_B64, "base64").toString("utf-8");
       const apiKey = body.apiKey || process.env.GEMINI_API_KEY || buildTimeKey || fallbackKey;
       try {

@@ -11,17 +11,18 @@ import { runVisionNoteClassSarthiTests } from './03_visionnote_classsarthi.test'
 import { runSmartNotesAndMasteryTests } from './04_smart_notes_mastery.test';
 import { runSocraticAiTutorTests } from './05_socratic_ai_tutor.test';
 import { runSecurityAndBugHunterTests } from './06_security_bug_hunter.test';
+import { runPluginsSystemTests } from './07_plugins_system.test';
 
 async function main() {
   console.log('\n\x1b[1m\x1b[36m===============================================================\x1b[0m');
-  console.log('\x1b[1m\x1b[36m  EduSync Comprehensive Feature Validation & Bug Hunter Suite  \x1b[0m');
+  console.log('\x1b[1m\x1b[36m  ClassSarthi Comprehensive Feature Validation & Bug Hunter Suite  \x1b[0m');
   console.log('\x1b[1m\x1b[36m===============================================================\x1b[0m\n');
 
   const runner = new TestRunner();
   let ctx;
 
   try {
-    console.log('\x1b[90m[1/7] Bootstrapping isolated test server runtime...\x1b[0m');
+    console.log('\x1b[90m[1/8] Bootstrapping isolated test server runtime...\x1b[0m');
     ctx = await setupTestServer();
     console.log(`\x1b[32m✔\x1b[0m Server initialized at ${ctx.baseUrl}\n`);
 
@@ -43,6 +44,9 @@ async function main() {
     console.log('\n\x1b[1m--- Suite 6: Security, OWASP Guards & Bug Hunter ---\x1b[0m');
     await runSecurityAndBugHunterTests(ctx, runner);
 
+    console.log('\n\x1b[1m--- Suite 7: Plugins System, Automation Rules & MCP Tutors ---\x1b[0m');
+    await runPluginsSystemTests(ctx, runner);
+
   } catch (fatalErr) {
     console.error('\n\x1b[31mFatal test suite error:\x1b[0m', fatalErr);
   } finally {
@@ -63,7 +67,7 @@ async function main() {
   console.log('\x1b[1m===============================================================\x1b[0m');
   console.log(`  Total Tests Run:  \x1b[1m${total}\x1b[0m`);
   console.log(`  Passed:           \x1b[32m\x1b[1m${passed}\x1b[0m`);
-  console.log(`  Failed / Bugs:    \x1b[${failed > 0 ? '31' : '32'}\x1b[1m${failed}\x1b[0m`);
+  console.log(`  Failed / Bugs:    \x1b[${failed > 0 ? '31m' : '32m'}\x1b[1m${failed}\x1b[0m`);
   console.log(`  Features Covered: \x1b[36m\x1b[1m${EDU_SYNC_FEATURES.length} / ${EDU_SYNC_FEATURES.length} (100%)\x1b[0m`);
   console.log('===============================================================\n');
 
@@ -84,7 +88,7 @@ function generateMarkdownReport(results: TestResult[], bugs: any[]): string {
   const passedCount = results.filter(r => r.passed).length;
   const failedCount = results.filter(r => !r.passed).length;
 
-  let md = `# EduSync: Feature Directory & Automated Bug Hunter Report
+  let md = `# ClassSarthi: Feature Directory & Automated Bug Hunter Report
 
 > **Execution Timestamp:** ${timestamp}  
 > **Total Test Suites:** 6  
@@ -96,7 +100,7 @@ function generateMarkdownReport(results: TestResult[], bugs: any[]): string {
 
 ## 1. Complete System Features Catalog
 
-Below is the complete inventory of all EduSync features verified during this test execution:
+Below is the complete inventory of all ClassSarthi features verified during this test execution:
 
 `;
 

@@ -1,5 +1,5 @@
 /**
- * EduSync Complete Feature Catalog & Architectural Specification
+ * ClassSarthi Complete Feature Catalog & Architectural Specification
  * Describes all institutional LMS, AI tutoring, cognitive scaffolding, and ClassSarthi features.
  */
 

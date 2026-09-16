@@ -8,16 +8,17 @@ import {
   User as UserIcon,
   Eye,
   EyeOff,
-  Building,
-  KeyRound,
-  ArrowRight,
   CheckCircle2,
   AlertCircle,
-  Zap,
-  Info,
-  Camera
+  ArrowRight,
+  Brain,
+  TrendingUp,
+  RotateCcw,
+  Check,
+  HelpCircle,
+  X,
+  School,
 } from 'lucide-react';
-
 import { FAKE_USERS } from '../mock/fakeData';
 import { fetchUsersFromSupabaseCloud } from '../lib/supabase';
 
@@ -27,20 +28,28 @@ interface LoginScreenProps {
   allUsers?: User[];
 }
 
-export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onLaunchVisionNoteDirectly, allUsers: initialUsers }) => {
-  const [selectedRole, setSelectedRole] = useState<UserRole>('student');
+export const LoginScreen: React.FC<LoginScreenProps> = ({
+  onLoginSuccess,
+  allUsers: initialUsers,
+}) => {
+  const [selectedRole, setSelectedRole] = useState<'student' | 'teacher' | 'admin'>('student');
   const [identifier, setIdentifier] = useState('student.dhruva');
-  const [password, setPassword] = useState('EduSync@260101');
+  const [password, setPassword] = useState('ClassSarthi@260101');
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotSubmitted, setForgotSubmitted] = useState(false);
+
   const [registeredUsers, setRegisteredUsers] = useState<User[]>(() => {
-    let base = (initialUsers && initialUsers.length > 0) ? [...initialUsers] : [...FAKE_USERS];
+    let base = initialUsers && initialUsers.length > 0 ? [...initialUsers] : [...FAKE_USERS];
     try {
-      const saved = JSON.parse(localStorage.getItem('edusync_users') || '[]');
+      const saved = JSON.parse(localStorage.getItem('classsarthi_users') || '[]');
       if (Array.isArray(saved)) {
         for (const s of saved) {
-          if (!base.some(b => b.id === s.id)) base.push(s);
+          if (!base.some((b) => b.id === s.id)) base.push(s);
         }
       }
     } catch {}
@@ -50,10 +59,10 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onLaun
   // Sync with initialUsers prop when updated by parent
   React.useEffect(() => {
     if (initialUsers && initialUsers.length > 0) {
-      setRegisteredUsers(prev => {
+      setRegisteredUsers((prev) => {
         const merged = [...initialUsers];
         for (const p of prev) {
-          if (!merged.some(m => m.id === p.id)) merged.push(p);
+          if (!merged.some((m) => m.id === p.id)) merged.push(p);
         }
         return merged;
       });
@@ -74,119 +83,110 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onLaun
 
   // Fetch updated registered users list from server and Supabase Cloud
   React.useEffect(() => {
-    // 1. Fetch from server endpoint
     fetch('/api/auth/public-users')
-      .then(async res => {
+      .then(async (res) => {
         const ct = res.headers.get('content-type');
         if (!res.ok || !ct || !ct.includes('application/json')) return null;
         return res.json();
       })
-      .then(data => {
+      .then((data) => {
         if (data?.users && Array.isArray(data.users) && data.users.length > 0) {
-          setRegisteredUsers(prev => {
+          setRegisteredUsers((prev) => {
             const merged = [...data.users];
             for (const p of prev) {
-              if (!merged.some(m => m.id === p.id)) merged.push(p);
+              if (!merged.some((m) => m.id === p.id)) merged.push(p);
             }
             return dedupeUsers(merged);
           });
         }
       })
-      .catch(err => console.error('Failed to load registered users from API:', err));
+      .catch((err) => console.error('Failed to load registered users from API:', err));
 
-    // 2. Fetch directly from Supabase Cloud as resilient cloud source
     fetchUsersFromSupabaseCloud()
-      .then(cloudUsers => {
+      .then((cloudUsers) => {
         if (cloudUsers && cloudUsers.length > 0) {
-          setRegisteredUsers(prev => {
+          setRegisteredUsers((prev) => {
             const merged = [...cloudUsers];
             for (const p of prev) {
-              if (!merged.some(m => m.id === p.id)) merged.push(p);
+              if (!merged.some((m) => m.id === p.id)) merged.push(p);
             }
             return dedupeUsers(merged);
           });
         }
       })
-      .catch(e => console.warn('Supabase cloud user pull note:', e));
+      .catch((e) => console.warn('Supabase cloud user pull note:', e));
   }, []);
 
-  // Select any registered user from roster
-  const handleSelectUser = (user: User) => {
-    setSelectedRole(user.role);
-    setIdentifier(user.username || user.institutionalId || user.email);
-    setPassword(user.password || (user.role === 'admin' ? 'Dean@EduSync2026!' : user.role === 'teacher' ? 'Physics@2026!' : 'EduSync@260101'));
-    setErrorMessage(null);
-  };
-
-  // Quick preset loader
-  const handleSelectRolePreset = (role: UserRole) => {
+  const handleRoleChange = (role: 'student' | 'teacher' | 'admin') => {
     setSelectedRole(role);
     setErrorMessage(null);
     if (role === 'student') {
       setIdentifier('student.dhruva');
-      setPassword('EduSync@260101');
+      setPassword('ClassSarthi@260101');
     } else if (role === 'teacher') {
       setIdentifier('prof.rajesh');
       setPassword('Physics@2026!');
     } else {
       setIdentifier('dean.maneek');
-      setPassword('Dean@EduSync2026!');
+      setPassword('Dean@ClassSarthi2026!');
     }
   };
 
   const safeUsers = Array.isArray(registeredUsers) ? registeredUsers : [];
 
-  // Strictly verify credentials locally or in cloud without ever falling back to a default preset
   const verifyCredentialsLocallyAndLogin = async (loginId: string, loginPass: string): Promise<boolean> => {
     const normId = loginId.toLowerCase().trim();
 
     let candidates = [...safeUsers];
     try {
-      const savedUsers = JSON.parse(localStorage.getItem('edusync_users') || '[]');
+      const savedUsers = JSON.parse(localStorage.getItem('classsarthi_users') || '[]');
       if (Array.isArray(savedUsers)) {
         for (const s of savedUsers) {
-          if (!candidates.some(c => c.id === s.id)) candidates.push(s);
+          if (!candidates.some((c) => c.id === s.id)) candidates.push(s);
         }
       }
     } catch {}
 
-    let matched = candidates.find(u =>
-      (u.username && u.username.toLowerCase() === normId) ||
-      (u.email && u.email.toLowerCase() === normId) ||
-      (u.institutionalId && u.institutionalId.toLowerCase() === normId) ||
-      (u.name && u.name.toLowerCase() === normId)
+    let matched = candidates.find(
+      (u) =>
+        (u.username && u.username.toLowerCase() === normId) ||
+        (u.email && u.email.toLowerCase() === normId) ||
+        (u.institutionalId && u.institutionalId.toLowerCase() === normId) ||
+        (u.name && u.name.toLowerCase() === normId)
     );
 
-    // If still not matched, check Supabase Cloud directly
     if (!matched) {
       try {
         const cloudUsers = await fetchUsersFromSupabaseCloud();
-        matched = cloudUsers.find(u =>
-          (u.username && u.username.toLowerCase() === normId) ||
-          (u.email && u.email.toLowerCase() === normId) ||
-          (u.institutionalId && u.institutionalId.toLowerCase() === normId) ||
-          (u.name && u.name.toLowerCase() === normId)
+        matched = cloudUsers.find(
+          (u) =>
+            (u.username && u.username.toLowerCase() === normId) ||
+            (u.email && u.email.toLowerCase() === normId) ||
+            (u.institutionalId && u.institutionalId.toLowerCase() === normId) ||
+            (u.name && u.name.toLowerCase() === normId)
         );
       } catch {}
     }
 
     if (!matched) {
-      setErrorMessage(`No registered account found matching "${loginId}". Please check your credentials or register as a new user.`);
+      setErrorMessage(`No registered account found matching "${loginId}". Please check your credentials.`);
       return false;
     }
 
-    // Verify Password strictly!
-    const expectedPassword = matched.password || 'EduSync@260101';
+    const expectedPassword = matched.password || 'ClassSarthi@260101';
     if (expectedPassword !== loginPass) {
       setErrorMessage('Incorrect password. Please verify your credentials and try again.');
       return false;
     }
 
-    // Valid credentials confirmed!
-    const fallbackToken = `edusync_session_${Date.now()}`;
-    localStorage.setItem('edusync_token', fallbackToken);
-    localStorage.setItem('edusync_user_id', matched.id);
-    try { localStorage.setItem('edusync_user', JSON.stringify(matched)); } catch (e) {}
+    const fallbackToken = `classsarthi_session_${Date.now()}`;
+    if (rememberMe) {
+      localStorage.setItem('classsarthi_token', fallbackToken);
+      localStorage.setItem('classsarthi_user_id', matched.id);
+      try {
+        localStorage.setItem('classsarthi_user', JSON.stringify(matched));
+      } catch (e) {}
+    }
     onLoginSuccess(matched, fallbackToken);
     return true;
   };
@@ -194,12 +194,12 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onLaun
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!identifier.trim()) {
-      setErrorMessage('Please enter your Name, Username, or Email.');
+      setErrorMessage('Please enter your Username or Email.');
       return;
     }
 
     if (!password.trim()) {
-      setErrorMessage('Please enter your password.');
+      setErrorMessage('Please enter your Password.');
       return;
     }
 
@@ -216,8 +216,8 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onLaun
         body: JSON.stringify({
           identifier: enteredId,
           password: enteredPass,
-          role: selectedRole
-        })
+          role: selectedRole,
+        }),
       });
 
       const contentType = response.headers.get('content-type');
@@ -225,334 +225,440 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onLaun
         const data = await response.json();
 
         if (!response.ok) {
-          // Explicit error from server (e.g. 401 Incorrect password)
           setErrorMessage(data.error || 'Invalid credentials. Please verify your username and password.');
           setIsLoading(false);
           return;
         }
 
-        // Save token and trigger callback
         if (data.token && data.user) {
-          localStorage.setItem('edusync_token', data.token);
-          localStorage.setItem('edusync_user_id', data.user.id);
-          try { localStorage.setItem('edusync_user', JSON.stringify(data.user)); } catch (e) {}
+          if (rememberMe) {
+            localStorage.setItem('classsarthi_token', data.token);
+            localStorage.setItem('classsarthi_user_id', data.user.id);
+            try {
+              localStorage.setItem('classsarthi_user', JSON.stringify(data.user));
+            } catch (e) {}
+          }
           onLoginSuccess(data.user, data.token);
           setIsLoading(false);
           return;
         }
       }
 
-      // If backend was unreachable or returned non-JSON, strictly verify credentials
       await verifyCredentialsLocallyAndLogin(enteredId, enteredPass);
     } catch (err) {
-      console.error('Login network error, checking local/cloud identity:', err);
+      console.error('Login network error, checking local identity:', err);
       await verifyCredentialsLocallyAndLogin(enteredId, enteredPass);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleQuickLaunchVisionNote = async () => {
-    setIsLoading(true);
-    setErrorMessage(null);
-    try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          identifier: 'student-g11-1',
-          password: 'Password@123',
-          role: 'student'
-        })
-      });
-      const data = await response.json();
-      if (data.token && data.user) {
-        localStorage.setItem('edusync_token', data.token);
-        localStorage.setItem('edusync_user_id', data.user.id);
-        try { localStorage.setItem('edusync_user', JSON.stringify(data.user)); } catch (e) {}
-        if (onLaunchVisionNoteDirectly) {
-          onLaunchVisionNoteDirectly(data.user, data.token);
-        } else {
-          onLoginSuccess(data.user, data.token);
-        }
-      }
-    } catch (err) {
-      console.error('Quick launch error:', err);
-      setErrorMessage('Failed to quick launch. Please select a user manually.');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between relative overflow-hidden font-sans selection:bg-purple-600 selection:text-white">
-      {/* Dynamic Background Gradients */}
-      <div className="absolute -top-40 -left-40 w-96 h-96 bg-cyan-600/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute top-1/3 -right-40 w-96 h-96 bg-purple-600/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-40 left-1/3 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
-
-      {/* Top Banner */}
-      <header className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 flex items-center justify-between">
+    <div className="min-h-screen bg-[#F8F9FC] text-[#333333] flex flex-col font-sans selection:bg-[#FF8C00]/20 selection:text-[#1A3A52]">
+      {/* 1. Header Section */}
+      <header className="w-full bg-white border-b border-[#E0E0E0] shadow-[0_1px_4px_rgba(0,0,0,0.04)] px-6 py-4 flex items-center justify-between sticky top-0 z-30">
         <div className="flex items-center gap-3">
-          <img
-            src="/logo.png"
-            alt="EduSync Logo"
-            className="w-10 h-10 object-contain rounded-xl shadow-lg shadow-cyan-500/20 border border-slate-700/60"
-          />
+          <div className="w-10 h-10 rounded-xl bg-[#FF8C00] flex items-center justify-center text-white font-black text-lg shadow-[0_2px_8px_rgba(255,140,0,0.35)]">
+            ES
+          </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-lg font-bold text-white tracking-tight">
-                EduSync<span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">.ai</span>
-              </h1>
-              <span className="px-2 py-0.5 bg-slate-900 border border-slate-800 text-[10px] font-mono text-cyan-400 rounded-full">
-                TechStorm 3.0
-              </span>
-            </div>
-            <p className="text-[11px] text-slate-400">BML Munjal University Academic Command OS</p>
+            <span className="text-xl font-bold text-[#1A3A52] tracking-tight block leading-tight">
+              ClassSarthi
+            </span>
+            <span className="text-xs text-[#666666] font-medium block">
+              Your Personal Learning Partner
+            </span>
           </div>
         </div>
 
-        <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-slate-900/80 border border-slate-800 rounded-full text-xs text-slate-300">
-          <Shield className="w-3.5 h-3.5 text-emerald-400" />
-          <span>Institutional RBAC Enforced</span>
+        <div className="flex items-center gap-3">
+          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 bg-[#F5F5F5] border border-[#E0E0E0] rounded-full text-xs font-semibold text-[#1A3A52]">
+            <Shield className="w-3.5 h-3.5 text-[#27AE60]" />
+            <span>256-bit Encrypted</span>
+          </div>
         </div>
       </header>
 
-      {/* Main Login Card */}
-      <main className="relative z-10 flex-1 flex items-center justify-center px-4 py-8">
-        <div className="w-full max-w-md">
-          {/* Card Container */}
-          <div className="bg-slate-900/80 backdrop-blur-xl border border-slate-800/80 rounded-2xl p-6 sm:p-8 shadow-2xl shadow-purple-950/20">
-            {/* Header in Card */}
-            <div className="text-center mb-6">
-              <img
-                src="/logo.png"
-                alt="EduSync"
-                className="w-16 h-16 object-contain mx-auto mb-3 rounded-2xl shadow-xl shadow-cyan-500/20 border border-slate-700/60"
-              />
-              <h2 className="text-2xl font-extrabold text-white tracking-tight">
-                Sign in to your Portal
-              </h2>
-              <p className="text-xs text-slate-400 mt-1">
-                Select your designated campus role to access your academic workspace.
+      {/* 2. Main Login Workspace: Split Screen Layout */}
+      <main className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-12">
+        <div className="w-full max-w-6xl bg-white rounded-2xl shadow-[0_4px_24px_rgba(26,58,82,0.08)] border border-[#E0E0E0] overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[640px]">
+          
+          {/* Left Side (60%): Hero Section & Branding */}
+          <div className="lg:col-span-7 bg-gradient-to-br from-[#1A3A52] via-[#162F43] to-[#0F2231] text-white p-8 sm:p-12 flex flex-col justify-between relative overflow-hidden">
+            {/* Background Decorative Circles */}
+            <div className="absolute top-0 right-0 w-96 h-96 bg-[#FF8C00]/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+            <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#3B82F6]/10 rounded-full blur-3xl pointer-events-none -ml-20 -mb-20" />
+
+            {/* Top Brand Statement */}
+            <div className="relative z-10 space-y-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-xs font-semibold text-[#FF8C00] border border-white/10">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Next-Gen Student Learning Platform</span>
+              </div>
+              <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight leading-tight text-white">
+                Welcome Back!
+              </h1>
+              <p className="text-sm sm:text-base text-gray-300 leading-relaxed max-w-lg">
+                Continue your learning journey with ClassSarthi. Master topics, get guided by AI, and achieve your academic goals with synchronized classroom intelligence.
               </p>
             </div>
 
-            {/* Role Selector Tabs */}
-            <div className="grid grid-cols-3 gap-1.5 p-1 bg-slate-950 rounded-xl border border-slate-800 mb-6">
-              <button
-                type="button"
-                onClick={() => handleSelectRolePreset('student')}
-                className={`py-2 px-1 rounded-lg text-xs font-bold transition-all flex flex-col items-center gap-1 ${
-                  selectedRole === 'student'
-                    ? 'bg-blue-600/20 text-blue-300 border border-blue-500/40 shadow-xs'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/50'
-                }`}
-              >
-                <GraduationCap className="w-4 h-4" />
-                <span>Student</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleSelectRolePreset('teacher')}
-                className={`py-2 px-1 rounded-lg text-xs font-bold transition-all flex flex-col items-center gap-1 ${
-                  selectedRole === 'teacher'
-                    ? 'bg-emerald-600/20 text-emerald-300 border border-emerald-500/40 shadow-xs'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/50'
-                }`}
-              >
-                <Zap className="w-4 h-4" />
-                <span>Faculty</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleSelectRolePreset('admin')}
-                className={`py-2 px-1 rounded-lg text-xs font-bold transition-all flex flex-col items-center gap-1 ${
-                  selectedRole === 'admin'
-                    ? 'bg-purple-600/20 text-purple-300 border border-purple-500/40 shadow-xs'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/50'
-                }`}
-              >
-                <Building className="w-4 h-4" />
-                <span>Dean / Reg.</span>
-              </button>
-            </div>
-
-            {/* Error Banner */}
-            {errorMessage && (
-              <div className="mb-4 p-3 bg-rose-950/60 border border-rose-800/80 rounded-xl flex items-start gap-2.5 text-xs text-rose-200 animate-in fade-in duration-200">
-                <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
-                <span>{errorMessage}</span>
-              </div>
-            )}
-
-            {/* Form */}
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center justify-between">
-                  <span>Username, Roll No. or Email</span>
-                  <span className="text-[10px] text-slate-500 font-mono">
-                    {selectedRole === 'student' ? 'e.g. student.dhruva' : selectedRole === 'teacher' ? 'e.g. prof.sanmitra' : 'e.g. dean.maneek'}
-                  </span>
-                </label>
-                <div className="relative">
-                  <UserIcon className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-                  <input
-                    type="text"
-                    required
-                    value={identifier}
-                    onChange={(e) => setIdentifier(e.target.value)}
-                    placeholder="Enter username or email..."
-                    className="w-full pl-9 pr-3 py-2.5 bg-slate-950/80 border border-slate-700/80 rounded-xl text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 font-mono transition-colors"
-                  />
+            {/* Core Educational Benefits Checklist */}
+            <div className="relative z-10 my-8 space-y-3.5">
+              <div className="flex items-center gap-3 bg-white/5 border border-white/10 p-3.5 rounded-xl backdrop-blur-xs hover:bg-white/10 transition-colors">
+                <div className="w-7 h-7 rounded-lg bg-[#27AE60]/20 flex items-center justify-center text-[#27AE60] flex-shrink-0">
+                  <Check className="w-4 h-4 font-bold" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-white">Personalized Learning Paths</h4>
+                  <p className="text-[11px] text-gray-300">Customized to your visual, step-by-step, or exam-focused learning profile.</p>
                 </div>
               </div>
 
+              <div className="flex items-center gap-3 bg-white/5 border border-white/10 p-3.5 rounded-xl backdrop-blur-xs hover:bg-white/10 transition-colors">
+                <div className="w-7 h-7 rounded-lg bg-[#FF8C00]/20 flex items-center justify-center text-[#FF8C00] flex-shrink-0">
+                  <Brain className="w-4 h-4 font-bold" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-white">24/7 Socratic AI Tutor</h4>
+                  <p className="text-[11px] text-gray-300">Grounded in your actual lecture notes, formulas, and chalkboard captures.</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 bg-white/5 border border-white/10 p-3.5 rounded-xl backdrop-blur-xs hover:bg-white/10 transition-colors">
+                <div className="w-7 h-7 rounded-lg bg-[#3B82F6]/20 flex items-center justify-center text-[#3B82F6] flex-shrink-0">
+                  <TrendingUp className="w-4 h-4 font-bold" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-white">Real-Time Progress & Mastery Radar</h4>
+                  <p className="text-[11px] text-gray-300">Identify misconceptions and weak topics before upcoming exams.</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 bg-white/5 border border-white/10 p-3.5 rounded-xl backdrop-blur-xs hover:bg-white/10 transition-colors">
+                <div className="w-7 h-7 rounded-lg bg-[#F39C12]/20 flex items-center justify-center text-[#F39C12] flex-shrink-0">
+                  <RotateCcw className="w-4 h-4 font-bold" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-white">Interactive Practice & Spaced Repetition</h4>
+                  <p className="text-[11px] text-gray-300">Adaptive multiple-choice quizzes and 3D flashcard decks.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Demo Credentials Footer */}
+            <div className="relative z-10 pt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs text-gray-400">
+              <span>Demo Quick-Fill:</span>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleRoleChange('student')}
+                  className="px-2.5 py-1 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors cursor-pointer text-[11px]"
+                >
+                  Student: <span className="font-mono text-[#FF8C00]">student.dhruva</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleRoleChange('teacher')}
+                  className="px-2.5 py-1 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors cursor-pointer text-[11px]"
+                >
+                  Teacher: <span className="font-mono text-[#FF8C00]">prof.rajesh</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Side (40%): Login Form */}
+          <div className="lg:col-span-5 p-8 sm:p-10 flex flex-col justify-center bg-white">
+            <div className="w-full max-w-md mx-auto space-y-6">
+              
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center justify-between">
-                  <span>Password</span>
-                  <span className="text-[10px] text-slate-500 font-mono">Protected</span>
+                <h2 className="text-2xl font-bold text-[#1A3A52] tracking-tight">
+                  Sign in to your account
+                </h2>
+                <p className="text-xs text-[#666666] mt-1">
+                  Select your role and enter your credentials below.
+                </p>
+              </div>
+
+              {/* 3.1 Role Selection (Two Large Touch Targets) */}
+              <div>
+                <label className="block text-[11px] font-bold text-[#666666] uppercase tracking-wider mb-2">
+                  LOGIN AS:
                 </label>
-                <div className="relative">
-                  <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter password..."
-                    className="w-full pl-9 pr-10 py-2.5 bg-slate-950/80 border border-slate-700/80 rounded-xl text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 font-mono transition-colors"
-                  />
+                <div className="grid grid-cols-2 gap-3">
+                  {/* Student Button */}
                   <button
                     type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-200"
-                    title={showPassword ? 'Hide password' : 'Show password'}
+                    onClick={() => handleRoleChange('student')}
+                    className={`p-3.5 rounded-xl border text-left transition-all duration-200 cursor-pointer flex flex-col justify-between ${
+                      selectedRole === 'student'
+                        ? 'border-[#FF8C00] bg-[#FFF8F0] shadow-[0_2px_12px_rgba(255,140,0,0.15)] ring-2 ring-[#FF8C00]/20'
+                        : 'border-[#E0E0E0] bg-[#FAFAFA] hover:bg-[#F5F5F5] hover:border-[#CCCCCC]'
+                    }`}
                   >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    <div className="flex items-center justify-between mb-1.5">
+                      <div className="flex items-center gap-2">
+                        <GraduationCap className={`w-5 h-5 ${selectedRole === 'student' ? 'text-[#FF8C00]' : 'text-[#666666]'}`} />
+                        <span className={`font-bold text-sm ${selectedRole === 'student' ? 'text-[#1A3A52]' : 'text-[#333333]'}`}>
+                          STUDENT
+                        </span>
+                      </div>
+                      {selectedRole === 'student' && (
+                        <div className="w-4 h-4 rounded-full bg-[#FF8C00] flex items-center justify-center text-white">
+                          <Check className="w-3 h-3 stroke-[3]" />
+                        </div>
+                      )}
+                    </div>
+                    <p className="text-[11px] text-[#666666] leading-tight">
+                      Learn with personalized AI tutor & track progress.
+                    </p>
+                  </button>
+
+                  {/* Teacher Button */}
+                  <button
+                    type="button"
+                    onClick={() => handleRoleChange('teacher')}
+                    className={`p-3.5 rounded-xl border text-left transition-all duration-200 cursor-pointer flex flex-col justify-between ${
+                      selectedRole === 'teacher'
+                        ? 'border-[#FF8C00] bg-[#FFF8F0] shadow-[0_2px_12px_rgba(255,140,0,0.15)] ring-2 ring-[#FF8C00]/20'
+                        : 'border-[#E0E0E0] bg-[#FAFAFA] hover:bg-[#F5F5F5] hover:border-[#CCCCCC]'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-1.5">
+                      <div className="flex items-center gap-2">
+                        <School className={`w-5 h-5 ${selectedRole === 'teacher' ? 'text-[#FF8C00]' : 'text-[#666666]'}`} />
+                        <span className={`font-bold text-sm ${selectedRole === 'teacher' ? 'text-[#1A3A52]' : 'text-[#333333]'}`}>
+                          TEACHER
+                        </span>
+                      </div>
+                      {selectedRole === 'teacher' && (
+                        <div className="w-4 h-4 rounded-full bg-[#FF8C00] flex items-center justify-center text-white">
+                          <Check className="w-3 h-3 stroke-[3]" />
+                        </div>
+                      )}
+                    </div>
+                    <p className="text-[11px] text-[#666666] leading-tight">
+                      Manage classes, grade rubrics & diagnostic insights.
+                    </p>
                   </button>
                 </div>
               </div>
 
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full mt-2 py-3 px-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 disabled:opacity-50 text-white rounded-xl text-xs font-bold shadow-lg shadow-indigo-950/50 flex items-center justify-center gap-2 transition-all transform active:scale-[0.99]"
-              >
-                <span>{isLoading ? 'Verifying Credentials...' : `Enter ${selectedRole === 'admin' ? 'Registrar OS' : selectedRole === 'teacher' ? 'Faculty Portal' : 'Student Learning Hub'}`}</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </form>
-
-            {/* Quick Demo Preloads Notice */}
-            <div className="mt-6 pt-5 border-t border-slate-800/80 space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                  <KeyRound className="w-3.5 h-3.5 text-purple-400" />
-                  Instant Role Credentials
-                </span>
-                <span className="text-[10px] text-slate-500 font-mono">
-                  {safeUsers.length} Users Stored
-                </span>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  onClick={() => handleSelectRolePreset('student')}
-                  className={`text-[11px] px-2.5 py-1.5 rounded-lg border font-mono transition-colors ${
-                    selectedRole === 'student' && identifier === 'student.dhruva'
-                      ? 'bg-blue-950 border-blue-700 text-blue-300'
-                      : 'bg-slate-950 border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-slate-200'
-                  }`}
-                >
-                  Student: Dhruva (260101)
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleSelectRolePreset('teacher')}
-                  className={`text-[11px] px-2.5 py-1.5 rounded-lg border font-mono transition-colors ${
-                    selectedRole === 'teacher' && identifier === 'prof.sanmitra'
-                      ? 'bg-emerald-950 border-emerald-700 text-emerald-300'
-                      : 'bg-slate-950 border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-slate-200'
-                  }`}
-                >
-                  Faculty: Dr. Sanmitra
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleSelectRolePreset('admin')}
-                  className={`text-[11px] px-2.5 py-1.5 rounded-lg border font-mono transition-colors ${
-                    selectedRole === 'admin' && identifier === 'dean.maneek'
-                      ? 'bg-purple-950 border-purple-700 text-purple-300'
-                      : 'bg-slate-950 border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-slate-200'
-                  }`}
-                >
-                  Dean: Dr. Maneek Singh
-                </button>
-              </div>
-
-              {/* Roster of Registered Users Dropdown / Quick Selector */}
-              {safeUsers.length > 0 && (
-                <div className="pt-2">
-                  <label className="block text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1.5">
-                    Select From All Registered Users ({safeUsers.length}):
-                  </label>
-                  <select
-                    value={safeUsers.find(u => u.username === identifier || u.institutionalId === identifier || u.email === identifier)?.id || ''}
-                    onChange={(e) => {
-                      const u = safeUsers.find(user => user.id === e.target.value);
-                      if (u) handleSelectUser(u);
-                    }}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-purple-500 font-mono"
-                  >
-                    <option value="">-- Choose Registered User ({safeUsers.length} available) --</option>
-                    <optgroup label="Newly Registered & Custom Users">
-                      {safeUsers.filter(u => !['admin-1', 'admin-2', 'teacher-1', 'teacher-2', 'teacher-3', 'teacher-4', 'teacher-5', 'student-1', 'student-2'].includes(u.id)).map(u => (
-                        <option key={u.id} value={u.id}>
-                          ⭐ [{u.role.toUpperCase()}] {u.name} ({u.institutionalId || u.username}) · Pass: {u.password || 'EduSync@260101'}
-                        </option>
-                      ))}
-                    </optgroup>
-                    <optgroup label="Default Student Roster">
-                      {safeUsers.filter(u => u.role === 'student').map(u => (
-                        <option key={u.id} value={u.id}>
-                          [STUDENT] {u.name} ({u.institutionalId})
-                        </option>
-                      ))}
-                    </optgroup>
-                    <optgroup label="Faculty & Deans">
-                      {safeUsers.filter(u => u.role !== 'student').map(u => (
-                        <option key={u.id} value={u.id}>
-                          [{u.role.toUpperCase()}] {u.name}
-                        </option>
-                      ))}
-                    </optgroup>
-                  </select>
+              {/* Error Banner */}
+              {errorMessage && (
+                <div className="p-3 bg-[#FDEDEC] border border-[#F5B7B1] rounded-xl flex items-start gap-2.5 text-xs text-[#E74C3C] animate-in fade-in duration-200">
+                  <AlertCircle className="w-4 h-4 text-[#E74C3C] shrink-0 mt-0.5" />
+                  <span>{errorMessage}</span>
                 </div>
               )}
-            </div>
 
-            {/* Governance Policy Footer in Card */}
-            <div className="mt-5 p-3 bg-slate-950/60 border border-slate-800/60 rounded-xl flex items-start gap-2 text-[11px] text-slate-400">
-              <Info className="w-3.5 h-3.5 text-cyan-400 shrink-0 mt-0.5" />
-              <span>
-                <strong className="text-slate-200">Registration Policy:</strong> Only Deans and Registrars can register new students and faculty. Credentials for all faculty & students are maintained securely in the Registrar Dashboard.
-              </span>
+              {/* Login Form */}
+              <form onSubmit={handleLogin} className="space-y-4">
+                {/* 3.2 Username/Email Field */}
+                <div>
+                  <label className="block text-[11px] font-bold text-[#666666] uppercase tracking-wider mb-1.5">
+                    USERNAME OR EMAIL
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#999999]">
+                      <UserIcon className="w-4 h-4" />
+                    </div>
+                    <input
+                      type="text"
+                      value={identifier}
+                      onChange={(e) => setIdentifier(e.target.value)}
+                      placeholder={selectedRole === 'teacher' ? 'prof.rajesh@bmu.edu.in' : 'student.dhruva@bmu.edu.in'}
+                      className="w-full h-11 pl-10 pr-3.5 rounded-lg border border-[#CCCCCC] focus:border-[#FF8C00] focus:ring-2 focus:ring-[#FF8C00]/20 outline-none text-sm text-[#333333] transition-all bg-white font-medium placeholder:text-[#999999]"
+                      required
+                    />
+                  </div>
+                  <p className="text-[11px] text-[#999999] mt-1">
+                    Tip: Use your registration email or username
+                  </p>
+                </div>
+
+                {/* 3.3 Password Field */}
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-[11px] font-bold text-[#666666] uppercase tracking-wider">
+                      PASSWORD
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowForgotPasswordModal(true);
+                        setForgotSubmitted(false);
+                        setForgotEmail('');
+                      }}
+                      className="text-xs text-[#FF8C00] hover:underline font-semibold cursor-pointer"
+                    >
+                      Forgot Password?
+                    </button>
+                  </div>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#999999]">
+                      <Lock className="w-4 h-4" />
+                    </div>
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••••••"
+                      className="w-full h-11 pl-10 pr-10 rounded-lg border border-[#CCCCCC] focus:border-[#FF8C00] focus:ring-2 focus:ring-[#FF8C00]/20 outline-none text-sm text-[#333333] transition-all bg-white font-medium"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#999999] hover:text-[#333333] cursor-pointer"
+                      tabIndex={-1}
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* 3.4 Remember Me Checkbox */}
+                <div className="flex items-start gap-2 pt-1">
+                  <input
+                    type="checkbox"
+                    id="rememberMe"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    className="mt-0.5 w-4 h-4 rounded text-[#FF8C00] focus:ring-[#FF8C00] border-[#CCCCCC] cursor-pointer"
+                  />
+                  <div className="flex flex-col">
+                    <label htmlFor="rememberMe" className="text-xs font-semibold text-[#333333] cursor-pointer select-none">
+                      Remember me for 30 days
+                    </label>
+                    <span className="text-[10px] text-[#999999]">
+                      Only use on your personal device
+                    </span>
+                  </div>
+                </div>
+
+                {/* 3.5 Login Button */}
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full h-12 bg-[#FF8C00] hover:bg-[#E67E00] active:bg-[#CC6A00] text-white font-bold text-sm rounded-lg transition-colors duration-150 shadow-[0_2px_8px_rgba(255,140,0,0.3)] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+                >
+                  {isLoading ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <span>Signing in...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>SIGN IN</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </>
+                  )}
+                </button>
+              </form>
+
+              {/* Admin OS / Dean Link Toggle */}
+              <div className="pt-2 text-center">
+                <button
+                  type="button"
+                  onClick={() => handleRoleChange('admin')}
+                  className={`text-xs font-medium cursor-pointer transition-colors ${
+                    selectedRole === 'admin'
+                      ? 'text-[#FF8C00] font-bold'
+                      : 'text-[#666666] hover:text-[#1A3A52]'
+                  }`}
+                >
+                  {selectedRole === 'admin' ? '✓ Administrator / Dean Mode Active' : 'Access as University Administrator / Dean'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="relative z-10 py-4 text-center text-xs text-slate-500 border-t border-slate-900">
-        <p>© 2026 EduSync.ai · BML Munjal University · TechStorm 3.0 Entry</p>
-      </footer>
+      {/* Forgot Password Modal */}
+      {showForgotPasswordModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl border border-[#E0E0E0] animate-in fade-in zoom-in-95 duration-150 space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-[#EEEEEE]">
+              <div className="flex items-center gap-2">
+                <HelpCircle className="w-5 h-5 text-[#FF8C00]" />
+                <h3 className="font-bold text-base text-[#1A3A52]">Account Recovery</h3>
+              </div>
+              <button
+                onClick={() => setShowForgotPasswordModal(false)}
+                className="text-[#999999] hover:text-[#333333] cursor-pointer"
+                type="button"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {forgotSubmitted ? (
+              <div className="py-4 text-center space-y-3">
+                <div className="w-12 h-12 rounded-full bg-[#EAFAF1] text-[#27AE60] flex items-center justify-center mx-auto">
+                  <CheckCircle2 className="w-6 h-6" />
+                </div>
+                <h4 className="font-bold text-sm text-[#1A3A52]">Recovery Email Sent</h4>
+                <p className="text-xs text-[#666666] leading-relaxed">
+                  If an account exists for <span className="font-semibold text-[#1A3A52]">{forgotEmail}</span>, a password reset link has been dispatched.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setShowForgotPasswordModal(false)}
+                  className="w-full py-2.5 bg-[#FF8C00] hover:bg-[#E67E00] text-white font-bold text-xs rounded-lg transition-colors cursor-pointer"
+                >
+                  Return to Sign In
+                </button>
+              </div>
+            ) : (
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (forgotEmail.trim()) {
+                    setForgotSubmitted(true);
+                  }
+                }}
+                className="space-y-4"
+              >
+                <p className="text-xs text-[#666666] leading-relaxed">
+                  Enter the email address or username associated with your ClassSarthi account to receive reset instructions.
+                </p>
+                <div>
+                  <label className="block text-[11px] font-bold text-[#666666] uppercase mb-1">
+                    Your Email or Username
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={forgotEmail}
+                    onChange={(e) => setForgotEmail(e.target.value)}
+                    placeholder="student.dhruva@bmu.edu.in"
+                    className="w-full h-10 px-3 rounded-lg border border-[#CCCCCC] focus:border-[#FF8C00] outline-none text-xs text-[#333333]"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowForgotPasswordModal(false)}
+                    className="flex-1 py-2.5 bg-[#F5F5F5] hover:bg-[#EEEEEE] text-[#666666] font-semibold text-xs rounded-lg transition-colors cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 py-2.5 bg-[#FF8C00] hover:bg-[#E67E00] text-white font-bold text-xs rounded-lg transition-colors cursor-pointer"
+                  >
+                    Send Reset Link
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

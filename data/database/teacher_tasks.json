@@ -1,0 +1,30 @@
+[
+  {
+    "id": "task-1",
+    "subjectId": "subj-ess",
+    "task": "Explain Photochemical Smog mechanism & ozone accumulation cycle",
+    "dueDate": "Today",
+    "isDone": true
+  },
+  {
+    "id": "task-2",
+    "subjectId": "subj-eme",
+    "task": "Solve 2 numerical problems on Clausius Inequality & Entropy Balance",
+    "dueDate": "Today",
+    "isDone": false
+  },
+  {
+    "id": "task-3",
+    "subjectId": "subj-ess",
+    "task": "Conduct 5-minute interactive poll on Solid Waste segregations",
+    "dueDate": "Today",
+    "isDone": false
+  },
+  {
+    "id": "task-4",
+    "subjectId": "subj-ess-lab",
+    "task": "Demonstrate spectrophotometer blank calibration at 600nm wavelength",
+    "dueDate": "Today",
+    "isDone": false
+  }
+]

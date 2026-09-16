@@ -24,13 +24,13 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('EduSync Uncaught Runtime Exception:', error, errorInfo);
+    console.error('ClassSarthi Uncaught Runtime Exception:', error, errorInfo);
   }
 
   private handleReset = () => {
-    localStorage.removeItem('edusync_token');
-    localStorage.removeItem('edusync_user_id');
-    localStorage.removeItem('edusync_audit_admin');
+    localStorage.removeItem('classsarthi_token');
+    localStorage.removeItem('classsarthi_user_id');
+    localStorage.removeItem('classsarthi_audit_admin');
     window.location.reload();
   };
 

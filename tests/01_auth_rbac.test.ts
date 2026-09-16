@@ -43,7 +43,7 @@ export async function runAuthRbacTests(ctx: TestContext, runner: TestRunner) {
       method: 'POST',
       body: {
         identifier: 'dean.maneek',
-        password: 'Dean@EduSync2026!',
+        password: 'Dean@ClassSarthi2026!',
         role: 'admin'
       }
     });

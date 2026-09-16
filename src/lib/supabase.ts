@@ -426,7 +426,7 @@ export const subscribeToVisionNotes = (
 ) => {
   const sb = getSupabaseClient() || supabase;
   if (!sb) {
-    console.info('[EduSync Supabase] Cloud credentials not configured. Running in local sync mode.');
+    console.info('[ClassSarthi Supabase] Cloud credentials not configured. Running in local sync mode.');
     return () => {};
   }
 
@@ -434,7 +434,7 @@ export const subscribeToVisionNotes = (
     const raw = payload.new;
     if (!raw) return;
     if (raw.is_archived) return;
-    if (raw.title?.startsWith('__EDUSYNC_USER__') || raw.metadata?.entity_type === 'edusync_user') return;
+    if (raw.title?.startsWith('__CLASSSARTHI_USER__') || raw.metadata?.entity_type === 'classsarthi_user') return;
 
     const meta = raw.metadata || {};
     const noteContent = raw.personalised_notes || raw.generalised_notes || raw.content || raw.raw_ocr_text || '';
@@ -545,7 +545,7 @@ export const fetchVisionNotesFromSupabase = async (options?: {
     let query = sb
       .from('notes')
       .select('*')
-      .not('title', 'like', '__EDUSYNC_USER__%')
+      .not('title', 'like', '__CLASSSARTHI_USER__%')
       .order('created_at', { ascending: false });
 
     if (options?.studentId && isUuid(options.studentId)) {
@@ -610,7 +610,7 @@ export const fetchVisionNotesFromSupabase = async (options?: {
 
     return { notes };
   } catch (err: any) {
-    console.error('[EduSync Supabase] Failed to fetch notes:', err);
+    console.error('[ClassSarthi Supabase] Failed to fetch notes:', err);
     return { notes: [], error: err.message || 'Failed to pull notes from Supabase' };
   }
 };
@@ -624,7 +624,7 @@ export const saveUserToSupabaseCloud = async (user: User): Promise<boolean> => {
     const sb = getSupabaseClient();
     if (!sb) return false;
 
-    const userTitle = `__EDUSYNC_USER__:${user.id}`;
+    const userTitle = `__CLASSSARTHI_USER__:${user.id}`;
     const payload = {
       user_id: null,
       title: userTitle,
@@ -632,7 +632,7 @@ export const saveUserToSupabaseCloud = async (user: User): Promise<boolean> => {
       personalised_notes: JSON.stringify(user),
       status: 'ready' as const,
       metadata: {
-        entity_type: 'edusync_user',
+        entity_type: 'classsarthi_user',
         id: user.id,
         username: user.username,
         email: user.email,
@@ -661,21 +661,21 @@ export const saveUserToSupabaseCloud = async (user: User): Promise<boolean> => {
         .eq('id', existing[0].id);
 
       if (error) {
-        console.warn('[EduSync Supabase] Error updating user in cloud:', error);
+        console.warn('[ClassSarthi Supabase] Error updating user in cloud:', error);
         return false;
       }
     } else {
       const { error } = await sb.from('notes').insert([payload]);
       if (error) {
-        console.warn('[EduSync Supabase] Error inserting user into cloud:', error);
+        console.warn('[ClassSarthi Supabase] Error inserting user into cloud:', error);
         return false;
       }
     }
 
-    console.log(`[EduSync Supabase] ☁️ User ${user.name} (${user.id}) saved to cloud!`);
+    console.log(`[ClassSarthi Supabase] ☁️ User ${user.name} (${user.id}) saved to cloud!`);
     return true;
   } catch (err) {
-    console.warn('[EduSync Supabase] Exception saving user to cloud:', err);
+    console.warn('[ClassSarthi Supabase] Exception saving user to cloud:', err);
     return false;
   }
 };
@@ -688,7 +688,7 @@ export const fetchUsersFromSupabaseCloud = async (): Promise<User[]> => {
     const { data, error } = await sb
       .from('notes')
       .select('*')
-      .like('title', '__EDUSYNC_USER__:%');
+      .like('title', '__CLASSSARTHI_USER__:%');
 
     if (error || !data) return [];
 
@@ -706,7 +706,7 @@ export const fetchUsersFromSupabaseCloud = async (): Promise<User[]> => {
 
     return users;
   } catch (err) {
-    console.warn('[EduSync Supabase] Exception loading users from cloud:', err);
+    console.warn('[ClassSarthi Supabase] Exception loading users from cloud:', err);
     return [];
   }
 };
@@ -716,11 +716,11 @@ export const deleteUserFromSupabaseCloud = async (userId: string): Promise<boole
     const sb = getSupabaseClient();
     if (!sb) return false;
 
-    const userTitle = `__EDUSYNC_USER__:${userId}`;
+    const userTitle = `__CLASSSARTHI_USER__:${userId}`;
     const { error } = await sb.from('notes').delete().eq('title', userTitle);
     return !error;
   } catch (err) {
-    console.warn('[EduSync Supabase] Exception deleting user from cloud:', err);
+    console.warn('[ClassSarthi Supabase] Exception deleting user from cloud:', err);
     return false;
   }
 };

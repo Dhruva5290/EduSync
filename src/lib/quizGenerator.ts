@@ -534,11 +534,17 @@ export function evaluateQuizPerformance(
     ? `I took the mastery checkpoint for "${quizTitle}" and struggled with ${missedTopics[0]}. Can you guide me through this ${styleHint} without giving away direct answers?`
     : `I completed the mastery checkpoint on "${quizTitle}" with ${pct}%. Can you challenge me with an advanced application problem ${styleHint}?`;
 
+  const masteryLevel: 'Mastered' | 'Proficient' | 'Needs Review' =
+    pct >= 80 ? 'Mastered' : pct >= 50 ? 'Proficient' : 'Needs Review';
+  const suggestedTutorTopic = missedTopics[0] || quizTitle;
+
   return {
     score: totalCorrect,
     totalQuestions: total,
     percentage: pct,
     summary,
+    masteryLevel,
+    suggestedTutorTopic,
     keyMisconceptions: Array.from(new Set(missedTopics)).slice(0, 3).map(t => `Misconception or uncertain recall in: ${t}`),
     suggestedTutorPrompt,
     difficultyBreakdown: {

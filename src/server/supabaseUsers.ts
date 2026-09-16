@@ -27,7 +27,7 @@ export async function persistUserToCloud(user: User): Promise<boolean> {
   if (!sb) return false;
 
   try {
-    const userTitle = `__EDUSYNC_USER__:${user.id}`;
+    const userTitle = `__CLASSSARTHI_USER__:${user.id}`;
     const cleanUsername = (user.username || '').toLowerCase().trim();
     const cleanEmail = (user.email || '').toLowerCase().trim();
     const cleanInstId = (user.institutionalId || '').toLowerCase().trim();
@@ -41,7 +41,7 @@ export async function persistUserToCloud(user: User): Promise<boolean> {
           generalised_notes: JSON.stringify(user),
           status: 'ready',
           metadata: {
-            entity_type: 'edusync_user',
+            entity_type: 'classsarthi_user',
             user_id: user.id,
             username: cleanUsername,
             email: cleanEmail,
@@ -67,7 +67,7 @@ export async function persistUserToCloud(user: User): Promise<boolean> {
           generalised_notes: JSON.stringify(user),
           status: 'ready',
           metadata: {
-            entity_type: 'edusync_user',
+            entity_type: 'classsarthi_user',
             user_id: user.id,
             username: cleanUsername,
             email: cleanEmail,
@@ -101,7 +101,7 @@ export async function loadUsersFromCloud(): Promise<User[]> {
     const { data, error } = await sb
       .from('notes')
       .select('generalised_notes')
-      .contains('metadata', { entity_type: 'edusync_user' });
+      .contains('metadata', { entity_type: 'classsarthi_user' });
 
     if (error || !data) {
       return [];
@@ -167,7 +167,7 @@ export async function deleteUserFromCloud(userId: string): Promise<boolean> {
   if (!sb || !userId) return false;
 
   try {
-    const userTitle = `__EDUSYNC_USER__:${userId}`;
+    const userTitle = `__CLASSSARTHI_USER__:${userId}`;
     await sb.from('notes').delete().eq('title', userTitle);
     return true;
   } catch (err) {

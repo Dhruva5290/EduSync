@@ -1,0 +1,28 @@
+[
+  {
+    "id": "leave-1",
+    "teacherId": "teacher-ess",
+    "teacherName": "Dr. Sanmitra Bhattacharya",
+    "leaveType": "Academic Conference",
+    "startDate": "2026-09-24",
+    "endDate": "2026-09-26",
+    "totalDays": 3,
+    "reason": "Presenting research paper at International Green Energy & Sustainability Symposium, IIT Delhi.",
+    "substituteTeacher": "Dr. Ananya Sen (School of Engineering)",
+    "status": "Approved",
+    "appliedAt": "2026-09-08"
+  },
+  {
+    "id": "leave-2",
+    "teacherId": "teacher-ess",
+    "teacherName": "Dr. Sanmitra Bhattacharya",
+    "leaveType": "Casual Leave",
+    "startDate": "2026-10-03",
+    "endDate": "2026-10-03",
+    "totalDays": 1,
+    "reason": "Personal family commitment in hometown.",
+    "substituteTeacher": "Prof. Rajesh Sharma",
+    "status": "Pending HOD Approval",
+    "appliedAt": "2026-09-11"
+  }
+]

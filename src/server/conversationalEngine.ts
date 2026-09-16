@@ -72,7 +72,7 @@ What would you like to explore?`,
 
   if (clean.includes('who are you') || clean.includes('what are you') || clean.includes('what can you do') || clean.includes('what is your name')) {
     return {
-      reply: `I'm your **EduSync AI Academic Tutor**! 🎓
+      reply: `I'm your **ClassSarthi AI Academic Tutor**! 🎓
 
 I'm designed to work just like a personal study partner and teaching assistant for **${subjectName}** (${subjectCode}). Here's how I can help:
 - 📖 **Understand Course Topics**: Break down complex concepts, formulas, and algorithms from your syllabus.
@@ -559,7 +559,7 @@ void reverseString(char *str) {
 }
 
 int main() {
-    char text[] = "EduSync"; // Modifiable stack array
+    char text[] = "ClassSarthi"; // Modifiable stack array
     printf("Original: %s\\n", text);
     
     reverseString(text);

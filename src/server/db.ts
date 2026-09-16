@@ -11,7 +11,10 @@ import {
   BoardCapture,
   LectureMasteryQuiz,
   StudentConceptMastery,
-  QuestionBank
+  QuestionBank,
+  PluginConnection,
+  CustomTutorPersona,
+  TutorApprovalRequest
 } from '../types';
 import { FAKE_QUESTION_BANKS } from '../mock/fakeData';
 import {
@@ -28,6 +31,7 @@ import seedUsersJson from '../../data/users.json';
 import seedLecturesJson from '../../data/lectures.json';
 import seedNotesJson from '../../data/notes.json';
 import seedProgressJson from '../../data/student_progress.json';
+import { initialPlugins, initialCustomTutors, initialTutorApprovalRequests } from '../data/initialData';
 
 export interface InMemoryDatabase {
   users: User[];
@@ -44,6 +48,9 @@ export interface InMemoryDatabase {
   lectureProgress: Record<string, Record<string, any>>;
   masteryQuizzes: Record<string, LectureMasteryQuiz>;
   questionBanks: QuestionBank[];
+  plugins: PluginConnection[];
+  customTutors: CustomTutorPersona[];
+  tutorApprovalRequests: TutorApprovalRequest[];
 }
 
 const isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
@@ -51,6 +58,7 @@ const USERS_FILE_PATH = path.resolve(process.cwd(), 'data', 'users.json');
 const NOTES_FILE_PATH = path.resolve(process.cwd(), 'data', 'notes.json');
 const LECTURES_FILE_PATH = path.resolve(process.cwd(), 'data', 'lectures.json');
 const PROGRESS_FILE_PATH = path.resolve(process.cwd(), 'data', 'student_progress.json');
+const PLUGINS_FILE_PATH = path.resolve(process.cwd(), 'data', 'plugins.json');
 
 export function saveLecturesToDisk(lectures: ClassSarthiLecture[]) {
   if (isServerless) return;
@@ -125,6 +133,30 @@ export function saveUsersToDisk(users: User[]) {
   }
 }
 
+export function savePluginsToDisk(plugins: PluginConnection[]) {
+  if (isServerless) return;
+  try {
+    const dir = path.dirname(PLUGINS_FILE_PATH);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(PLUGINS_FILE_PATH, JSON.stringify(plugins, null, 2), 'utf-8');
+  } catch (err) {
+    console.error('Error saving plugins to disk:', err);
+  }
+}
+
+export function loadPluginsFromDisk(seed: PluginConnection[]): PluginConnection[] {
+  try {
+    if (fs.existsSync(PLUGINS_FILE_PATH)) {
+      const content = fs.readFileSync(PLUGINS_FILE_PATH, 'utf-8');
+      const parsed = JSON.parse(content);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (err) {}
+  return JSON.parse(JSON.stringify(seed));
+}
+
 export function loadUsersFromDisk(seed: User[]): User[] {
   const fallbackSeed = (Array.isArray(seedUsersJson) && seedUsersJson.length > 0) ? (seedUsersJson as unknown as User[]) : seed;
   try {
@@ -177,9 +209,9 @@ const seedUsers: User[] = [
   {
     id: 'admin-1',
     name: 'Dr. Maneek Singh',
-    email: 'dean.maneek@edusync.edu.in',
+    email: 'dean.maneek@classsarthi.edu.in',
     username: 'dean.maneek',
-    password: 'Dean@EduSync2026!',
+    password: 'Dean@ClassSarthi2026!',
     role: 'admin',
     gender: 'Male',
     institutionalId: 'EDU-ADM-1001',
@@ -198,7 +230,7 @@ const seedUsers: User[] = [
   {
     id: 'teacher-phy',
     name: 'Dr. Rajesh Kulkarni',
-    email: 'rajesh.kulkarni@edusync.edu.in',
+    email: 'rajesh.kulkarni@classsarthi.edu.in',
     username: 'prof.rajesh',
     password: 'Physics@2026!',
     role: 'teacher',
@@ -217,7 +249,7 @@ const seedUsers: User[] = [
   {
     id: 'teacher-che',
     name: 'Dr. Ananya Sen',
-    email: 'ananya.sen@edusync.edu.in',
+    email: 'ananya.sen@classsarthi.edu.in',
     username: 'prof.ananya',
     password: 'Chemistry@2026!',
     role: 'teacher',
@@ -236,7 +268,7 @@ const seedUsers: User[] = [
   {
     id: 'teacher-mat',
     name: 'Prof. Vikramaditya Roy',
-    email: 'vikram.roy@edusync.edu.in',
+    email: 'vikram.roy@classsarthi.edu.in',
     username: 'prof.vikram',
     password: 'Maths@2026!',
     role: 'teacher',
@@ -257,7 +289,7 @@ const seedUsers: User[] = [
   {
     id: 'student-1',
     name: 'Aarav Sharma',
-    email: 'aarav.sharma@edusync.edu.in',
+    email: 'aarav.sharma@classsarthi.edu.in',
     username: 'aarav.sharma',
     password: 'Student@2026!',
     role: 'student',
@@ -286,7 +318,7 @@ const seedUsers: User[] = [
   {
     id: 'student-2',
     name: 'Diya Patel',
-    email: 'diya.patel@edusync.edu.in',
+    email: 'diya.patel@classsarthi.edu.in',
     username: 'diya.patel',
     password: 'Student@2026!',
     role: 'student',
@@ -315,7 +347,7 @@ const seedUsers: User[] = [
   {
     id: 'student-3',
     name: 'Kabir Mehta',
-    email: 'kabir.mehta@edusync.edu.in',
+    email: 'kabir.mehta@classsarthi.edu.in',
     username: 'kabir.mehta',
     password: 'Student@2026!',
     role: 'student',
@@ -344,7 +376,7 @@ const seedUsers: User[] = [
   {
     id: 'student-4',
     name: 'Ananya Iyer',
-    email: 'ananya.iyer@edusync.edu.in',
+    email: 'ananya.iyer@classsarthi.edu.in',
     username: 'ananya.iyer',
     password: 'Student@2026!',
     role: 'student',
@@ -373,7 +405,7 @@ const seedUsers: User[] = [
   {
     id: 'student-5',
     name: 'Rohan Gupta',
-    email: 'rohan.gupta@edusync.edu.in',
+    email: 'rohan.gupta@classsarthi.edu.in',
     username: 'rohan.gupta',
     password: 'Student@2026!',
     role: 'student',
@@ -402,7 +434,7 @@ const seedUsers: User[] = [
   {
     id: 'student-6',
     name: 'Ishaan Verma',
-    email: 'ishaan.verma@edusync.edu.in',
+    email: 'ishaan.verma@classsarthi.edu.in',
     username: 'ishaan.verma',
     password: 'Student@2026!',
     role: 'student',
@@ -443,7 +475,7 @@ export const db: InMemoryDatabase = {
       description: 'Foundational Newtonian mechanics, kinematics, rotational dynamics, work-energy theorem, universal gravitation, thermodynamics, and electromagnetism.',
       teacherId: 'teacher-phy',
       teacherName: 'Dr. Rajesh Kulkarni',
-      teacherEmail: 'rajesh.kulkarni@edusync.edu.in',
+      teacherEmail: 'rajesh.kulkarni@classsarthi.edu.in',
       color: 'blue',
       accentBg: 'bg-blue-500/10 border-blue-500/30 text-blue-400',
       enrolledCount: 7,
@@ -466,7 +498,7 @@ export const db: InMemoryDatabase = {
       description: 'Quantum atomic models, chemical bonding (VSEPR), chemical thermodynamics, electrochemistry (Nernst equation), chemical kinetics, and reaction mechanisms.',
       teacherId: 'teacher-che',
       teacherName: 'Dr. Ananya Sen',
-      teacherEmail: 'ananya.sen@edusync.edu.in',
+      teacherEmail: 'ananya.sen@classsarthi.edu.in',
       color: 'emerald',
       accentBg: 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400',
       enrolledCount: 7,
@@ -489,7 +521,7 @@ export const db: InMemoryDatabase = {
       description: 'Techniques of integration, definite integrals, vector cross products, 3D geometry of planes, limits, continuity, and differential equations.',
       teacherId: 'teacher-mat',
       teacherName: 'Prof. Vikramaditya Roy',
-      teacherEmail: 'vikram.roy@edusync.edu.in',
+      teacherEmail: 'vikram.roy@classsarthi.edu.in',
       color: 'violet',
       accentBg: 'bg-violet-500/10 border-violet-500/30 text-violet-400',
       enrolledCount: 7,
@@ -512,7 +544,7 @@ export const db: InMemoryDatabase = {
       description: 'Central designated repository where all cross-disciplinary, general studies, electives, lab journals, and other notes are organized.',
       teacherId: 'teacher-phy',
       teacherName: 'Dr. Rajesh Kulkarni',
-      teacherEmail: 'rajesh.kulkarni@edusync.edu.in',
+      teacherEmail: 'rajesh.kulkarni@classsarthi.edu.in',
       color: 'purple',
       accentBg: 'bg-purple-500/10 border-purple-500/30 text-purple-400',
       enrolledCount: 7,
@@ -538,7 +570,7 @@ export const db: InMemoryDatabase = {
       description: 'Foundational Newtonian mechanics, kinematics, rotational dynamics, work-energy theorem, gravitation, fluid mechanics, and thermodynamics.',
       teacherId: 'teacher-phy',
       teacherName: 'Dr. Rajesh Kulkarni',
-      teacherEmail: 'rajesh.kulkarni@edusync.edu.in',
+      teacherEmail: 'rajesh.kulkarni@classsarthi.edu.in',
       color: 'blue',
       accentBg: 'bg-blue-500/10 border-blue-500/30 text-blue-400',
       enrolledCount: 6,
@@ -562,7 +594,7 @@ export const db: InMemoryDatabase = {
       description: 'Quantum atomic structure, periodic classification, chemical bonding, thermodynamics, equilibrium, redox reactions, and fundamental organic chemistry.',
       teacherId: 'teacher-che',
       teacherName: 'Dr. Ananya Sen',
-      teacherEmail: 'ananya.sen@edusync.edu.in',
+      teacherEmail: 'ananya.sen@classsarthi.edu.in',
       color: 'emerald',
       accentBg: 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400',
       enrolledCount: 6,
@@ -586,7 +618,7 @@ export const db: InMemoryDatabase = {
       description: 'Sets, relations and functions, trigonometric functions, permutations and combinations, binomial theorem, straight lines, conic sections, and introductory limits.',
       teacherId: 'teacher-mat',
       teacherName: 'Prof. Vikramaditya Roy',
-      teacherEmail: 'vikram.roy@edusync.edu.in',
+      teacherEmail: 'vikram.roy@classsarthi.edu.in',
       color: 'violet',
       accentBg: 'bg-violet-500/10 border-violet-500/30 text-violet-400',
       enrolledCount: 6,
@@ -614,7 +646,7 @@ export const db: InMemoryDatabase = {
       description: 'Electrostatics, Gauss Law, current electricity, magnetic effects of current, electromagnetic induction, wave optics, photoelectric effect, and nuclear physics.',
       teacherId: 'teacher-phy',
       teacherName: 'Dr. Rajesh Kulkarni',
-      teacherEmail: 'rajesh.kulkarni@edusync.edu.in',
+      teacherEmail: 'rajesh.kulkarni@classsarthi.edu.in',
       color: 'sky',
       accentBg: 'bg-sky-500/10 border-sky-500/30 text-sky-400',
       enrolledCount: 6,
@@ -638,7 +670,7 @@ export const db: InMemoryDatabase = {
       description: 'Solid state, solutions, electrochemistry, chemical kinetics, d & f block elements, coordination compounds, haloalkanes, aldehydes, ketones, and biomolecules.',
       teacherId: 'teacher-che',
       teacherName: 'Dr. Ananya Sen',
-      teacherEmail: 'ananya.sen@edusync.edu.in',
+      teacherEmail: 'ananya.sen@classsarthi.edu.in',
       color: 'amber',
       accentBg: 'bg-amber-500/10 border-amber-500/30 text-amber-400',
       enrolledCount: 6,
@@ -662,7 +694,7 @@ export const db: InMemoryDatabase = {
       description: 'Inverse trigonometric functions, matrices & determinants, continuity & differentiability, applications of derivatives, integrals, differential equations, and 3D geometry.',
       teacherId: 'teacher-mat',
       teacherName: 'Prof. Vikramaditya Roy',
-      teacherEmail: 'vikram.roy@edusync.edu.in',
+      teacherEmail: 'vikram.roy@classsarthi.edu.in',
       color: 'indigo',
       accentBg: 'bg-indigo-500/10 border-indigo-500/30 text-indigo-400',
       enrolledCount: 6,
@@ -690,7 +722,7 @@ export const db: InMemoryDatabase = {
       description: 'Automated PyTest configuration, test fixtures, suites, and runners captured live from VisionNote.',
       teacherId: 'teacher-phy',
       teacherName: 'Dr. Rajesh Kulkarni',
-      teacherEmail: 'rajesh.kulkarni@edusync.edu.in',
+      teacherEmail: 'rajesh.kulkarni@classsarthi.edu.in',
       color: 'purple',
       accentBg: 'bg-purple-500/10 border-purple-500/30 text-purple-400',
       enrolledCount: 6,
@@ -1991,7 +2023,7 @@ $$2I = \\int_{0}^{\\pi/2} 1 \\, dx = \\frac{\\pi}{2} \\implies I = \\frac{\\pi}{
         { week: 'Week 3', avgScore: 85.2, submissionRate: 93.3, activeCount: 14 },
         { week: 'Week 4', avgScore: 86.4, submissionRate: 93.3, activeCount: 15 }
       ],
-      aiExecutiveSummary: `The 1st Year B.Tech cohort across CSE, ECE, and ME is showing excellent engagement in ESS. Class average stands at 86.4% under Dr. Sanmitra Burman. Dhruva and Ashita lead in environmental audit precision.`,
+      aiExecutiveSummary: `The 1st Year B.Tech cohort across CSE, ECE, and ME is showing excellent engagement in ESS. Class average stands at 86.4% under Dr. Rajesh Burman. Dhruva and Ashita lead in environmental audit precision.`,
       keyActionItems: [
         'Conduct the campus water sampling practical session.',
         'Review Leopold EIA scoring methodology before the midterm.'
@@ -2151,6 +2183,9 @@ $$2I = \\int_{0}^{\\pi/2} 1 \\, dx = \\frac{\\pi}{2} \\implies I = \\frac{\\pi}{
   conceptMastery: seedConceptMastery,
   lectureProgress: loadProgressFromDisk(seedStudentLectureProgress),
   masteryQuizzes: seedMasteryQuizzes,
-  questionBanks: [...FAKE_QUESTION_BANKS]
+  questionBanks: [...FAKE_QUESTION_BANKS],
+  plugins: loadPluginsFromDisk(initialPlugins),
+  customTutors: JSON.parse(JSON.stringify(initialCustomTutors)),
+  tutorApprovalRequests: JSON.parse(JSON.stringify(initialTutorApprovalRequests))
 };
 
